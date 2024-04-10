@@ -1,5 +1,20 @@
 models:
   Post:
     title: string:400
+    slug: string:400
     content: longtext
+    published: boolean
     published_at: nullable timestamp
+    softDeletes: true
+    relationships:
+      HasMany: Comment
+      BelongsTo: User
+
+  Comment:
+    content: longtext
+    relationships:
+      BelongsTo: Post, User
+
+
+
+
