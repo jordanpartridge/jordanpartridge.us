@@ -22,18 +22,17 @@
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
 
-            <x-link href="/">
+            <x-link href="/" dusk="nav-home">
                 Home
             </x-link>
 
-            <x-link href="/engineering">
+            <x-link href="/engineering" dusk="nav-engineering">
                 Engineering
             </x-link>
 
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                    More
-                </a>
+           <x-link href="/admin" dusk="nav-admin">
+                Admin
+            </x-link>
 
                 <div class="navbar-dropdown">
                     <a class="navbar-item">
