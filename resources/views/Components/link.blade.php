@@ -1,1 +1,1 @@
-<a class='navbar-item' href="">{{$slot}}</a>
+<a class='navbar-item' {{$attributes}}">{{$slot}}</a>
