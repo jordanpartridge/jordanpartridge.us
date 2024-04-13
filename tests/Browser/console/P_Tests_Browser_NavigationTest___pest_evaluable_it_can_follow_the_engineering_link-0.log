@@ -1,0 +1,44 @@
+[
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/jordanpartridge.test\/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712985363124
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:5173\/resource\/assets\/css\/app.css - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712985363231
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:5173\/resource\/assets\/js\/app.js - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712985363231
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:5173\/resource\/assets\/css\/app.scss - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712985363231
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:5173\/resource\/assets\/css\/app.css - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712985363355
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:5173\/resource\/assets\/js\/app.js - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712985363356
+    },
+    {
+        "level": "SEVERE",
+        "message": "http:\/\/127.0.0.1:5173\/resource\/assets\/css\/app.scss - Failed to load resource: the server responded with a status of 404 (Not Found)",
+        "source": "network",
+        "timestamp": 1712985363357
+    }
+]

@@ -11,9 +11,9 @@
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
     >
+    <script src="https://kit.fontawesome.com/d1901f5db9.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<x-nav/>
 
 {{ $slot }}
 </body>
