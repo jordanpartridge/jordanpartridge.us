@@ -2,14 +2,11 @@
 
 namespace App\Filament\Resources\PostResource\RelationManagers;
 
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class CommentsRelationManager extends RelationManager
@@ -25,9 +22,9 @@ class CommentsRelationManager extends RelationManager
                     ->maxLength(255),
                 Forms\Components\Select::make('user_id')
                     ->options(
-                       collect([Auth::user()])->pluck('name', 'id')->toArray()
+                        collect([Auth::user()])->pluck('name', 'id')->toArray()
                     )->label('User')
-                    ->default(Auth::user()->getAuthIdentifier())
+                    ->default(Auth::user()->getAuthIdentifier()),
             ]);
     }
 
