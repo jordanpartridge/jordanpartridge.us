@@ -34,16 +34,16 @@
     <!-- Hero footer: will stick at the bottom -->
     <div class="hero-foot">
         <nav class="tabs">
-            <div class="container">
-                <ul>
-                    <li class="is-active"><a>Software Engineering</a></li>
-                    <li><x-link href="/">Home</x-link></li>
-                    <li><a>Grid</a></li>
-                    <li><a>Elements</a></li>
-                    <li><a>Components</a></li>
-                    <li><a>Layout</a></li>
-                </ul>
-            </div>
+{{--            <div class="container">--}}
+{{--                <ul>--}}
+{{--                    <li class="is-active"><a>Software Engineering</a></li>--}}
+{{--                    <li><x-link href="/">Home</x-link></li>--}}
+{{--                    <li><a>Grid</a></li>--}}
+{{--                    <li><a>Elements</a></li>--}}
+{{--                    <li><a>Components</a></li>--}}
+{{--                    <li><a>Layout</a></li>--}}
+{{--                </ul>--}}
+{{--            </div>--}}
         </nav>
     </div>
 </section>
