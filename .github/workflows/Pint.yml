@@ -2,9 +2,9 @@ name: Pint Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   pint-tests:
@@ -18,8 +18,7 @@ jobs:
           extensions: mbstring, xml, ctype, iconv, mysql
       - name: Install Dependencies
         run: |
-          composer config "http-basic.nova.laravel.com" "${{ secrets.NOVA_USERNAME }}" "${{ secrets.NOVA_PASSWORD }}"
-          composer install -n --prefer-dist
+          composer install
           npm install
           npm run build
       - name: Run Pint Tests

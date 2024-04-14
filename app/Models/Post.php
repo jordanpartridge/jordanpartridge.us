@@ -33,29 +33,23 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'id'           => 'integer',
-        'published'    => 'boolean',
+        'id' => 'integer',
+        'published' => 'boolean',
         'published_at' => 'timestamp',
-        'user_id'      => 'integer',
+        'user_id' => 'integer',
     ];
 
     /**
      * The attributes that should be mutated to dates.
-     *
-     * @param $value
-     *
-     * @return void
      */
     public function setTitleAttribute($value): void
     {
         $this->attributes['title'] = $value;
-        $this->attributes['slug']  = Str::slug($value);
+        $this->attributes['slug'] = Str::slug($value);
     }
 
     /**
      * Get the comments for the Post
-     *
-     * @return HasMany
      */
     public function comments(): HasMany
     {
@@ -64,8 +58,6 @@ class Post extends Model
 
     /**
      * Get the user that owns the Post
-     *
-     * @return BelongsTo
      */
     public function user(): BelongsTo
     {

@@ -11,8 +11,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PostResource extends Resource
 {
@@ -86,9 +84,9 @@ class PostResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListPosts::route('/'),
+            'index' => Pages\ListPosts::route('/'),
             'create' => Pages\CreatePost::route('/create'),
-            'edit'   => Pages\EditPost::route('/{record}/edit'),
+            'edit' => Pages\EditPost::route('/{record}/edit'),
         ];
     }
 }
