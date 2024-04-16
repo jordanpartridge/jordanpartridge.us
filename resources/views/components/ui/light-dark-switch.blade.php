@@ -1,6 +1,6 @@
-<button 
+<button
     x-data="{
-        darkMode: $persist(false).as('dark_mode'),
+        darkMode: $persist(true).as('dark_mode'),
         toggleDarkMode(){
             document.documentElement.classList.toggle('dark');
             if(document.documentElement.classList.contains('dark')){
@@ -11,7 +11,7 @@
                 new Audio('/assets/audio/light.mp3').play()
             }
         }
-    }" 
+    }"
     @click="toggleDarkMode()"
     x-init="
         if(document.documentElement.classList.contains('dark')){ darkMode=true; }
