@@ -55,83 +55,20 @@ middleware(['redirect-to-dashboard']);
                 <h1 class="text-3xl font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
                     Everyone is entitled to bike joy, some don't want it though.
                 </h1>
-                <p class="w-full max-w-2xl mx-auto mt-8 text-lg dark:text-white/60 text-slate-500">Early this year I
-                    decided without much research to purchase a fat tire bicycle.
-                    I figured it would be a nice chill fun ride, and I was correct.</p>
-                <p class="w-full max w-2xl mx-auto mt-8 text-lg dark:text-white/60 text-slate-500">I have been riding my
-                    bike for a few months now and I have to say it is a lot of fun. Here are some perks of riding a fat
-                    bike, but on regular streets</p>
-                <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" class="py-3 px-6">
-                                Benefit 🌟
-                            </th>
-                            <th scope="col" class="py-3 px-6">
-                                Description 📝
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                            <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Great Workout 💪
-                            </td>
-                            <td class="py-4 px-6">
-                                Regular biking can significantly improve cardiovascular fitness and physical stamina,
-                                which contributes to overall health and stress reduction.
-                            </td>
-                        </tr>
-                        <tr class="bg-gray-50 border-b dark:bg-gray-700 dark:border-gray-600">
-                            <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Embrace the Heaviness 🏋️‍♂️
-                            </td>
-                            <td class="py-4 px-6">
-                                Handling a heavier bike can mirror the challenges faced in software development,
-                                enhancing your ability to navigate and solve complex problems.
-                            </td>
-                        </tr>
-                        <tr class="bg-white dark:bg-gray-800">
-                            <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Explore the City 🚴‍♀️
-                            </td>
-                            <td class="py-4 px-6">
-                                Biking allows you to clear your mind and look at problems from new perspectives, often
-                                leading to creative solutions once you're back at your desk.
-                            </td>
-                        </tr>
-                        <tr class="bg-gray-50 dark:bg-gray-700">
-                            <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Meet New People 👫
-                            </td>
-                            <td class="py-4 px-6">
-                                Networking with fellow bikers can lead to unexpected solutions and ideas, as discussing
-                                common challenges often sparks innovation.
-                            </td>
-                        </tr>
-                        <tr class="bg-white dark:bg-gray-800">
-                            <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Stress Relief 🌿
-                            </td>
-                            <td class="py-4 px-6">
-                                Biking is an effective way to manage stress, offering a break from the high-intensity
-                                environment of software development and refreshing your mental state.
-                            </td>
-                        </tr>
-                        <tr class="bg-gray-50 dark:bg-gray-700">
-                            <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                Fresh Air and Nature 🍃
-                            </td>
-                            <td class="py-4 px-6">
-                                Engaging with nature while biking can improve your mood and mental focus, reducing
-                                feelings of burnout and enhancing productivity.
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                <div class="text-center max-w-4xl mx-auto p-4 mt-8 text-lg text-slate-800 dark:text-white/80">
+                    <p>
+                        In the early part of this year, I made a spontaneous decision to buy a fat tire bicycle. It seemed like a promising way to unwind from the daily grind and inject some fun into my routine. My expectations were surpassed—riding has not only been enjoyable but also incredibly rejuvenating.
+                    </p>
+                    <p>
+                        Over the past few months, as I've navigated city streets and park paths, I've discovered more than just the joy of cycling. Beyond the physical benefits, biking has proven to be a fantastic mental escape, offering a fresh perspective amid the structured chaos of software development. Whether it's the rhythmic pedaling or the refreshing breezes, each ride delivers a new sense of clarity and creativity that enhances my problem-solving skills back at the desk.
+                    </p>
+                    <p>
+                        For those of us entrenched in the digital realm of coding and debugging, biking serves as a perfect counterbalance. Here are some specific perks of incorporating regular biking into our high-tech lives:
+                    </p>
                 </div>
 
+
+                <x-bike-joy.perks />
 
                 <div class="p-3">
                     <a style="display:inline-block;background-color:#FC5200;color:#fff;padding:5px 10px 5px 30px;font-size:11px;font-family:Helvetica, Arial, sans-serif;white-space:nowrap;text-decoration:none;background-repeat:no-repeat;background-position:10px center;border-radius:3px;background-image:url('https://badges.strava.com/logo-strava-echelon.png')"
@@ -143,19 +80,21 @@ middleware(['redirect-to-dashboard']);
                 </div>
 
 
-                <h5 class="mt-5 text-4xl font-light leading-tight tracking-tight text-center dark:text-white text-slate-800 sm:text-5xl md:text-8xl">
-                    Recent Rides</h5>
-                <div
-                    class="mt-8 flex items-center justify-center space-x-5 bg-white dark:bg-gray-800 p-4 shadow-lg rounded-lg">
-                    <iframe class="rounded-md shadow-inner" height='454' width='700' frameborder='0'
-                            allowtransparency='true' scrolling='no'
-                            src='https://www.strava.com/athletes/2645359/latest-rides/6ca39d65357fcc443b84609f5797366fb5c811cd'></iframe>
-                    <iframe class="rounded-md shadow-inner" height='160' width='700' frameborder='0'
-                            allowtransparency='true' scrolling='no'
-                            src='https://www.strava.com/athletes/2645359/activity-summary/6ca39d65357fcc443b84609f5797366fb5c811cd'></iframe>
+                <div class="bg-white dark:bg-gray-800">
+                    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+                            Check Out My Recent Rides!
+                        </h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
+                            <div class="shadow-lg rounded-lg overflow-hidden">
+                                <iframe src="https://www.strava.com/athletes/2645359/latest-rides/6ca39d65357fcc443b84609f5797366fb5c811cd" frameborder="0" allowtransparency="true" scrolling="no" class="w-full h-64"></iframe>
+                            </div>
+                            <div class="shadow-lg rounded-lg overflow-hidden">
+                                <iframe src="https://www.strava.com/athletes/2645359/activity-summary/6ca39d65357fcc443b84609f5797366fb5c811cd" frameborder="0" allowtransparency="true" scrolling="no" class="w-full h-64"></iframe>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-            </div>
 
         </div>
         @endvolt
