@@ -44,13 +44,15 @@ middleware(['redirect-to-dashboard']);
         <div class="flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto">
             <div class="container relative max-w-4xl mx-auto mt-20 text-center sm:mt-24 lg:mt-32">
 
-                <div class="flex justify-center items-center">
+                <div class="flex justify-center items-center p-5">
                     <img src="/img/bike-joy.jpg" alt="logo" class="rounded-full" width="128" height="128">
                 </div>
+                <div class="m-2 p-2">
                 <div style="background-image:linear-gradient(160deg,#e66735,#e335e2 50%,#73f7f8, #a729ed)"
                      class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
                     <p class="w-auto h-full px-3 bg-slate-50 dark:bg-neutral-900 dark:text-white py-1.5 font-medium text-sm tracking-widest uppercase  rounded-full text-slate-800/90 group-hover:text-white/100">
                         Bike Joy</p>
+                </div>
                 </div>
                 <h1 class="text-3xl font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
                     Everyone is entitled to bike joy, some don't want it though.
@@ -92,6 +94,18 @@ middleware(['redirect-to-dashboard']);
                             <div class="shadow-lg rounded-lg overflow-hidden">
                                 <iframe src="https://www.strava.com/athletes/2645359/activity-summary/6ca39d65357fcc443b84609f5797366fb5c811cd" frameborder="0" allowtransparency="true" scrolling="no" class="w-full h-64"></iframe>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New code -->
+                <div class="bg-white dark:bg-gray-800 mt-8">
+                    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+                            Listen to My Playlist!
+                        </h2>
+                        <div class="shadow-lg rounded-lg overflow-hidden">
+                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
