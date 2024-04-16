@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "devdojo/genesis": "dev-main",
         "filament/filament": "^3.2",
         "laravel/folio": "^1.1",
         "laravel/framework": "^11.0",

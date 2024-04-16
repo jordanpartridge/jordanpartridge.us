@@ -4,63 +4,45 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class Post extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'title',
-        'slug',
-        'content',
-        'published',
-        'published_at',
-        'user_id',
-    ];
+    const STATUS_DRAFT = 'DRAFT';
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'id' => 'integer',
-        'published' => 'boolean',
-        'published_at' => 'timestamp',
-        'user_id' => 'integer',
-    ];
+    const STATUS_PUBLISHED = 'PUBLISHED';
 
-    /**
-     * The attributes that should be mutated to dates.
-     */
-    public function setTitleAttribute($value): void
+    const TYPE_POST = 'post';
+
+    const TYPE_PAGE = 'page';
+
+    public function scopeExcludeFeatured($query)
     {
-        $this->attributes['title'] = $value;
-        $this->attributes['slug'] = Str::slug($value);
+        $featured = Post::where('featured', 1)->where('type', 'post')->first();
+        $query->where('id', '!=', ($featured->id) ?? 0);
     }
 
-    /**
-     * Get the comments for the Post
-     */
-    public function comments(): HasMany
+    public function scopeTypePost($query)
     {
-        return $this->hasMany(Comment::class);
+        $query->where('type', 'post');
     }
 
-    /**
-     * Get the user that owns the Post
-     */
-    public function user(): BelongsTo
+    public function scopePublished($query)
     {
-        return $this->belongsTo(User::class);
+        $query->where('status', Post::STATUS_PUBLISHED);
+    }
+
+    public function scopeList($query)
+    {
+        return $query->orderBy('created_at', 'DESC')
+            ->excludeFeatured()
+            ->typePost()
+            ->published();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\Models\User', 'user_id');
     }
 }
