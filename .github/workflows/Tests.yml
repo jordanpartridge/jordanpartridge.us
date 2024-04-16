@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   laravel-tests:
@@ -40,7 +40,6 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        composer config "http-basic.nova.laravel.com" "${{ secrets.NOVA_USERNAME }}" "${{ secrets.NOVA_PASSWORD }}"
         composer install -n --prefer-dist
         npm install
         npm run build
@@ -50,8 +49,6 @@ jobs:
       run: php artisan key:generate --env=testing
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
-    - name: Publish Nova
-      run: php artisan nova:publish
     - name: Migrate Database cuz yeah
       run: php artisan migrate
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest

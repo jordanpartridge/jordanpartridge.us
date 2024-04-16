@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "518c200e79d510b00643d52f90eff6fa",
+    "content-hash": "f273072657c0c74b8f4d2e720c78696e",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -347,6 +347,77 @@
             "time": "2023-12-11T17:09:12+00:00"
         },
         {
+            "name": "codeat3/blade-phosphor-icons",
+            "version": "2.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codeat3/blade-phosphor-icons.git",
+                "reference": "d7d7c027ce0a0ce2f5e5c68688595f0a816e7508"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codeat3/blade-phosphor-icons/zipball/d7d7c027ce0a0ce2f5e5c68688595f0a816e7508",
+                "reference": "d7d7c027ce0a0ce2f5e5c68688595f0a816e7508",
+                "shasum": ""
+            },
+            "require": {
+                "blade-ui-kit/blade-icons": "^1.1",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+                "php": "^7.4|^8.0"
+            },
+            "require-dev": {
+                "codeat3/blade-icon-generation-helpers": "^0.8",
+                "codeat3/phpcs-styles": "^1.0",
+                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
+                "phpunit/phpunit": "^9.0|^10.5|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Codeat3\\BladePhosphorIcons\\BladePhosphorIconsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Codeat3\\BladePhosphorIcons\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Swapnil Sarwe",
+                    "homepage": "https://swapnilsarwe.com"
+                },
+                {
+                    "name": "Dries Vints",
+                    "homepage": "https://driesvints.com"
+                }
+            ],
+            "description": "A package to easily make use of \"Phosphor Icons\" in your Laravel Blade views.",
+            "homepage": "https://github.com/codeat3/blade-phosphor-icons",
+            "keywords": [
+                "blade",
+                "laravel",
+                "phosphor-icons"
+            ],
+            "support": {
+                "issues": "https://github.com/codeat3/blade-phosphor-icons/issues",
+                "source": "https://github.com/codeat3/blade-phosphor-icons/tree/2.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/swapnilsarwe",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-04-08T19:02:17+00:00"
+        },
+        {
             "name": "danharrin/date-format-converter",
             "version": "v0.3.0",
             "source": {
@@ -450,6 +521,83 @@
                 }
             ],
             "time": "2024-01-21T14:53:34+00:00"
+        },
+        {
+            "name": "devdojo/genesis",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thedevdojo/genesis.git",
+                "reference": "3ce30a8485dbe3ff1d07f5f4703c791d9d53bfc7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thedevdojo/genesis/zipball/3ce30a8485dbe3ff1d07f5f4703c791d9d53bfc7",
+                "reference": "3ce30a8485dbe3ff1d07f5f4703c791d9d53bfc7",
+                "shasum": ""
+            },
+            "require": {
+                "codeat3/blade-phosphor-icons": "^2.0",
+                "illuminate/support": "^10.0|^11.0",
+                "laravel/folio": "^1.0",
+                "laravel/ui": "^4.2",
+                "livewire/livewire": "^3.0",
+                "livewire/volt": "^1.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5.10"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Devdojo\\Genesis\\GenesisServiceProvider"
+                    ],
+                    "aliases": {
+                        "Genesis": "Devdojo\\Genesis\\GenesisFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Devdojo\\Genesis\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Tony Lea",
+                    "email": "tony@devdojo.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "An Application Starter Kit - Built with Laravel Folio and Volt",
+            "homepage": "https://github.com/devdojo/genesis",
+            "keywords": [
+                "alpine",
+                "alpinejs",
+                "devdojo",
+                "folio",
+                "genesis",
+                "laravel",
+                "livewire",
+                "preset",
+                "tailwind",
+                "tailwindcss",
+                "tailwindui",
+                "tall",
+                "volt"
+            ],
+            "support": {
+                "issues": "https://github.com/thedevdojo/genesis/issues",
+                "source": "https://github.com/thedevdojo/genesis/tree/main"
+            },
+            "time": "2024-03-13T00:10:55+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -2732,6 +2880,69 @@
             "time": "2024-01-04T16:10:04+00:00"
         },
         {
+            "name": "laravel/ui",
+            "version": "v4.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/ui.git",
+                "reference": "a3562953123946996a503159199d6742d5534e61"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/ui/zipball/a3562953123946996a503159199d6742d5534e61",
+                "reference": "a3562953123946996a503159199d6742d5534e61",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^9.21|^10.0|^11.0",
+                "illuminate/filesystem": "^9.21|^10.0|^11.0",
+                "illuminate/support": "^9.21|^10.0|^11.0",
+                "illuminate/validation": "^9.21|^10.0|^11.0",
+                "php": "^8.0",
+                "symfony/console": "^6.0|^7.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^7.35|^8.15|^9.0",
+                "phpunit/phpunit": "^9.3|^10.4|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Ui\\UiServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Ui\\": "src/",
+                    "Illuminate\\Foundation\\Auth\\": "auth-backend/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                }
+            ],
+            "description": "Laravel UI utilities and presets.",
+            "keywords": [
+                "laravel",
+                "ui"
+            ],
+            "support": {
+                "source": "https://github.com/laravel/ui/tree/v4.5.1"
+            },
+            "time": "2024-03-21T18:12:29+00:00"
+        },
+        {
             "name": "league/commonmark",
             "version": "2.4.2",
             "source": {
@@ -3462,6 +3673,78 @@
                 }
             ],
             "time": "2024-04-02T14:22:50+00:00"
+        },
+        {
+            "name": "livewire/volt",
+            "version": "v1.6.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/livewire/volt.git",
+                "reference": "e5316b4f3508f759d0da6dc736331720ba14b8bb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/livewire/volt/zipball/e5316b4f3508f759d0da6dc736331720ba14b8bb",
+                "reference": "e5316b4f3508f759d0da6dc736331720ba14b8bb",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^10.38.2|^11.0",
+                "livewire/livewire": "^3.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/folio": "^1.1",
+                "mockery/mockery": "^1.6",
+                "orchestra/testbench": "^8.15.0|^9.0",
+                "pestphp/pest": "^2.9.5",
+                "phpstan/phpstan": "^1.10"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Livewire\\Volt\\VoltServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "functions.php"
+                ],
+                "psr-4": {
+                    "Livewire\\Volt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Nuno Maduro",
+                    "email": "nuno@laravel.com"
+                }
+            ],
+            "description": "An elegantly crafted functional API for Laravel Livewire.",
+            "homepage": "https://github.com/livewire/volt",
+            "keywords": [
+                "laravel",
+                "livewire",
+                "volt"
+            ],
+            "support": {
+                "issues": "https://github.com/livewire/volt/issues",
+                "source": "https://github.com/livewire/volt"
+            },
+            "time": "2024-03-06T20:38:22+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -11329,7 +11612,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "devdojo/genesis": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

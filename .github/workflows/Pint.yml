@@ -1,4 +1,4 @@
-name: Pint Tests
+name: pint
 
 on:
   push:
