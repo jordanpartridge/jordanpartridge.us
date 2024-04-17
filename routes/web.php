@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\StravaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,10 +18,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('home', '/')->name('home');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth')->group(callback: function () {
     Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
         ->middleware('signed')
         ->name('verification.verify');
     Route::post('logout', LogoutController::class)
         ->name('logout');
+
+    Route::get('/strava/redirect', [StravaController::class, 'redirect'])->name('strava.redirect');
+    Route::get('/strava/callback', [StravaController::class, 'callback'])->name('strava.callback');
+
 });
