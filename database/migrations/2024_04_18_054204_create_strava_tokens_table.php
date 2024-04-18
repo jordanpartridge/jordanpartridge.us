@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('strava_tokens', function (Blueprint $table) {
             $table->id();
-            $table->string('access_token');
+            $table->text('access_token');
             $table->dateTime('expires_at');
-            $table->string('refresh_token');
+            $table->text('refresh_token');
             $table->unsignedBigInteger('athlete_id');
             $table->timestamps();
         });
