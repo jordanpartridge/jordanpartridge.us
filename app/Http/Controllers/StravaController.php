@@ -51,5 +51,8 @@ class StravaController extends Controller
             'refresh_token' => $data['refresh_token'],
             'athlete_id' => $data['athlete']['id'],
         ]);
+
+        // Redirect to the dashboard
+        redirect()->route('dashboard')->with('success', 'Connected to Strava successfully!');
     }
 }
