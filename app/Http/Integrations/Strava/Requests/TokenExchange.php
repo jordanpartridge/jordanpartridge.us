@@ -12,13 +12,19 @@ class TokenExchange extends Request implements HasBody
     use HasJsonBody;
 
     /**
-     * The code from the Strava OAuth flow
+     * The code from the Strava OAuth flow, either an authorization code or a refresh token
      */
     private string $code;
 
-    public function __construct(string $code)
+    /**
+     * The type of grant being exchanged
+     */
+    private string $grant_type;
+
+    public function __construct(string $code , string $grant_type = 'authorization_code')
     {
         $this->code = $code;
+        $this->grant_type = $grant_type;
     }
 
     /**
@@ -39,11 +45,16 @@ class TokenExchange extends Request implements HasBody
      */
     public function defaultBody(): array
     {
-        return [
+      return  $this->grant_type === 'authorization_code' ? [
             'client_id' => config('services.strava.client_id'),
             'client_secret' => config('services.strava.client_secret'),
             'code' => $this->code,
-            'grant_type' => 'authorization_code',
+            'grant_type' => $this->grant_type,
+        ] : [
+            'client_id' => config('services.strava.client_id'),
+            'client_secret' => config('services.strava.client_secret'),
+            'refresh_token' => $this->code,
+            'grant_type' => $this->grant_type,
         ];
     }
 }
