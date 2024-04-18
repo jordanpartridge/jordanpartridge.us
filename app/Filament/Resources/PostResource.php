@@ -3,10 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PostResource\Pages;
-use App\Filament\Resources\PostResource\RelationManagers;
 use App\Models\Post;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -22,7 +22,17 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                TextInput::make('title')
+                    ->required()
+                    ->maxLength(400),
+                Forms\Components\FileUpload::make('image')
+                    ->required()
+                    ->image()
+                    ->disk('public'),
+                Forms\Components\Textarea::make('excerpt')
+                    ->required()
+                    ->maxLength(400),
+                TextInput::make('slug')
                     ->required()
                     ->maxLength(400),
                 Forms\Components\Select::make('user_id')
@@ -31,7 +41,7 @@ class PostResource extends Resource
                         User::all()->pluck('name', 'id')->toArray()
                     )
                     ->required(),
-                Forms\Components\Textarea::make('content')
+                Forms\Components\MarkdownEditor::make('body')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('published'),
@@ -72,13 +82,6 @@ class PostResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            RelationManagers\CommentsRelationManager::class,
-        ];
     }
 
     public static function getPages(): array

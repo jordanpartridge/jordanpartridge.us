@@ -9,8 +9,8 @@ use Saloon\Traits\Plugins\AcceptsJson;
 
 class Strava extends Connector
 {
-    use AuthorizationCodeGrant;
     use AcceptsJson;
+    use AuthorizationCodeGrant;
 
     /**
      * The Base URL of the API.
