@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @method static updateOrCreate(string[] $array, array $array1)
+ */
 class User extends Authenticatable
 {
     use HasFactory;

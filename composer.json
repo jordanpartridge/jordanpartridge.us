@@ -13,7 +13,8 @@
         "laravel/pint": "^1.15",
         "laravel/tinker": "^2.9",
         "saloonphp/laravel-plugin": "^3.0",
-        "saloonphp/saloon": "^3.0"
+        "saloonphp/saloon": "^3.0",
+        "spatie/laravel-login-link": "^1.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -25,8 +26,7 @@
         "nunomaduro/collision": "^8.0",
         "pestphp/pest": "^2.34",
         "pestphp/pest-plugin-laravel": "^2.3",
-        "spatie/laravel-ignition": "^2.4",
-      "ext-yaml": "*"
+        "spatie/laravel-ignition": "^2.4"
     },
     "autoload": {
         "psr-4": {

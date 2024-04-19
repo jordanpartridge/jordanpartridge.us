@@ -44,7 +44,12 @@ middleware(['redirect-to-dashboard']);
 
         <div class="flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto">
             <div class="container relative max-w-4xl mx-auto mt-20 text-center sm:mt-24 lg:mt-32">
-
+                @env('local')
+                    <div class="space-y-2">
+                        <x-login-link class="text-gray-700 dark:text-gray-300" email="test@jordanpartridge.us"
+                                      label="Login"/>
+                    </div>
+                @endenv
                 <div class="flex justify-center items-center">
                     <img src="/img/logo.jpg" alt="logo" class="rounded-full" width="128" height="128">
                 </div>
@@ -66,39 +71,38 @@ middleware(['redirect-to-dashboard']);
                     </x-ui.button>
                 </div>
 
-
-
-                <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden" x-cloak>
+                <div
+                    class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden m-6"
+                    x-cloak>
                     <!-- Centralized YouTube Video Section -->
                     <div class="flex flex-col items-center justify-center w-full px-8 pt-12 pb-20">
                         <div class="container max-w-4xl mx-auto text-center">
 
-                            <h2 class="text-3xl font-semibold text-slate-800 dark:text-white mb-4">Podcast Highlight @UnderdogPodcast</h2>
+                            <h2 class="text-3xl font-semibold text-slate-800 dark:text-white mb-4">Podcast Highlight
+                                @UnderdogPodcast</h2>
 
                             <!-- Video Embed Container -->
                             <div class="video-container" style="max-width: 560px; margin: auto;">
-                                <iframe width="560" height="315" src="https://www.youtube.com/embed/WHnlWZsOEj4" frameborder="0" style="width: 100%; height: 315px; max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                <iframe width="560" height="315" src="https://www.youtube.com/embed/WHnlWZsOEj4"
+                                        frameborder="0"
+                                        style="width: 100%; height: 315px; max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.15);"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowfullscreen></iframe>
                             </div>
-
-                            <p class="mt-3 text-lg text-slate-500 dark:text-white/80">Check out more episodes on our <a href="https://www.youtube.com/@UnderdogVoicePodcast" target="_blank" class="text-blue-500 hover:text-blue-700">YouTube channel</a>.</p>
+                            <div class="p-20">
+                                <a href="https://www.youtube.com/@UnderdogVoicePodcast?utm_source=your_website&utm_medium=podcast_feature&utm_campaign=support_friend"
+                                   target="_blank"
+                                   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
+                                    Check out @UnderdogVoicePodcast on YouTube
+                                </a>
+                            </div>
                         </div>
-
-
-
-                        <div class="podcast-feature-section text-center my-8">
-                            <h2 class="text-3xl font-bold mb-4">Featured Podcast: Underdog Voice</h2>
-                            <p class="text-lg mb-4">Dive into the latest discussions on sports, life, and much more. Support my friend’s engaging conversations by listening to their episodes!</p>
-                            <a href="https://www.youtube.com/@UnderdogVoicePodcast?utm_source=your_website&utm_medium=podcast_feature&utm_campaign=support_friend" target="_blank" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                                Listen Now
-                            </a>
-                            <p class="mt-3">Don’t forget to subscribe for the latest episodes!</p>
-                        </div>
-                    </div>
                     </div>
                 </div>
             </div>
-
         </div>
+
+    </div>
 
     </div>
     @endvolt
