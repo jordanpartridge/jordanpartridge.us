@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StravaToken extends Model
 {
@@ -24,6 +25,14 @@ class StravaToken extends Model
     protected $casts = [
         'expires_at' => 'datetime',
     ];
+
+    /**
+     * The user that the token belongs to
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * decrypt the access token after fetching it from the database

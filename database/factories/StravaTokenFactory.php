@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,6 +20,7 @@ class StravaTokenFactory extends Factory
         return [
             'access_token' => $this->faker->word,
             'expires_at' => $this->faker->dateTime,
+            'user_id' => User::factory()->create(),
             'refresh_token' => $this->faker->word,
             'athlete_id' => $this->faker->randomNumber(),
         ];

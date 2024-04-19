@@ -78,7 +78,8 @@ middleware(['redirect-to-dashboard']);
                         <div class="container max-w-4xl mx-auto text-center">
 
                             <h2 class="text-3xl font-semibold text-slate-800 dark:text-white mb-4">Podcast Highlight
-                                @UnderdogPodcast</h2>
+                                <a href="https://www.youtube.com/@UnderdogVoicePodcast?utm_source=your_website&utm_medium=podcast_feature&utm_campaign=support_friend">@UnderdogPodcast</a>
+                            </h2>
 
                             <!-- Video Embed Container -->
                             <div class="video-container" style="max-width: 560px; margin: auto;">
@@ -88,18 +89,12 @@ middleware(['redirect-to-dashboard']);
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                         allowfullscreen></iframe>
                             </div>
-                            <div class="p-20">
-                                <a href="https://www.youtube.com/@UnderdogVoicePodcast?utm_source=your_website&utm_medium=podcast_feature&utm_campaign=support_friend"
-                                   target="_blank"
-                                   class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">
-                                    Check out @UnderdogVoicePodcast on YouTube
-                                </a>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     @endvolt
 
 </x-layouts.marketing>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Integrations\Strava\Requests\TokenExchange;
 use App\Http\Integrations\Strava\Strava;
-use App\Models\StravaToken;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -39,13 +38,13 @@ class StravaController extends Controller
     {
         $strava = new Strava();
 
-        $request = new TokenExchange($request->code);
+        $tokenExchange = new TokenExchange($request->code);
 
-        $response = $strava->send($request);
+        $response = $strava->send($tokenExchange);
 
         $data = $response->json();
 
-        StravaToken::create([
+        $request->user()->stravaToken()->create([
             'access_token' => $data['access_token'],
             'expires_at' => now()->addSeconds($data['expires_in']),
             'refresh_token' => $data['refresh_token'],
