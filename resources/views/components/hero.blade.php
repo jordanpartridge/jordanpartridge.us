@@ -4,9 +4,7 @@
         <nav class="navbar">
             <div class="container">
                 <div class="navbar-brand">
-                    <figure class="image is-32x32 m-1 container">
-                        <img class="is-rounded" src="/img/hero.gif"/>
-                    </figure>
+                        <x-ui.image-rounded class="is-rounded" src="/img/hero.gif"/>
                     <span class="navbar-burger" data-target="navbarMenuHeroA">
             <span></span>
             <span></span>
