@@ -25,6 +25,11 @@ mount(function () {
     $this->email = $this->user->email;
 });
 
+$disconnectStrava = function () {
+    $this->user->stravaToken()->delete();
+    $this->dispatch('toast', message: 'Successfully disconnected Strava.', data: ['position' => 'top-right', 'type' => 'success']);
+};
+
 $updateProfile = function () {
     // performing validation manually to use dynamic email rule.
     $validated = $this->validate([
@@ -135,7 +140,11 @@ $destroy = function (Request $request) {
                         <div class="flex items
                         -start">
                             <div>
-                                <x-ui.button type="primary" wire:click="connectStrava">{{ __('Connect Strava') }}</x-ui.button>
+                                @if(!$user->stravaToken)
+                                   <x-ui.button  type="primary" wire:click="connectStrava">{{ __('Connect Strava') }}</x-ui.button>
+                                @else
+                                    <x-ui.button  type="danger" wire:click="disconnectStrava" >{{ __('disconnect Strava') }}</x-ui.button>
+                                @endif
                             </div>
                         </div>
                     </div>
