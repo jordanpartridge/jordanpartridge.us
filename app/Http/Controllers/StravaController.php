@@ -35,7 +35,7 @@ class StravaController extends Controller
      * @throws FatalRequestException
      * @throws RequestException|\JsonException
      */
-    public function callback(Request $request): void
+    public function callback(Request $request): RedirectResponse
     {
         $strava = new Strava();
 
@@ -53,6 +53,6 @@ class StravaController extends Controller
         ]);
 
         // Redirect to the dashboard
-        redirect()->route('dashboard')->with('success', 'Connected to Strava successfully!');
+        return redirect()->route('profile.edit');
     }
 }

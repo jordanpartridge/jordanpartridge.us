@@ -50,10 +50,9 @@ middleware(['redirect-to-dashboard']);
                                       label="Login"/>
                     </div>
                 @endenv
-                <div class="flex justify-center items-center">
-                    <img src="/img/logo.jpg" alt="logo" class="rounded-full" width="128" height="128">
-                </div>
-                <div style="background-image:linear-gradient(160deg,#e66735,#e335e2 50%,#73f7f8, #a729ed)"
+                <x-ui.image-rounded src="/img/logo.jpg" alt="logo"/>
+
+                <div style="background-image:linear-gradient(160deg,#4d35e6,#3580e3 50%,#73f7f8, #a729ed)"
                      class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
                     <p class="w-auto h-full px-3 bg-slate-50 dark:bg-neutral-900 dark:text-white py-1.5 font-medium text-sm tracking-widest uppercase  rounded-full text-slate-800/90 group-hover:text-white/100">
                         Jordan Partridge</p>
@@ -101,10 +100,6 @@ middleware(['redirect-to-dashboard']);
                 </div>
             </div>
         </div>
-
-    </div>
-
-    </div>
     @endvolt
 
 </x-layouts.marketing>

@@ -45,7 +45,7 @@ middleware(['redirect-to-dashboard']);
             <div class="container relative max-w-4xl mx-auto mt-20 text-center sm:mt-24 lg:mt-32">
 
                 <div class="flex justify-center items-center p-5">
-                    <img src="/img/bike-joy.jpg" alt="logo" class="rounded-full" width="128" height="128">
+                    <x-ui.image-rounded src="/img/bike-joy.jpg"/>
                 </div>
                 <div class="m-2 p-2">
                 <div style="background-image:linear-gradient(160deg,rgba(20,208,136,0.43),#3566e3 50%,#73f4f8, #110e0f)"
