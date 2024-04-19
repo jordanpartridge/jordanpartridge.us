@@ -33,14 +33,14 @@ class RefreshExpiredStravaToken extends Command
 
         // Refresh each token
         $tokens->each(function (StravaToken $token) {
-            $strava   = new Strava();
+            $strava = new Strava();
             $response = new TokenExchange($token->refresh_token, 'refresh_token');
 
             $response = $strava->send($response)->json();
 
             $token->update([
-                'access_token'  => $response['access_token'],
-                'expires_at'    => now()->addSeconds($response['expires_in']),
+                'access_token' => $response['access_token'],
+                'expires_at' => now()->addSeconds($response['expires_in']),
                 'refresh_token' => $response['refresh_token'],
             ]);
         });
