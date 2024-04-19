@@ -15,7 +15,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: laravel_test
+          MYSQL_DATABASE: jordanpartridge_testing
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping -h localhost -p3306" --health-interval=10s --health-timeout=5s --health-retries=5
@@ -30,7 +30,7 @@ jobs:
       run: |
         php -r "file_exists('.env') || copy('.env.example', '.env');"
         echo "DB_CONNECTION=mysql" >> .env
-        echo "DB_DATABASE=laravel_test" >> .env
+        echo "DB_DATABASE=jordanpartridge_testing" >> .env
         echo "DB_PORT=3306" >> .env
         echo "DB_HOST=127.0.0.1" >> .env
         echo "DB_USERNAME=root" >> .env
