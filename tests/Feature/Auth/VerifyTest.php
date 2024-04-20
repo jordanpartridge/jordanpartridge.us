@@ -39,7 +39,7 @@ test('can verify', function () {
     Auth::login($user);
 
     $url = URL::temporarySignedRoute('verification.verify', Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)), [
-        'id' => $user->getKey(),
+        'id'   => $user->getKey(),
         'hash' => sha1($user->getEmailForVerification()),
     ]);
 

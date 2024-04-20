@@ -48,29 +48,39 @@ middleware(['redirect-to-dashboard']);
                     <x-ui.image-rounded src="/img/bike-joy.jpg"/>
                 </div>
                 <div class="m-2 p-2">
-                <div style="background-image:linear-gradient(160deg,rgba(20,208,136,0.43),#3566e3 50%,#73f4f8, #110e0f)"
-                     class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
-                    <p class="w-auto h-full px-3 bg-slate-50 dark:bg-neutral-900 dark:text-white py-1.5 font-medium text-sm tracking-widest uppercase  rounded-full text-slate-800/90 group-hover:text-white/100">
-                        Bike Joy</p>
-                </div>
+                    <div
+                        style="background-image:linear-gradient(160deg,rgba(20,208,136,0.43),#3566e3 50%,#73f4f8, #110e0f)"
+                        class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
+                        <p class="w-auto h-full px-3 bg-slate-50 dark:bg-neutral-900 dark:text-white py-1.5 font-medium text-sm tracking-widest uppercase  rounded-full text-slate-800/90 group-hover:text-white/100">
+                            Bike Joy</p>
+                    </div>
                 </div>
                 <h1 class="text-3xl font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
                     Everyone is entitled to bike joy, some don't want it though.
                 </h1>
                 <div class="text-center max-w-4xl mx-auto p-4 mt-8 text-lg text-slate-800 dark:text-white/80">
                     <p>
-                        In the early part of this year, I made a spontaneous decision to buy a fat tire bicycle. It seemed like a promising way to unwind from the daily grind and inject some fun into my routine. My expectations were surpassed—riding has not only been enjoyable but also incredibly rejuvenating.
+                        In the early part of this year, I made a spontaneous decision to buy a fat tire bicycle. It
+                        seemed like a promising way to unwind from the daily grind and inject some fun into my routine.
+                        My expectations were surpassed—riding has not only been enjoyable but also incredibly
+                        rejuvenating.
                     </p>
                     <p>
-                        Over the past few months, as I've navigated city streets and park paths, I've discovered more than just the joy of cycling. Beyond the physical benefits, biking has proven to be a fantastic mental escape, offering a fresh perspective amid the structured chaos of software development. Whether it's the rhythmic pedaling or the refreshing breezes, each ride delivers a new sense of clarity and creativity that enhances my problem-solving skills back at the desk.
+                        Over the past few months, as I've navigated city streets and park paths, I've discovered more
+                        than just the joy of cycling. Beyond the physical benefits, biking has proven to be a fantastic
+                        mental escape, offering a fresh perspective amid the structured chaos of software development.
+                        Whether it's the rhythmic pedaling or the refreshing breezes, each ride delivers a new sense of
+                        clarity and creativity that enhances my problem-solving skills back at the desk.
                     </p>
                     <p>
-                        For those of us entrenched in the digital realm of coding and debugging, biking serves as a perfect counterbalance. Here are some specific perks of incorporating regular biking into our high-tech lives:
+                        For those of us entrenched in the digital realm of coding and debugging, biking serves as a
+                        perfect counterbalance. Here are some specific perks of incorporating regular biking into our
+                        high-tech lives:
                     </p>
                 </div>
 
 
-                <x-bike-joy.perks />
+                <x-bike-joy.perks/>
 
                 <div class="p-3">
                     <a style="display:inline-block;background-color:#FC5200;color:#fff;padding:5px 10px 5px 30px;font-size:11px;font-family:Helvetica, Arial, sans-serif;white-space:nowrap;text-decoration:none;background-repeat:no-repeat;background-position:10px center;border-radius:3px;background-image:url('https://badges.strava.com/logo-strava-echelon.png')"
@@ -87,29 +97,66 @@ middleware(['redirect-to-dashboard']);
                         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
                             Check Out My Recent Rides!
                         </h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-stretch">
-                            <div class="shadow-lg rounded-lg overflow-hidden">
-                                <iframe src="https://www.strava.com/athletes/2645359/latest-rides/6ca39d65357fcc443b84609f5797366fb5c811cd" frameborder="0" allowtransparency="true" scrolling="no" class="w-full h-64"></iframe>
-                            </div>
-                            <div class="shadow-lg rounded-lg overflow-hidden">
-                                <iframe src="https://www.strava.com/athletes/2645359/activity-summary/6ca39d65357fcc443b84609f5797366fb5c811cd" frameborder="0" allowtransparency="true" scrolling="no" class="w-full h-64"></iframe>
-                            </div>
+                        <main
+                            class="bg-white dark:bg-gray-800"
+                            x-data="{'layout': 'list'}"
+                        >
+                            <nav class="p-4 text-gray-800 dark:text-white bg-white dark:bg-gray-800">
+                                Layout:
+                                <button type="button"
+                                        class="mx-1 px-2 py-1 dark:hover:bg-gray-200 dark:hover:text-slate-800 hover:bg-blue-400  hover:text-gray-100"
+                                        x-on:click="layout = 'list'"
+                                        x-bind:class="{'bg-blue-300 dark:bg-gray-50 dark:text-slate-800 text-white': layout === 'list'}">
+                                    List
+                                </button>
+                                <button type="button"
+                                        class="mx-1 px-2 py-1 dark:hover:bg-gray-200 dark:hover:text-slate-800 hover:bg-blue-400  hover:text-gray-100"
+                                        x-on:click="layout = 'grid'"
+                                        x-bind:class="{'bg-blue-300 dark:bg-gray-50 dark:text-slate-800 text-white': layout === 'grid'}">
+                                    Grid
+                                </button>
+                            </nav>
+
+                            <section class="flex flex-wrap"
+                                     x-bind:class="{'pb-4': layout === 'list', 'p-2': layout === 'grid'}">
+
+                                @foreach(\App\Models\Ride::all() as $ride)
+                                    <div
+                                        x-bind:class="{'w-full m-4 mb-0': layout === 'list', 'w-1/4 p-2': layout === 'grid'}"
+                                    >
+                                        <x-bike-joy.ride :ride="$ride"/>
+                                    </div>
+                                @endforeach
+
+                            </section>
+                        </main>
+
+                        <div class="shadow-lg rounded-lg overflow-hidden">
+                            <iframe
+                                src="https://www.strava.com/athletes/2645359/activity-summary/6ca39d65357fcc443b84609f5797366fb5c811cd"
+                                frameborder="0" allowtransparency="true" scrolling="no"
+                                class="w-full h-64"></iframe>
                         </div>
                     </div>
                 </div>
 
-                <!-- New code -->
                 <div class="bg-white dark:bg-gray-800 mt-8">
                     <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
                         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
                             Listen to My Playlist!
                         </h2>
                         <div class="shadow-lg rounded-lg overflow-hidden">
-                            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            <iframe style="border-radius:12px"
+                                    src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0"
+                                    width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                    loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
-
+            </div>
         </div>
-        @endvolt
+    </div>
+
+    @endvolt
 </x-layouts.marketing>

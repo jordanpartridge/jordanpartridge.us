@@ -10,12 +10,14 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        Schema::create('strava_tokens', function (Blueprint $table) {
+        Schema::create('rides', function (Blueprint $table) {
             $table->id();
-            $table->text('access_token');
-            $table->dateTime('expires_at');
-            $table->text('refresh_token');
-            $table->unsignedBigInteger('athlete_id');
+            $table->timestamp('date');
+            $table->string('name');
+            $table->string('external_id');
+            $table->float('max_speed');
+            $table->float('average_speed');
+            $table->float('distance');
             $table->timestamps();
         });
     }
@@ -25,6 +27,6 @@ return new class () extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('strava_tokens');
+        Schema::dropIfExists('rides');
     }
 };

@@ -19,13 +19,13 @@ class StravaController extends Controller
     public function redirect(): Application|Redirector|RedirectResponse
     {
         $query = http_build_query([
-            'client_id' => config('services.strava.client_id'),
-            'redirect_uri' => route('strava.callback'),
+            'client_id'     => config('services.strava.client_id'),
+            'redirect_uri'  => route('strava.callback'),
             'response_type' => 'code',
-            'scope' => 'read,activity:read_all',
+            'scope'         => 'read,activity:read_all',
         ]);
 
-        return redirect('https://www.strava.com/oauth/authorize?'.$query);
+        return redirect('https://www.strava.com/oauth/authorize?' . $query);
     }
 
     /**
@@ -45,10 +45,10 @@ class StravaController extends Controller
         $data = $response->json();
 
         $request->user()->stravaToken()->create([
-            'access_token' => $data['access_token'],
-            'expires_at' => now()->addSeconds($data['expires_in']),
+            'access_token'  => $data['access_token'],
+            'expires_at'    => now()->addSeconds($data['expires_in']),
             'refresh_token' => $data['refresh_token'],
-            'athlete_id' => $data['athlete']['id'],
+            'athlete_id'    => $data['athlete']['id'],
         ]);
 
         // Redirect to the dashboard

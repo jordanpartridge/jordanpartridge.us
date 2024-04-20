@@ -18,11 +18,11 @@ class StravaTokenFactory extends Factory
     public function definition(): array
     {
         return [
-            'access_token' => $this->faker->word,
-            'expires_at' => $this->faker->dateTime,
-            'user_id' => User::factory()->create(),
+            'access_token'  => $this->faker->word,
+            'expires_at'    => $this->faker->dateTime,
+            'user_id'       => User::factory()->create(),
             'refresh_token' => $this->faker->word,
-            'athlete_id' => $this->faker->randomNumber(),
+            'athlete_id'    => $this->faker->randomNumber(),
         ];
     }
 }

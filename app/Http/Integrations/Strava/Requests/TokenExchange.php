@@ -46,15 +46,15 @@ class TokenExchange extends Request implements HasBody
     public function defaultBody(): array
     {
         return $this->grant_type === 'authorization_code' ? [
-            'client_id' => config('services.strava.client_id'),
+            'client_id'     => config('services.strava.client_id'),
             'client_secret' => config('services.strava.client_secret'),
-            'code' => $this->code,
-            'grant_type' => $this->grant_type,
+            'code'          => $this->code,
+            'grant_type'    => $this->grant_type,
         ] : [
-            'client_id' => config('services.strava.client_id'),
+            'client_id'     => config('services.strava.client_id'),
             'client_secret' => config('services.strava.client_secret'),
             'refresh_token' => $this->code,
-            'grant_type' => $this->grant_type,
+            'grant_type'    => $this->grant_type,
         ];
     }
 }
