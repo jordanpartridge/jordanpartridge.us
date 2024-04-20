@@ -9,3 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('strava:refresh-token')->everyFourHours();
+
+Schedule::command('strava:fetch-activities')->hourly();
