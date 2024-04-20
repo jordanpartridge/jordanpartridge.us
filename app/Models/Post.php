@@ -10,13 +10,13 @@ class Post extends Model
 {
     use HasFactory;
 
-    const STATUS_DRAFT = 'DRAFT';
+    public const STATUS_DRAFT = 'DRAFT';
 
-    const STATUS_PUBLISHED = 'PUBLISHED';
+    public const STATUS_PUBLISHED = 'PUBLISHED';
 
-    const TYPE_POST = 'post';
+    public const TYPE_POST = 'post';
 
-    const TYPE_PAGE = 'page';
+    public const TYPE_PAGE = 'page';
 
     protected $fillable = [
         'title',

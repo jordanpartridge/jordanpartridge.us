@@ -11,9 +11,9 @@ it('can be created with factory', function () {
     expect($token->athlete_id)->toBeInt();
 
     $this->assertDatabaseHas('strava_tokens', [
-        'expires_at' => $token->expires_at,
+        'expires_at'    => $token->expires_at,
         'refresh_token' => $token->refresh_token,
-        'athlete_id' => $token->athlete_id,
+        'athlete_id'    => $token->athlete_id,
     ]);
 });
 

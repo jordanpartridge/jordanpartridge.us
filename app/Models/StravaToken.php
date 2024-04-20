@@ -8,14 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StravaToken extends Model
 {
+    use HasFactory;
     public $fillable = [
         'access_token',
         'expires_at',
         'refresh_token',
         'athlete_id',
     ];
-
-    use HasFactory;
 
     /**
      * The attributes that should be cast.

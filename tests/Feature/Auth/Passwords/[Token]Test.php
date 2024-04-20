@@ -16,12 +16,12 @@ test('can view password reset page', function () {
     $token = Str::random(16);
 
     DB::table('password_reset_tokens')->insert([
-        'email' => $user->email,
-        'token' => Hash::make($token),
+        'email'      => $user->email,
+        'token'      => Hash::make($token),
         'created_at' => Carbon::now(),
     ]);
 
-    $this->get('/auth/password/'.$token.'/?email='.$user->email)
+    $this->get('/auth/password/' . $token . '/?email=' . $user->email)
         ->assertSuccessful()
         ->assertSee($user->email);
 });
@@ -32,8 +32,8 @@ test('can reset password', function () {
     $token = Str::random(16);
 
     DB::table('password_reset_tokens')->insert([
-        'email' => $user->email,
-        'token' => Hash::make($token),
+        'email'      => $user->email,
+        'token'      => Hash::make($token),
         'created_at' => Carbon::now(),
     ]);
 
@@ -46,7 +46,7 @@ test('can reset password', function () {
         ->call('resetPassword');
 
     expect(Auth::attempt([
-        'email' => $user->email,
+        'email'    => $user->email,
         'password' => 'new-password',
     ]))->toBeTrue();
 });

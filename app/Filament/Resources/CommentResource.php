@@ -52,9 +52,9 @@ class CommentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListComments::route('/'),
+            'index'  => Pages\ListComments::route('/'),
             'create' => Pages\CreateComment::route('/create'),
-            'edit' => Pages\EditComment::route('/{record}/edit'),
+            'edit'   => Pages\EditComment::route('/{record}/edit'),
         ];
     }
 }

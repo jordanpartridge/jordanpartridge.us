@@ -27,7 +27,7 @@ class Comment extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
+        'id'      => 'integer',
         'post_id' => 'integer',
         'user_id' => 'integer',
     ];
