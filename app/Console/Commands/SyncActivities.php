@@ -7,6 +7,12 @@ use App\Http\Integrations\Strava\Strava;
 use App\Models\Ride;
 use App\Models\StravaToken;
 use Carbon\Carbon;
+use Saloon\Http\Response;
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\note;
+use function Laravel\Prompts\table;
+use function Laravel\Prompts\info;
+
 use Illuminate\Console\Command;
 
 class SyncActivities extends Command
@@ -23,19 +29,56 @@ class SyncActivities extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Command description {--verbose: Display verbose output}';
 
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
+        if(StravaToken::query()->count() === 0) {
+            info('No token found. Please add a token first.');
+            return;
+        }
         StravaToken::query()->each(function ($token) {
-            $strava = new Strava($token->access_token);
+            $this->info('Syncing activities for token: ' . $token->access_token);
+            $this->info('Expires at: ' . $token->expires_at);
 
-            $activities = new ActivitiesRequest();
+            $response = $this->getActivities($token);
+            info('get activities response: ' . $response->status());
+            info('get activities response: ' . count($response->json()));
+            confirm('would you like to see the response?') ? $this->displayRides($response->json())   : null;
 
-            $response = $strava->send($activities);
+            $response->onError(function ($response) use ($token) {
+                $response->json();
+                table(
+                    ['status', 'message', 'token', 'field', 'Code'],
+                    [
+                        [
+                            $response->status(),
+                            $response->json()['message'],
+                            $token->access_token,
+                            $response->json()['errors'][0]['field'],
+                            $response->json()['errors'][0]['code'],
+                        ],
+                    ],
+                );
+
+                if ($response->status() === 401) {
+
+                    $confirmed = confirm(
+                        label: 'Do you want to refresh the token?',
+                        required: true
+                    );
+
+                    if ($confirmed) {
+                        $this->info('Refreshing token: ' . $token->access_token);
+                        $token = $this->refreshToken($token);
+                        $this->info('Token refreshed :' . $token->access_token);
+                        $response = $this->getActivities($token);
+                    }
+                }
+            });
 
             collect($response->json())->where('type', 'Ride')->each(function ($activity) {
                 Ride::query()->updateOrCreate([
@@ -48,6 +91,68 @@ class SyncActivities extends Command
                     'average_speed' => $activity['average_speed'],
                 ]);
             });
+            info('Activities synced');
         });
+    }
+
+    /**
+     * Get activities from Strava
+     */
+    private function getActivities(StravaToken $token): Response
+    {
+        $strava     = new Strava($token->access_token);
+        $activities = new ActivitiesRequest();
+
+        $this->displayFunctionSummary('getActivities', ['token' => $token]);
+
+        return $strava->send($activities);
+    }
+
+    private function refreshToken(StravaToken $token): StravaToken
+    {
+        if ($this->option('verbose')) {
+            $this->info('Refreshing token');
+        }
+        $strava   = new Strava();
+        $response = $strava->refreshToken($token->refresh_token);
+        if ($this->option('verbose')) {
+            $this->info('Response: ' . $response->status());
+            $this->info('Response: ' . $response->body());
+        }
+
+        $token->update([
+            'access_token'  => $response->json()['access_token'],
+            'expires_at'    => now()->addSeconds($response->json()['expires_in']),
+            'refresh_token' => $response->json()['refresh_token'],
+        ]) ? $this->info('Token refreshed') : $this->error('Token not refreshed');
+
+        return $token->fresh();
+    }
+
+    private function displayFunctionSummary(string $functionName, array $parameters): void
+    {
+       note($functionName . ' function called with the following parameters:');
+        collect($parameters)->each(function ($value, $key) {
+            $this->info($key . ':');
+            $value->promptTable();
+        });
+    }
+
+    private function displayRides(array $rides): void
+    {
+        $rideData = collect($rides)->map(function ($ride) {
+            return [
+                'date' => $ride['start_date_local'],
+                'name' => $ride['name'],
+                'distance' => $ride['distance'],
+                'max_speed' => $ride['max_speed'],
+                'average_speed' => $ride['average_speed'],
+            ];
+        })->toArray();
+
+        table(
+            ['date','name', 'distance', 'max_speed', 'average_speed'],
+            $rideData
+        );
     }
 }

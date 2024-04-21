@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use function Laravel\Prompts\table;
 
 class StravaToken extends Model
 {
     use HasFactory;
+
     public $fillable = [
         'access_token',
         'expires_at',
@@ -52,10 +54,26 @@ class StravaToken extends Model
     /**
      * encrypt the access token before storing it in the database
      *
-     * @param  string  $value
+     * @param string $value
      */
     public function setAccessTokenAttribute($value): void
     {
         $this->attributes['access_token'] = encrypt($value);
+    }
+
+    public function promptTable()
+    {
+         table(
+            ['id', 'access_token', 'expires_at', 'refresh_token', 'athlete_id'],
+            [
+                [
+                    $this->id,
+                    $this->access_token,
+                    $this->expires_at,
+                    $this->refresh_token,
+                    $this->athlete_id,
+                ],
+            ],
+        );
     }
 }

@@ -4,7 +4,7 @@
         </a>
     </h2>
     <div class="flex flex-row items-start">
-        <img src="https://source.unsplash.com/200x200/?cat,kitten,kitty" alt="Cute Cat" class="w-48 h-auto rounded-md"  x-show="layout === 'list'">
+        <x-route-map :ride="$ride"  x-show="layout === 'list'"/>
         <div class=" justify-between text-xl font-light ml-4 w-full" x-cloak   >
             <table class="table-auto w-full" x-show="layout === 'list'">
                 <tbody>
