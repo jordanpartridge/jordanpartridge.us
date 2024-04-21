@@ -12,6 +12,7 @@
         "laravel/folio": "^1.1",
         "laravel/framework": "^11.0",
         "laravel/pint": "^1.15",
+        "laravel/prompts": "^0.1.19",
         "laravel/tinker": "^2.9",
         "saloonphp/laravel-plugin": "^3.0",
         "saloonphp/saloon": "^3.0",

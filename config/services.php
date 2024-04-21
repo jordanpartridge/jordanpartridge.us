@@ -34,5 +34,8 @@ return [
         'client_id'     => env('STRAVA_CLIENT_ID'),
         'client_secret' => env('STRAVA_CLIENT_SECRET'),
     ],
+    'google_maps' => [
+        'key' => env('GOOGLE_MAP_API_KEY'),
+    ],
 
 ];

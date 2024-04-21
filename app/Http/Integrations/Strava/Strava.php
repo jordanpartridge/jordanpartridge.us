@@ -2,9 +2,13 @@
 
 namespace App\Http\Integrations\Strava;
 
+use App\Http\Integrations\Strava\Requests\TokenExchange;
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
 use Saloon\Helpers\OAuth2\OAuthConfig;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
+use Saloon\Http\Response;
 use Saloon\Traits\OAuth2\AuthorizationCodeGrant;
 use Saloon\Traits\Plugins\AcceptsJson;
 
@@ -24,6 +28,19 @@ class Strava extends Connector
     public function __construct(?string $token = null)
     {
         $this->token = $token;
+    }
+
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function refreshToken($refresh): Response
+    {
+        $request = new TokenExchange($refresh, 'refresh_token');
+        $response = $this->send($request);
+        $this->token = $response->json()['access_token'];
+
+        return $response;
     }
 
     /**
