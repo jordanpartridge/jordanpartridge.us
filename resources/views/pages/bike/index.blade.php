@@ -117,12 +117,12 @@ middleware(['redirect-to-dashboard']);
                                 </button>
                             </nav>
 
-                            <section class="flex flex-wrap"
-                                     x-bind:class="{'pb-4': layout === 'list', 'p-2': layout === 'grid'}">
+                            <section class=" sm:grid-cols-4 gap-4"
+                                     x-bind:class="{'pb-4': layout === 'list', 'p-2 grid grid-cols-2': layout === 'grid'}">
 
                                 @foreach(\App\Models\Ride::all() as $ride)
                                     <div
-                                        x-bind:class="{'w-full m-4 mb-0': layout === 'list', 'w-1/4 p-2': layout === 'grid'}"
+                                        x-bind:class="{'w-full m-4 mb-0': layout === 'list', 'w-full': layout === 'grid'}"
                                     >
                                         <x-bike-joy.ride :ride="$ride"/>
                                     </div>

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
@@ -20,6 +21,7 @@ class Ride extends Model
         'average_speed',
         'external_id',
         'name',
+        'polyline',
         'distance',
         'date',
         'max_speed',
@@ -28,6 +30,14 @@ class Ride extends Model
     protected array $dates = [
         'date',
     ];
+
+    public static function booted(): void
+    {
+        static::addGlobalScope('order', function (Builder $builder) {
+            $builder->orderBy('date', 'desc');
+        });
+    }
+
 
     /**
      * Convert the distance from meters to miles, only take 1 decimal place append with miles

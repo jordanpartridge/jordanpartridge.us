@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 use function Laravel\Prompts\table;
 
 class StravaToken extends Model
@@ -63,16 +64,16 @@ class StravaToken extends Model
 
     public function promptTable()
     {
-         table(
+        table(
             ['id', 'access_token', 'expires_at', 'refresh_token', 'athlete_id'],
             [
-                [
-                    $this->id,
-                    $this->access_token,
-                    $this->expires_at,
-                    $this->refresh_token,
-                    $this->athlete_id,
-                ],
+               [
+                   $this->id,
+                   $this->access_token,
+                   $this->expires_at,
+                   $this->refresh_token,
+                   $this->athlete_id,
+               ],
             ],
         );
     }

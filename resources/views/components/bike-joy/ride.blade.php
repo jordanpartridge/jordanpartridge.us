@@ -4,7 +4,7 @@
         </a>
     </h2>
     <div class="flex flex-row items-start">
-        <x-route-map :ride="$ride"  x-show="layout === 'list'"/>
+        <x-route-map :ride="$ride" class=" w-full h-64 sm:w-72 sm:h-72 md:w-96 md:h-96 "  x-show="layout === 'list'"/>
         <div class=" justify-between text-xl font-light ml-4 w-full" x-cloak   >
             <table class="table-auto w-full" x-show="layout === 'list'">
                 <tbody>
@@ -20,6 +20,9 @@
                         <td class="border px-4 py-2 font-semibold bg-blue-300">Average Speed</td>
                         <td class="border px-4 py-2 bg-slate-300">{{ $ride->average_speed}} MPH</td>
                     </tr>
+                    <tr>
+                        <td class="border px-4 py-2 font-semibold bg-blue-300">Date</td>
+                        <td class="border px-4 py-2 bg-slate-300">{{ $ride->date }} </td>
                 </tbody>
             </table>
             <ul class="mt-4" x-show="layout === 'grid'">
