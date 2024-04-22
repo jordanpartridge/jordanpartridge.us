@@ -46,9 +46,9 @@ class SyncActivities extends Command
             $this->info('Expires at: ' . $token->expires_at);
 
             $response = $this->getActivities($token);
+
             info('get activities response: ' . $response->status());
             info('get activities response: ' . count($response->json()));
-            confirm('would you like to see the response?') ? $this->displayRides($response->json()) : null;
 
             $response->onError(function ($response) use ($token) {
                 $response->json();
@@ -81,6 +81,8 @@ class SyncActivities extends Command
                 }
             });
 
+            confirm('would you like to see the response?') ? $this->displayRides($response->json()) : null;
+
             collect($response->json())->where('type', 'Ride')->each(function ($activity) {
                 Ride::query()->updateOrCreate([
                     'external_id' => $activity['external_id'],
@@ -91,6 +93,8 @@ class SyncActivities extends Command
                     'polyline'      => $activity['map']['summary_polyline'],
                     'max_speed'     => $activity['max_speed'],
                     'average_speed' => $activity['average_speed'],
+                    'moving_time'   => $activity['moving_time'],
+                    'elapsed_time'  => $activity['elapsed_time'],
                 ]);
             });
             info('Activities synced');
@@ -102,7 +106,7 @@ class SyncActivities extends Command
      */
     private function getActivities(StravaToken $token): Response
     {
-        $strava     = new Strava($token->access_token);
+        $strava = new Strava($token->access_token);
         $activities = new ActivitiesRequest();
 
         $this->displayFunctionSummary('getActivities', ['token' => $token]);
@@ -114,7 +118,7 @@ class SyncActivities extends Command
     {
         $this->info('Refreshing token');
 
-        $strava   = new Strava();
+        $strava = new Strava();
         $response = $strava->refreshToken($token->refresh_token);
         $this->info('Response: ' . $response->status());
         if ($response->status() !== 200) {
@@ -149,11 +153,13 @@ class SyncActivities extends Command
                 'distance'      => $ride['distance'],
                 'max_speed'     => $ride['max_speed'],
                 'average_speed' => $ride['average_speed'],
+                'moving_time'   => $ride['moving_time'],
+                'elapsed_time'  => $ride['elapsed_time'],
             ];
         })->toArray();
 
         table(
-            ['date', 'name', 'distance', 'max_speed', 'average_speed'],
+            ['date', 'name', 'distance', 'max_speed', 'average_speed', 'moving_time', 'elapsed_time'],
             $rideData
         );
     }
