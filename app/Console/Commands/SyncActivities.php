@@ -30,14 +30,14 @@ class SyncActivities extends Command
      *
      * @var string
      */
-    protected $description = 'Command description {--verbose: Display verbose output}';
+    protected $description = 'Command description';
 
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        if(StravaToken::query()->count() === 0) {
+        if (StravaToken::query()->count() === 0) {
             info('No token found. Please add a token first.');
             return;
         }
@@ -102,7 +102,7 @@ class SyncActivities extends Command
      */
     private function getActivities(StravaToken $token): Response
     {
-        $strava = new Strava($token->access_token);
+        $strava     = new Strava($token->access_token);
         $activities = new ActivitiesRequest();
 
         $this->displayFunctionSummary('getActivities', ['token' => $token]);
@@ -112,14 +112,14 @@ class SyncActivities extends Command
 
     private function refreshToken(StravaToken $token): StravaToken
     {
-        if ($this->option('verbose')) {
-            $this->info('Refreshing token');
-        }
-        $strava = new Strava();
+        $this->info('Refreshing token');
+
+        $strava   = new Strava();
         $response = $strava->refreshToken($token->refresh_token);
-        if ($this->option('verbose')) {
-            $this->info('Response: ' . $response->status());
-            $this->info('Response: ' . $response->body());
+        $this->info('Response: ' . $response->status());
+        if ($response->status() !== 200) {
+            $this->error('Token not refreshed');
+            return $token;
         }
 
         $token->update([
@@ -153,7 +153,7 @@ class SyncActivities extends Command
         })->toArray();
 
         table(
-            ['date','name', 'distance', 'max_speed', 'average_speed'],
+            ['date', 'name', 'distance', 'max_speed', 'average_speed'],
             $rideData
         );
     }
