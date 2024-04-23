@@ -92,6 +92,7 @@ class SyncActivities extends Command
                     'distance'      => $activity['distance'],
                     'polyline'      => $activity['map']['summary_polyline'],
                     'max_speed'     => $activity['max_speed'],
+                    'elevation'     => $activity['total_elevation_gain'],
                     'average_speed' => $activity['average_speed'],
                     'moving_time'   => $activity['moving_time'],
                     'elapsed_time'  => $activity['elapsed_time'],
@@ -152,6 +153,7 @@ class SyncActivities extends Command
                 'name'          => $ride['name'],
                 'distance'      => $ride['distance'],
                 'max_speed'     => $ride['max_speed'],
+                'elevation'     => $ride['total_elevation_gain'],
                 'average_speed' => $ride['average_speed'],
                 'moving_time'   => $ride['moving_time'],
                 'elapsed_time'  => $ride['elapsed_time'],
@@ -159,7 +161,7 @@ class SyncActivities extends Command
         })->toArray();
 
         table(
-            ['date', 'name', 'distance', 'max_speed', 'average_speed', 'moving_time', 'elapsed_time'],
+            ['date', 'name', 'distance', 'max_speed', 'elevation' ,'average_speed', 'moving_time', 'elapsed_time'],
             $rideData
         );
     }
