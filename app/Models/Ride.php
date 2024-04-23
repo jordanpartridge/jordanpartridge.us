@@ -69,4 +69,15 @@ class Ride extends Model
     {
         return Number::format($this->attributes['elevation'] * 3.28084, 1);
     }
+
+    /**
+     * @return string
+     */
+    public function getMovingTimeAttribute(): string
+    {
+        $hours = floor($this->attributes['moving_time'] / 3600);
+        $minutes = floor(($this->attributes['moving_time'] % 3600) / 60);
+
+        return $hours . 'h ' . $minutes . 'm';
+    }
 }
