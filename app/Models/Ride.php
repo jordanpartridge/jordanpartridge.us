@@ -20,6 +20,9 @@ class Ride extends Model
     protected $fillable = [
         'average_speed',
         'external_id',
+        'moving_time',
+        'elapsed_time',
+        'elevation',
         'name',
         'polyline',
         'distance',
@@ -60,5 +63,10 @@ class Ride extends Model
     public function getDateAttribute(): string
     {
         return Carbon::create($this->attributes['date'])->format('M d, Y h:i A');
+    }
+
+    public function getElevationAttribute(): float
+    {
+        return Number::format($this->attributes['elevation'] * 3.28084, 1);
     }
 }
