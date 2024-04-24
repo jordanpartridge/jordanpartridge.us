@@ -1,13 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
+Schedule::command('strava:token-refresh')->everyFourHours();
 
-Schedule::command('strava:refresh-token')->everyFourHours();
-
-Schedule::command('strava:fetch-activities')->hourly();
+Schedule::command('strava:activities-sync')->hourly();

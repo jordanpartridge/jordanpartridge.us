@@ -31,7 +31,7 @@ class SyncActivities extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Sync activities from strava api';
 
     /**
      * Execute the console command.
