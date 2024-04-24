@@ -129,9 +129,9 @@ class SyncActivities extends Command
         });
     }
 
-    private function displayRides(array $rides): void
+    private function displayRides(Collection $rides): void
     {
-        $rideData = collect($rides)->map(function ($ride) {
+        $rideData = $rides->map(function ($ride) {
             return [
                 'date'          => $ride['start_date_local'],
                 'name'          => $ride['name'],
