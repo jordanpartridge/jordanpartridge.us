@@ -5,7 +5,7 @@ namespace App\Http\Integrations\Strava\Requests;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
-class ActivitiesRequest extends Request
+class AthleteActivityRequest extends Request
 {
     /**
      * The HTTP method of the request

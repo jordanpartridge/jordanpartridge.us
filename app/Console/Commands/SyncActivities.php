@@ -2,11 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Integrations\Strava\Requests\ActivitiesRequest;
+use App\Http\Integrations\Strava\Requests\ActivityRequest;
+use App\Http\Integrations\Strava\Requests\AthleteActivityRequest;
 use App\Http\Integrations\Strava\Strava;
 use App\Models\Ride;
 use App\Models\StravaToken;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Saloon\Http\Response;
 use Illuminate\Console\Command;
 
@@ -46,8 +48,19 @@ class SyncActivities extends Command
 
             $response = $this->getActivities($token);
 
+            $activities = collect($response->json());
+            $activities = $activities->map(function ($activity) use ($token) {
+                $this->info('Activity: ' . $activity['name']);
+                $strava = new Strava($token->access_token);
+                $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
+                $activity['calories'] = $moreDataResponse->json()['calories'];
+                return $activity;
+            });
+
             info('get activities response: ' . $response->status());
             info('get activities response: ' . count($response->json()));
+            $this->storeResults($activities);
+            $this->displayRides($activities);
 
             $response->onError(function ($response) use ($token) {
                 $response->json();
@@ -69,14 +82,9 @@ class SyncActivities extends Command
                     $token = $this->refreshToken($token);
                     $this->info('Token refreshed :' . $token->access_token);
                     $response = $this->getActivities($token);
-                    $this->showResults($response);
-                    return;
+                    $this->storeResults($response);
                 }
-
-                $this->showResults($response);
             });
-
-
         });
     }
 
@@ -86,9 +94,7 @@ class SyncActivities extends Command
     private function getActivities(StravaToken $token): Response
     {
         $strava = new Strava($token->access_token);
-        $activities = new ActivitiesRequest();
-
-        $this->displayFunctionSummary('getActivities', ['token' => $token]);
+        $activities = new AthleteActivityRequest();
 
         return $strava->send($activities);
     }
@@ -131,6 +137,7 @@ class SyncActivities extends Command
                 'name'          => $ride['name'],
                 'distance'      => $ride['distance'],
                 'max_speed'     => $ride['max_speed'],
+                'calories'      => $ride['calories'],
                 'elevation'     => $ride['total_elevation_gain'],
                 'average_speed' => $ride['average_speed'],
                 'moving_time'   => $ride['moving_time'],
@@ -139,14 +146,15 @@ class SyncActivities extends Command
         })->toArray();
 
         table(
-            ['date', 'name', 'distance', 'max_speed', 'elevation' ,'average_speed', 'moving_time', 'elapsed_time'],
+            ['date', 'name', 'distance', 'max_speed', 'elevation', 'calories', 'average_speed', 'moving_time', 'elapsed_time'],
             $rideData
         );
     }
 
-    private function showResults(Response $response): void
+
+    private function storeResults(Collection $activities): void
     {
-        collect($response->json())->where('type', 'Ride')->each(function ($activity) {
+        $activities->where('type', 'Ride')->each(function ($activity) {
             Ride::query()->updateOrCreate([
                 'external_id' => $activity['external_id'],
             ], [
@@ -155,6 +163,7 @@ class SyncActivities extends Command
                 'distance'      => $activity['distance'],
                 'polyline'      => $activity['map']['summary_polyline'],
                 'max_speed'     => $activity['max_speed'],
+                'calories'      => $activity['calories'],
                 'elevation'     => $activity['total_elevation_gain'],
                 'average_speed' => $activity['average_speed'],
                 'moving_time'   => $activity['moving_time'],
