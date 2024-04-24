@@ -30,6 +30,7 @@ middleware(['redirect-to-dashboard']);
 
 <x-layouts.marketing>
     @volt('bike')
+
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden" x-cloak>
 
         <svg
@@ -76,79 +77,83 @@ middleware(['redirect-to-dashboard']);
                     </div>
                 </div>
 
-                <h1 class="text-3xl font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
+                <h1 class="text-3xl p-2 font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
                     Everyone is entitled to bike joy.
                 </h1>
-                <div id="dashboard" class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mt-8">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
                         Weekly Statistics ({{ $this->startOfWeek->format('M d') }}
                         - {{ $this->endOfWeek->format('M d') }})
                     </h2>
-                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4"> Distance</h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300">{{ number_format($this->weeklyMileage, 1) }}
-                                miles</p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+                        <!-- Statistic Card Example -->
+                        <div
+                            class="bg-gradient-to-tr from-green-300 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            <h3 class="text-xl font-semibold text-white">Distance</h3>
+                            <p class="text-white text-lg">{{ number_format($this->weeklyMileage, 1) }} miles</p>
                         </div>
-                        <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Average Speed</h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300">{{ number_format($this->weeklyAverageSpeed, 1) }}
-                                mph</p>
+                        <!-- Additional cards -->
+                        <div
+                            class="bg-gradient-to-tr from-yellow-300 via-red-500 to-pink-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            <h3 class="text-xl font-semibold text-white">Calories</h3>
+                            <p class="text-white text-lg">{{ $this->calories }} kcal</p>
                         </div>
-                        <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Max Speed
-                               </h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300">{{ number_format($this->weeklyMaxSpeed, 1) }}
-                                mph</p>
+                        <div
+                            class="bg-gradient-to-tr from-teal-300 via-cyan-500 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            <h3 class="text-xl font-semibold text-white">Elevation</h3>
+                            <p class="text-white text-lg">{{ $this->elevation }} ft</p>
                         </div>
-                        <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Time</h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300">{{ $this->time }}</p>
+                        <div
+                            class="bg-gradient-to-tr from-yellow-100 via-red-500 to-pink-400 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            <h3 class="text-xl font-semibold text-white">Time</h3>
+                            <p class="text-white
+                            text-lg">{{ $this->time }}</p>
                         </div>
-                        <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Calories Burned</h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300">{{$this->calories}}</p>
+                        <div
+                            class="bg-gradient-to-tr from-green-300 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            <h3 class="text-xl font-semibold text-white">Max Speed</h3>
+                            <p class="text-white text-lg">{{ number_format($this->weeklyMaxSpeed, 1) }} mph</p>
                         </div>
-                        <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Elevation Climbed</h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300">{{ $this->elevation }} Feet</p>
+                        <div
+                            class="bg-gradient-to-tr from-orange-300 via-emerald-500 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            <h3 class="text-xl font-semibold text-white">Average</h3>
+                            <p class="text-white text-lg">{{ number_format($this->weeklyAverageSpeed,1) }} mph</p>
                         </div>
+
                     </div>
-                    <div class="text-center max-w-4xl mx-auto p-4 mt-8 text-lg text-slate-800 dark:text-white/80">
-                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Why I
-                            Ride</h3>
-                        <x-bike-joy.perks/>
+                </div>
 
-                        <div class="bg-white dark:bg-gray-800">
-                            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                                <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
-                                    Check Out My Recent Rides!
-                                </h2>
-                                @foreach($this->rides as $ride)
-                                    <div class="w-full m-4 mb-0">
-                                        <x-bike-joy.ride :ride="$ride"/>
-                                    </div>
-                                @endforeach
+                <div class="bg-white dark:bg-gray-800">
+                    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+                            Check Out My Recent Rides!
+                        </h2>
+                        @foreach($this->rides as $ride)
+                            <div class="w-full m-4 mb-0">
+                                <x-bike-joy.ride :ride="$ride"/>
                             </div>
-                        </div>
+                        @endforeach
+                    </div>
+                </div>
 
-                        <div class="bg-white dark:bg-gray-800 mt-8">
-                            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                                <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
-                                    Listen to My Playlist!
-                                </h2>
-                                <div class="shadow-lg rounded-lg overflow-hidden">
-                                    <iframe style="border-radius:12px"
-                                            src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0"
-                                            width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                            loading="lazy"></iframe>
-                                </div>
-                            </div>
+                <div class="bg-white dark:bg-gray-800 mt-8">
+                    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+                            Listen to My Playlist!
+                        </h2>
+                        <div class="shadow-lg rounded-lg overflow-hidden">
+                            <iframe style="border-radius:12px"
+                                    src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0"
+                                    width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                    loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            @endvolt
+    @endvolt
 </x-layouts.marketing>
