@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Saloon\Http\Response;
 use Illuminate\Console\Command;
 
-use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\note;
 use function Laravel\Prompts\table;
 
@@ -66,39 +65,18 @@ class SyncActivities extends Command
                 );
 
                 if ($response->status() === 401) {
-
-                    $confirmed = confirm(
-                        label: 'Do you want to refresh the token?',
-                        required: true
-                    );
-
-                    if ($confirmed) {
-                        $this->info('Refreshing token: ' . $token->access_token);
-                        $token = $this->refreshToken($token);
-                        $this->info('Token refreshed :' . $token->access_token);
-                        $response = $this->getActivities($token);
-                    }
+                    $this->info('Refreshing token: ' . $token->access_token);
+                    $token = $this->refreshToken($token);
+                    $this->info('Token refreshed :' . $token->access_token);
+                    $response = $this->getActivities($token);
+                    $this->showResults($response);
+                    return;
                 }
+
+                $this->showResults($response);
             });
 
-            confirm('would you like to see the response?') ? $this->displayRides($response->json()) : null;
 
-            collect($response->json())->where('type', 'Ride')->each(function ($activity) {
-                Ride::query()->updateOrCreate([
-                    'external_id' => $activity['external_id'],
-                ], [
-                    'date'          => Carbon::parse($activity['start_date_local']),
-                    'name'          => $activity['name'],
-                    'distance'      => $activity['distance'],
-                    'polyline'      => $activity['map']['summary_polyline'],
-                    'max_speed'     => $activity['max_speed'],
-                    'elevation'     => $activity['total_elevation_gain'],
-                    'average_speed' => $activity['average_speed'],
-                    'moving_time'   => $activity['moving_time'],
-                    'elapsed_time'  => $activity['elapsed_time'],
-                ]);
-            });
-            info('Activities synced');
         });
     }
 
@@ -164,5 +142,25 @@ class SyncActivities extends Command
             ['date', 'name', 'distance', 'max_speed', 'elevation' ,'average_speed', 'moving_time', 'elapsed_time'],
             $rideData
         );
+    }
+
+    private function showResults(Response $response): void
+    {
+        collect($response->json())->where('type', 'Ride')->each(function ($activity) {
+            Ride::query()->updateOrCreate([
+                'external_id' => $activity['external_id'],
+            ], [
+                'date'          => Carbon::parse($activity['start_date_local']),
+                'name'          => $activity['name'],
+                'distance'      => $activity['distance'],
+                'polyline'      => $activity['map']['summary_polyline'],
+                'max_speed'     => $activity['max_speed'],
+                'elevation'     => $activity['total_elevation_gain'],
+                'average_speed' => $activity['average_speed'],
+                'moving_time'   => $activity['moving_time'],
+                'elapsed_time'  => $activity['elapsed_time'],
+            ]);
+        });
+        info('Activities synced');
     }
 }
