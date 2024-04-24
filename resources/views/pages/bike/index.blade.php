@@ -22,6 +22,7 @@ middleware(['redirect-to-dashboard']);
     $minutes                  = ($this->rides->sum('elapsed_time') / 60) % 60;
     $this->elapsedTime        = sprintf("%d hours %d minutes", $hours, $minutes);
     $this->elevation          = number_format($this->rides->sum('elevation') * 3.28084);
+    $this->calories           = number_format($this->rides->sum('calories'));
 }
 );
 
@@ -85,97 +86,69 @@ middleware(['redirect-to-dashboard']);
                     </h2>
                     <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4"> Distance</h2>
+                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4"> Distance</h2>
                             <p class="text-lg text-gray-600 dark:text-gray-300">{{ number_format($this->weeklyMileage, 1) }}
                                 miles</p>
                         </div>
                         <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Average Speed Per
-                                Ride
-                                Speed</h2>
+                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Average Speed</h2>
                             <p class="text-lg text-gray-600 dark:text-gray-300">{{ number_format($this->weeklyAverageSpeed, 1) }}
                                 mph</p>
                         </div>
                         <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Average Max Speed
-                                Per
-                                Ride</h2>
+                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Max Speed
+                               </h2>
                             <p class="text-lg text-gray-600 dark:text-gray-300">{{ number_format($this->weeklyMaxSpeed, 1) }}
                                 mph</p>
                         </div>
                         <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Moving Time</h2>
+                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Time</h2>
                             <p class="text-lg text-gray-600 dark:text-gray-300">{{ $this->time }}</p>
                         </div>
                         <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Elapsed Time</h2>
-                            <p class="text-lg text-gray-600 dark:text-gray-300">{{$this->elapsedTime}}</p>
+                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Calories Burned</h2>
+                            <p class="text-lg text-gray-600 dark:text-gray-300">{{$this->calories}}</p>
                         </div>
                         <div class="item bg-white dark:bg-gray-700 rounded-lg p-6 shadow">
-                            <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4">Elevation</h2>
+                            <h2 class="text-xl bg-blue-300 rounded font-semibold text-gray-800 dark:text-white mb-4">Elevation Climbed</h2>
                             <p class="text-lg text-gray-600 dark:text-gray-300">{{ $this->elevation }} Feet</p>
                         </div>
                     </div>
                     <div class="text-center max-w-4xl mx-auto p-4 mt-8 text-lg text-slate-800 dark:text-white/80">
-                        <p>
-                            In the early part of this year, I made a spontaneous decision to buy a fat tire bicycle. It
-                            seemed like a promising way to unwind from the daily grind and inject some fun into my
-                            routine.
-                            My expectations were surpassed—riding has not only been enjoyable but also incredibly
-                            rejuvenating.
-                        </p>
-                        <p>
-                            Over the past few months, as I've navigated city streets and park paths, I've discovered
-                            more
-                            than just the joy of cycling. Beyond the physical benefits, biking has proven to be a
-                            fantastic
-                            mental escape, offering a fresh perspective amid the structured chaos of software
-                            development.
-                            Whether it's the rhythmic pedaling or the refreshing breezes, each ride delivers a new sense
-                            of
-                            clarity and creativity that enhances my problem-solving skills back at the desk.
-                        </p>
-                        <p>
-                            For those of us entrenched in the digital realm of coding and debugging, biking serves as a
-                            perfect counterbalance. Here are some specific perks of incorporating regular biking into
-                            our
-                            high-tech lives:
-                        </p>
-                    </div>
+                        <h3 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Why I
+                            Ride</h3>
+                        <x-bike-joy.perks/>
 
-
-                    <x-bike-joy.perks/>
-
-                    <div class="bg-white dark:bg-gray-800">
-                        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                            <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
-                                Check Out My Recent Rides!
-                            </h2>
-                            @foreach($this->rides as $ride)
-                                <div class="w-full m-4 mb-0">
-                                    <x-bike-joy.ride :ride="$ride"/>
-                                </div>
-                            @endforeach
+                        <div class="bg-white dark:bg-gray-800">
+                            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                                <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+                                    Check Out My Recent Rides!
+                                </h2>
+                                @foreach($this->rides as $ride)
+                                    <div class="w-full m-4 mb-0">
+                                        <x-bike-joy.ride :ride="$ride"/>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="bg-white dark:bg-gray-800 mt-8">
-                        <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                            <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
-                                Listen to My Playlist!
-                            </h2>
-                            <div class="shadow-lg rounded-lg overflow-hidden">
-                                <iframe style="border-radius:12px"
-                                        src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0"
-                                        width="100%" height="352" frameBorder="0" allowfullscreen=""
-                                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                                        loading="lazy"></iframe>
+                        <div class="bg-white dark:bg-gray-800 mt-8">
+                            <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                                <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
+                                    Listen to My Playlist!
+                                </h2>
+                                <div class="shadow-lg rounded-lg overflow-hidden">
+                                    <iframe style="border-radius:12px"
+                                            src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0"
+                                            width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                            loading="lazy"></iframe>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        @endvolt
+            @endvolt
 </x-layouts.marketing>
