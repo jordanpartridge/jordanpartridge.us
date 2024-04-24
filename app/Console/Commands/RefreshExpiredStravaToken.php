@@ -14,7 +14,7 @@ class RefreshExpiredStravaToken extends Command
      *
      * @var string
      */
-    protected $signature = 'strava:refresh-token';
+    protected $signature = 'strava:token-refresh';
 
     /**
      * The console command description.
