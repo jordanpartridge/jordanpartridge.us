@@ -20,6 +20,7 @@ class Ride extends Model
     protected $fillable = [
         'average_speed',
         'calories',
+        'date',
         'external_id',
         'moving_time',
         'elapsed_time',
