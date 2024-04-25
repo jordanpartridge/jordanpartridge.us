@@ -26,7 +26,7 @@ class RefreshExpiredStravaToken extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         // Get all expired tokens
         $tokens = StravaToken::all();

@@ -9,6 +9,7 @@ use App\Models\Ride;
 use App\Models\StravaToken;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
 use Saloon\Http\Response;
 use Illuminate\Console\Command;
 
@@ -38,27 +39,30 @@ class SyncActivities extends Command
      */
     public function handle(): void
     {
+        Artisan::call('strava:token-refresh');
         if (StravaToken::query()->count() === 0) {
             info('No token found. Please add a token first.');
             return;
         }
         StravaToken::query()->each(function ($token) {
-            $this->info('Syncing activities for token: ' . $token->access_token);
-            $this->info('Expires at: ' . $token->expires_at);
 
             $response = $this->getActivities($token);
 
             $activities = collect($response->json());
-            $activities = $activities->map(function ($activity) use ($token) {
-                $this->info('Activity: ' . $activity['name']);
+            $activities = $activities->filter(function ($activity) use ($token) {
+                $existingRide = Ride::query()->where('external_id', $activity['external_id'])->first();
+                if ($existingRide || $activity['type'] !== 'Ride') {
+                    return false;
+                }
+
                 $strava = new Strava($token->access_token);
                 $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
                 $activity['calories'] = $moreDataResponse->json()['calories'];
                 return $activity;
             });
 
-            info('get activities response: ' . $response->status());
-            info('get activities response: ' . count($response->json()));
+            $this->info('Rides to Sync: ' . count($activities));
+
             $this->storeResults($activities);
             $this->displayRides($activities);
 
@@ -132,6 +136,7 @@ class SyncActivities extends Command
     private function displayRides(Collection $rides): void
     {
         $rideData = $rides->map(function ($ride) {
+
             return [
                 'date'          => $ride['start_date_local'],
                 'name'          => $ride['name'],

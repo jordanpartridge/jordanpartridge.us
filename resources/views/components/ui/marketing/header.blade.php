@@ -38,16 +38,15 @@
             </div>
             @auth
                 <div class="flex items-center w-auto">
-                    <x-ui.button type="primary" submit="true" tag="a" href="{{ route('dashboard') }}">View Dashboard
+                    <x-ui.button type="primary" submit="true" tag="a" href="{{ route('filament.admin.pages.dashboard') }}">View Dashboard
                     </x-ui.button>
                 </div>
             @else
-                {{--                <div class="flex items-center w-auto">--}}
-                {{--                    <x-ui.button type="secondary" submit="true" tag="a" href="{{ route('login') }}">Login</x-ui.button>--}}
-                {{--                </div>--}}
-                {{--                <div class="flex items-center w-auto">--}}
-                {{--                    <x-ui.button type="primary" submit="true" tag="a" href="{{ route('register') }}">Sign Up</x-ui.button>--}}
-                {{--                </div>--}}
+                                <div class="flex items-center w-auto">
+                                    <x-ui.button type="secondary" submit="true" tag="a" href="{{ route('filament.admin.pages.dashboard') }}">Login</x-ui.button>
+                                </div>
+                                <div class="flex items-center w-auto">
+                                </div>
             @endauth
 
         </div>
