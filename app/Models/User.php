@@ -36,7 +36,16 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    private mixed $email;
 
+    /**
+     * Determine if the user can access Filament.
+     */
+    public function canAccessFilament(): bool
+    {
+        return str_ends_with($this->email, '@partridge.rocks') && $this->hasVerifiedEmail();
+    }
+}
     /**
      * Get the attributes that should be cast.
      *
