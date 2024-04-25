@@ -45,7 +45,7 @@ class User extends Authenticatable
     {
         return str_ends_with($this->email, '@partridge.rocks') && $this->hasVerifiedEmail();
     }
-}
+
     /**
      * Get the attributes that should be cast.
      *
