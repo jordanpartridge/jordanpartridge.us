@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -11,7 +13,7 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @method static updateOrCreate(string[] $array, array $array1)
  */
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory;
     use Notifiable;
@@ -36,15 +38,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-    private mixed $email;
 
-    /**
-     * Determine if the user can access Filament.
-     */
-    public function canAccessFilament(): bool
-    {
-        return true;
-    }
 
     /**
      * Get the attributes that should be cast.
@@ -62,5 +56,10 @@ class User extends Authenticatable
     public function stravaToken(): HasOne
     {
         return $this->hasOne(StravaToken::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->email === 'jordan@partridge.rocks';
     }
 }
