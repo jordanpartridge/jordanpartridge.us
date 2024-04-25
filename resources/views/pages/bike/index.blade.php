@@ -1,29 +1,29 @@
 <?php
 
 use function Laravel\Folio\{middleware, name};
-use function Livewire\Volt\{state, rules};
 
 name('bike');
 middleware(['redirect-to-dashboard-x']);
 
-\Livewire\Volt\mount(function () {
-    $this->startOfWeek = \Carbon\Carbon::now()->startOfWeek();
-    $this->endOfWeek   = \Carbon\Carbon::now()->endOfWeek();
+\Livewire\Volt\mount(
+    function () {
+        $this->startOfWeek = \Carbon\Carbon::now()->startOfWeek();
+        $this->endOfWeek = \Carbon\Carbon::now()->endOfWeek();
 
-    $this->rides              = \App\Models\Ride::whereBetween('date', [$this->startOfWeek, $this->endOfWeek]);
-    $this->weeklyMileage      = number_format($this->rides->sum('distance') * 0.000621371, 1);
-    $this->weeklyAverageSpeed = $this->rides->avg('average_speed') * 2.23694;
-    $this->weeklyMaxSpeed     = $this->rides->max('max_speed') * 2.23694;
-    $hours                    = floor($this->rides->sum('moving_time') / 3600);
-    $minutes                  = ($this->rides->sum('moving_time') / 60) % 60;
-    $this->time               = sprintf("%d hours %d minutes", $hours, $minutes);
-    $this->rides              = $this->rides->latest()->limit(6)->get();
-    $hours                    = floor($this->rides->sum('elapsed_time') / 3600);
-    $minutes                  = ($this->rides->sum('elapsed_time') / 60) % 60;
-    $this->elapsedTime        = sprintf("%d hours %d minutes", $hours, $minutes);
-    $this->elevation          = number_format($this->rides->sum('elevation') * 3.28084);
-    $this->calories           = number_format($this->rides->sum('calories'));
-}
+        $this->rides = \App\Models\Ride::whereBetween('date', [$this->startOfWeek, $this->endOfWeek]);
+        $this->weeklyMileage = number_format($this->rides->sum('distance') * 0.000621371, 1);
+        $this->weeklyAverageSpeed = $this->rides->avg('average_speed') * 2.23694;
+        $this->weeklyMaxSpeed = $this->rides->max('max_speed') * 2.23694;
+        $hours = floor($this->rides->sum('moving_time') / 3600);
+        $minutes = ($this->rides->sum('moving_time') / 60) % 60;
+        $this->time = sprintf("%d hours %d minutes", $hours, $minutes);
+        $this->rides = $this->rides->latest()->limit(6)->get();
+        $hours = floor($this->rides->sum('elapsed_time') / 3600);
+        $minutes = ($this->rides->sum('elapsed_time') / 60) % 60;
+        $this->elapsedTime = sprintf("%d hours %d minutes", $hours, $minutes);
+        $this->elevation = number_format($this->rides->sum('elevation') * 3.28084);
+        $this->calories = number_format($this->rides->sum('calories'));
+    }
 );
 
 ?>
@@ -78,7 +78,7 @@ middleware(['redirect-to-dashboard-x']);
                 </div>
 
                 <h1 class="text-3xl p-2 font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
-                    Everyone is entitled to bike joy.
+                    Everyone is entitled to bike joy
                 </h1>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
@@ -89,34 +89,34 @@ middleware(['redirect-to-dashboard-x']);
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
                         <!-- Statistic Card Example -->
                         <div
-                            class="bg-gradient-to-tr from-green-300 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Distance</h3>
                             <p class="text-white text-lg">{{ number_format($this->weeklyMileage, 1) }} miles</p>
                         </div>
                         <!-- Additional cards -->
                         <div
-                            class="bg-gradient-to-tr from-yellow-300 via-red-500 to-pink-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-tr from-yellow-200 via-blue-500 to-gray-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Calories</h3>
                             <p class="text-white text-lg">{{ $this->calories }} kcal</p>
                         </div>
                         <div
-                            class="bg-gradient-to-tr from-teal-300 via-cyan-500 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-tr from-blue-900 via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Elevation</h3>
                             <p class="text-white text-lg">{{ $this->elevation }} ft</p>
                         </div>
                         <div
-                            class="bg-gradient-to-tr from-yellow-100 via-red-500 to-pink-400 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-tr from-green-240 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Time</h3>
                             <p class="text-white
                             text-lg">{{ $this->time }}</p>
                         </div>
                         <div
-                            class="bg-gradient-to-tr from-green-300 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-br from-yellow-100 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Max Speed</h3>
                             <p class="text-white text-lg">{{ number_format($this->weeklyMaxSpeed, 1) }} mph</p>
                         </div>
                         <div
-                            class="bg-gradient-to-tr from-orange-300 via-emerald-500 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-tr from-purple-400 via-blue-700 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Average</h3>
                             <p class="text-white text-lg">{{ number_format($this->weeklyAverageSpeed,1) }} mph</p>
                         </div>
@@ -138,7 +138,7 @@ middleware(['redirect-to-dashboard-x']);
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 mt-8">
-                    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 hover:bg-blue-900 hover:text-gray-100">
                         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
                             Listen to My Playlist!
                         </h2>

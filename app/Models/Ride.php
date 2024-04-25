@@ -27,7 +27,6 @@ class Ride extends Model
         'name',
         'polyline',
         'distance',
-        'date',
         'max_speed',
     ];
 
@@ -61,11 +60,6 @@ class Ride extends Model
         return Number::format($this->attributes['average_speed'] * 2.23694, 1);
     }
 
-    public function getDateAttribute(): string
-    {
-        return Carbon::create($this->attributes['date'])->format('M d, Y h:i A');
-    }
-
     public function getElevationAttribute(): float
     {
         return Number::format($this->attributes['elevation'] * 3.28084, 1);
@@ -80,5 +74,17 @@ class Ride extends Model
         $minutes = floor(($this->attributes['moving_time'] % 3600) / 60);
 
         return $hours . 'h ' . $minutes . 'm';
+    }
+
+    /**
+     * @return Carbon
+     */
+    public function getDateAttribute(): Carbon
+    {
+        return Carbon::createFromFormat(
+            'Y-m-d H:i:s',
+            $this->attributes['date'],
+            'America/Phoenix'
+        );
     }
 }

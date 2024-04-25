@@ -25,23 +25,21 @@ class PostResource extends Resource
                 TextInput::make('title')
                     ->required()
                     ->maxLength(400),
+                TextInput::make('slug')
+                    ->required()
+                    ->maxLength(400),
                 Forms\Components\FileUpload::make('image')
                     ->required()
                     ->image()
                     ->disk('public'),
-                Forms\Components\Textarea::make('excerpt')
-                    ->required()
-                    ->maxLength(400),
-                TextInput::make('slug')
-                    ->required()
-                    ->maxLength(400),
+
                 Forms\Components\Select::make('user_id')
                     ->Label('User')
                     ->options(
                         User::all()->pluck('name', 'id')->toArray()
                     )
                     ->required(),
-                Forms\Components\MarkdownEditor::make('body')
+                Forms\Components\RichEditor::make('body')
                     ->required()
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('published'),

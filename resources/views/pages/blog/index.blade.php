@@ -1,25 +1,26 @@
 <?php
 
 use App\Models\Post;
-use function Livewire\Volt\{with, state, rules, mount, usesPagination};
+
+use function Livewire\Volt\{with, state, mount, usesPagination};
 
 usesPagination();
 
 state([
-    'numResults' => 6,
-    'results' => null,
-    'total' => '',
-    'finished' => false,
+    'numResults'   => 6,
+    'results'      => null,
+    'total'        => '',
+    'finished'     => false,
     'route_prefix' => 'blog',
-    'sortOrder' => 'desc'
+    'sortOrder'    => 'desc'
 ]);
 
-mount(function (){
+mount(function () {
     $this->results = $this->numResults;
     $this->total = Post::count();
 });
 
-$loadMore = function(){
+$loadMore = function () {
     $this->results += $this->numResults;
     if ($this->results >= $this->total) {
         $this->finished = true;
@@ -65,11 +66,11 @@ with(fn () => [
                                 <time class="inline-block dark:text-gray-400">{{ date('F j, Y', $post->updated_at->timestamp) }}</time><span class="mx-2">·</span><a class="font-medium underline capitalize hover:underline dark:text-gray-400" href="/category/documentation">{{ $post->user->name }}</a>
                             </div>
                             <h2 class="mb-2 text-xl font-medium leading-tight underline dark:text-slate-300 font-heading sm:text-2xl"><a class="transition duration-200 ease-in dark:hover:text-blue-700 hover:text-primary" href="{{ $this->route_prefix }}/{{ $post->slug }}">{{ $post->title }}</a></h2>
-                            <p class="flex-grow text-lg font-light text-muted dark:text-slate-400">{{ substr(strip_tags($post->body), 0, 200) }}@if(strlen(strip_tags($post->body)) > 200){{ '...' }}@endif</p>
+                            <p class="flex-grow text-lg font-light text-muted dark:text-slate-400"><x-markdown>{{ substr(strip_tags($post->body), 0, 200) }}</x-markdown>@if(strlen(strip_tags($post->body)) > 200){{ '...' }}@endif</p>
                             <ul class="mt-5 text-sm">
-                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag1</a></li>
-                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag2</a></li>
-                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag3</a></li>
+{{--                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag1</a></li>--}}
+{{--                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag2</a></li>--}}
+{{--                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag3</a></li>--}}
                             </ul>
                         </div>
                     </article>
