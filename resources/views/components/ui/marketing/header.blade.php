@@ -36,19 +36,6 @@
             <div x-data class="flex-shrink-0 hidden w-[38px] overflow-hidden rounded-full h-[38px] sm:block" x-cloak>
                 <x-ui.light-dark-switch></x-ui.light-dark-switch>
             </div>
-            @auth
-                <div class="flex items-center w-auto">
-                    <x-ui.button type="primary" submit="true" tag="a" href="{{ route('filament.admin.pages.dashboard') }}">View Dashboard
-                    </x-ui.button>
-                </div>
-            @else
-                                <div class="flex items-center w-auto">
-                                    <x-ui.button type="secondary" submit="true" tag="a" href="{{ route('filament.admin.pages.dashboard') }}">Login</x-ui.button>
-                                </div>
-                                <div class="flex items-center w-auto">
-                                </div>
-            @endauth
-
         </div>
     </div>
 </header>
