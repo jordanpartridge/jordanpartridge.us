@@ -51,7 +51,7 @@ class StravaController extends Controller
             'athlete_id'    => $data['athlete']['id'],
         ]);
 
-        // Redirect to the dashboard
+        // Redirect to the dashboard-x
         return redirect()->route('profile.edit');
     }
 }

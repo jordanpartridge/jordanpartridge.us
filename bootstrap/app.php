@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'redirect-to-dashboard' => \App\Http\Middleware\RedirectToDashboard::class,
+            'redirect-to-dashboard-x' => \App\Http\Middleware\RedirectToDashboard::class,
         ]);
         //
     })

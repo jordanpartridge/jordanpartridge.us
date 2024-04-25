@@ -4,7 +4,7 @@ use function Laravel\Folio\{middleware, name};
 use function Livewire\Volt\{state, rules};
 
 name('bike');
-middleware(['redirect-to-dashboard']);
+middleware(['redirect-to-dashboard-x']);
 
 \Livewire\Volt\mount(function () {
     $this->startOfWeek = \Carbon\Carbon::now()->startOfWeek();

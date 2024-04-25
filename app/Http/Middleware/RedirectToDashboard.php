@@ -17,7 +17,7 @@ class RedirectToDashboard
     public function handle(Request $request, Closure $next): Response
     {
         if (! Auth::guest()) {
-            return redirect()->route('dashboard');
+            return redirect()->route('filament.admin.pages.dashboard');
         }
 
         return $next($request);
