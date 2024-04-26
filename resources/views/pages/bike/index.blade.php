@@ -17,7 +17,7 @@ middleware(['redirect-to-dashboard-x']);
         $hours = floor($this->rides->sum('moving_time') / 3600);
         $minutes = ($this->rides->sum('moving_time') / 60) % 60;
         $this->time = sprintf("%d hours %d minutes", $hours, $minutes);
-        $this->rides = $this->rides->latest()->limit(6)->get();
+        $this->rides = $this->rides->limit(6)->get();
         $hours = floor($this->rides->sum('elapsed_time') / 3600);
         $minutes = ($this->rides->sum('elapsed_time') / 60) % 60;
         $this->elapsedTime = sprintf("%d hours %d minutes", $hours, $minutes);
