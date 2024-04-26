@@ -2,9 +2,10 @@
 
 use App\Models\Ride;
 
-test('can be created with factory', function () {
+it('can be created with factory', function () {
     $ride = Ride::factory()->create();
-    expect($ride->id)->toBeInt();
-    expect($ride->name)->toBeString();
-    expect($ride->distance)->toBeFloat();
+    $this->expect($ride->id)->toBeInt();
+    $this->expect($ride->name)->toBeString();
+    $this->expect($ride->distance)->toBeFloat();
+    $this->assertDatabaseHas('rides', ['id' => $ride->id]);
 });

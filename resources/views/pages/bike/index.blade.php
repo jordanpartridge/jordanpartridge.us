@@ -87,13 +87,11 @@ middleware(['redirect-to-dashboard-x']);
                     </h2>
 
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-                        <!-- Statistic Card Example -->
                         <div
                             class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Distance</h3>
                             <p class="text-white text-lg">{{ number_format($this->weeklyMileage, 1) }} miles</p>
                         </div>
-                        <!-- Additional cards -->
                         <div
                             class="bg-gradient-to-tr from-yellow-200 via-blue-500 to-gray-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Calories</h3>
@@ -105,13 +103,13 @@ middleware(['redirect-to-dashboard-x']);
                             <p class="text-white text-lg">{{ $this->elevation }} ft</p>
                         </div>
                         <div
-                            class="bg-gradient-to-tr from-green-240 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-br bg-blue-500  dark:bg-gradient-to-br dark:from-blue-100 from-slate-800 dark:via-blue-500 text-slate-800  via-dark-300 to-blue-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Time</h3>
                             <p class="text-white
                             text-lg">{{ $this->time }}</p>
                         </div>
                         <div
-                            class="bg-gradient-to-br from-yellow-100 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-br from-blue-100 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Max Speed</h3>
                             <p class="text-white text-lg">{{ number_format($this->weeklyMaxSpeed, 1) }} mph</p>
                         </div>
@@ -120,7 +118,6 @@ middleware(['redirect-to-dashboard-x']);
                             <h3 class="text-xl font-semibold text-white">Average</h3>
                             <p class="text-white text-lg">{{ number_format($this->weeklyAverageSpeed,1) }} mph</p>
                         </div>
-
                     </div>
                 </div>
 
@@ -143,9 +140,9 @@ middleware(['redirect-to-dashboard-x']);
                             Listen to My Playlist!
                         </h2>
                         <div class="shadow-lg rounded-lg overflow-hidden">
-                            <iframe style="border-radius:12px"
+                            <iframe class="border-r-2"
                                     src="https://open.spotify.com/embed/playlist/0MUayKfGRk0kRvsaQBDBWe?utm_source=generator&theme=0"
-                                    width="100%" height="352" frameBorder="0" allowfullscreen=""
+                                    width="100%" height="352" allowfullscreen=""
                                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                                     loading="lazy"></iframe>
                         </div>
