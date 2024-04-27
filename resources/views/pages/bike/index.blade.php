@@ -3,12 +3,12 @@
 use App\Models\Ride;
 use Carbon\Carbon;
 
-use function Laravel\Folio\{middleware, name};
+use function Livewire\Volt\mount;
+use function Laravel\Folio\{name};
 
 name('bike');
-middleware(['redirect-to-dashboard-x']);
 
-\Livewire\Volt\mount(
+mount(
     function () {
         $this->startOfWeek = Carbon::now()->startOfWeek();
         $this->endOfWeek = Carbon::now()->endOfWeek();
