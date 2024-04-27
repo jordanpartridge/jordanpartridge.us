@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Ride;
+use Carbon\Carbon;
+
 use function Laravel\Folio\{middleware, name};
 
 name('bike');
@@ -7,10 +10,10 @@ middleware(['redirect-to-dashboard-x']);
 
 \Livewire\Volt\mount(
     function () {
-        $this->startOfWeek = \Carbon\Carbon::now()->startOfWeek();
-        $this->endOfWeek = \Carbon\Carbon::now()->endOfWeek();
+        $this->startOfWeek = Carbon::now()->startOfWeek();
+        $this->endOfWeek = Carbon::now()->endOfWeek();
 
-        $this->rides = \App\Models\Ride::whereBetween('date', [$this->startOfWeek, $this->endOfWeek]);
+        $this->rides = Ride::whereBetween('date', [$this->startOfWeek, $this->endOfWeek]);
         $this->weeklyMileage = number_format($this->rides->sum('distance') * 0.000621371, 1);
         $this->weeklyAverageSpeed = $this->rides->avg('average_speed') * 2.23694;
         $this->weeklyMaxSpeed = $this->rides->max('max_speed') * 2.23694;
