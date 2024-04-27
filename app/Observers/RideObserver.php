@@ -13,6 +13,10 @@ class RideObserver
      */
     public function created(Ride $ride): void
     {
+        if(config('app.env') === 'testing') {
+            return;
+        }
+
         User::all()->each(function ($user) use ($ride) {
             $user->notify(new RideSynced($ride));
         });
