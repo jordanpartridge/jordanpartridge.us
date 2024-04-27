@@ -22,7 +22,10 @@ class RideFactory extends Factory
             'distance'      => $this->faker->randomFloat(2, 0, 1000),
             'max_speed'     => $this->faker->randomFloat(2, 0, 100),
             'average_speed' => $this->faker->randomFloat(2, 0, 100),
+            'elevation'     => $this->faker->randomFloat(2, 0, 1000),
             'date'          => $this->faker->dateTime,
+            'moving_time'   => $this->faker->randomNumber(3),
+            'calories'      => $this->faker->randomNumber(3),
             'external_id'   => $this->faker->uuid,
         ];
     }
