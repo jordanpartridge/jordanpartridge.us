@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\SlackController;
 use App\Http\Controllers\StravaController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -19,11 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('home', '/')->name('home');
 
-Route::post('slack', function (\Illuminate\Http\Request $request) {
-    \App\Models\User::first()->notify(new \App\Notifications\SlackEventReceived($request));
-    \Illuminate\Support\Facades\Log::info('slack event received: ', $request->all());
-    return $request->input('challenge');
-})->name('slack.hook')->withoutMiddleware(VerifyCsrfToken::class);
+Route::post('slack', SlackController::class)
+    ->name('slack.hook')
+    ->withoutMiddleware(VerifyCsrfToken::class);
 
 
 Route::middleware('auth')->group(callback: function () {
