@@ -35,7 +35,6 @@ mount(
     @volt('bike')
 
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden" x-cloak>
-
         <svg
             class="absolute top-0 left-0 w-7/12 -ml-40 -translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
             viewBox="0 0 978 615" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -103,7 +102,7 @@ mount(
                             <p class="text-white text-lg">{{ $this->calories }} kcal</p>
                         </div>
                         <div
-                            class="bg-gradient-to-tr from-blue-900 via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                            class="bg-gradient-to-tr from-blue-900  via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Elevation</h3>
                             <p class="text-white text-lg">{{ $this->elevation }} ft</p>
                         </div>
@@ -157,6 +156,5 @@ mount(
             </div>
         </div>
     </div>
-
     @endvolt
 </x-layouts.marketing>

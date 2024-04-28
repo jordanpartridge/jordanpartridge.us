@@ -30,7 +30,7 @@
         <div class="space-y-2">
             <div class="flex justify-between text-gray-600 dark:text-gray-300">
                 <span>Duration</span>
-                <span class="font-semibold">{{$ride->moving_time}} hrs</span>
+                <span class="font-semibold">{{$ride->moving_time}}</span>
             </div>
             <div class="flex justify-between text-gray-600 dark:text-gray-300">
                 <span>Elevation</span>
