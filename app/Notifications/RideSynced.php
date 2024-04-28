@@ -30,7 +30,7 @@ class RideSynced extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['slack'];
+        return ['slack', 'mail'];
     }
 
     /**

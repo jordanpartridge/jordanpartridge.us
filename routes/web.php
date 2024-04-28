@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('home', '/')->name('home');
 
-Route::post('slack', function () {
-    return request()->input('challenge');
+Route::post('slack', function (\Illuminate\Http\Request $request) {
+    \App\Models\User::first()->notify(new \App\Notifications\SlackEventReceived($request));
+    \Illuminate\Support\Facades\Log::info('slack event received: ', $request->all());
+    return $request->input('challenge');
 })->name('slack.hook')->withoutMiddleware(VerifyCsrfToken::class);
 
 
