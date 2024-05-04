@@ -8,27 +8,17 @@ class RideMetricService
 {
     public function calculateRideMetrics($startDate, $endDate): array
     {
-        $metrics = Ride::whereBetween('date', [$startDate, $endDate])
-            ->selectRaw('
-                ROUND(SUM(distance)) as distance,
-                SUM(calories) as total_calories,
-                SUM(elevation) as total_elevation,
-                MAX(max_speed) as max_speed,
-                AVG(average_speed) as average_speed,
-                COUNT(*) as ride_count
-            ')
-            ->first()
-            ->toArray();
-
-        $metrics = [
-            'distance'      => $metrics['distance'],
-            'calories'      => $metrics['total_calories'],
-            'elevation'     => $metrics['total_elevation'],
-            'max_speed'     => number_format($metrics['max_speed'], 1),
-            'average_speed' => number_format($metrics['average_speed'], 1),
-            'ride_count'    => $metrics['ride_count'],
+        return [
+            $rides = Ride::whereBetween('date', [$startDate, $endDate])->get(), [
+                'distance'      => $rides->sum('distance'),
+                'calories'      => $rides->sum('calories'),
+                'elevation'     => $rides->sum('elevation'),
+                'ride_count'    => $rides->count(),
+                'max_speed'     => $rides->max('max_speed'),
+                'average_speed' => number_format($rides->avg('average_speed'), 1),
+            ],
+            $startDate,
+            $endDate,
         ];
-
-        return $metrics;
     }
 }
