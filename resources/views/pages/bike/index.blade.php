@@ -33,33 +33,9 @@ $recalculateMetrics = function () {
 
 mount(function () {
 
-    $this->rides = Ride::query()
-        ->whereBetween('date', [$this->startOfWeek, $this->endOfWeek])
-        ->latest()
-        ->get();
-    $this->weeklyMileage = $this->rides->sum('distance');
-    $this->calories = $this->rides->sum('calories');
-    $this->elevation = $this->rides->sum('elevation');
-    //$this->time = $this->rides->sum('moving_time');
-    $this->weeklyMaxSpeed = $this->rides->max('max_speed');
-    $this->weeklyAverageSpeed = $this->rides->avg('average_speed');
-    $this->recalculateMetrics = function () {
+    $this->recalculateMetrics();
 
-        $this->weeklyMileage = $this->rides->sum('distance');
-        $this->calories = $this->rides->sum('calories');
-        $this->elevation = $this->rides->sum('elevation');
-        $this->time = $this->rides->sum('moving_time');
-        $this->weeklyMaxSpeed = $this->rides->max('max_speed');
-        $this->weeklyAverageSpeed = $this->rides->avg('average_speed');
-    };
 });
-
-with(fn () => [
-    'rides' => Ride::query()
-        ->whereBetween('date', [$this->startOfWeek, $this->endOfWeek])
-        ->latest()
-        ->get()
-]);
 
 
 ?>
