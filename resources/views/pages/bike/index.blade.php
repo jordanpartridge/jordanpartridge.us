@@ -6,35 +6,33 @@ use Carbon\Carbon;
 use function Livewire\Volt\{mount, state};
 
 state([
-    'startOfWeek'        => Carbon::now()->startOfWeek()->toDateString(),
-    'endOfWeek'          => Carbon::now()->endOfWeek()->toDateString(),
-    'weeklyMileage'      => 0,
-    'calories'           => 0,
-    'elevation'          => 0,
-    'time'               => 0,
-    'weeklyMaxSpeed'     => 0,
-    'weeklyAverageSpeed' => 0,
-    'rides'              => collect([])
+    'startDate' => Carbon::now()->startOfWeek()->format('Y-m-d'),
+    'endDate'   => Carbon::now()->endOfWeek()->format('Y-m-d'),
+    'metrics'   => [
+        'distance'      => 0,
+        'calories'      => 0,
+        'elevation'     => 0,
+        'max_speed'     => 0,
+        'average_speed' => 0,
+        'ride_count'    => 0,
+    ],
+    'rides' => collect([]),
 ]);
 
 $recalculateMetrics = function () {
-
-    $this->rides = Ride::query()
-        ->whereBetween('date', [$this->startOfWeek, $this->endOfWeek])
-        ->latest()
-        ->get();
-    $this->weeklyMileage = $this->rides->sum('distance');
-    $this->calories = $this->rides->sum('calories');
-    $this->elevation = $this->rides->sum('elevation');
-    $this->weeklyMaxSpeed = $this->rides->max('max_speed');
-    $this->weeklyAverageSpeed = $this->rides->avg('average_speed');
+    $service = app(\App\Services\RideMetricService::class);
+    $this->metrics = $service->calculateRideMetrics($this->startDate, $this->endDate);
 };
 
+mount(function (\App\Services\RideMetricService $rideMetricService) {
+    $this->rideMetricService = new \App\Services\RideMetricService();
 
-mount(function () {
+    $this->rides = Ride::query()
+        ->latest()
+        ->whereBetween('date', [$this->startDate, $this->endDate])
+        ->get();
 
-    $this->recalculateMetrics();
-
+    $this->metrics = $this->rideMetricService->calculateRideMetrics($this->startDate, $this->endDate);
 });
 
 
@@ -44,32 +42,32 @@ mount(function () {
     @volt('bike')
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden" x-cloak>
         <svg
-            class="absolute top-0 left-0 w-7/12 -ml-40 -translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
-            viewBox="0 0 978 615" fill="none" xmlns="http://www.w3.org/2000/svg">
+                class="absolute top-0 left-0 w-7/12 -ml-40 -translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
+                viewBox="0 0 978 615" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
-                d="M978 216.141C656.885 277.452 321.116 341.682 0 402.993c39.425-4.071 128.449-11.563 167.843-15.912l6.661 22.46c59.138 174.752 275.144 254.906 438.792 172.235 48.902-72.088 119.911-180.018 171.073-255.946L978 216.141ZM611.485 405.155c-19.059 27.934-46.278 66.955-65.782 94.576-98.453 40.793-230.472-11.793-268.175-111.202-1.096-2.89-1.702-5.965-3.379-11.972l382.99-38.6c-16.875 24.845-31.224 46.049-45.654 67.198Z"/>
+                    d="M978 216.141C656.885 277.452 321.116 341.682 0 402.993c39.425-4.071 128.449-11.563 167.843-15.912l6.661 22.46c59.138 174.752 275.144 254.906 438.792 172.235 48.902-72.088 119.911-180.018 171.073-255.946L978 216.141ZM611.485 405.155c-19.059 27.934-46.278 66.955-65.782 94.576-98.453 40.793-230.472-11.793-268.175-111.202-1.096-2.89-1.702-5.965-3.379-11.972l382.99-38.6c-16.875 24.845-31.224 46.049-45.654 67.198Z"/>
             <path
-                d="m262.704 306.481 1.336-28.817c.25-1.784.572-3.562.951-5.323 17.455-81.121 65.161-136.563 144.708-159.63 81.813-23.725 157.283-5.079 211.302 61.02 6.466 7.912 23.695 33.305 23.695 33.305s107.788-20.295 102.487-22.242C710.939 81.362 569.507-31.34 398.149 8.04 221.871 48.55 144.282 217.1 160.797 331.317c23.221-5.568 78.863-19.192 101.907-24.836Z"/>
+                    d="m262.704 306.481 1.336-28.817c.25-1.784.572-3.562.951-5.323 17.455-81.121 65.161-136.563 144.708-159.63 81.813-23.725 157.283-5.079 211.302 61.02 6.466 7.912 23.695 33.305 23.695 33.305s107.788-20.295 102.487-22.242C710.939 81.362 569.507-31.34 398.149 8.04 221.871 48.55 144.282 217.1 160.797 331.317c23.221-5.568 78.863-19.192 101.907-24.836Z"/>
             <path
-                d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
+                    d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
             <path
-                d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
+                    d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
             <path
-                d="M952.832 409.766c-21.048.812-25.626 5.39-26.438 26.438-.811-21.048-5.39-25.626-26.437-26.438 21.047-.811 25.626-5.39 26.437-26.437.812 21.047 5.39 25.626 26.438 26.437Z"/>
+                    d="M952.832 409.766c-21.048.812-25.626 5.39-26.438 26.438-.811-21.048-5.39-25.626-26.437-26.438 21.047-.811 25.626-5.39 26.437-26.437.812 21.047 5.39 25.626 26.438 26.437Z"/>
         </svg>
         <svg
-            class="absolute top-0 right-0 w-7/12 -mr-40 translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
-            viewBox="0 0 978 615" fill="none" xmlns="http://www.w3.org/2000/svg">
+                class="absolute top-0 right-0 w-7/12 -mr-40 translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
+                viewBox="0 0 978 615" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
-                d="M978 216.141C656.885 277.452 321.116 341.682 0 402.993c39.425-4.071 128.449-11.563 167.843-15.912l6.661 22.46c59.138 174.752 275.144 254.906 438.792 172.235 48.902-72.088 119.911-180.018 171.073-255.946L978 216.141ZM611.485 405.155c-19.059 27.934-46.278 66.955-65.782 94.576-98.453 40.793-230.472-11.793-268.175-111.202-1.096-2.89-1.702-5.965-3.379-11.972l382.99-38.6c-16.875 24.845-31.224 46.049-45.654 67.198Z"/>
+                    d="M978 216.141C656.885 277.452 321.116 341.682 0 402.993c39.425-4.071 128.449-11.563 167.843-15.912l6.661 22.46c59.138 174.752 275.144 254.906 438.792 172.235 48.902-72.088 119.911-180.018 171.073-255.946L978 216.141ZM611.485 405.155c-19.059 27.934-46.278 66.955-65.782 94.576-98.453 40.793-230.472-11.793-268.175-111.202-1.096-2.89-1.702-5.965-3.379-11.972l382.99-38.6c-16.875 24.845-31.224 46.049-45.654 67.198Z"/>
             <path
-                d="m262.704 306.481 1.336-28.817c.25-1.784.572-3.562.951-5.323 17.455-81.121 65.161-136.563 144.708-159.63 81.813-23.725 157.283-5.079 211.302 61.02 6.466 7.912 23.695 33.305 23.695 33.305s107.788-20.295 102.487-22.242C710.939 81.362 569.507-31.34 398.149 8.04 221.871 48.55 144.282 217.1 160.797 331.317c23.221-5.568 78.863-19.192 101.907-24.836Z"/>
+                    d="m262.704 306.481 1.336-28.817c.25-1.784.572-3.562.951-5.323 17.455-81.121 65.161-136.563 144.708-159.63 81.813-23.725 157.283-5.079 211.302 61.02 6.466 7.912 23.695 33.305 23.695 33.305s107.788-20.295 102.487-22.242C710.939 81.362 569.507-31.34 398.149 8.04 221.871 48.55 144.282 217.1 160.797 331.317c23.221-5.568 78.863-19.192 101.907-24.836Z"/>
             <path
-                d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
+                    d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
             <path
-                d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
+                    d="M890.991 458.296c-57.168 2.205-69.605 14.641-71.809 71.809-2.205-57.168-14.641-69.604-71.809-71.809 57.168-2.204 69.604-14.641 71.809-71.809 2.204 57.169 14.641 69.605 71.809 71.809Z"/>
             <path
-                d="M952.832 409.766c-21.048.812-25.626 5.39-26.438 26.438-.811-21.048-5.39-25.626-26.437-26.438 21.047-.811 25.626-5.39 26.437-26.437.812 21.047 5.39 25.626 26.438 26.437Z"/>
+                    d="M952.832 409.766c-21.048.812-25.626 5.39-26.438 26.438-.811-21.048-5.39-25.626-26.437-26.438 21.047-.811 25.626-5.39 26.437-26.437.812 21.047 5.39 25.626 26.438 26.437Z"/>
         </svg>
 
         <div class="flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto">
@@ -80,8 +78,8 @@ mount(function () {
                 </div>
                 <div class="m-2 p-2">
                     <div
-                        style="background-image:linear-gradient(160deg,rgba(20,208,136,0.43),#3566e3 50%,#73f4f8, #110e0f)"
-                        class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
+                            style="background-image:linear-gradient(160deg,rgba(20,208,136,0.43),#3566e3 50%,#73f4f8, #110e0f)"
+                            class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
                         <p class="w-auto h-full px-3 bg-slate-50 dark:bg-neutral-900 dark:text-white py-1.5 font-medium text-sm tracking-widest uppercase  rounded-full text-slate-800/90 group-hover:text-white/100">
                             Bike Joy</p>
                     </div>
@@ -93,11 +91,15 @@ mount(function () {
                 <form class="w-full">
                     <div class="grid grid-cols-2 p-2">
                         <div class="p-6">
-                            <label  class="text-slate-800 dark:text-gray-200" for="startOfWeek">Start:</label>
-                            <input  aria-label="start date input" class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="startOfWeek" name="startOfWeek" wire:model="startOfWeek" wire:change="recalculateMetrics" >                        </div>
+                            <label class="text-slate-800 dark:text-gray-200" for="startDate">Start:</label>
+                            <input aria-label="start date input"
+                                   class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"
+                                   id="startDate" name="startDate" wire:model="startDate" wire:change="recalculateMetrics"></div>
                         <div class="p-6">
                             <label class="text-slate-800 dark:text-gray-200" for="endOfWeek">End:</label>
-                            <input aria-labe="end date input" class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="endOfWeek" name="endOfWeek" wire:model="endOfWeek" wire:change="recalculateMetrics">
+                            <input aria-labe="end date input"
+                                   class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"
+                                   id="endOfWeek" name="endOfWeek" wire:model="endDate" wire:change="recalculateMetrics">
                         </div>
                         <div>
                             <input type="submit" value="Update">
@@ -106,36 +108,36 @@ mount(function () {
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
                                 <!-- Statistic Card Example -->
                                 <div
-                                    class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
+                                        class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Distance</h3>
-                                    <p class="text-white text-lg">{{$this->weeklyMileage}}</p>
+                                    <p class="text-white text-lg">{{$this->metrics['distance'] ?? null}}</p>
                                 </div>
                                 <!-- Additional cards -->
                                 <div
-                                    class="bg-gradient-to-tr from-yellow-200 via-blue-500 to-gray-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                        class="bg-gradient-to-tr from-yellow-200 via-blue-500 to-gray-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Calories</h3>
-                                    <p class="text-white text-lg">{{ $this->calories }} kcal</p>
+                                    <p class="text-white text-lg">{{ $this->metrics['calories'] }} kcal</p>
                                 </div>
                                 <div
-                                    class="bg-gradient-to-tr from-blue-900  via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                        class="bg-gradient-to-tr from-blue-900  via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Elevation</h3>
-                                    <p class="text-white text-lg">{{ $this->elevation }} ft</p>
+                                    <p class="text-white text-lg">{{ $this->metrics['elevation'] }} ft</p>
                                 </div>
                                 <div
-                                    class="bg-gradient-to-tr from-green-240 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                        class="bg-gradient-to-tr from-green-240 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Number of rides</h3>
                                     <p class="text-white
-                            text-lg">{{ count($this->rides) }}</p>
+                            text-lg">{{ $this->metrics['ride_count'] }}</p>
                                 </div>
                                 <div
-                                    class="bg-gradient-to-br from-yellow-100 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                        class="bg-gradient-to-br from-yellow-100 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Max Speed</h3>
-                                    <p class="text-white text-lg">{{ number_format($this->weeklyMaxSpeed, 1) }} mph</p>
+                                    <p class="text-white text-lg">{{ $this->metrics['max_speed']}} mph</p>
                                 </div>
                                 <div
-                                    class="bg-gradient-to-tr from-purple-400 via-blue-700 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                        class="bg-gradient-to-tr from-purple-400 via-blue-700 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Average</h3>
-                                    <p class="text-white text-lg">{{ number_format($this->weeklyAverageSpeed,1) }}
+                                    <p class="text-white text-lg">{{ $this->metrics['average_speed'] }}
                                         mph</p>
                                 </div>
 
