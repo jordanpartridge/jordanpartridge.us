@@ -1,37 +1,24 @@
 <?php
 
-use App\Models\Ride;
 use Carbon\Carbon;
 use App\Services\RideMetricService;
 
 use function Livewire\Volt\{mount, state};
 
 state([
-    'startDate' => Carbon::now()->startOfWeek()->format('Y-m-d'),
-    'endDate'   => Carbon::now()->endOfWeek()->format('Y-m-d'),
-    'metrics'   => [
-        'distance'      => 0,
-        'calories'      => 0,
-        'elevation'     => 0,
-        'max_speed'     => 0,
-        'average_speed' => 0,
-        'ride_count'    => 0,
-    ],
-    'rides' => collect([]),
+    'startDate' => Carbon::now()->subDays(7)->format('Y-m-d'),
+    'endDate'   => Carbon::now()->format('Y-m-d'),
+    'rides'     => [],
+    'metrics'   => [],
 ]);
 
+
 $recalculateMetrics = function (RideMetricService $service) {
-    $this->metrics = $service->calculateRideMetrics($this->startDate, $this->endDate);
+    list($this->rides, $this->metrics, $this->startDate, $this->endDate) = $service->calculateRideMetrics($this->startDate, $this->endDate);
 };
 
 mount(function (RideMetricService $service) {
-
-    $this->rides = Ride::query()
-        ->latest()
-        ->whereBetween('date', [$this->startDate, $this->endDate])
-        ->get();
-
-    $this->metrics = $service->calculateRideMetrics($this->startDate, $this->endDate);
+    list($this->rides, $this->metrics, $this->startDate, $this->endDate) = $service->calculateRideMetrics($this->startDate, $this->endDate);
 });
 
 
@@ -91,14 +78,14 @@ mount(function (RideMetricService $service) {
        <div class="grid grid-cols-1 sm:grid-cols-2 md:gap-4 xs:grids-cols-2 mb-6">
     <div class="md:p-6">
         <label class="block text-slate-800 dark:text-gray-200" for="startDate">Start Date</label>
-        <input aria-label="start date input"
+        <input aria-label="start date"
                class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"
                id="startDate" name="startDate" wire:model="startDate"
                wire:change="recalculateMetrics">
     </div>
     <div class="md:p-6">
         <label class="block text-slate-800 dark:text-gray-200" for="endOfWeek">End Date</label>
-        <input aria-label="end date input"
+        <input aria-label="end date"
                class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"
                id="endOfWeek" name="endOfWeek" wire:model="endDate"
                wire:change="recalculateMetrics">
