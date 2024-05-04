@@ -3,31 +3,31 @@
 use App\Models\Ride;
 use Carbon\Carbon;
 
-use function Livewire\Volt\mount;
+use function Livewire\Volt\{mount};
 use function Laravel\Folio\{name};
 
 name('bike');
 
-mount(
-    function () {
-        $this->startOfWeek = Carbon::now()->startOfWeek();
-        $this->endOfWeek = Carbon::now()->endOfWeek();
+mount(function () {
+    $this->startOfWeek = Carbon::now()->startOfWeek()->toDateString();
+    $this->endOfWeek = Carbon::now()->endOfWeek()->toDateString();
+    $this->recalculateMetrics = function () {
+        $this->rides = Ride::query()
+            ->whereBetween('date', [$this->startOfWeek, $this->endOfWeek])
+            ->latest()
+            ->get();
 
-        $this->rides = Ride::whereBetween('date', [$this->startOfWeek, $this->endOfWeek]);
-        $this->weeklyMileage = number_format($this->rides->sum('distance') * 0.000621371, 1);
-        $this->weeklyAverageSpeed = $this->rides->avg('average_speed') * 2.23694;
-        $this->weeklyMaxSpeed = $this->rides->max('max_speed') * 2.23694;
-        $hours = floor($this->rides->sum('moving_time') / 3600);
-        $minutes = ($this->rides->sum('moving_time') / 60) % 60;
-        $this->time = sprintf("%d hours %d minutes", $hours, $minutes);
-        $this->rides = $this->rides->limit(6)->get();
-        $hours = floor($this->rides->sum('elapsed_time') / 3600);
-        $minutes = ($this->rides->sum('elapsed_time') / 60) % 60;
-        $this->elapsedTime = sprintf("%d hours %d minutes", $hours, $minutes);
-        $this->elevation = number_format($this->rides->sum('elevation') * 3.28084);
-        $this->calories = number_format($this->rides->sum('calories'));
-    }
-);
+        $this->weeklyMileage = $this->rides->sum('distance');
+        $this->calories = $this->rides->sum('calories');
+        $this->elevation = $this->rides->sum('elevation');
+        $this->time = $this->rides->sum('moving_time');
+        $this->weeklyMaxSpeed = $this->rides->max('max_speed');
+        $this->weeklyAverageSpeed = $this->rides->avg('average_speed');
+    };
+})
+
+
+
 
 ?>
 
@@ -83,17 +83,22 @@ mount(
                     Everyone is entitled to bike joy
                 </h1>
                 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
-                        Weekly Statistics ({{ $this->startOfWeek->format('M d') }}
-                        - {{ $this->endOfWeek->format('M d') }})
-                    </h2>
+                    <form method="POST" action="/update-dates">
+                        @csrf
+                        <label for="startOfWeek">Start of Week:</label>
+                        <input type="date" id="startOfWeek" name="startOfWeek" wire:model="startOfWeek">
 
+                        <label for="endOfWeek">End of Week:</label>
+                        <input type="date" id="endOfWeek" name="endOfWeek" wire:model="endOfWeek">
+
+                        <input type="submit" value="Update">
+                    </form>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
                         <!-- Statistic Card Example -->
                         <div
                             class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
                             <h3 class="text-xl font-semibold text-white">Distance</h3>
-                            <p class="text-white text-lg">{{ number_format($this->weeklyMileage, 1) }} miles</p>
+                            <p class="text-white text-lg">{{$this->weeklyMileage}}</p>
                         </div>
                         <!-- Additional cards -->
                         <div
