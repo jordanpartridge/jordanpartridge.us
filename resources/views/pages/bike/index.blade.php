@@ -3,8 +3,8 @@
 use App\Models\Ride;
 use Carbon\Carbon;
 
-use function Livewire\Volt\{mount};
-use function Laravel\Folio\{name};
+use function Livewire\Volt\mount;
+use function Laravel\Folio\name;
 
 name('bike');
 
