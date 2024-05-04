@@ -2,6 +2,7 @@
 
 use App\Models\Ride;
 use Carbon\Carbon;
+use App\Services\RideMetricService;
 
 use function Livewire\Volt\{mount, state};
 
@@ -19,8 +20,7 @@ state([
     'rides' => collect([]),
 ]);
 
-$recalculateMetrics = function () {
-    $service = app(\App\Services\RideMetricService::class);
+$recalculateMetrics = function (RideMetricService $service) {
     $this->metrics = $service->calculateRideMetrics($this->startDate, $this->endDate);
 };
 
@@ -97,7 +97,7 @@ mount(function (\App\Services\RideMetricService $rideMetricService) {
                                    id="startDate" name="startDate" wire:model="startDate" wire:change="recalculateMetrics"></div>
                         <div class="p-6">
                             <label class="text-slate-800 dark:text-gray-200" for="endOfWeek">End:</label>
-                            <input aria-labe="end date input"
+                            <input aria-label="end date input"
                                    class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"
                                    id="endOfWeek" name="endOfWeek" wire:model="endDate" wire:change="recalculateMetrics">
                         </div>
@@ -110,13 +110,13 @@ mount(function (\App\Services\RideMetricService $rideMetricService) {
                                 <div
                                         class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Distance</h3>
-                                    <p class="text-white text-lg">{{$this->metrics['distance'] ?? null}}</p>
+                                    <p class="text-white text-lg">{{$this->metrics['distance']}} miles</p>
                                 </div>
                                 <!-- Additional cards -->
                                 <div
                                         class="bg-gradient-to-tr from-yellow-200 via-blue-500 to-gray-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
                                     <h3 class="text-xl font-semibold text-white">Calories</h3>
-                                    <p class="text-white text-lg">{{ $this->metrics['calories'] }} kcal</p>
+                                    <p class="text-white text-lg">{{ $this->metrics['calories'] }} calories</p>
                                 </div>
                                 <div
                                         class="bg-gradient-to-tr from-blue-900  via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
