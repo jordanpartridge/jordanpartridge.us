@@ -3,37 +3,69 @@
 use App\Models\Ride;
 use Carbon\Carbon;
 
-use function Livewire\Volt\mount;
-use function Laravel\Folio\{name};
+use function Livewire\Volt\{mount, state};
 
-name('bike');
+state([
+    'startOfWeek'        => Carbon::now()->startOfWeek()->toDateString(),
+    'endOfWeek'          => Carbon::now()->endOfWeek()->toDateString(),
+    'weeklyMileage'      => 0,
+    'calories'           => 0,
+    'elevation'          => 0,
+    'time'               => 0,
+    'weeklyMaxSpeed'     => 0,
+    'weeklyAverageSpeed' => 0,
+    'rides'              => collect([])
+]);
 
-mount(
-    function () {
-        $this->startOfWeek = Carbon::now()->startOfWeek();
-        $this->endOfWeek = Carbon::now()->endOfWeek();
+$recalculateMetrics = function () {
 
-        $this->rides = Ride::whereBetween('date', [$this->startOfWeek, $this->endOfWeek]);
-        $this->weeklyMileage = number_format($this->rides->sum('distance') * 0.000621371, 1);
-        $this->weeklyAverageSpeed = $this->rides->avg('average_speed') * 2.23694;
-        $this->weeklyMaxSpeed = $this->rides->max('max_speed') * 2.23694;
-        $hours = floor($this->rides->sum('moving_time') / 3600);
-        $minutes = ($this->rides->sum('moving_time') / 60) % 60;
-        $this->time = sprintf("%d hours %d minutes", $hours, $minutes);
-        $this->rides = $this->rides->limit(6)->get();
-        $hours = floor($this->rides->sum('elapsed_time') / 3600);
-        $minutes = ($this->rides->sum('elapsed_time') / 60) % 60;
-        $this->elapsedTime = sprintf("%d hours %d minutes", $hours, $minutes);
-        $this->elevation = number_format($this->rides->sum('elevation') * 3.28084);
-        $this->calories = number_format($this->rides->sum('calories'));
-    }
-);
+    $this->rides = Ride::query()
+        ->whereBetween('date', [$this->startOfWeek, $this->endOfWeek])
+        ->latest()
+        ->get();
+    $this->weeklyMileage = $this->rides->sum('distance');
+    $this->calories = $this->rides->sum('calories');
+    $this->elevation = $this->rides->sum('elevation');
+    $this->weeklyMaxSpeed = $this->rides->max('max_speed');
+    $this->weeklyAverageSpeed = $this->rides->avg('average_speed');
+};
+
+
+mount(function () {
+
+    $this->rides = Ride::query()
+        ->whereBetween('date', [$this->startOfWeek, $this->endOfWeek])
+        ->latest()
+        ->get();
+    $this->weeklyMileage = $this->rides->sum('distance');
+    $this->calories = $this->rides->sum('calories');
+    $this->elevation = $this->rides->sum('elevation');
+    //$this->time = $this->rides->sum('moving_time');
+    $this->weeklyMaxSpeed = $this->rides->max('max_speed');
+    $this->weeklyAverageSpeed = $this->rides->avg('average_speed');
+    $this->recalculateMetrics = function () {
+
+        $this->weeklyMileage = $this->rides->sum('distance');
+        $this->calories = $this->rides->sum('calories');
+        $this->elevation = $this->rides->sum('elevation');
+        $this->time = $this->rides->sum('moving_time');
+        $this->weeklyMaxSpeed = $this->rides->max('max_speed');
+        $this->weeklyAverageSpeed = $this->rides->avg('average_speed');
+    };
+});
+
+with(fn () => [
+    'rides' => Ride::query()
+        ->whereBetween('date', [$this->startOfWeek, $this->endOfWeek])
+        ->latest()
+        ->get()
+]);
+
 
 ?>
 
 <x-layouts.marketing>
     @volt('bike')
-
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden" x-cloak>
         <svg
             class="absolute top-0 left-0 w-7/12 -ml-40 -translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
@@ -82,49 +114,60 @@ mount(
                 <h1 class="text-3xl p-2 font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
                     Everyone is entitled to bike joy
                 </h1>
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-4 text-center">
-                        Weekly Statistics ({{ $this->startOfWeek->format('M d') }}
-                        - {{ $this->endOfWeek->format('M d') }})
-                    </h2>
+                <form class="w-full">
+                    <div class="grid grid-cols-2 p-2">
+                        <div class="p-6">
+                            <label  class="text-slate-800 dark:text-gray-200" for="startOfWeek">Start:</label>
+                            <input  class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="startOfWeek" name="startOfWeek" wire:model="startOfWeek" wire:change="recalculateMetrics" >                        </div>
+                        <div class="p-6">
+                            <label class="text-slate-800 dark:text-gray-200" for="endOfWeek">End:</label>
+                            <input    class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="endOfWeek" name="endOfWeek" wire:model="endOfWeek" wire:change="recalculateMetrics">
+                        </div>
+                        <div>
+                            <input type="submit" value="Update">
+                        </div>
+                        <div class="w-full col-span-1 md:col-span-2 lg:col-span-3">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+                                <!-- Statistic Card Example -->
+                                <div
+                                    class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
+                                    <h3 class="text-xl font-semibold text-white">Distance</h3>
+                                    <p class="text-white text-lg">{{$this->weeklyMileage}}</p>
+                                </div>
+                                <!-- Additional cards -->
+                                <div
+                                    class="bg-gradient-to-tr from-yellow-200 via-blue-500 to-gray-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                    <h3 class="text-xl font-semibold text-white">Calories</h3>
+                                    <p class="text-white text-lg">{{ $this->calories }} kcal</p>
+                                </div>
+                                <div
+                                    class="bg-gradient-to-tr from-blue-900  via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                    <h3 class="text-xl font-semibold text-white">Elevation</h3>
+                                    <p class="text-white text-lg">{{ $this->elevation }} ft</p>
+                                </div>
+                                <div
+                                    class="bg-gradient-to-tr from-green-240 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                    <h3 class="text-xl font-semibold text-white">Number of rides</h3>
+                                    <p class="text-white
+                            text-lg">{{ count($this->rides) }}</p>
+                                </div>
+                                <div
+                                    class="bg-gradient-to-br from-yellow-100 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                    <h3 class="text-xl font-semibold text-white">Max Speed</h3>
+                                    <p class="text-white text-lg">{{ number_format($this->weeklyMaxSpeed, 1) }} mph</p>
+                                </div>
+                                <div
+                                    class="bg-gradient-to-tr from-purple-400 via-blue-700 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
+                                    <h3 class="text-xl font-semibold text-white">Average</h3>
+                                    <p class="text-white text-lg">{{ number_format($this->weeklyAverageSpeed,1) }}
+                                        mph</p>
+                                </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-                        <!-- Statistic Card Example -->
-                        <div
-                            class="bg-gradient-to-br from-gray-300 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 hover:rotate-12 transition-transform duration-300">
-                            <h3 class="text-xl font-semibold text-white">Distance</h3>
-                            <p class="text-white text-lg">{{ number_format($this->weeklyMileage, 1) }} miles</p>
+                            </div>
                         </div>
-                        <!-- Additional cards -->
-                        <div
-                            class="bg-gradient-to-tr from-yellow-200 via-blue-500 to-gray-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
-                            <h3 class="text-xl font-semibold text-white">Calories</h3>
-                            <p class="text-white text-lg">{{ $this->calories }} kcal</p>
-                        </div>
-                        <div
-                            class="bg-gradient-to-tr from-blue-900  via-blue-300 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
-                            <h3 class="text-xl font-semibold text-white">Elevation</h3>
-                            <p class="text-white text-lg">{{ $this->elevation }} ft</p>
-                        </div>
-                        <div
-                            class="bg-gradient-to-tr from-green-240 via-blue-500 to-yellow-200 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
-                            <h3 class="text-xl font-semibold text-white">Time</h3>
-                            <p class="text-white
-                            text-lg">{{ $this->time }}</p>
-                        </div>
-                        <div
-                            class="bg-gradient-to-br from-yellow-100 via-blue-500 to-purple-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
-                            <h3 class="text-xl font-semibold text-white">Max Speed</h3>
-                            <p class="text-white text-lg">{{ number_format($this->weeklyMaxSpeed, 1) }} mph</p>
-                        </div>
-                        <div
-                            class="bg-gradient-to-tr from-purple-400 via-blue-700 to-blue-600 rounded-lg shadow-lg p-4 hover:scale-105 transition-transform duration-300">
-                            <h3 class="text-xl font-semibold text-white">Average</h3>
-                            <p class="text-white text-lg">{{ number_format($this->weeklyAverageSpeed,1) }} mph</p>
-                        </div>
-
                     </div>
-                </div>
+                </form>
+
 
                 <div class="bg-white dark:bg-gray-800">
                     <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
