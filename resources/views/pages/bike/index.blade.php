@@ -94,10 +94,10 @@ mount(function () {
                     <div class="grid grid-cols-2 p-2">
                         <div class="p-6">
                             <label  class="text-slate-800 dark:text-gray-200" for="startOfWeek">Start:</label>
-                            <input  class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="startOfWeek" name="startOfWeek" wire:model="startOfWeek" wire:change="recalculateMetrics" >                        </div>
+                            <input  aria-label="start date input" class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="startOfWeek" name="startOfWeek" wire:model="startOfWeek" wire:change="recalculateMetrics" >                        </div>
                         <div class="p-6">
                             <label class="text-slate-800 dark:text-gray-200" for="endOfWeek">End:</label>
-                            <input    class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="endOfWeek" name="endOfWeek" wire:model="endOfWeek" wire:change="recalculateMetrics">
+                            <input aria-labe="end date input" class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date" id="endOfWeek" name="endOfWeek" wire:model="endOfWeek" wire:change="recalculateMetrics">
                         </div>
                         <div>
                             <input type="submit" value="Update">
