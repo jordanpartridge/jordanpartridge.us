@@ -3,13 +3,14 @@
 namespace App\Services;
 
 use App\Models\Ride;
+use Carbon\Carbon;
 
 class RideMetricService
 {
     public function calculateRideMetrics($startDate, $endDate): array
     {
         return [
-            $rides = Ride::whereBetween('date', [$startDate, $endDate])->get(), [
+            $rides = Ride::whereBetween('date', [$startDate, Carbon::parse($endDate)->addDay()])->get(), [
                 'distance'      => $rides->sum('distance'),
                 'calories'      => $rides->sum('calories'),
                 'elevation'     => $rides->sum('elevation'),
