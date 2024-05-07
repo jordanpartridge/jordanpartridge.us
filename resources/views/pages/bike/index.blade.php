@@ -7,7 +7,7 @@ use function Livewire\Volt\{mount, state};
 
 state([
     'startDate' => Carbon::now()->subDays(7)->format('Y-m-d'),
-    'endDate'   => Carbon::now()->addDay()->format('Y-m-d'),
+    'endDate'   => Carbon::now()->format('Y-m-d'),
     'rides'     => [],
     'metrics'   => [],
 ]);
