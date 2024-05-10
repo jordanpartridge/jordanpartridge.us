@@ -55,7 +55,7 @@ class StravaToken extends Model
     /**
      * encrypt the access token before storing it in the database
      *
-     * @param string $value
+     * @param  string  $value
      */
     public function setAccessTokenAttribute($value): void
     {
@@ -67,13 +67,13 @@ class StravaToken extends Model
         table(
             ['id', 'access_token', 'expires_at', 'refresh_token', 'athlete_id'],
             [
-               [
-                   $this->id,
-                   $this->access_token,
-                   $this->expires_at,
-                   $this->refresh_token,
-                   $this->athlete_id,
-               ],
+                [
+                    $this->id,
+                    $this->access_token,
+                    $this->expires_at,
+                    $this->refresh_token,
+                    $this->athlete_id,
+                ],
             ],
         );
     }

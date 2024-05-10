@@ -8,15 +8,14 @@ use App\Http\Integrations\Strava\Strava;
 use App\Models\Ride;
 use App\Models\StravaToken;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Saloon\Http\Response;
-use Illuminate\Console\Command;
-
-use function Laravel\Prompts\table;
 
 use function Laravel\Prompts\info;
+use function Laravel\Prompts\table;
 
 class SyncActivities extends Command
 {
@@ -42,6 +41,7 @@ class SyncActivities extends Command
         Artisan::call('strava:token-refresh');
         if (StravaToken::query()->count() === 0) {
             info('No token found. Please add a token first.');
+
             return;
         }
         StravaToken::query()->each(function ($token) {
@@ -72,12 +72,11 @@ class SyncActivities extends Command
                     'moving_time'   => $activity['moving_time'],
                     'elapsed_time'  => $activity['elapsed_time'],
                 ]);
+
                 return $activity;
             });
 
             $this->info('Rides to Sync: ' . count($activities));
-
-
 
             $response->onError(function ($response) use ($token) {
                 Log::error('Error syncing activities', [
@@ -121,5 +120,4 @@ class SyncActivities extends Command
             $rideData
         );
     }
-
 }

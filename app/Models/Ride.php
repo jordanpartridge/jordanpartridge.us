@@ -42,7 +42,6 @@ class Ride extends Model
         });
     }
 
-
     /**
      * Convert the distance from meters to miles, only take 1 decimal place append with miles
      */
@@ -66,9 +65,6 @@ class Ride extends Model
         return Number::format($this->attributes['elevation'] * 3.28084, 1);
     }
 
-    /**
-     * @return string
-     */
     public function getMovingTimeAttribute(): string
     {
         $hours = floor($this->attributes['moving_time'] / 3600);
@@ -77,9 +73,6 @@ class Ride extends Model
         return $hours . 'h ' . $minutes . 'm';
     }
 
-    /**
-     * @return Carbon
-     */
     public function getDateAttribute(): Carbon
     {
         return Carbon::createFromFormat(

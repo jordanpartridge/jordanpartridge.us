@@ -23,7 +23,6 @@ Route::post('slack', function () {
     return request()->input('challenge');
 })->name('slack.hook')->withoutMiddleware(VerifyCsrfToken::class);
 
-
 Route::middleware('auth')->group(callback: function () {
     Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
         ->middleware('signed')
