@@ -39,7 +39,6 @@ class User extends Authenticatable implements FilamentUser
         'remember_token',
     ];
 
-
     /**
      * Get the attributes that should be cast.
      *

@@ -13,7 +13,7 @@ class RideObserver
      */
     public function created(Ride $ride): void
     {
-        if(config('app.env') === 'testing') {
+        if (config('app.env') === 'testing') {
             return;
         }
 
