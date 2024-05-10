@@ -52,6 +52,6 @@ class StravaController extends Controller
         ]);
 
         // Redirect to the dashboard-x
-        return redirect()->route('profile.edit');
+        return redirect()->route('/');
     }
 }
