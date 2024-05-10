@@ -9,12 +9,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 /**
  * @method static updateOrCreate(string[] $array, array $array1)
  */
 class User extends Authenticatable implements FilamentUser
 {
+    use hasApiTokens;
     use HasFactory;
     use Notifiable;
 
