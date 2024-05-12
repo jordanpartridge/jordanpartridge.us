@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\SlackController;
 use App\Http\Controllers\StravaController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -19,13 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('home', '/')->name('home');
 
-Route::post('slack', function () {
-    return request()->input('challenge');
-})->name('slack.hook')->withoutMiddleware(VerifyCsrfToken::class);
-
-Route::get('login', function () {
-    return route('nova.login');
-})->name('login');
+Route::post('slack', SlackController::class)->name('slack.hook')->withoutMiddleware(VerifyCsrfToken::class);
 
 Route::middleware('auth')->group(callback: function () {
     Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
