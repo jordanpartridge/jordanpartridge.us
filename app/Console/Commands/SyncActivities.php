@@ -8,6 +8,7 @@ use App\Http\Integrations\Strava\Strava;
 use App\Models\Ride;
 use App\Models\StravaToken;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
@@ -15,7 +16,6 @@ use Illuminate\Support\Facades\Log;
 use Saloon\Http\Response;
 
 use function Laravel\Prompts\info;
-use function Laravel\Prompts\table;
 
 class SyncActivities extends Command
 {
@@ -24,7 +24,7 @@ class SyncActivities extends Command
      *
      * @var string
      */
-    protected $signature = 'strava:activities-sync';
+    protected $signature = 'sync';
 
     /**
      * The console command description.
@@ -35,13 +35,14 @@ class SyncActivities extends Command
 
     /**
      * Execute the console command.
+     * @throws Exception
      */
     public function handle(): void
     {
         Artisan::call('strava:token-refresh');
         if (StravaToken::query()->count() === 0) {
             info('No token found. Please add a token first.');
-
+            Log::channel('slack')->info('No token found. Please add a token first.');
             return;
         }
         StravaToken::query()->each(function ($token) {
@@ -58,6 +59,9 @@ class SyncActivities extends Command
                 $strava = new Strava($token->access_token);
                 $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
                 $activity['calories'] = $moreDataResponse->json()['calories'];
+                Log::channel('slack')->info('Ride added', ['ride' => $activity['name']]);
+
+                // this already sends a slack notification
                 Ride::query()->updateOrCreate([
                     'external_id' => $activity['external_id'],
                 ], [
@@ -75,15 +79,15 @@ class SyncActivities extends Command
 
                 return $activity;
             });
-
-            $this->info('Rides to Sync: ' . count($activities));
-
             $response->onError(function ($response) use ($token) {
                 Log::error('Error syncing activities', [
                     'token'    => $token->access_token,
                     'response' => $response->json(),
                 ]);
+                return $response;
             });
+
+            Log::info('Synced activities', ['activities' => $activities->count()]);
         });
     }
 
@@ -114,10 +118,5 @@ class SyncActivities extends Command
                 'elapsed_time'  => $ride['elapsed_time'],
             ];
         })->toArray();
-
-        table(
-            ['date', 'name', 'distance', 'max_speed', 'elevation', 'calories', 'average_speed', 'moving_time', 'elapsed_time'],
-            $rideData
-        );
     }
 }
