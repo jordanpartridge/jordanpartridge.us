@@ -13,7 +13,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
-use Saloon\Http\Response;
 
 use function Laravel\Prompts\info;
 
@@ -45,11 +44,12 @@ class SyncActivities extends Command
             Log::channel('slack')->info('No token found. Please add a token first.');
             return;
         }
+
         StravaToken::query()->each(function ($token) {
-
+            Log::info('Syncing activities', ['token' => $token->id]);
             $response = $this->getActivities($token);
-
-            $activities = collect($response->json());
+            Log::info('Activities', ['activities' => $response->count()]);
+            $activities = $response;
             $activities = $activities->filter(function ($activity) use ($token) {
                 $existingRide = Ride::query()->where('external_id', $activity['external_id'])->first();
                 if ($existingRide || $activity['type'] !== 'Ride') {
@@ -79,13 +79,6 @@ class SyncActivities extends Command
 
                 return $activity;
             });
-            $response->onError(function ($response) use ($token) {
-                Log::error('Error syncing activities', [
-                    'token'    => $token->access_token,
-                    'response' => $response->json(),
-                ]);
-                return $response;
-            });
 
             Log::info('Synced activities', ['activities' => $activities->count()]);
         });
@@ -94,13 +87,36 @@ class SyncActivities extends Command
     /**
      * Get activities from Strava
      */
-    private function getActivities(StravaToken $token): Response
+    private function getActivities(StravaToken $token): Collection
     {
         $strava = new Strava($token->access_token);
-        $activities = new AthleteActivityRequest();
+        $activities = collect();
+        $page = 1;
 
-        return $strava->send($activities);
+        do {
+            try {
+                $response = $strava->send(new AthleteActivityRequest(['page' => $page, 'per_page' => 200]));
+                if ($response->failed()) {
+                    Log::error('Error getting activities', [
+                        'response' => $response->json(),
+                    ]);
+                    break;
+                }
+
+                $currentPageActivities = collect($response->json());
+                $activities = $activities->concat($currentPageActivities);
+                Log::info('Activities so far', ['activities' => $activities->count()]);
+                $page++;
+                sleep(1); // Pause to respect API rate limits
+            } catch (\Exception $e) {
+                Log::error('API request failed', ['exception' => $e->getMessage()]);
+                break;
+            }
+        } while ($currentPageActivities->isNotEmpty());
+
+        return $activities;
     }
+
 
     private function displayRides(Collection $rides): void
     {
