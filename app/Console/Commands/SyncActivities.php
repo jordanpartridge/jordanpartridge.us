@@ -46,9 +46,7 @@ class SyncActivities extends Command
         }
 
         StravaToken::query()->each(function ($token) {
-            Log::info('Syncing activities', ['token' => $token->id]);
             $response = $this->getActivities($token);
-            Log::info('Activities', ['activities' => $response->count()]);
             $activities = $response;
             $activities = $activities->filter(function ($activity) use ($token) {
                 $existingRide = Ride::query()->where('external_id', $activity['external_id'])->first();
@@ -80,7 +78,10 @@ class SyncActivities extends Command
                 return $activity;
             });
 
-            Log::info('Synced activities', ['activities' => $activities->count()]);
+            if($activities->isNotEmpty()) {
+                Log::info('Synced activities', ['activities' => $activities->count()]);
+
+            }
         });
     }
 
@@ -105,7 +106,6 @@ class SyncActivities extends Command
 
                 $currentPageActivities = collect($response->json());
                 $activities = $activities->concat($currentPageActivities);
-                Log::info('Activities so far', ['activities' => $activities->count()]);
                 $page++;
                 sleep(1); // Pause to respect API rate limits
             } catch (\Exception $e) {
