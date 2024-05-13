@@ -78,9 +78,8 @@ class SyncActivities extends Command
                 return $activity;
             });
 
-            if($activities->isNotEmpty()) {
-                Log::info('Synced activities', ['activities' => $activities->count()]);
-
+            if ($activities->isNotEmpty()) {
+                Log::info('Synced activities count', ['count' => $activities->count()]);
             }
         });
     }
@@ -107,7 +106,7 @@ class SyncActivities extends Command
                 $currentPageActivities = collect($response->json());
                 $activities = $activities->concat($currentPageActivities);
                 $page++;
-                sleep(1); // Pause to respect API rate limits
+                sleep(1);
             } catch (\Exception $e) {
                 Log::error('API request failed', ['exception' => $e->getMessage()]);
                 break;
