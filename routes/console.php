@@ -2,6 +2,6 @@
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('strava:token-refresh')->everyFourHours();
+Schedule::command('strava:token-refresh')->everyFourHours()->withoutOverlapping();
 
-Schedule::command('sync')->everyFifteenMinutes();
+Schedule::command('sync')->everyFifteenMinutes()->withoutOverlapping();
