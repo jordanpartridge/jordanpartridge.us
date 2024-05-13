@@ -79,23 +79,24 @@ mount(function (RideMetricService $service) {
                 <h1 class="text-3xl p-2 font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
                     Everyone is entitled to bike joy
                 </h1>
+                <livewire:date-range-picker />
                 <div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:gap-4 xs:grids-cols-2 mb-6">
-                        <div class="md:p-6">
-                            <label class="block text-slate-800 dark:text-gray-200" for="startDate">Start Date</label>
-                            <input aria-label="start date"
-                                   class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"
-                                   id="startDate" name="startDate" wire:model="startDate"
-                                   wire:change="recalculateMetrics">
-                        </div>
-                        <div class="md:p-6">
-                            <label class="block text-slate-800 dark:text-gray-200" for="endOfWeek">End Date</label>
-                            <input aria-label="end date"
-                                   class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"
-                                   id="endOfWeek" name="endOfWeek" wire:model="endDate"
-                                   wire:change="recalculateMetrics">
-                        </div>
-                    </div>
+{{--                    <div class="grid grid-cols-1 sm:grid-cols-2 md:gap-4 xs:grids-cols-2 mb-6">--}}
+{{--                        <div class="md:p-6">--}}
+{{--                            <label class="block text-slate-800 dark:text-gray-200" for="startDate">Start Date</label>--}}
+{{--                            <input aria-label="start date"--}}
+{{--                                   class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"--}}
+{{--                                   id="startDate" name="startDate" wire:model="startDate"--}}
+{{--                                   wire:change="recalculateMetrics">--}}
+{{--                        </div>--}}
+{{--                        <div class="md:p-6">--}}
+{{--                            <label class="block text-slate-800 dark:text-gray-200" for="endOfWeek">End Date</label>--}}
+{{--                            <input aria-label="end date"--}}
+{{--                                   class="text-gray-700 bg-white dark:text-gray-200 dark:bg-gray-800" type="date"--}}
+{{--                                   id="endOfWeek" name="endOfWeek" wire:model="endDate"--}}
+{{--                                   wire:change="recalculateMetrics">--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
                     <div class="w-full col-span-1 md:col-span-2 lg:col-span-3">
                         <div class="f-width grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
                             <div
