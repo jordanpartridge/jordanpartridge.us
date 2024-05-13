@@ -12,18 +12,21 @@ class AthleteActivityRequest extends Request
      */
     protected Method $method = Method::GET;
 
+    public function __construct(
+        private array $payload,
+    ) {
+    }
+
     /**
      * The endpoint for the request
      */
     public function resolveEndpoint(): string
     {
-        return '/athlete/activities';
+        return '/athlete/activities?page=' . $this->payload['page'] . '&per_page=' . $this->payload['per_page'];
     }
 
     public function resolveQuery(): array
     {
-        return [
-            'per_page' => 10,
-        ];
+        return $this->payload;
     }
 }
