@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Integrations\Strava\Requests\TokenExchange;
 use App\Http\Integrations\Strava\Strava;
+use Filament\Notifications\Notification;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,9 +35,13 @@ class StravaController extends Controller
      * @throws FatalRequestException
      * @throws RequestException|\JsonException
      */
-    public function callback(Request $request): RedirectResponse
+    public function callback(Request $request)
     {
         $strava = new Strava();
+
+        if (!$request->has('code')) {
+            return response(['error' => 'No code provided'], 400);
+        }
 
         $tokenExchange = new TokenExchange($request->code);
 
@@ -51,7 +56,12 @@ class StravaController extends Controller
             'athlete_id'    => $data['athlete']['id'],
         ]);
 
+        Notification::make()
+            ->title('Strava Connected')
+            ->success()
+            ->send();
+
         // Redirect to the dashboard-x
-        return redirect()->route('/');
+        return redirect('/admin');
     }
 }
