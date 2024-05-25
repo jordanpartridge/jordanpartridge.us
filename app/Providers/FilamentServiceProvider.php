@@ -15,6 +15,7 @@ class FilamentServiceProvider extends ServiceProvider
     {
 
     }
+
     /**
      * Bootstrap services.
      */
@@ -30,5 +31,4 @@ class FilamentServiceProvider extends ServiceProvider
             ]);
         });
     }
-
 }

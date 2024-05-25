@@ -21,7 +21,6 @@ test('redirect returns an ok response', function () {
 
     $response->assertRedirect('https://www.strava.com/oauth/authorize?' . $query);
 
-
 });
 
 // test cases...

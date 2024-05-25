@@ -34,6 +34,7 @@ class SyncActivities extends Command
 
     /**
      * Execute the console command.
+     *
      * @throws Exception
      */
     public function handle(): void
@@ -42,6 +43,7 @@ class SyncActivities extends Command
         if (StravaToken::query()->count() === 0) {
             info('No token found. Please add a token first.');
             Log::channel('slack')->info('No token found. Please add a token first.');
+
             return;
         }
 
@@ -115,7 +117,6 @@ class SyncActivities extends Command
 
         return $activities;
     }
-
 
     private function displayRides(Collection $rides): void
     {

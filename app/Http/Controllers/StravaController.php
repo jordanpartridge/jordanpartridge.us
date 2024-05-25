@@ -39,7 +39,7 @@ class StravaController extends Controller
     {
         $strava = new Strava();
 
-        if (!$request->has('code')) {
+        if (! $request->has('code')) {
             return response(['error' => 'No code provided'], 400);
         }
 

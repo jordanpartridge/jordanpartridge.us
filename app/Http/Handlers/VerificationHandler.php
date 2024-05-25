@@ -8,23 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 class VerificationHandler implements WebhookHandlerInterface
 {
-    /**
-     * @param array $payload
-     *
-     * @return Response
-     */
     public function handle(array $payload): Response
     {
         Log::channel('slack')->info('Verification request received');
+
         return response(['challenge' => $payload['challenge']], 200);
     }
 
     /**
      * Determine if the handler should handle the incoming payload.
-     *
-     * @param array $payload
-     *
-     * @return bool
      */
     public function shouldHandle(array $payload): bool
     {
