@@ -12,14 +12,8 @@ module.exports = {
     variants: {
         extend: {
             backgroundColor: ['active'],
-        }
+        },
     },
-    content: [
-        './app/**/*.php',
-        "./resources/**/*.{php,html,js,jsx,ts,tsx,vue,twig}",
-    ],
-    plugins: [
-        require('@tailwindcss/forms'),
-        require('@tailwindcss/typography'),
-    ],
+    content: ['./app/**/*.php', './resources/**/*.{php,html,js,jsx,ts,tsx,vue,twig}'],
+    plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
 }
