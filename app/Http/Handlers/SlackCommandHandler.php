@@ -3,6 +3,7 @@
 namespace App\Http\Handlers;
 
 use App\Contracts\WebhookHandlerInterface;
+use App\Models\Deck;
 use App\Models\Ride;
 use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Support\Facades\Artisan;
@@ -18,6 +19,7 @@ class SlackCommandHandler implements WebhookHandlerInterface
         $this->commands = [
             '/list-rides' => 'listRides',
             '/sync-rides' => 'syncRides',
+            '/start-game' => 'startGame',
         ];
     }
 
@@ -25,7 +27,6 @@ class SlackCommandHandler implements WebhookHandlerInterface
      * Handle the incoming webhook payload.
      *
      * @param array $payload
-     * @return IlluminateResponse
      */
     public function handle(array $payload): IlluminateResponse
     {
@@ -33,7 +34,7 @@ class SlackCommandHandler implements WebhookHandlerInterface
 
         if ($command && array_key_exists($command, $this->commands)) {
             $methodName = $this->commands[$command];
-            return $this->$methodName(); // Call the method based on the command
+            return $this->$methodName($payload); // Call the method based on the command
         }
 
         return response(['message' => 'Unknown command: ' . $command], 400);
@@ -42,7 +43,7 @@ class SlackCommandHandler implements WebhookHandlerInterface
     /**
      * List all rides
      */
-    private function listRides(): IlluminateResponse
+    private function listRides(array $payload): IlluminateResponse
     {
         $rides = Ride::all();
         $header = sprintf("%-50s %-50s", "Ride Name", "Ride Distance");
@@ -59,11 +60,26 @@ class SlackCommandHandler implements WebhookHandlerInterface
     /**
      * Sync rides
      */
-    private function syncRides(): IlluminateResponse
+    private function syncRides(array $payload): IlluminateResponse
     {
         Artisan::queue('sync'); // This example assumes you have a corresponding Artisan command
 
         return response(['text' => 'Sync process started, we will notify you once done!'], 200);
+    }
+
+    /*
+     * Start a game
+     */
+    private function startGame(array $payload): IlluminateResponse
+    {
+        $deck = new Deck();
+        $deck->shuffle();
+        $playerCards = $deck->draw(2);
+        $dealerCards = $deck->draw(2);
+        Log::channel('slack')->info('Game started', ['player_cards' => $playerCards, 'dealer_cards' => $dealerCards]);
+        $userId = $payload['user_id'];
+        return response(['text' => "Dealing in:  <@$userId> with $900"], 200);
+
     }
 
 

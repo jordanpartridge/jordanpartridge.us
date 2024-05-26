@@ -14,6 +14,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
+
 use function Laravel\Prompts\info;
 
 class SyncActivities extends Command
@@ -32,6 +35,8 @@ class SyncActivities extends Command
      */
     protected $description = 'Sync activities from strava api';
 
+    protected StravaToken $token;
+
     /**
      * Execute the console command.
      * @throws Exception
@@ -48,35 +53,9 @@ class SyncActivities extends Command
         StravaToken::query()->each(function ($token) {
             $response = $this->getActivities($token);
             $activities = $response;
-            $activities = $activities->filter(function ($activity) use ($token) {
-                $existingRide = Ride::query()->where('external_id', $activity['external_id'])->first();
-                if ($existingRide || $activity['type'] !== 'Ride') {
-                    return false;
-                }
+            $this->token = $token;
+            $activities = $activities->filter([$this, 'filterActivities']);
 
-                $strava = new Strava($token->access_token);
-                $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
-                $activity['calories'] = $moreDataResponse->json()['calories'];
-                Log::channel('slack')->info('Ride added', ['ride' => $activity['name']]);
-
-                // this already sends a slack notification
-                Ride::query()->updateOrCreate([
-                    'external_id' => $activity['external_id'],
-                ], [
-                    'date'          => Carbon::parse($activity['start_date_local']),
-                    'name'          => $activity['name'],
-                    'distance'      => $activity['distance'],
-                    'polyline'      => $activity['map']['summary_polyline'],
-                    'max_speed'     => $activity['max_speed'],
-                    'calories'      => $activity['calories'],
-                    'elevation'     => $activity['total_elevation_gain'],
-                    'average_speed' => $activity['average_speed'],
-                    'moving_time'   => $activity['moving_time'],
-                    'elapsed_time'  => $activity['elapsed_time'],
-                ]);
-
-                return $activity;
-            });
 
             if ($activities->isNotEmpty()) {
                 Log::info('Synced activities count', ['count' => $activities->count()]);
@@ -116,22 +95,46 @@ class SyncActivities extends Command
         return $activities;
     }
 
-
-    private function displayRides(Collection $rides): void
+    /**
+     * Filter activities.
+     *
+     * @param mixed       $activity
+     * @param mixed       $key
+     * @param StravaToken $token
+     * @throws \JsonException
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @return bool
+     */
+    public function filterActivities(array $activity, string $key): bool
     {
-        $rideData = $rides->map(function ($ride) {
+        $existingRide = Ride::query()->where('external_id', $activity['external_id'])->first();
+        if ($existingRide || $activity['type'] !== 'Ride') {
+            return false;
+        }
 
-            return [
-                'date'          => $ride['start_date_local'],
-                'name'          => $ride['name'],
-                'distance'      => $ride['distance'],
-                'max_speed'     => $ride['max_speed'],
-                'calories'      => $ride['calories'],
-                'elevation'     => $ride['total_elevation_gain'],
-                'average_speed' => $ride['average_speed'],
-                'moving_time'   => $ride['moving_time'],
-                'elapsed_time'  => $ride['elapsed_time'],
-            ];
-        })->toArray();
+        $strava = new Strava($this->token->access_token);
+        $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
+        $activity['calories'] = $moreDataResponse->json()['calories'];
+        Log::channel('slack')->info('Ride added', ['ride' => $activity['name']]);
+
+        // this already sends a slack notification
+        Ride::query()->updateOrCreate([
+            'external_id' => $activity['external_id'],
+        ], [
+            'date'          => Carbon::parse($activity['start_date_local']),
+            'name'          => $activity['name'],
+            'distance'      => $activity['distance'],
+            'polyline'      => $activity['map']['summary_polyline'],
+            'max_speed'     => $activity['max_speed'],
+            'calories'      => $activity['calories'],
+            'elevation'     => $activity['total_elevation_gain'],
+            'average_speed' => $activity['average_speed'],
+            'moving_time'   => $activity['moving_time'],
+            'elapsed_time'  => $activity['elapsed_time'],
+        ]);
+
+        return true;
     }
+
 }

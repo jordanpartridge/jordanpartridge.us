@@ -38,11 +38,20 @@ class RefreshExpiredStravaToken extends Command
 
             $response = $strava->send($response)->json();
 
-            $token->update([
-                'access_token'  => $response['access_token'],
-                'expires_at'    => now()->addSeconds($response['expires_in']),
-                'refresh_token' => $response['refresh_token'],
-            ]);
+            if (isset($response['expires_in'])) {
+                $expiresIn = $response['expires_in'];
+                if (is_int($expiresIn) || ctype_digit($expiresIn)) {
+                    $expiresIn = (int)$expiresIn;
+
+                } else {
+                    $expiresIn = 0;
+                }
+                $token->update([
+                    'access_token'  => $response['access_token'],
+                    'expires_at'    => now()->addSeconds($expiresIn),
+                    'refresh_token' => $response['refresh_token'],
+                ]);
+            }
         });
     }
 }
