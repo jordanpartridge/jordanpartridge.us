@@ -12,7 +12,7 @@ return new class () extends Migration {
     {
         Schema::create('suits', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('color');
             $table->string('symbol');
             $table->timestamps();

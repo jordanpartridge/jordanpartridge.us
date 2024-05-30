@@ -37,7 +37,7 @@ class SuitSeeder extends Seeder
         ];
         collect($suits)->each(function ($suit) {
             Log::channel('slack')->info('Creating suit: ' . $suit['name'], $suit);
-            Suit::factory()->create(['name' => $suit['name'], 'symbol' => $suit['symbol'], 'color' => $suit['color']]);
+            Suit::create(['name' => $suit['name'], 'symbol' => $suit['symbol'], 'color' => $suit['color']]);
         });
     }
 }
