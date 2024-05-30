@@ -21,6 +21,7 @@ class Comment extends Model
         'user_id',
     ];
 
+
     /**
      * The attributes that should be cast to native types.
      *

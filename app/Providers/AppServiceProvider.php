@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
     private function registerGates(): self
     {
         Gate::define('viewPulse', function (User $user) {
-            return $user->email === 'jordan@partridge.rocks';
+            return true;
         });
 
         return $this;

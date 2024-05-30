@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use function Laravel\Prompts\table;
 
+/**
+ * @property string $refresh_token
+ */
 class StravaToken extends Model
 {
     use HasFactory;
