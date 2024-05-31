@@ -11,11 +11,18 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class PostResource extends Resource
 {
+    /**
+     * @var string|null
+     */
     protected static ?string $model = Post::class;
 
+    /**
+     * @var string|null
+     */
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -24,10 +31,17 @@ class PostResource extends Resource
             ->schema([
                 TextInput::make('title')
                     ->required()
+                    ->reactive()
                     ->maxLength(400),
-                TextInput::make('slug')
-                    ->required()
-                    ->maxLength(400),
+
+                Forms\Components\Select::make(__('status'))
+                    ->options([
+                        'draft'     => __('Draft'),
+                        'published' => __('Published'),
+                    ])
+                    ->default('draft')
+                    ->required(),
+
                 Forms\Components\FileUpload::make('image')
                     ->required()
                     ->image()
@@ -37,13 +51,14 @@ class PostResource extends Resource
                     ->Label('User')
                     ->options(
                         User::all()->pluck('name', 'id')->toArray()
-                    )
+                    )->default(Auth::user()->id)
                     ->required(),
+
                 Forms\Components\RichEditor::make('body')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\Toggle::make('published'),
 
+                Forms\Components\Toggle::make('published'),
             ]);
     }
 
@@ -53,17 +68,21 @@ class PostResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('published_at')
-                    ->dateTime()
-                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->sortable()
+                    ->formatStateUsing(fn (string $state): string => __(ucfirst($state))),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()

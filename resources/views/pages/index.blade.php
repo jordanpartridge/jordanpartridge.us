@@ -1,7 +1,6 @@
 <?php
 
-use function Laravel\Folio\{middleware, name};
-use function Livewire\Volt\{state, rules};
+use function Laravel\Folio\{name};
 
 name('home');
 
@@ -45,7 +44,7 @@ name('home');
             <div class="container relative max-w-4xl mx-auto mt-20 text-center sm:mt-24 lg:mt-32">
                 @env('local')
                     <div class="space-y-2">
-                        <x-login-link class="text-gray-700 dark:text-gray-300" email="test@jordanpartridge.us"
+                        <x-login-link class="text-gray-700 dark:text-gray-300" email="jordan@partridge.rocks"
                                       label="Login"/>
                     </div>
                 @endenv

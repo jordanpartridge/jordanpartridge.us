@@ -26,7 +26,8 @@
         "saloonphp/laravel-plugin": "^3.0",
         "saloonphp/saloon": "^3.0",
         "spatie/laravel-login-link": "^1.2",
-        "spatie/laravel-markdown": "^2.5"
+        "spatie/laravel-markdown": "^2.5",
+        "spatie/laravel-sluggable": "^3.6"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",

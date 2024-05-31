@@ -5,11 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Post extends Model
 {
     use HasFactory;
-
+    use HasSlug;
     public const STATUS_DRAFT = 'DRAFT';
 
     public const STATUS_PUBLISHED = 'PUBLISHED';
@@ -40,6 +42,8 @@ class Post extends Model
         $query->where('type', 'post');
     }
 
+
+
     public function scopePublished($query): void
     {
         $query->where('status', Post::STATUS_PUBLISHED);
@@ -48,7 +52,7 @@ class Post extends Model
     /**
      * @return mixed
      */
-    public function scopeList($query)
+    public function scopeList($query): mixed
     {
         return $query->orderBy('created_at', 'DESC')
             ->excludeFeatured()
@@ -59,5 +63,12 @@ class Post extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('title')
+            ->saveSlugsTo('slug');
     }
 }
