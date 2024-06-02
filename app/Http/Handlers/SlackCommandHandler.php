@@ -61,7 +61,7 @@ class SlackCommandHandler implements WebhookHandlerInterface
      */
     private function syncRides(): IlluminateResponse
     {
-        Artisan::call('sync');
+        Artisan::queue('sync');
 
         return response(['text' => 'Syncing rides please standby'], 200);
     }
