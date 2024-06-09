@@ -9,17 +9,17 @@ it('shows the right name', function () {
     });
 });
 
-it('can follow the engineering link', function () {
+it('can follow the software-development link', function () {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
-            ->click('@nav-engineering')
-            ->assertPathIs('/engineering');
+            ->click('@nav-software-development')
+            ->assertPathIs('/software-development');
     });
 });
 
 it('can follow the home link', function () {
     $this->browse(function (Browser $browser) {
-        $browser->visit('/engineering')
+        $browser->visit('/software-development')
             ->click('@nav-home')
             ->assertPathIs('/');
     });

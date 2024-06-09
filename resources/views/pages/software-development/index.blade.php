@@ -1,16 +1,6 @@
-<?php
-
-use function Laravel\Folio\{name};
-
-name('home');
-
-?>
-
 <x-layouts.marketing>
-
-    @volt('home')
+    @volt('software-development')
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden" x-cloak>
-
         <svg
             class="absolute top-0 left-0 w-7/12 -ml-40 -translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
             viewBox="0 0 978 615" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,66 +32,39 @@ name('home');
 
         <div class="flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto">
             <div class="container relative max-w-4xl mx-auto mt-20 text-center sm:mt-24 lg:mt-32">
-                @env('local')
-                    <div class="space-y-2">
-                        <x-login-link class="text-gray-700 dark:text-gray-300" email="jordan@partridge.rocks"
-                                      label="Login"/>
-                    </div>
-                @endenv
-                <x-ui.image-rounded src="/img/logo.jpg" alt="logo"/>
 
-                <div style="background-image:linear-gradient(160deg,#4d35e6,#3580e3 50%,#73f7f8, #a729ed)"
-                     class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
-                    <p class="w-auto h-full px-3 bg-slate-50 dark:bg-neutral-900 dark:text-white py-1.5 font-medium text-sm tracking-widest uppercase  rounded-full text-slate-800/90 group-hover:text-white/100">
-                        Jordan Partridge</p>
+                <div class="flex justify-center items-center p-5">
+                    <x-ui.image-rounded src="/img/bike-joy.jpg"/>
                 </div>
-                <h1 class="mt-5 text-4xl font-light leading-tight tracking-tight text-center dark:text-white text-slate-800 sm:text-5xl md:text-8xl">
-                    Passionate Software Engineer</h1>
-                <p class="w-full max-w-2xl mx-auto mt-8 text-lg dark:text-white/60 text-slate-500">Software Engineer |
-                    Foodie | Fat bike Fattie</p>
-                <div class="flex items-center justify-center w-full max-w-sm px-5 mx-auto mt-8 space-x-5">
-                    <x-ui.button type="secondary" tag="a" href="https://www.linkedin.com/in/jordan-partridge-8284897/"
-                                 target="_blank">Linkedin
-                    </x-ui.button>
-                    <x-ui.button type="primary" tag="a" href="https://github.com/jordanpartridge" target="_blank">View
-                        Github
-                    </x-ui.button>
+                <div class="m-2 p-2">
+                    <div
+                        style="background-image:linear-gradient(160deg,rgba(20,208,136,0.43),#3566e3 50%,#73f4f8, #110e0f)"
+                        class="inline-block w-auto p-0.5 shadow rounded-full animate-gradient">
+                        <p class="w-auto h-full px-3 bg-slate-50 dark:bg-neutral-900 dark:text-white py-1.5 font-medium text-sm tracking-widest uppercase  rounded-full text-slate-800/90 group-hover:text-white/100">
+                            Software Development</p>
+                    </div>
                 </div>
 
-                <div
-                    class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden m-6"
-                    x-cloak>
-                    <!-- Centralized YouTube Video Section -->
-                    <div class="flex flex-col items-center justify-center w-full px-8 pt-12 pb-20">
-                        <div class="container max-w-4xl mx-auto text-center">
+                <h1 class="text-3xl p-2 font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
+                    Web developer with 10 years experience in software development.
+                </h1>
+                <div>
+                    <p class="text-xl p-2 font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-2xl lg:text-3xl shadow-sm">
+                    <div class="w-full col-span-1 md:col-span-2 lg:col-span-3">
 
-                            <h2 class="text-3xl font-semibold text-slate-800 dark:text-white mb-4">Podcast Highlight
-                            </h2>
-
-                            <div class="max-w-sm mx-auto mt-10">
-                                <div class="dark:bg-slate bg-white shadow-md rounded-lg overflow-hidden">
-                                    <div class="relative pb-56">
-                                        <iframe class="absolute inset-0 w-full h-full"
-                                                src="https://www.youtube.com/embed/iT5j2fsemWc" frameborder="0"
-                                                allowfullscreen></iframe>
-                                    </div>
-                                    <div class="p-4 dark:text-white dark:bg-slate-900 bg-slate-100 rounded-b-lg">
-                                        <h2 class="text-xl font-semibold">Doing The Work</h2>
-                                        <p class="dark:text-sky-100 text-gray-600 mt-2">
-                                            Listen as Scott Foley explains the value of doing the work and working on your goals every day.
-                                        </p>
-                                        <div class="m-6">
-                                            <x-youtube-subscribe-button channelId="UC8K4ImiCmXKQO6Lb5A8QMcg"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
+                </div>
+
+
+                <div class="bg-white dark:bg-gray-800">
+                    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Check out my Laravel Channel</h2>
+                            <x-youtube-subscribe-button channelId="UCM8yrvyqFf6IFlQIeGwIClQ"/>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
     </div>
     @endvolt
-
 </x-layouts.marketing>

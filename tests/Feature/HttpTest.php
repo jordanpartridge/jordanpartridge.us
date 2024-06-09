@@ -5,8 +5,8 @@ it('can see home page', function () {
     $response->assertStatus(200);
 });
 
-it('can see engineering page', function () {
-    $response = $this->get('/engineering');
+it('can see software-development page', function () {
+    $response = $this->get('/software-development');
     $response->assertStatus(200);
 });
 
