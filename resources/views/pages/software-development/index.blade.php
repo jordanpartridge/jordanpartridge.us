@@ -1,6 +1,9 @@
 <x-layouts.marketing>
     @volt('software-development')
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden" x-cloak>
+        <!-- Laravel install background gif -->
+        <div class="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat bg-gray-100/50 dark:bg-gray-900/50"
+             style="background-image: url('/img/laravel-install.gif');"></div>
         <svg
             class="absolute top-0 left-0 w-7/12 -ml-40 -translate-x-1/2 fill-current opacity-10 dark:opacity-5 text-slate-400"
             viewBox="0 0 978 615" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -30,11 +33,11 @@
                 d="M952.832 409.766c-21.048.812-25.626 5.39-26.438 26.438-.811-21.048-5.39-25.626-26.437-26.438 21.047-.811 25.626-5.39 26.437-26.437.812 21.047 5.39 25.626 26.438 26.437Z"/>
         </svg>
 
-        <div class="flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto">
+        <div class="flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto bg-transparent">
             <div class="container relative max-w-4xl mx-auto mt-20 text-center sm:mt-24 lg:mt-32">
 
                 <div class="flex justify-center items-center p-5">
-                    <x-ui.image-rounded src="/img/bike-joy.jpg"/>
+                    <x-ui.image-rounded src="/img/logo.jpg"/>
                 </div>
                 <div class="m-2 p-2">
                     <div
@@ -45,7 +48,7 @@
                     </div>
                 </div>
 
-                <h1 class="text-3xl p-2 font-normal leading-normal text-center text-slate-800 dark:text-white sm:text-4xl lg:text-5xl shadow-sm">
+                <h1 class="text-3xl p-2 font-normal leading-normal text-center text-white sm:text-4xl lg:text-5xl shadow-sm">
                     Web developer with 10 years experience in software development.
                 </h1>
                 <div>
@@ -56,9 +59,9 @@
                 </div>
 
 
-                <div class="bg-white dark:bg-gray-800">
+                <div>
                     <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-                        <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">Check out my Laravel Channel</h2>
+                        <h2 class="text-2xl font-semibold text-white mb-6 text-center">Check out my Laravel Channel</h2>
                             <x-youtube-subscribe-button channelId="UCM8yrvyqFf6IFlQIeGwIClQ"/>
                     </div>
                 </div>
