@@ -45,7 +45,8 @@ class PostResource extends Resource
                 Forms\Components\FileUpload::make('image')
                     ->required()
                     ->image()
-                    ->disk('public'),
+                    ->disk('public')
+                    ->columnSpanFull(),
 
                 Forms\Components\Select::make('user_id')
                     ->Label('User')
@@ -57,8 +58,6 @@ class PostResource extends Resource
                 Forms\Components\RichEditor::make('body')
                     ->required()
                     ->columnSpanFull(),
-
-                Forms\Components\Toggle::make('published'),
             ]);
     }
 
