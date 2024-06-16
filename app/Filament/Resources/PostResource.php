@@ -69,6 +69,11 @@ class PostResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft'     => 'warning',
+                        'published' => 'success',
+                    })
                     ->sortable()
                     ->formatStateUsing(fn (string $state): string => __(ucfirst($state))),
 
