@@ -25,21 +25,19 @@ class UserResource extends Resource
                 Wizard::make([
                     Wizard\Step::make('Basic Information')
                         ->schema([
+
+                            FileUpload::make('avatar')
+                                ->avatar()
+                                ->maxSize(1024),
+
                             TextInput::make('name')
                                 ->required()
                                 ->maxLength(255),
+
                             TextInput::make('email')
                                 ->email()
                                 ->required()
                                 ->maxLength(255),
-
-                        ]),
-                    Wizard\Step::make('Avatar')
-                        ->schema([
-                            FileUpload::make('avatar')
-                                ->image()
-                                ->required()
-                                ->maxSize(1024),
                         ]),
                     Wizard\Step::make('Password')
                         ->schema([
@@ -55,7 +53,7 @@ class UserResource extends Resource
                                 ->password()
                                 ->maxLength(255),
                         ]),
-                ]),
+                ])->columnSpanFull(),
             ]);
 
     }
@@ -65,7 +63,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
-                Tables\Columns\ImageColumn::make('avatar')->label('Profile Picture'),
+                Tables\Columns\ImageColumn::make('avatar')->label('Avatar')->circular(),
                 Tables\Columns\TextColumn::make('name')->searchable()->label('Full Name'),
                 Tables\Columns\TextColumn::make('email')->searchable()->label('Email Address'),
                 Tables\Columns\TextColumn::make('created_at')->date()->label('Created At'),
@@ -75,7 +73,7 @@ class UserResource extends Resource
                 // Add any filters if needed
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -94,9 +92,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit'   => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            //            'create' => Pages\CreateUser::route('/create'),
+            //            'edit'   => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }
