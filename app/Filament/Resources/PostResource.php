@@ -23,7 +23,7 @@ class PostResource extends Resource
     /**
      * @var string|null
      */
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
 
     public static function form(Form $form): Form
     {
