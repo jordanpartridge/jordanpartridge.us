@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -20,17 +22,42 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name'),
+                Wizard::make([
+                    Wizard\Step::make('Basic Information')
+                        ->schema([
+                            TextInput::make('name')
+                                ->required()
+                                ->maxLength(255),
+                            TextInput::make('email')
+                                ->email()
+                                ->required()
+                                ->maxLength(255),
 
-                TextInput::make('email'),
+                        ]),
+                    Wizard\Step::make('Avatar')
+                        ->schema([
+                            FileUpload::make('avatar')
+                                ->image()
+                                ->required()
+                                ->maxSize(1024),
+                        ]),
+                    Wizard\Step::make('Password')
+                        ->schema([
+                            TextInput::make('password')
+                                ->password()
+                                ->confirmed()
+                                ->dehydrated(fn ($state) => filled($state))
+                                ->helperText('Leave empty to keep the current password')
+                                ->maxLength(255)
+                                ->autocomplete(false),
 
-                TextInput::make('password')
-                    ->type('password')
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->confirmed(),
-
-                TextInput::make('password_confirmation')->type('password'),
+                            TextInput::make('password_confirmation')
+                                ->password()
+                                ->maxLength(255),
+                        ]),
+                ]),
             ]);
+
     }
 
     public static function table(Table $table): Table
@@ -38,13 +65,14 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
-                Tables\Columns\TextColumn::make('name')->searchable(),
-                Tables\Columns\TextColumn::make('email')->searchable(),
-                Tables\Columns\TextColumn::make('created_at')->date(),
-                Tables\Columns\TextColumn::make('updated_at')->date(),
+                Tables\Columns\ImageColumn::make('avatar')->label('Profile Picture'),
+                Tables\Columns\TextColumn::make('name')->searchable()->label('Full Name'),
+                Tables\Columns\TextColumn::make('email')->searchable()->label('Email Address'),
+                Tables\Columns\TextColumn::make('created_at')->date()->label('Created At'),
+                Tables\Columns\TextColumn::make('updated_at')->date()->label('Updated At'),
             ])
             ->filters([
-                //
+                // Add any filters if needed
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -59,7 +87,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            // Define any relations if needed
         ];
     }
 
