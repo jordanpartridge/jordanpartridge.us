@@ -59,7 +59,6 @@ class SyncActivities extends Command
                 $activity['calories'] = $moreDataResponse->json()['calories'];
                 Log::channel('slack')->info('Ride added', ['ride' => $activity['name']]);
 
-                dd($activity);
                 // this already sends a slack notification
                 Ride::query()->updateOrCreate([
                     'external_id' => $activity['external_id'],
