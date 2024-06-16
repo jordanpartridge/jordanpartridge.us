@@ -27,7 +27,12 @@ class RidesResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date')->date(),
+                Tables\Columns\TextColumn::make('distance')->sortable(),
+
             ])
             ->filters([
                 //
@@ -39,7 +44,7 @@ class RidesResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->paginated();
     }
 
     public static function getRelations(): array
