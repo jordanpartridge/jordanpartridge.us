@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Filament\Facades\Filament;
-use Filament\Navigation\UserMenuItem;
+use Filament\Navigation\MenuItem;
 use Illuminate\Support\ServiceProvider;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -22,11 +22,13 @@ class FilamentServiceProvider extends ServiceProvider
     {
         Filament::serving(function () {
             Filament::registerUserMenuItems([
-                UserMenuItem::make()
+                MenuItem::make()
                     ->label('Connect Strava')
                     ->url(route('strava.redirect'))
                     ->icon('heroicon-s-cog'),
-                // ...
+                MenuItem::make()
+                    ->label('Return to Home')
+                    ->url('/'),
             ]);
         });
     }
