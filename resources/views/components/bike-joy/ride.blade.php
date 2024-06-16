@@ -1,4 +1,5 @@
 @php use Illuminate\Support\Carbon; @endphp
+<div class="w-full m-4 mb-0">
 <div class="bg-gray-50 dark:bg-gray-900 p-8 rounded-2xl shadow-lg transition-shadow duration-300 flex flex-col lg:flex-row">
     <!-- Map Section -->
     <div class="relative w-full lg:w-1/3 mb-4 lg:mb-0 lg:mr-6">
@@ -38,4 +39,5 @@
             @endforeach
         </div>
     </div>
+</div>
 </div>
