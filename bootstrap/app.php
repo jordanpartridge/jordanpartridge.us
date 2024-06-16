@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Middleware\RedirectToDashboard;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,10 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'redirect-to-dashboard-x' => \App\Http\Middleware\RedirectToDashboard::class,
+            'redirect-to-dashboard-x' => RedirectToDashboard::class,
         ]);
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        Integration::handles($exceptions);
     })->create();

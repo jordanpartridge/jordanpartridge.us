@@ -29,6 +29,12 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\FileUpload::make('image')
+                    ->required()
+                    ->image()
+                    ->disk('public')
+                    ->columnSpanFull(),
+
                 TextInput::make('title')
                     ->required()
                     ->reactive()
@@ -42,20 +48,16 @@ class PostResource extends Resource
                     ->default('draft')
                     ->required(),
 
-                Forms\Components\FileUpload::make('image')
-                    ->required()
-                    ->image()
-                    ->disk('public')
-                    ->columnSpanFull(),
+
 
                 Forms\Components\Select::make('user_id')
                     ->Label('User')
                     ->options(
                         User::all()->pluck('name', 'id')->toArray()
                     )->default(Auth::user()->id)
-                    ->required(),
+                    ->required()->dehydrated(fn ($state) => Auth::user()->id),
 
-                Forms\Components\RichEditor::make('body')
+                Forms\Components\MarkdownEditor::make('body')
                     ->required()
                     ->columnSpanFull(),
             ]);
