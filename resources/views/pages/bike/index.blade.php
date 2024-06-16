@@ -37,9 +37,11 @@ mount(function (RideMetricService $service) {
         body {
             font-family: 'Poppins', sans-serif;
         }
+
         .fade-in {
             animation: fadeIn 1.5s ease-in-out;
         }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -48,12 +50,14 @@ mount(function (RideMetricService $service) {
                 opacity: 1;
             }
         }
+
         .gradient-border {
             border: 2px solid;
             border-image-slice: 1;
             border-width: 3px;
             border-image-source: linear-gradient(45deg, #f3ec78, #af4261);
         }
+
         .playlist-container {
             background-color: #4b5563; /* Tailwind's gray-700 */
             border-radius: 12px;
@@ -61,6 +65,7 @@ mount(function (RideMetricService $service) {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s, box-shadow 0.3s;
         }
+
         .playlist-container:hover {
             transform: scale(1.05);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -117,7 +122,8 @@ mount(function (RideMetricService $service) {
                                         <h3 class="text-xl font-semibold text-white">
                                             <span class="emoji">🚴‍♂️</span> Distance
                                         </h3>
-                                        <p class="text-white text-lg special-text">{{$this->metrics['distance']}} miles</p>
+                                        <p class="text-white text-lg special-text">{{$this->metrics['distance']}}
+                                            miles</p>
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +135,8 @@ mount(function (RideMetricService $service) {
                                         <h3 class="text-xl font-semibold text-white">
                                             <span class="emoji">🔥</span> Calories
                                         </h3>
-                                        <p class="text-white text-lg special-text">{{ $this->metrics['calories'] }} calories</p>
+                                        <p class="text-white text-lg special-text">{{ $this->metrics['calories'] }}
+                                            calories</p>
                                     </div>
                                 </div>
                             </div>
@@ -140,7 +147,8 @@ mount(function (RideMetricService $service) {
                                         <h3 class="text-xl font-semibold text-white">
                                             <span class="emoji">🏔️</span> Elevation
                                         </h3>
-                                        <p class="text-white text-lg special-text">{{ $this->metrics['elevation'] }} ft</p>
+                                        <p class="text-white text-lg special-text">{{ $this->metrics['elevation'] }}
+                                            ft</p>
                                     </div>
                                 </div>
                             </div>
@@ -162,7 +170,8 @@ mount(function (RideMetricService $service) {
                                         <h3 class="text-xl font-semibold text-white">
                                             <span class="emoji">⚡</span> Max Speed
                                         </h3>
-                                        <p class="text-white text-lg special-text">{{ $this->metrics['max_speed']}} mph</p>
+                                        <p class="text-white text-lg special-text">{{ $this->metrics['max_speed']}}
+                                            mph</p>
                                     </div>
                                 </div>
                             </div>
@@ -173,7 +182,8 @@ mount(function (RideMetricService $service) {
                                         <h3 class="text-xl font-semibold text-white">
                                             <span class="emoji">🏎️</span> Average Speed
                                         </h3>
-                                        <p class="text-white text-lg special-text">{{ $this->metrics['average_speed'] }} mph</p>
+                                        <p class="text-white text-lg special-text">{{ $this->metrics['average_speed'] }}
+                                            mph</p>
                                     </div>
                                 </div>
                             </div>
@@ -191,9 +201,7 @@ mount(function (RideMetricService $service) {
                     Check Out My Recent Rides!
                 </h2>
                 @foreach($this->rides as $ride)
-                    <div class="w-full m-4 mb-0">
-                        <x-bike-joy.ride :ride="$ride"/>
-                    </div>
+                    <x-bike-joy.ride :ride="$ride"/>
                 @endforeach
             </div>
         </div>
