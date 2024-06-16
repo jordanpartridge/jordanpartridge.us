@@ -20,7 +20,7 @@ state([
        <x-svg-header> </x-svg-header>
         <div class="flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto">
             <div class="container relative max-w-4xl mx-auto mt-20 text-center sm:mt-24 lg:mt-32">
-                <x-custom-login-link/>
+                <x-custom-login-link email='jordan@partridge.rocks'/>
                 <x-ui.image-rounded src="/img/logo.jpg" alt="logo"/>
 
                 <div style="background-image:linear-gradient(160deg,#4d35e6,#3580e3 50%,#73f7f8, #a729ed)"
