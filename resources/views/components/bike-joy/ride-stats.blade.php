@@ -1,6 +1,6 @@
 @props(['ride', 'condense' => false])
 
-<div class="{{ $condense ? 'w-full parallax flex flex-col justify-center items-center' : 'lg:w-1/3 flex flex-col justify-between' }}">
+<div class="{{ $condense ? 'w-full parallax flex flex-col justify-center items-center' : 'lg:w-2/3 flex flex-col justify-between' }}">
     <div class="text-center mb-2">
         <div class="flex flex-col items-center space-y-2">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white ">{{ $ride->name }}</h2>
