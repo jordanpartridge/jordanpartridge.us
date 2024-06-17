@@ -1,12 +1,18 @@
-
 <!-- Recent Rides Section -->
-<div class="container mx-auto px-4 mt-10">
+<div id="recent-rides" class="container mx-auto px-4 mt-10">
     <h2 class="text-3xl font-semibold text-slate-800 dark:text-white mb-4">Recent Rides</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach (\App\Models\Ride::take(6)->get() as $ride)
             <div
                 class="flex flex-col items-center justify-center w-full p-6 bg-gray-50 dark:bg-gray-900 rounded-lg shadow-xl transform transition-transform duration-300 hover:scale-105">
-                <x-bike-joy.ride :ride="$ride" :condense="true"/>
+                <x-bike-joy.ride :ride="$ride" :condense="true">
+                    <div class="ride-title">
+                        {{ $ride->name }}
+                    </div>
+                    <div class="ride-details">
+                        <!-- Other ride details go here -->
+                    </div>
+                </x-bike-joy.ride>
             </div>
         @endforeach
     </div>
@@ -24,3 +30,32 @@
         </a>
     </div>
 </div>
+
+<style>
+    .ride-title {
+        font-size: 1.25rem; /* Adjust font size as needed */
+        font-weight: bold;
+        color: #1a202c; /* dark:text-white for dark mode */
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+    }
+
+    .ride-title:hover {
+        overflow: visible;
+        white-space: normal;
+        text-overflow: clip;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        position: relative;
+        z-index: 10;
+    }
+
+    .ride-details {
+        /* Add additional styling for ride details here */
+    }
+</style>
