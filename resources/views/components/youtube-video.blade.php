@@ -24,4 +24,13 @@
             </div>
         </div>
     </div>
+    <div class="flex justify-center mt-8">
+        <a href="#recent-rides" class="animate-bounce">
+            <svg class="h-8 w-8 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24"
+                 stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 9l-7 7-7-7"/>
+            </svg>
+        </a>
+    </div>
 </div>
