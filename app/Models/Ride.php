@@ -35,6 +35,11 @@ class Ride extends Model
         'date',
     ];
 
+    public function getRideDiffAttribute(): string
+    {
+        return Carbon::parse($this->attributes['date'])->diffForHumans();
+    }
+
     public static function booted(): void
     {
         static::addGlobalScope('order', function (Builder $builder) {

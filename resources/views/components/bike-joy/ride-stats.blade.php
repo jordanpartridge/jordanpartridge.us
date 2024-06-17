@@ -1,14 +1,10 @@
-<?php
-
-
-?>
 
 <div class="w-full lg:w-2/3 flex flex-col justify-between">
     <div class="flex justify-center items-center mb-4">
         <h2 class="text-3xl font-bold text-gray-800 dark:text-white text-center">{{ $ride->name }}</h2>
     </div>
     <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">
-        {{Carbon::parse($ride->date)->diffForHumans() }}
+        {{  $ride->rideDiff  }}
     </p>
     <div class="mt-6 space-y-4">
         @foreach([
