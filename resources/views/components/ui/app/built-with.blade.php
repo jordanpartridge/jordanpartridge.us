@@ -14,7 +14,7 @@
             <p class="text-base text-gray-600 dark:text-gray-400 text-center mb-4">
                 Find the complete code for this site on GitHub.
             </p>
-            <a href="https://github.com/jordanpartridge/your-repo" target="_blank" class="text-blue-600 hover:underline">
+            <a href="https://github.com/jordanpartridge/jordanpartridge.us" target="_blank" class="text-blue-600 hover:underline">
                 View Code on GitHub
             </a>
         </div>
