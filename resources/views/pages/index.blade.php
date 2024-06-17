@@ -21,7 +21,7 @@ state([
         <div class="flex items-center w-full max-w-6xl px-8 pt-8 pb-16 mx-auto text-white">
             <div class="container relative max-w-4xl mx-auto mt-12 text-center space-y-6">
                 <x-custom-login-link email='jordan@partridge.rocks'/>
-                <x-ui.avatar></x-ui.avatar>
+                <x-ui.avatar class="mx-auto my-4"/>
                 <div class="relative inline-block w-auto p-0.5 shadow-lg rounded-full overflow-hidden group">
                     <div
                         class="absolute inset-0 bg-gradient-to-r from-purple-600 via-blue-500 to-green-400 opacity-75 transition-opacity duration-500 ease-in-out group-hover:opacity-0"></div>
@@ -82,23 +82,23 @@ state([
                     <x-youtube-video url="{{ $podcast_url }}"
                                      title="{{ $podcast_title }}"
                                      description="{{$podcast_description}}"/>
-
-            </div>
-            <div id="recent-rides" class="flex justify-center mt-8">
+                </div>
                 <x-bike-joy.recent-rides/>
-            </div>
 
-            <!-- Additional Suggested Content Sections -->
-            <x-ui.app.projects/>
-            <x-ui.app.built-with/>
+                <!-- Additional Suggested Content Sections -->
+                <x-ui.app.projects/>
+                <x-ui.app.built-with/>
+            </div>
         </div>
+    </div>
     @endvolt
 
 </x-layouts.marketing>
 
 <style>
     .parallax {
-        background-image: url('/path/to/your/image.jpg');
+        background-attachment: fixed;
+        background-image: url('/images/hero.jpg');
         min-height: 400px;
         background-attachment: fixed;
         background-position: center;
