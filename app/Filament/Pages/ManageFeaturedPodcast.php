@@ -32,6 +32,7 @@ class ManageFeaturedPodcast extends SettingsPage
                 Textarea::make('description')
                     ->label('Description')
                     ->helperText('Short Description shown underneath the video')
+                    ->columnSpanFull()
                     ->required(),
 
             ]);

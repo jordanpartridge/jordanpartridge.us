@@ -1,55 +1,45 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Jobs;
 
+use App\Models\StravaToken;
+use App\Models\Ride;
 use App\Http\Integrations\Strava\Requests\ActivityRequest;
 use App\Http\Integrations\Strava\Requests\AthleteActivityRequest;
 use App\Http\Integrations\Strava\Strava;
-use App\Models\Ride;
-use App\Models\StravaToken;
 use Carbon\Carbon;
 use Exception;
-use Filament\Notifications\Notification;
-use Illuminate\Console\Command;
-use Illuminate\Support\Collection;
+use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Collection;
 
-use function Laravel\Prompts\info;
-
-class SyncActivities extends Command
+class SyncActivitiesJob implements ShouldQueue
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'sync';
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Sync activities from strava api';
-
-    /**
-     * Execute the console command.
+     * Execute the job.
      * @throws Exception
      */
     public function handle(): void
     {
         Artisan::call('strava:token-refresh');
         if (StravaToken::query()->count() === 0) {
-            info('No token found. Please add a token first.');
             Log::channel('slack')->info('No token found. Please add a token first.');
             return;
         }
 
         StravaToken::query()->each(function ($token) {
             $response = $this->getActivities($token);
-            $activities = $response;
-            $activities = $activities->filter(function ($activity) use ($token) {
+            $activities = $response->filter(function ($activity) use ($token) {
                 $existingRide = Ride::query()->where('external_id', $activity['external_id'])->first();
                 if ($existingRide || $activity['type'] !== 'Ride') {
                     return false;
@@ -60,7 +50,6 @@ class SyncActivities extends Command
                 $activity['calories'] = $moreDataResponse->json()['calories'];
                 Log::channel('slack')->info('Ride added', ['ride' => $activity['name']]);
 
-                // this already sends a slack notification
                 Ride::query()->updateOrCreate([
                     'external_id' => $activity['external_id'],
                 ], [
@@ -79,15 +68,9 @@ class SyncActivities extends Command
                 return $activity;
             });
 
-
             if ($activities->isNotEmpty()) {
                 Log::info('Synced activities count', ['count' => $activities->count()]);
-                Notification::make()
-                    ->title('Ride Sync Completed')
-                    ->success()
-                    ->send();
             }
-
         });
     }
 
@@ -104,9 +87,7 @@ class SyncActivities extends Command
             try {
                 $response = $strava->send(new AthleteActivityRequest(['page' => $page, 'per_page' => 200]));
                 if ($response->failed()) {
-                    Log::error('Error getting activities', [
-                        'response' => $response->json(),
-                    ]);
+                    Log::error('Error getting activities', ['response' => $response->json()]);
                     break;
                 }
 
@@ -114,31 +95,12 @@ class SyncActivities extends Command
                 $activities = $activities->concat($currentPageActivities);
                 $page++;
                 sleep(1);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error('API request failed', ['exception' => $e->getMessage()]);
                 break;
             }
         } while ($currentPageActivities->isNotEmpty());
 
         return $activities;
-    }
-
-
-    private function displayRides(Collection $rides): void
-    {
-        $rideData = $rides->map(function ($ride) {
-
-            return [
-                'date'          => $ride['start_date_local'],
-                'name'          => $ride['name'],
-                'distance'      => $ride['distance'],
-                'max_speed'     => $ride['max_speed'],
-                'calories'      => $ride['calories'],
-                'elevation'     => $ride['total_elevation_gain'],
-                'average_speed' => $ride['average_speed'],
-                'moving_time'   => $ride['moving_time'],
-                'elapsed_time'  => $ride['elapsed_time'],
-            ];
-        })->toArray();
     }
 }
