@@ -14,7 +14,11 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'log'),
+    'default' => env('MAIL_MAILER', 'resend'),
+
+    'resend' => [
+        'key' => env('RESEND_KEY'),
+    ],
 
     /*
     |--------------------------------------------------------------------------

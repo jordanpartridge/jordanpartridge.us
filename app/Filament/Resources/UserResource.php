@@ -25,7 +25,6 @@ class UserResource extends Resource
                 Wizard::make([
                     Wizard\Step::make('Basic Information')
                         ->schema([
-
                             FileUpload::make('avatar')
                                 ->avatar()
                                 ->maxSize(1024),
@@ -45,17 +44,18 @@ class UserResource extends Resource
                                 ->password()
                                 ->confirmed()
                                 ->dehydrated(fn ($state) => filled($state))
+                                ->required(fn ($context) => $context === 'create')
                                 ->helperText('Leave empty to keep the current password')
                                 ->maxLength(255)
                                 ->autocomplete(false),
 
                             TextInput::make('password_confirmation')
                                 ->password()
+                                ->required(fn ($context) => $context === 'create')
                                 ->maxLength(255),
                         ]),
-                ])->columnSpanFull(),
+                ])
             ]);
-
     }
 
     public static function table(Table $table): Table
@@ -74,6 +74,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->slideOver(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -93,8 +94,8 @@ class UserResource extends Resource
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            //            'create' => Pages\CreateUser::route('/create'),
-            //            'edit'   => Pages\EditUser::route('/{record}/edit'),
+//            'create' => Pages\CreateUser::route('/create'),
+//            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

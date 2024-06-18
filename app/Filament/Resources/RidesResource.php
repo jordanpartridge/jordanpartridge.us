@@ -4,10 +4,15 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RidesResource\Pages;
 use App\Models\Ride;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\BadgeColumn;
 
 class RidesResource extends Resource
 {
@@ -19,7 +24,37 @@ class RidesResource extends Resource
     {
         return $form
             ->schema([
-                //
+                TextInput::make('name')
+                    ->label('Ride Name')
+                    ->required()
+                    ->maxLength(255),
+                DatePicker::make('date')
+                    ->label('Ride Date')
+                    ->required(),
+                TextInput::make('distance')
+                    ->label('Distance (km)')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('duration')
+                    ->label('Duration (min)')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('average_speed')
+                    ->label('Avg Speed (km/h)')
+                    ->required()
+                    ->numeric(),
+                TextInput::make('max_speed')
+                    ->label('Max Speed (km/h)')
+                    ->numeric(),
+                TextInput::make('calories')
+                    ->label('Calories Burned')
+                    ->numeric(),
+                TextInput::make('elevation')
+                    ->label('Elevation Gain (m)')
+                    ->numeric(),
+                Textarea::make('polyline')
+                    ->label('Map Polyline')
+                    ->maxLength(65535),
             ]);
     }
 
@@ -27,34 +62,60 @@ class RidesResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('date')
+                TextColumn::make('date')
+                    ->label('Ride Date')
                     ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('name')
+                    ->sortable()
+                    ->icon('heroicon-o-calendar')
+                    ->color('primary'),
+                TextColumn::make('name')
+                    ->label('Ride Name')
                     ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('distance')->sortable(),
-                Tables\Columns\TextColumn::make('duration')->sortable(),
-                Tables\Columns\TextColumn::make('average_speed')->sortable(),
-
+                    ->sortable()
+                    ->icon('heroicon-o-academic-cap')
+                    ->color('success'),
+                BadgeColumn::make('distance')
+                    ->label('Distance (km)')
+                    ->sortable()
+                    ->colors([
+                        'danger'  => static fn ($state): bool => $state > 32,
+                        'warning' => static fn ($state): bool => $state <= 32 && $state > 20,
+                        'success' => static fn ($state): bool => $state <= 20,
+                    ]),
+                TextColumn::make('duration')
+                    ->label('Duration (min)')
+                    ->sortable()
+                    ->icon('heroicon-o-clock')
+                    ->color('secondary'),
+                TextColumn::make('average_speed')
+                    ->label('Avg Speed (km/h)')
+                    ->sortable()
+                    ->icon('heroicon-o-arrows-up-down')
+                    ->color('info'),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil')
+                    ->color('warning'),
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->color('danger'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])->paginated();
+                Tables\Actions\DeleteBulkAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->color('danger'),
+            ])
+            ->paginated();
     }
 
     public static function getRelations(): array
     {
         return [
-            //
+// Define any relations if needed
         ];
     }
 
