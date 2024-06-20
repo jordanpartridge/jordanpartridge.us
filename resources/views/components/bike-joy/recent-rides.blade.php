@@ -10,7 +10,15 @@
                         {{ $ride->name }}
                     </div>
                     <div class="ride-details">
-                        <!-- Other ride details go here -->
+                        <p class="text-gray-600 dark:text-gray-400 mt-2">
+                            Distance: {{ $ride->distance }} km
+                        </p>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Duration: {{ $ride->duration }} hrs
+                        </p>
+                        <p class="text-gray-600 dark:text-gray-400">
+                            Location: {{ $ride->location }}
+                        </p>
                     </div>
                 </x-bike-joy.ride>
             </div>
@@ -33,7 +41,7 @@
 
 <style>
     .ride-title {
-        font-size: 1.25rem; /* Adjust font size as needed */
+        font-size: 1.25rem;
         font-weight: bold;
         color: #1a202c; /* dark:text-white for dark mode */
         text-align: center;
@@ -41,6 +49,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
+        transition: all 0.3s ease-in-out;
     }
 
     .ride-title:hover {
@@ -56,6 +65,9 @@
     }
 
     .ride-details {
-        /* Add additional styling for ride details here */
+        text-align: center;
+        margin-top: 0.5rem;
+        font-size: 1rem;
+        color: #4a5568; /* dark:text-gray-400 for dark mode */
     }
 </style>

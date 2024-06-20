@@ -60,6 +60,11 @@ name('home');
                     </x-button-link>
                 </div>
 
+
+                  <x-ui.contact-form></x-ui.contact-form>
+
+
+
                 <div class="flex justify-center mt-8">
                     <a href="#youtube" class="animate-bounce">
                         <svg class="h-8 w-8 text-gray-800 dark:text-white" fill="none" viewBox="0 0 24 24"
