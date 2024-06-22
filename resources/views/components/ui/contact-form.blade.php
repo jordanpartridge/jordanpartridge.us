@@ -28,8 +28,15 @@ new class () extends Component {
 
     public function setReason($reason)
     {
-        $this->reason = $reason;
-        $this->dropdownOpen = false;
+        $reasonLabels = [
+            'freelance'     => 'Freelance Project',
+            'teaching'      => 'Teaching Opportunity',
+            'collaboration' => 'Collaboration',
+            'other'         => 'Other',
+        ];
+
+        $this->reason = $reasonLabels[$reason] ?? $reason;
+        $this->toggleDropdown();
     }
 
     public function submit()
