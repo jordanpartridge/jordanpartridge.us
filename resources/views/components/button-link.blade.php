@@ -1,4 +1,10 @@
+@props(['href', 'icon' => null])
+
+
 <a {{ $attributes->merge(['class' => 'btn-gradient']) }}>
+    @if($icon)
+        <i class="{{ $icon }} mr-2"></i>
+    @endif
     {{ $slot }}
 </a>
 

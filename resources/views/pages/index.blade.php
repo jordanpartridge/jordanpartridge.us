@@ -52,17 +52,16 @@ name('home');
                 </p>
 
                 <div class="flex items-center justify-center w-full max-w-sm px-5 mx-auto mt-8 space-x-4">
-                    <x-button-link href="https://www.linkedin.com/in/jordan-partridge-8284897/" class="w-full">
+                    <x-button-link href="https://www.linkedin.com/in/jordan-partridge-8284897/" icon="fab fa-linkedin" class="w-full">
                         LinkedIn
                     </x-button-link>
-                    <x-button-link href="http://www.github.com/jordanpartridge" class="w-full">
+                    <x-button-link href="http://www.github.com/jordanpartridge" icon="fab fa-github" class="w-full">
                         GitHub
                     </x-button-link>
                 </div>
 
 
-                  <x-ui.contact-form></x-ui.contact-form>
-
+                <x-ui.contact-form></x-ui.contact-form>
 
 
                 <div class="flex justify-center mt-8">
@@ -87,4 +86,14 @@ name('home');
     @endvolt
 
 </x-layouts.marketing>
-
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Prevent default scrolling to iframe
+        var iframe = document.getElementById('my-iframe');
+        if (iframe) {
+            iframe.addEventListener('load', function () {
+                window.scrollTo(0, 0);
+            });
+        }
+    });
+</script>
