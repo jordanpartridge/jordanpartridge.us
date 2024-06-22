@@ -1,12 +1,20 @@
-@props(['href', 'icon' => null])
+@props(['href' => null, 'icon' => null])
 
-
-<a {{ $attributes->merge(['class' => 'btn-gradient']) }}>
-    @if($icon)
-        <i class="{{ $icon }} mr-2"></i>
-    @endif
-    {{ $slot }}
-</a>
+@if($href)
+    <a href="{{ $href }}" {{ $attributes->merge(['class' => 'btn-gradient']) }}>
+        @if($icon)
+            <i class="{{ $icon }} mr-2"></i>
+        @endif
+        {{ $slot }}
+    </a>
+@else
+    <button {{ $attributes->merge(['class' => 'btn-gradient']) }}>
+        @if($icon)
+            <i class="{{ $icon }} mr-2"></i>
+        @endif
+        {{ $slot }}
+    </button>
+@endif
 
 <style>
     .btn-gradient {

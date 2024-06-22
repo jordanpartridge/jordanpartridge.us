@@ -129,9 +129,9 @@ new class () extends Component {
     </div>
 
     <div class="flex items-center justify-center mt-8">
-        <button wire:click="submit" class="bg-gradient-to-r from-purple-600 via-blue-500 to-green-400 hover:from-blue-500 hover:to-purple-600 dark:from-pink-600 dark:via-red-500 dark:to-yellow-400 dark:hover:from-red-500 dark:hover:to-pink-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out transform hover:scale-105" type="button">
+        <x-button-link wire:click="submit" type="button">
             Submit
-        </button>
+        </x-button-link>
     </div>
 
 </div>
