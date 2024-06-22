@@ -8,6 +8,7 @@
     <title>{{config('app.name')}}</title>
 
     <script src="https://kit.fontawesome.com/d1901f5db9.js" crossorigin="anonymous"></script>
+
 </head>
 <body>
 

@@ -20,12 +20,12 @@
 
         <!-- Accomplishments Section -->
         <div class="flex flex-col justify-center space-y-6">
-            <h2 class="text-5xl font-extrabold text-gray-800 dark:text-gray-200">About My Career Advisor</h2>
-            <p class="text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-800 dark:text-gray-200">About My Career Advisor</h2>
+            <p class="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
                 My Career Advisor is a no-cost, comprehensive career services platform developed by Goodwill. It offers a wealth of resources and tools designed to assist job seekers, students, and veterans in advancing their careers.
             </p>
-            <h2 class="text-5xl font-extrabold text-gray-800 dark:text-gray-200">My Journey with My Career Advisor</h2>
-            <p class="text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-gray-800 dark:text-gray-200">My Journey with My Career Advisor</h2>
+            <p class="text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-relaxed">
                 Over the past several years, I have had the privilege of contributing to My Career Advisor. This transformative project has provided invaluable experiences in software engineering and team collaboration, shaping my professional growth.
             </p>
         </div>
@@ -33,17 +33,17 @@
 
     <!-- Contributions and Milestones Section -->
     <div class="mt-16">
-        <h2 class="text-5xl font-extrabold mb-12 text-center text-gray-800 dark:text-gray-200">Key Contributions and Milestones</h2>
+        <h2 class="text-4xl sm:text-5xl font-extrabold mb-12 text-center text-gray-800 dark:text-gray-200">Key Contributions and Milestones</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <!-- Contribution 1 -->
             <div class="bg-teal-100 dark:bg-teal-900 p-8 rounded-3xl shadow-2xl transition-transform transform hover:scale-105 hover:bg-teal-200 dark:hover:bg-teal-800">
                 <div class="flex items-center space-x-4 mb-4">
                     <div class="p-4 bg-white bg-opacity-20 rounded-full transition-all transform hover:rotate-12">
-                        <img src="https://img.icons8.com/ios-filled/50/000000/idea.png" class="w-12 h-12">
+                        <i class="fas fa-lightbulb text-teal-700 dark:text-teal-300 text-3xl sm:text-4xl"></i>
                     </div>
-                    <h3 class="text-4xl font-extrabold text-teal-700 dark:text-teal-300">Passion and Innovation</h3>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-teal-700 dark:text-teal-300">Passion and Innovation</h3>
                 </div>
-                <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p class="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                     Spearheaded the transformation of My Career Advisor from an outsourced project to an in-house initiative, fostering a culture of innovation and dedication.
                 </p>
             </div>
@@ -51,11 +51,11 @@
             <div class="bg-blue-100 dark:bg-blue-900 p-8 rounded-3xl shadow-2xl transition-transform transform hover:scale-105 hover:bg-blue-200 dark:hover:bg-blue-800">
                 <div class="flex items-center space-x-4 mb-4">
                     <div class="p-4 bg-white bg-opacity-20 rounded-full transition-all transform hover:rotate-12">
-                        <img src="https://img.icons8.com/ios-filled/50/000000/leadership.png" class="w-12 h-12">
+                        <i class="fas fa-user-tie text-blue-700 dark:text-blue-300 text-3xl sm:text-4xl"></i>
                     </div>
-                    <h3 class="text-4xl font-extrabold text-blue-700 dark:text-blue-300">Mentorship</h3>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-blue-700 dark:text-blue-300">Mentorship</h3>
                 </div>
-                <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p class="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                     Mentored emerging engineers, guiding them from foundational roles to advanced positions, while cultivating a culture of continuous learning and professional growth.
                 </p>
             </div>
@@ -63,11 +63,11 @@
             <div class="bg-indigo-100 dark:bg-indigo-900 p-8 rounded-3xl shadow-2xl transition-transform transform hover:scale-105 hover:bg-indigo-200 dark:hover:bg-indigo-800">
                 <div class="flex items-center space-x-4 mb-4">
                     <div class="p-4 bg-white bg-opacity-20 rounded-full transition-all transform hover:rotate-12">
-                        <img src="https://img.icons8.com/ios-filled/50/000000/teamwork.png" class="w-12 h-12">
+                        <i class="fas fa-users text-indigo-700 dark:text-indigo-300 text-3xl sm:text-4xl"></i>
                     </div>
-                    <h3 class="text-4xl font-extrabold text-indigo-700 dark:text-indigo-300">Leadership</h3>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-indigo-700 dark:text-indigo-300">Leadership</h3>
                 </div>
-                <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p class="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                     Led a high-performing development team to build a scalable platform using Laravel and Vue.js, emphasizing collaboration and innovation.
                 </p>
             </div>
@@ -75,11 +75,11 @@
             <div class="bg-purple-100 dark:bg-purple-900 p-8 rounded-3xl shadow-2xl transition-transform transform hover:scale-105 hover:bg-purple-200 dark:hover:bg-purple-800">
                 <div class="flex items-center space-x-4 mb-4">
                     <div class="p-4 bg-white bg-opacity-20 rounded-full transition-all transform hover:rotate-12">
-                        <img src="https://img.icons8.com/ios-filled/50/000000/equality.png" class="w-12 h-12">
+                        <i class="fas fa-equals text-purple-700 dark:text-purple-300 text-3xl sm:text-4xl"></i>
                     </div>
-                    <h3 class="text-4xl font-extrabold text-purple-700 dark:text-purple-300">Culture and Values</h3>
+                    <h3 class="text-3xl sm:text-4xl font-extrabold text-purple-700 dark:text-purple-300">Culture and Values</h3>
                 </div>
-                <p class="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p class="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                     Championed a culture of diversity, equity, and inclusion, ensuring our team reflected the values we aspired to uphold in the workplace.
                 </p>
             </div>

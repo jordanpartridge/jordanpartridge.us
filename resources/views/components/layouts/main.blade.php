@@ -16,6 +16,8 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <script src="https://kit.fontawesome.com/d1901f5db9.js" crossorigin="anonymous"></script>
+
         <title>{{ $title ?? 'Jordan Partridge' }}</title>
     </head>
     <body class="min-h-screen antialiased bg-white dark:bg-gradient-to-b dark:from-gray-950 dark:to-gray-900">
