@@ -1,5 +1,7 @@
-<header x-data="{ open: false }" class="bg-white border-b border-gray-200/80 dark:bg-gray-900/40 dark:border-gray-200/[15%]">
-    <!-- Primary Navigation Menu -->
+<header x-data="{ open: false }" class="bg-white/80 dark:bg-gray-900/80 border-b border-gray-200/80 dark:border-gray-200/[15%] backdrop-blur-sm">
+
+
+<!-- Primary Navigation Menu -->
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <!-- Logo -->
@@ -20,10 +22,11 @@
                 </nav>
 
                 <div class="flex items-center">
-                    <div class="hidden w-[38px] h-[38px] overflow-hidden rounded-full sm:block" x-cloak>
-                        <x-ui.light-dark-switch></x-ui.light-dark-switch>
+                    <div class="flex items-center ml-4">
+                        <div class="w-10 h-10 overflow-hidden rounded-full">
+                            <x-ui.light-dark-switch></x-ui.light-dark-switch>
+                        </div>
                     </div>
-
                     <!-- User Dropdown -->
                     <div x-data="{ dropdownOpen: false }"
                         :class="{ 'block z-50 w-full p-4 border-t border-gray-100 bg-white dark:bg-gray-900 dark:border-gray-800' : open, 'hidden': ! open }"

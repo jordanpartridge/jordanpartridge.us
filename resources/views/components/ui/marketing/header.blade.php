@@ -1,29 +1,12 @@
-<header class="w-full">
+<header x-data="{ mobileMenuOpen: false }" class="w-full bg-white dark:bg-gray-900 shadow-sm">
     <div class="relative z-20 flex items-center justify-between w-full h-20 max-w-6xl px-6 mx-auto">
-        <div x-data="{ mobileMenuOpen: false }" class="relative flex items-center md:space-x-2 text-neutral-800">
-
-            <div class="relative z-50 flex items-center w-auto h-full">
-                <a href="{{ route('home') }}" class="flex items-center mr-0 md:mr-5 shrink-0">
-                    <x-ui.logo class="block w-auto text-gray-800 fill-current h-7 dark:text-gray-200"/>
+        <div class="flex items-center justify-between w-full">
+            <div class="flex items-center space-x-4 md:space-x-8">
+                <a href="{{ route('home') }}" class="flex items-center shrink-0 transition-transform duration-200 hover:scale-105">
+                    <x-ui.logo class="block w-auto h-8 text-gray-800 fill-current dark:text-gray-200"/>
                 </a>
-                <div @click="mobileMenuOpen=!mobileMenuOpen"
-                     class="relative flex items-center justify-center w-8 h-8 ml-5 overflow-hidden text-gray-500 bg-gray-100 rounded cursor-pointer md:hidden hover:text-gray-700 hover:bg-gray-200">
-                    <div :class="{ 'rotate-0' : mobileMenuOpen }"
-                         class="flex flex-col items-center justify-center w-4 h-4 duration-300 ease-in-out">
-                        <span :class="{ '-rotate-[135deg] translate-y-[5px]' : mobileMenuOpen }"
-                              class="block ease-in-out duration-300 w-full h-0.5 bg-gray-800 rounded-full"></span>
-                        <span :class="{ 'w-0' : mobileMenuOpen, 'w-full' : !mobileMenuOpen }"
-                              class="block ease-in-out duration-300 w-full h-0.5 my-[3px] bg-gray-800 rounded-full"></span>
-                        <span :class="{ '-rotate-45 -translate-y-[5px]' : mobileMenuOpen }"
-                              class="block ease-in-out duration-300 w-full h-0.5 bg-gray-800 rounded-full"></span>
-                    </div>
-                </div>
-            </div>
-            <div :class="{ 'flex' : mobileMenuOpen, 'hidden md:flex' :  !mobileMenuOpen }"
-                 class="fixed top-0 left-0 z-40 flex-col items-start justify-start hidden w-full h-full min-h-screen pt-20 space-y-5 text-sm font-medium duration-150 ease-out transform md:pt-0 text-neutral-500 md:h-auto md:min-h-0 md:left-auto md:items-center md:relative">
 
-                <nav
-                    class="flex flex-col w-full p-6 space-y-2 bg-white dark:bg-slate-500 md:dark:bg-transparent md:p-0 md:flex-row md:space-x-2 md:space-y-0 md:w-auto md:bg-transparent md:flex ">
+                <nav class="hidden md:flex space-x-1 md:space-x-4">
                     <x-ui.nav-link href="/">Home</x-ui.nav-link>
                     <x-ui.nav-link href="/bike">Bike Joy</x-ui.nav-link>
                     <x-ui.nav-link href="/software-development">Software Development</x-ui.nav-link>
@@ -32,11 +15,46 @@
                     @endif
                 </nav>
             </div>
-        </div>
-        <div class="relative z-50 flex items-stretch space-x-3 text-neutral-800">
-            <div x-data class="flex-shrink-0 hidden w-[38px] overflow-hidden rounded-full h-[38px] sm:block" x-cloak>
-                <x-ui.light-dark-switch></x-ui.light-dark-switch>
+
+            <div class="flex items-center space-x-4">
+                <div class="hidden sm:block">
+                    <x-ui.light-dark-switch class="w-[38px] h-[38px] rounded-full overflow-hidden transition-transform duration-200 hover:scale-110"></x-ui.light-dark-switch>
+                </div>
+
+                <button @click="mobileMenuOpen = !mobileMenuOpen"
+                        class="relative flex items-center justify-center w-10 h-10 md:hidden focus:outline-none"
+                        aria-label="Toggle mobile menu">
+                    <div class="flex flex-col items-center justify-center w-6 h-6">
+                        <span :class="{ '-rotate-45 translate-y-1.5' : mobileMenuOpen }"
+                              class="block w-full h-0.5 bg-gray-600 dark:bg-gray-300 transition duration-300 ease-out rounded-full"></span>
+                        <span :class="{ 'opacity-0' : mobileMenuOpen }"
+                              class="block w-full h-0.5 my-1 bg-gray-600 dark:bg-gray-300 transition duration-300 ease-out rounded-full"></span>
+                        <span :class="{ 'rotate-45 -translate-y-1.5' : mobileMenuOpen }"
+                              class="block w-full h-0.5 bg-gray-600 dark:bg-gray-300 transition duration-300 ease-out rounded-full"></span>
+                    </div>
+                </button>
             </div>
         </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div x-show="mobileMenuOpen"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-4"
+         class="fixed inset-0 z-40 pt-20 bg-white dark:bg-gray-900 md:hidden"
+         @click.away="mobileMenuOpen = false"
+         x-cloak>
+        <nav class="flex flex-col items-center space-y-4 text-lg">
+            <x-ui.nav-link href="/">Home</x-ui.nav-link>
+            <x-ui.nav-link href="/bike">Bike Joy</x-ui.nav-link>
+            <x-ui.nav-link href="/software-development">Software Development</x-ui.nav-link>
+            @if(view()->exists('pages.blog.index'))
+                <x-ui.nav-link href="/blog">Blog</x-ui.nav-link>
+            @endif
+        </nav>
     </div>
 </header>
