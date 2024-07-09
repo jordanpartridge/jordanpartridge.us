@@ -7,16 +7,64 @@
 
             <!-- Mission Brief -->
             <div
-                class="mb-20 bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-8 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700">
-                <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-300 mb-4">Mission Brief</h2>
-                <p class="text-gray-700 dark:text-gray-300 leading-relaxed" x-data="{ text: '' }" x-init="
-                    const fullText = 'With over a decade of experience in the digital battlefield, I specialize in developing robust web applications using Laravel and modern web technologies. My mission is to create efficient, scalable, and secure software solutions that drive business success.';
-                    let i = 0;
-                    const intervalId = setInterval(() => {
-                        text += fullText[i];
-                        i++;
-                        if (i === fullText.length) clearInterval(intervalId);
-                    }, 30);" x-text="text"></p>
+                class="mb-20 bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-8 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-gray-50 dark:from-blue-900 dark:to-gray-900 opacity-10 animate-pulse"></div>
+                <h2 class="text-3xl font-semibold text-blue-600 dark:text-blue-300 mb-4 relative">Mission Brief</h2>
+                <div
+                    x-data="{
+            text: '',
+            fullText: `Veteran of both military and digital battlefields, with over a decade of combat-tested experience in software engineering. My tour of duty spans the full stack, with a specialization in Laravel and cutting-edge web technologies.
+
+Mission Objective: To engineer robust, scalable, and secure software solutions that drive mission-critical business operations. My code is my weapon, efficiency is my strategy, and your success is my endgame.
+
+Core Values:
+1. Precision: Every line of code is meticulously crafted for optimal performance.
+2. Adaptability: Rapidly adjusting to new tech terrains and mission parameters.
+3. Teamwork: Collaborating seamlessly with cross-functional units to achieve objectives.
+4. Innovation: Constantly exploring new tactics and technologies to maintain our competitive edge.
+
+Lessons from the Front Lines: My time in the Army Signal Corps ingrained the paramount importance of redundancy. In both military communications and software architecture, I ensure multiple layers of reliability to guarantee uninterrupted operations.
+
+Ready to deploy battle-tested solutions for your next big mission? Let's strategize.`,
+            isTyping: true,
+            skipAnimation: localStorage.getItem('SkipTypewriter') === 'true'
+        }"
+                    x-init="
+            if (skipAnimation) {
+                text = fullText;
+                isTyping = false;
+            } else {
+                let i = 0;
+                const intervalId = setInterval(() => {
+                    text += fullText[i];
+                    i++;
+                    if (i === fullText.length) {
+                        clearInterval(intervalId);
+                        isTyping = false;
+                        localStorage.setItem('skipAnimation', 'true');
+                    }
+                }, 20);
+            }
+        "
+                    class="relative"
+                >
+                    <p
+                        class="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"
+                        x-text="text"
+                        aria-live="polite"
+                    ></p>
+                    <span
+                        x-show="isTyping"
+                        class="inline-block w-2 h-5 ml-1 bg-blue-500 animate-blink"
+                    ></span>
+                    <button
+                        x-show="isTyping"
+                        @click="text = fullText; isTyping = false; localStorage.setItem('skipAnimation', 'true');"
+                        class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+                    >
+                        Skip Animation
+                    </button>
+                </div>
             </div>
 
             <!-- Arsenal -->
@@ -84,6 +132,16 @@
 
                 .animate-pulse {
                     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                }
+
+                @layer utilities {
+                    @keyframes blink {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0; }
+                    }
+                    .animate-blink {
+                        animation: blink 1s step-end infinite;
+                    }
                 }
             </style>
     @endpush
