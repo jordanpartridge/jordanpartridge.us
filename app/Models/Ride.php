@@ -37,7 +37,7 @@ class Ride extends Model
 
     public function getRideDiffAttribute(): string
     {
-        return Carbon::parse($this->attributes['date'])->diffForHumans();
+        return $this->date->diffForHumans();
     }
 
     public static function booted(): void
