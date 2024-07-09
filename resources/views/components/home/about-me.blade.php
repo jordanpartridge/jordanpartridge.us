@@ -34,4 +34,9 @@
         x-text="expanded ? 'Read Less' : 'Read More'"
         aria-expanded="expanded"
     ></button>
+    <p class="mt-4">
+        <a href="/software-development" class="text-blue-500 hover:text-blue-600 transition-colors duration-200">
+            Learn more about my software development expertise →
+        </a>
+    </p>
 </div>
