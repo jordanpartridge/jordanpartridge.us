@@ -49,49 +49,7 @@
                             </div>
                         @endforeach
                     </div>
-                    <div
-                        class="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="silver" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                                  clip-rule="evenodd"></path>
-                        </svg>
-                        Bug Maker
-                    </div>
-                    <div
-                        class="bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="bronze" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path fill-rule="evenodd"
-                                  d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
-                                  clip-rule="evenodd"></path>
-                        </svg>
-                        Code Warrior
-                    </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img src="https://vuejs.org/images/logo.png" alt="Vue.js" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">Vue.js</span>
-                    </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img
-                            src="/img/tailwind.png"
-                            alt="Tailwind CSS" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gry-800 dark:text-gray-200">Tailwind CSS</span>
-                    </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img src="https://raw.githubusercontent.com/livewire/livewire/master/art/logo.svg"
-                             alt="Livewire" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">Livewire</span>
-                    </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img src="https://laravel.com/img/logomark.min.svg" alt="Laravel Folio" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">Laravel Folio</span>
-                    </div>
                 </div>
-            </header>
 
                 <!-- Call to Action -->
                 <div class="text-center">
@@ -109,54 +67,8 @@
                         Initiate Contact Protocol
                     </span>
                     </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img src="https://vuejs.org/images/logo.png" alt="Vue.js" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">Vue.js</span>
-                    </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img
-                            src="/img/tailwind.png"
-                            alt="Tailwind CSS" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gry-800 dark:text-gray-200">Tailwind CSS</span>
-                    </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img src="https://raw.githubusercontent.com/livewire/livewire/master/art/logo.svg"
-                             alt="Livewire" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">Livewire</span>
-                    </div>
-                    <div
-                        class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-6 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 flex flex-col items-center relative">
-                        <img src="https://laravel.com/img/logomark.min.svg" alt="Laravel Folio" class="w-20 h-20 mb-4">
-                        <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">Laravel Folio</span>
-                    </div>
                 </div>
             </div>
-
-
-            <!-- Call to Action -->
-            <div class="relative group">
-                <a href="mailto:jordan@partridge.rocks?subject=Request%20for%20Code%20Commando%20Assistance&body=Mission%20Details:%0A%0ATarget%20Objective:%0A%0AExpected%20Deployment%20Date:%0A%0AAdditional%20Intel:"
-                   class="inline-block bg-gradient-to-r from-blue-500 to-green-500 dark:from-purple-500 dark:to-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 group relative overflow-hidden">
-                    <span class="relative z-10">Request Briefing</span>
-                    <span
-                        class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
-                    <span
-                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <svg class="h-6 w-6 text-blue-600 dark:text-purple-400" fill="none" stroke="currentColor"
-                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-            </svg>
-        </span>
-                </a>
-                <span
-                    class="absolute bottom-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 mb-2">
-        Initiate Contact Protocol
-    </span>
-            </div>
-
         </div>
 
         @push('styles')
