@@ -71,7 +71,7 @@
     [
         'name' => 'My Career Advisor',
         'category' => 'Featured Project',
-        'url' => 'https://www.mycareeradvisor.com/',
+        'url' => 'https://www.mycareeradvisor.com/login?utm_source=jordanpartridge.com&utm_medium=referral&utm_campaign=homepage',
         'description' => 'A comprehensive career services platform developed by Goodwill, offering resources and tools for job seekers, students, and veterans.',
         'logo' => 'https://www.mycareeradvisor.com/img/mca-logo-wide-orange.png',
         'headerClass' => 'bg-gray-100 dark:bg-gray-200',
