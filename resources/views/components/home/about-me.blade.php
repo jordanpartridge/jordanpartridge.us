@@ -4,19 +4,7 @@
      class="mt-8 space-y-6 transition-colors duration-300 ease-in-out">
     <h2 class="text-4xl font-extrabold text-center bg-gradient-to-r from-blue-600 to-teal-400 text-transparent bg-clip-text transition-all duration-300">About Me: From Signal Corps to Software Engineering</h2>
 
-    <div class="flex flex-col items-center justify-center text-center space-y-4 mb-8">
-        <div class="relative inline-block">
-            <img src="img/Signal Corps Insignia.png" alt="U.S. Army Signal Corps Insignia" class="w-32 h-32 drop-shadow-[0_0_0.75rem_rgba(0,0,0,0.5)] transition-all duration-300 hover:scale-105">
-        </div>
-        <div class="space-y-2">
-            <p class="text-2xl italic font-semibold text-yellow-600 dark:text-yellow-400 drop-shadow-[0_2px_2px_rgba(0,0,0,0.3)] transition-colors duration-300">
-                "Pro Patria Vigilans"
-            </p>
-            <p class="text-lg text-blue-600 dark:text-blue-300 transition-colors duration-300">
-                Watchful for the Country
-            </p>
-        </div>
-    </div>
+    <x-signal-corps-insignia/>
 
     <div class="text-lg text-gray-700 dark:text-gray-200 leading-relaxed transition-colors duration-300">
         <p>Picture this: a <span class="text-green-600 dark:text-green-400 font-semibold">kid tinkering</span> with BASIC on an MS-DOS computer, fast-forwarding through <span class="text-yellow-600 dark:text-yellow-300 font-semibold">four years in the United States Army Signal Corps</span>, and landing as a <span class="text-blue-600 dark:text-blue-400 font-semibold">full-stack software engineer</span> with over a decade of experience. That's me – <span class="text-pink-600 dark:text-pink-400 font-bold text-xl">Jordan Partridge</span>, your friendly neighborhood <span class="text-purple-600 dark:text-purple-400 font-semibold">code warrior</span> with a military-grade background in communications!</p>
