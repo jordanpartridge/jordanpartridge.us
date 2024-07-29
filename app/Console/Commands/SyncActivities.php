@@ -13,7 +13,10 @@ use Filament\Notifications\Notification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+
+use Illuminate\Support\Facades\Storage;
 
 use function Laravel\Prompts\info;
 
@@ -55,6 +58,11 @@ class SyncActivities extends Command
                     return false;
                 }
 
+                //save map to s3
+                $map = $this->getMap(mapId: $activity['map']['id'], polyline: $activity['map']['summary_polyline']);
+                $activity['map_url'] = $map;
+
+
                 $strava = new Strava($token->access_token);
                 $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
                 $activity['calories'] = $moreDataResponse->json()['calories'];
@@ -68,6 +76,7 @@ class SyncActivities extends Command
                     'name'          => $activity['name'],
                     'distance'      => $activity['distance'],
                     'polyline'      => $activity['map']['summary_polyline'],
+                    'map_url'       => $activity['map_url'],
                     'max_speed'     => $activity['max_speed'],
                     'calories'      => $activity['calories'],
                     'elevation'     => $activity['total_elevation_gain'],
@@ -140,5 +149,47 @@ class SyncActivities extends Command
                 'elapsed_time'  => $ride['elapsed_time'],
             ];
         })->toArray();
+    }
+
+    /**
+     * @param string $mapId
+     * @param        $polyline
+     * @return string|null
+     */
+    private function getMap(string $mapId, $polyline): ?string
+    {
+        $apiKey = config('services.google.maps.api_key');
+        $encodedPolyline = urlencode($polyline);
+        $url = "https://maps.googleapis.com/maps/api/staticmap?size=600x600&maptype=roadmap&path=enc:{$encodedPolyline}&key={$apiKey}";
+        dd($url);
+        Log::info('Attempting to fetch map', ['url' => $url]);
+
+        try {
+            $response = Http::get($url);
+
+            Log::info('Google Maps API response', [
+                'status' => $response->status(),
+                'body'   => substr($response->body(), 0, 100), // Log first 100 characters of body
+            ]);
+
+            if ($response->successful()) {
+                $imageData = $response->body();
+                $filename = "rides/{$mapId}.png";
+
+                $putResult = Storage::disk('s3')->put($filename, $imageData);
+                Log::info('S3 put result', ['result' => $putResult]);
+
+                if ($putResult) {
+                    $url = Storage::disk('s3')->url($filename);
+                    Log::info('S3 URL generated', ['url' => $url]);
+                    return $url;
+                }
+            }
+        } catch (Exception $e) {
+            Log::error('Error fetching map from Google', ['exception' => $e->getMessage()]);
+        }
+
+        Log::warning('Map fetch failed, returning null');
+        return null;
     }
 }

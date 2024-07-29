@@ -65,7 +65,7 @@ class Ride extends Model
         return Number::format($this->attributes['average_speed'] * 2.23694, 1);
     }
 
-    public function getElevationAttribute()
+    public function getElevationAttribute(): false|string
     {
         return Number::format($this->attributes['elevation'] * 3.28084, 1);
     }
