@@ -48,7 +48,6 @@ class SyncActivitiesJob implements ShouldQueue
                 $strava = new Strava($token->access_token);
                 $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
                 $activity['calories'] = $moreDataResponse->json()['calories'];
-                Log::channel('slack')->info('Ride added', ['ride' => $activity['name']]);
 
                 Ride::query()->updateOrCreate([
                     'external_id' => $activity['external_id'],
