@@ -62,7 +62,7 @@ class StravaToken extends Model
         $this->attributes['access_token'] = encrypt($value);
     }
 
-    public function promptTable()
+    public function promptTable(): void
     {
         table(
             ['id', 'access_token', 'expires_at', 'refresh_token', 'athlete_id'],
