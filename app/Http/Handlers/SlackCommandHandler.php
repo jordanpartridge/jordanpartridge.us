@@ -39,6 +39,18 @@ class SlackCommandHandler implements WebhookHandlerInterface
         return response(['message' => 'Unknown command: ' . $command], 400);
     }
 
+
+    /**
+     * Determine if the handler should handle the incoming payload.
+     *
+     * @param array $payload
+     * @return bool
+     */
+    public function shouldHandle(array $payload): bool
+    {
+        return isset($payload['command']);
+    }
+
     /**
      * List all rides
      */
@@ -64,17 +76,5 @@ class SlackCommandHandler implements WebhookHandlerInterface
         Artisan::queue('sync');
 
         return response(['text' => 'Syncing rides please standby'], 200);
-    }
-
-
-    /**
-     * Determine if the handler should handle the incoming payload.
-     *
-     * @param array $payload
-     * @return bool
-     */
-    public function shouldHandle(array $payload): bool
-    {
-        return isset($payload['command']);
     }
 }

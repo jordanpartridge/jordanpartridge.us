@@ -36,16 +36,16 @@ class Ride extends Model
         'date',
     ];
 
-    public function getRideDiffAttribute(): string
-    {
-        return $this->date->diffForHumans();
-    }
-
     public static function booted(): void
     {
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('date', 'desc');
         });
+    }
+
+    public function getRideDiffAttribute(): string
+    {
+        return $this->date->diffForHumans();
     }
 
     /**

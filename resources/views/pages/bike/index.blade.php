@@ -123,7 +123,7 @@ mount(function (RideMetricService $service) {
                                         <h3 class="text-xl font-semibold text-white">
                                             <span class="emoji">🚴‍♂️</span> Distance
                                         </h3>
-                                        <p class="text-white text-lg special-text">{{$this->metrics['distance']}}
+                                        <p class="text-white text-lg special-text">{{ $this->metrics['distance'] }}
                                             miles</p>
                                     </div>
                                 </div>
@@ -171,7 +171,7 @@ mount(function (RideMetricService $service) {
                                         <h3 class="text-xl font-semibold text-white">
                                             <span class="emoji">⚡</span> Max Speed
                                         </h3>
-                                        <p class="text-white text-lg special-text">{{ $this->metrics['max_speed']}}
+                                        <p class="text-white text-lg special-text">{{ $this->metrics['max_speed'] }}
                                             mph</p>
                                     </div>
                                 </div>
@@ -201,7 +201,7 @@ mount(function (RideMetricService $service) {
                 <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center">
                     Check Out My Recent Rides!
                 </h2>
-                @foreach($this->rides as $ride)
+                @foreach ($this->rides as $ride)
                     <x-bike-joy.ride :ride="$ride"/>
                 @endforeach
             </div>

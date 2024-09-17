@@ -46,19 +46,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-        ];
-    }
-
     public function stravaToken(): HasOne
     {
         return $this->hasOne(StravaToken::class);
@@ -75,5 +62,18 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function getFilamentAvatarUrl(): ?string
     {
         return  $this->avatar ? asset($this->avatar) : null;
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password'          => 'hashed',
+        ];
     }
 }

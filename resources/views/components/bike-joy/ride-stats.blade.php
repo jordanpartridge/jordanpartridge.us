@@ -16,7 +16,7 @@
 
         @unless ($condense)
             <div class="mt-4 space-y-2">
-                @foreach([
+                @foreach ([
                     'Duration' => [$ride->moving_time, '⏱️'],
                     'Elevation' => [$ride->elevation . ' ft', '🏔️'],
                     'Calories Burned' => [$ride->calories . ' kcal', '🔥'],

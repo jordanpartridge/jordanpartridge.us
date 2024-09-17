@@ -1,6 +1,6 @@
 @props([
-    'type' => 'primary', 
-    'size' => 'md', 
+    'type' => 'primary',
+    'size' => 'md',
     'tag' => 'button',
     'href' => '/',
     'submit' => false,

@@ -53,7 +53,7 @@ with(fn () => [
                     <article class="flex space-x-8">
                         <a href="/{{ $this->route_prefix }}/{{ $post->slug }}" class="block w-5/12">
                             @if ($post->image)
-                                <img src="@if(str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http')){{ storage_path($post->image) }}@else{{ asset('storage/' . $post->image) }}@endif" class="relative object-cover w-full h-full bg-gray-200 rounded-lg shadow-lg aspect-video dark:bg-slate-700" alt="{{ $post->title }}" />
+                                <img src="@if (str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http')){{ storage_path($post->image) }}@else{{ asset('storage/' . $post->image) }}@endif" class="relative object-cover w-full h-full bg-gray-200 rounded-lg shadow-lg aspect-video dark:bg-slate-700" alt="{{ $post->title }}" />
                             @else
                                 <div class="flex items-center justify-center w-full text-gray-500 bg-gray-200 dark:bg-gray-800 aspect-video">
                                     <svg class="w-10 h-10 opacity-50" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
@@ -66,7 +66,7 @@ with(fn () => [
                                 <time class="inline-block dark:text-gray-400">{{ date('F j, Y', $post->updated_at->timestamp) }}</time><span class="mx-2">·</span><a class="font-medium underline capitalize hover:underline dark:text-gray-400" href="/category/documentation">{{ $post->user->name }}</a>
                             </div>
                             <h2 class="mb-2 text-xl font-medium leading-tight underline dark:text-slate-300 font-heading sm:text-2xl"><a class="transition duration-200 ease-in dark:hover:text-blue-700 hover:text-primary" href="{{ $this->route_prefix }}/{{ $post->slug }}">{{ $post->title }}</a></h2>
-                            <p class="flex-grow text-lg font-light text-muted dark:text-gray-200">{{ substr(strip_tags($post->body), 0, 200) }}@if(strlen(strip_tags($post->body)) > 200){{ '...' }}@endif</p>
+                            <p class="flex-grow text-lg font-light text-muted dark:text-gray-200">{{ substr(strip_tags($post->body), 0, 200) }}@if (strlen(strip_tags($post->body)) > 200){{ '...' }}@endif</p>
 {{--                            <ul class="mt-5 text-sm">--}}
 {{--                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag1</a></li>--}}
 {{--                                <li class="inline-block px-3 pt-1 pb-1.5 mb-2 mr-2 text-xs font-medium text-gray-500 hover:text-gray-700 lowercase bg-gray-200 rounded-full dark:bg-slate-700"><a class="dark:hover:text-gray-200 dark:text-slate-300 hover:text-primary" href="/tag/tag1">tag2</a></li>--}}

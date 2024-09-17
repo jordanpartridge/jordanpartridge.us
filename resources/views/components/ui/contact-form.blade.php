@@ -100,7 +100,7 @@ new class () extends Component {
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
             </button>
-            <div class="@if(!$dropdownOpen) hidden @endif absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-md shadow-lg">
+            <div class="@if (!$dropdownOpen) hidden @endif absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 rounded-md shadow-lg">
                 <div class="py-1">
                     <div wire:click="setReason('freelance')" class="dropdown-option hover:bg-teal-100 dark:hover:bg-pink-700 hover:opacity-80 dark:hover:opacity-80 hover:scale-102 dark:hover:scale-102 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer transition-all duration-200 ease-in-out">Freelance Project</div>
                     <div wire:click="setReason('teaching')" class="dropdown-option hover:bg-teal-100 dark:hover:bg-pink-700 hover:opacity-80 dark:hover:opacity-80 hover:scale-102 dark:hover:scale-102 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer transition-all duration-200 ease-in-out">Teaching Opportunity</div>

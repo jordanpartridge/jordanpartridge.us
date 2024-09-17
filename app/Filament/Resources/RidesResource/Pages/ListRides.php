@@ -12,6 +12,15 @@ class ListRides extends ListRecords
 {
     protected static string $resource = RidesResource::class;
 
+    public function notifySyncCompleted(): void
+    {
+        Notification::make()
+            ->title('Sync Completed')
+            ->body('The sync process has been completed successfully.')
+            ->success()
+            ->send();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -40,14 +49,5 @@ class ListRides extends ListRecords
         return array_merge(parent::getListeners(), [
             'syncCompleted' => 'notifySyncCompleted',
         ]);
-    }
-
-    public function notifySyncCompleted(): void
-    {
-        Notification::make()
-            ->title('Sync Completed')
-            ->body('The sync process has been completed successfully.')
-            ->success()
-            ->send();
     }
 }

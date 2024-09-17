@@ -15,8 +15,8 @@ $maxWidth = [
 ][$maxWidth];
 @endphp
 
-<div x-data="{ 
-        slideOverOpen: @js($open), 
+<div x-data="{
+        slideOverOpen: @js($open),
     }"
     wire:key="{{ $name }}"
     class="relative z-50 w-auto h-auto">
@@ -24,7 +24,7 @@ $maxWidth = [
         {{ $trigger }}
     </div>
     <template x-teleport="body">
-        <div 
+        <div
             x-show="slideOverOpen"
             @keydown.window.escape="slideOverOpen=false"
             class="relative z-[99]">
@@ -32,20 +32,20 @@ $maxWidth = [
             <div class="fixed inset-0 overflow-hidden">
                 <div class="absolute inset-0 overflow-hidden">
                     <div class="fixed inset-y-0 right-0 flex max-w-full pl-10">
-                        <div 
+                        <div
                             x-on:open-slide-over.window="$event.detail == '{{ $name }}' ? slideOverOpen = true : null"
                             x-on:close.stop="slideOverOpen = false"
                             x-on:keydown.escape.window="slideOverOpen = false"
                             x-on:keydown.tab.prevent="$event.shiftKey || nextFocusable().focus()"
                             x-on:keydown.shift.tab.prevent="prevFocusable().focus()"
-                            x-show="slideOverOpen" 
+                            x-show="slideOverOpen"
                             @click.away="slideOverOpen = false"
-                            x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700" 
-                            x-transition:enter-start="translate-x-full" 
-                            x-transition:enter-end="translate-x-0" 
-                            x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700" 
-                            x-transition:leave-start="translate-x-0" 
-                            x-transition:leave-end="translate-x-full" 
+                            x-transition:enter="transform transition ease-in-out duration-500 sm:duration-700"
+                            x-transition:enter-start="translate-x-full"
+                            x-transition:enter-end="translate-x-0"
+                            x-transition:leave="transform transition ease-in-out duration-500 sm:duration-700"
+                            x-transition:leave-start="translate-x-0"
+                            x-transition:leave-end="translate-x-full"
                             class="w-screen {{ $maxWidth }}">
                             <div class="flex flex-col h-full py-5 overflow-y-scroll bg-white border-l shadow-lg dark:bg-gray-900 dark:border-gray-700/70 border-neutral-100/70">
                                 <div class="px-4 sm:px-5">

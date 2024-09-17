@@ -2,7 +2,7 @@
     <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-10">
         Arsenal</h2>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        @foreach([
+        @foreach ([
             ['Laravel', 95, 'https://laravel.com/img/logomark.min.svg', 'Expert-level proficiency in Laravel, capable of architecting complex applications'],
             ['Vue.js', 85, 'https://vuejs.org/images/logo.png', 'Advanced knowledge in Vue.js, building interactive and responsive UIs'],
             ['Tailwind CSS', 90, '/img/tailwind.png', 'Mastery in rapid, utility-first CSS development with Tailwind'],

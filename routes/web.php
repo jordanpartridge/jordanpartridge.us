@@ -29,7 +29,7 @@ Route::middleware('auth')->group(callback: function () {
     Route::post('logout', LogoutController::class)
         ->name('logout');
 
-    Route::get('/strava/redirect', [StravaController::class, 'redirect'])->name('strava.redirect');
-    Route::get('/strava/callback', [StravaController::class, 'callback'])->name('strava.callback');
+    Route::get('strava/redirect', [StravaController::class, 'redirect'])->name('strava.redirect');
+    Route::get('strava/callback', [StravaController::class, 'callback'])->name('strava.callback');
 
 });

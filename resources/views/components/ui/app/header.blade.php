@@ -16,7 +16,7 @@
                 @endphp
                 <!-- Navigation Links -->
                 <nav :class="{'flex flex-col bg-white dark:bg-gray-900 relative z-50 w-full h-auto px-4 py-5 left-0 mt-16': open, 'hidden': ! open}" class="items-center space-y-3 sm:space-x-3 sm:space-y-0 sm:mt-0 sm:bg-transparent sm:p-0 sm:relative sm:flex sm:-my-px sm:ml-8" x-cloak>
-                    @foreach($navLinks as $title => $route)
+                    @foreach ($navLinks as $title => $route)
                         <x-ui.nav-link href="{{ $route }}">{{ $title }}</x-ui.nav-link>
                     @endforeach
                 </nav>

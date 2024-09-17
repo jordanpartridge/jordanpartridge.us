@@ -8,9 +8,9 @@
 @php $wireModel = $attributes->get('wire:model'); @endphp
 
 <div>
-    @if($label)
+    @if ($label)
         <label for="{{ $id ?? '' }}" class="block text-sm font-medium leading-5 text-gray-700 dark:text-gray-300">
-            {{ $label  }}
+            {{ $label }}
         </label>
     @endif
 
