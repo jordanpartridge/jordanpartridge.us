@@ -3,13 +3,20 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class UserResource extends Resource
@@ -23,7 +30,7 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Wizard::make([
-                    Wizard\Step::make('Basic Information')
+                    Step::make('Basic Information')
                         ->schema([
                             FileUpload::make('avatar')
                                 ->avatar()
@@ -38,7 +45,7 @@ class UserResource extends Resource
                                 ->required()
                                 ->maxLength(255),
                         ]),
-                    Wizard\Step::make('Password')
+                    Step::make('Password')
                         ->schema([
                             TextInput::make('password')
                                 ->password()
@@ -54,7 +61,7 @@ class UserResource extends Resource
                                 ->required(fn ($context) => $context === 'create')
                                 ->maxLength(255),
                         ]),
-                ])
+                ]),
             ]);
     }
 
@@ -62,23 +69,23 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->searchable()->sortable(),
-                Tables\Columns\ImageColumn::make('avatar')->label('Avatar')->circular(),
-                Tables\Columns\TextColumn::make('name')->searchable()->label('Full Name'),
-                Tables\Columns\TextColumn::make('email')->searchable()->label('Email Address'),
-                Tables\Columns\TextColumn::make('created_at')->date()->label('Created At'),
-                Tables\Columns\TextColumn::make('updated_at')->date()->label('Updated At'),
+                TextColumn::make('id')->searchable()->sortable(),
+                ImageColumn::make('avatar')->label('Avatar')->circular(),
+                TextColumn::make('name')->searchable()->label('Full Name'),
+                TextColumn::make('email')->searchable()->label('Email Address'),
+                TextColumn::make('created_at')->date()->label('Created At'),
+                TextColumn::make('updated_at')->date()->label('Updated At'),
             ])
             ->filters([
                 // Add any filters if needed
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->slideOver(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make()->slideOver(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -93,9 +100,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-//            'create' => Pages\CreateUser::route('/create'),
-//            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => ListUsers::route('/'),
+            //            'create' => Pages\CreateUser::route('/create'),
+            //            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }

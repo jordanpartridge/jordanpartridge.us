@@ -4,7 +4,8 @@ namespace App\Filament\Resources\RidesResource\Pages;
 
 use App\Filament\Resources\RidesResource;
 use App\Jobs\SyncActivitiesJob;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Notifications\Notification;
 
@@ -24,8 +25,8 @@ class ListRides extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
-            Actions\Action::make('sync')
+            CreateAction::make(),
+            Action::make('sync')
                 ->label('Sync Rides')
                 ->color('primary')
                 ->icon('heroicon-o-arrows-up-down')
