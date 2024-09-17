@@ -29,3 +29,15 @@ cd jordanpartridge.us
 composer install
 npm install
 npm run dev
+```
+## Code Quality and Formatting
+
+This project uses [Duster](https://github.com/tightenco/duster) to maintain code quality and consistency across the codebase.
+
+This will automatically fix most issues; however, if you prefer to run it manually, you can use the following command:
+
+```bash
+./vendor/bin/duster fix
+```
+
+Also, committing to the repo will automatically run the tests and linting.

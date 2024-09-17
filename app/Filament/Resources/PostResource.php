@@ -6,7 +6,6 @@ use App\Filament\Resources\PostResource\Pages\CreatePost;
 use App\Filament\Resources\PostResource\Pages\EditPost;
 use App\Filament\Resources\PostResource\Pages\ListPosts;
 use App\Models\Post;
-use App\Models\User;
 use Exception;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -68,7 +67,7 @@ class PostResource extends Resource
 
                                         Select::make('user_id')
                                             ->label('Author')
-                                            ->options(User::all()->pluck('name', 'id')->toArray())
+                                            ->relationship('user', 'name')
                                             ->default(Auth::user()->id)
                                             ->required()
                                             ->dehydrated(fn ($state) => Auth::user()->id),

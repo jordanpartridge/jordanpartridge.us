@@ -37,7 +37,7 @@ return [
         'client_id'     => env('STRAVA_CLIENT_ID'),
         'client_secret' => env('STRAVA_CLIENT_SECRET'),
     ],
-    'card-api' => [
+    'card_api' => [
         'api_key'  => env('CARD_API_KEY'),
         'base_url' => env('CARD_API_BASE_URL'),
     ],

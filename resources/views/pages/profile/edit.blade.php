@@ -67,7 +67,7 @@ $updatePassword = function () {
 
 $connectStrava = function () {
     $this->dispatch('toast', message: 'Redirecting to Strava', data: ['position' => 'top-right', 'type' => 'info']);
-    return redirect()->to(route('strava.redirect'));
+    return redirect()->to(route('strava:redirect'));
 };
 
 /**

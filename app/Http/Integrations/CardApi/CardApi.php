@@ -2,17 +2,18 @@
 
 namespace App\Http\Integrations\CardApi;
 
+use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
 
 class CardApi extends Connector
 {
-    /**
-     * Resolves the base URL for the Card API.
-     *
-     * @return string The base URL for the Card API.
-     */
+    public function __construct(string $token, private readonly string $base_url)
+    {
+        $this->authenticate(new TokenAuthenticator($token));
+    }
+
     public function resolveBaseUrl(): string
     {
-        return 'https://card-api.jordanpartridge.us/v1/';
+        return $this->base_url;
     }
 }

@@ -52,7 +52,7 @@ new class () extends Component {
             'message'  => $this->message,
         ];
 
-        User::first()->first()->notify(new ContactFormSubmitted($data));
+        User::first()->notify(new ContactFormSubmitted($data));
 
         session()->flash('message', 'Form successfully submitted.');
 
