@@ -23,7 +23,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     use Notifiable;
     use SendsPasswordResetEmails;
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -56,12 +55,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         return true;
     }
 
-    /**
-     * @return string|null
-     */
     public function getFilamentAvatarUrl(): ?string
     {
-        return  $this->avatar ? asset($this->avatar) : null;
+        return $this->avatar ? asset($this->avatar) : null;
     }
 
     /**
