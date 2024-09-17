@@ -2,7 +2,9 @@
 
 namespace App\Filament\Pages;
 
-class Login extends \Filament\Pages\Auth\Login
+use Filament\Pages\Auth\Login as FilamentLogin;
+
+class Login extends FilamentLogin
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 

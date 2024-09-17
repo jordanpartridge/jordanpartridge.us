@@ -32,8 +32,8 @@ class Ride extends Model
         'max_speed',
     ];
 
-    protected array $dates = [
-        'date',
+    protected $casts = [
+        'date' => 'datetime',
     ];
 
     public static function booted(): void

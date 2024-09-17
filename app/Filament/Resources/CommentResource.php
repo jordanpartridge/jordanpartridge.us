@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\CommentResource\Pages;
+use App\Filament\Resources\CommentResource\Pages\CreateComment;
+use App\Filament\Resources\CommentResource\Pages\EditComment;
+use App\Filament\Resources\CommentResource\Pages\ListComments;
 use App\Models\Comment;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Table;
 
 class CommentResource extends Resource
@@ -33,11 +37,11 @@ class CommentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -52,9 +56,9 @@ class CommentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListComments::route('/'),
-            'create' => Pages\CreateComment::route('/create'),
-            'edit'   => Pages\EditComment::route('/{record}/edit'),
+            'index'  => ListComments::route('/'),
+            'create' => CreateComment::route('/create'),
+            'edit'   => EditComment::route('/{record}/edit'),
         ];
     }
 }

@@ -52,7 +52,6 @@ mount(function (RideMetricService $service) {
         }
 
         .gradient-border {
-            border: 2px solid;
             border-image-slice: 1;
             border-width: 3px;
             border-image-source: linear-gradient(45deg, #f3ec78, #af4261);
