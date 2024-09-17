@@ -15,14 +15,18 @@ final class CardService
      */
     public function __construct(private readonly CardApi $cardApi)
     {
-        $this->initializeDeck();
+    }
+
+    public function getDeck(): array
+    {
+        return $this->cardApi->send(new GetDeck())->json();
     }
 
     /**
      * @throws FatalRequestException
      * @throws RequestException
      */
-    private function initializeDeck(): void
+    public function initializeDeck(): void
     {
         $this->cardApi->send(new CreateDeck('jordan-partridge-us-deck'));
     }
