@@ -9,17 +9,24 @@ use Illuminate\Http\Request;
 
 class CallbackController
 {
+    public function __construct(private readonly Strava $strava)
+    {
+    }
+
     public function __invoke(Request $request)
     {
-        $strava = new Strava();
 
         if (! $request->has('code')) {
             return response(['error' => 'No code provided'], 400);
         }
 
-        $tokenExchange = new TokenExchange($request->code);
+        $tokenExchange = new TokenExchange($request->input('code'));
 
-        $response = $strava->send($tokenExchange);
+        $response = $this->strava->send($tokenExchange);
+
+        if (! $response->ok()) {
+            return response(['error' => 'Failed to exchange token'], 500);
+        }
 
         $data = $response->json();
 
@@ -35,7 +42,6 @@ class CallbackController
             ->success()
             ->send();
 
-        // Redirect to the dashboard-x
         return redirect('/admin');
     }
 }

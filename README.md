@@ -23,6 +23,7 @@ Welcome to my personal website, where I showcase my professional work, hobbies, 
 
 ## Getting Started
 Clone the repository and install the dependencies:
+
 ```bash
 git clone https://github.com/jordanpartridge/jordanpartridge.us.git
 cd jordanpartridge.us
@@ -30,9 +31,17 @@ composer install
 npm install
 npm run dev
 ```
+
 ## Code Quality and Formatting
 
-This project uses [Duster](https://github.com/tightenco/duster) to maintain code quality and consistency across the codebase.
+## Card API
+
+This site uses jordanpartridge/card-api for black jack, please ensure your env is setup
+
+```dotenv
+CARD_API_URL=https://card-api.jordanpartridge.us
+CARD_API_KEY=some-secret-key
+```
 
 This will automatically fix most issues; however, if you prefer to run it manually, you can use the following command:
 
