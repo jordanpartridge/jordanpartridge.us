@@ -43,7 +43,7 @@ CARD_API_URL=https://card-api.jordanpartridge.us
 CARD_API_KEY=some-secret-key
 ```
 
-This will automatically fix most issues; however, if you prefer to run it manually, you can use the following command:
+Running Duster will automatically fix most issues. However, if you prefer to run it manually, you can use the following command:
 
 ```bash
 ./vendor/bin/duster fix
