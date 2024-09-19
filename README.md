@@ -36,7 +36,7 @@ npm run dev
 
 ## Card API
 
-This site uses jordanpartridge/card-api for black jack, please ensure your env is setup
+This site uses jordanpartridge/card-api for Blackjack; please ensure your environment is set up.
 
 ```dotenv
 CARD_API_URL=https://card-api.jordanpartridge.us
