@@ -1,6 +1,7 @@
 <?php
 
 it('can see home page', function () {
+    $this->seed(\Database\Seeders\FeaturedPodcastSeeder::class);
     $response = $this->get('/');
     $response->assertStatus(200);
 });
