@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Integrations\CardApi\CardApi;
 use App\Http\Integrations\CardApi\Requests\CreateDeck;
+use App\Http\Integrations\CardApi\Requests\DrawCard;
 use App\Http\Integrations\CardApi\Requests\GetDeck;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -12,13 +13,20 @@ final readonly class CardService
 {
     public function __construct(
         private CardApi $cardApi,
-        private string $deckName = 'jordan-partridge-us',
+        private string  $deckName = 'jordan-partridge-us',
     ) {
     }
 
-    public function getDeck(): array
+    public function drawCard(): array
     {
-        return $this->cardApi->send(new GetDeck($this->deckName))->json();
+        $deck = $this->getDeck();
+
+        return $this->cardApi->send(new DrawCard($this->deckName))->json();
+    }
+
+    public function getDeck($name = null): array
+    {
+        return $this->cardApi->send(new GetDeck($name ?? $this->deckName))->json();
     }
 
     /**

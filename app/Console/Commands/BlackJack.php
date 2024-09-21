@@ -27,6 +27,9 @@ class BlackJack extends Command
         $deck = $cardService->initializeDeck();
         $this->info('we have deck');
 
+        $card = $cardService->drawCard();
+
+        $this->info('we have a card: ' . $card[0]['rank'] . ' of ' . $card[0]['suit']);
 
         // Add your game logic here
     }
