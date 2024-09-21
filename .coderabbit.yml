@@ -1,4 +1,8 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+path_filters:
+  exclude:
+    - 'public/js/filament/**'
+    - 'database/schema/**'
 language: "en-US"
 early_access: true
 reviews:
