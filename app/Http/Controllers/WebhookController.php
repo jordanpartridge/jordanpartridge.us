@@ -7,7 +7,7 @@ use App\Http\Handlers\VerificationHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class SlackController extends Controller
+class WebhookController extends Controller
 {
     /**
      * @var SlackCommandHandler[]|array
@@ -28,7 +28,6 @@ class SlackController extends Controller
     /**
      * Handle the incoming webhook payload.
      *
-     * @param Request $request
      * @return Response
      */
     public function __invoke(Request $request)

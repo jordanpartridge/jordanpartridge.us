@@ -10,7 +10,7 @@
                     <x-ui.nav-link href="/">Home</x-ui.nav-link>
                     <x-ui.nav-link href="/bike">Bike Joy</x-ui.nav-link>
                     <x-ui.nav-link href="/software-development">Software Development</x-ui.nav-link>
-                    @if(view()->exists('pages.blog.index'))
+                    @if (view()->exists('pages.blog.index'))
                         <x-ui.nav-link href="/blog">Blog</x-ui.nav-link>
                     @endif
                 </nav>
@@ -48,7 +48,7 @@
             <x-ui.nav-link href="/">Home</x-ui.nav-link>
             <x-ui.nav-link href="/bike">Bike Joy</x-ui.nav-link>
             <x-ui.nav-link href="/software-development">Software Development</x-ui.nav-link>
-            @if(view()->exists('pages.blog.index'))
+            @if (view()->exists('pages.blog.index'))
                 <x-ui.nav-link href="/blog">Blog</x-ui.nav-link>
             @endif
         </nav>

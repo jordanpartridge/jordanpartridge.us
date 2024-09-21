@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
+
 use function Laravel\Folio\{middleware, name};
-use function Livewire\Volt\{with, state, rules, mount};
+use function Livewire\Volt\{state, rules, mount};
 
 name('profile.edit');
 middleware(['auth', 'verified']);
@@ -21,7 +22,7 @@ state([
 ]);
 
 mount(function () {
-    $this->name  = $this->user->name;
+    $this->name = $this->user->name;
     $this->email = $this->user->email;
 });
 
@@ -66,7 +67,7 @@ $updatePassword = function () {
 
 $connectStrava = function () {
     $this->dispatch('toast', message: 'Redirecting to Strava', data: ['position' => 'top-right', 'type' => 'info']);
-    return redirect()->to(route('strava.redirect'));
+    return redirect()->to(route('strava:redirect'));
 };
 
 /**
@@ -140,7 +141,7 @@ $destroy = function (Request $request) {
                         <div class="flex items
                         -start">
                             <div>
-                                @if(!$user->stravaToken)
+                                @if (!$user->stravaToken)
                                    <x-ui.button  type="primary" wire:click="connectStrava">{{ __('Connect Strava') }}</x-ui.button>
                                 @else
                                     <x-ui.button  type="danger" wire:click="disconnectStrava" >{{ __('disconnect Strava') }}</x-ui.button>

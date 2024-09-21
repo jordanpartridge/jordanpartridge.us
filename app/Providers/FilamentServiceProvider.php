@@ -24,7 +24,7 @@ class FilamentServiceProvider extends ServiceProvider
             Filament::registerUserMenuItems([
                 MenuItem::make()
                     ->label('Connect Strava')
-                    ->url(route('strava.redirect'))
+                    ->url(route('strava:redirect'))
                     ->icon('heroicon-s-cog'),
                 MenuItem::make()
                     ->label('Return to Home')

@@ -8,13 +8,13 @@
                 <div class="dark:bg-slate-900 bg-gray-800 shadow-lg rounded-xl overflow-hidden">
                     <div class="relative pb-[56.25%]">
                         <iframe class="absolute inset-0 w-full h-full"
-                                src="{{$url}}"
+                                src="{{ $url }}"
                                 allowfullscreen></iframe>
                     </div>
                     <div class="p-6 dark:text-white bg-gray-900">
-                        <h2 class="text-2xl font-bold mb-2">{{$title}}</h2>
+                        <h2 class="text-2xl font-bold mb-2">{{ $title }}</h2>
                         <p class="text-base text-gray-300 mt-2">
-                            {{$description}}
+                            {{ $description }}
                         </p>
                         <div class="mt-4">
                             <x-youtube-subscribe-button channelId="UC8K4ImiCmXKQO6Lb5A8QMcg"/>

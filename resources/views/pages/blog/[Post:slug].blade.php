@@ -18,7 +18,7 @@
             <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                 @if ($post->image)
                     <div class="aspect-w-16 aspect-h-9">
-                        <img src="@if(str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http')){{ $post->image }}@else{{ asset('storage/' . $post->image) }}@endif" alt="{{ $post->title }}" class="object-cover w-full h-full">
+                        <img src="@if (str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http')){{ $post->image }}@else{{ asset('storage/' . $post->image) }}@endif" alt="{{ $post->title }}" class="object-cover w-full h-full">
                     </div>
                 @endif
 

@@ -11,6 +11,12 @@ class TokenExchange extends Request implements HasBody
 {
     use HasJsonBody;
 
+
+    /**
+     * The HTTP method of the request
+     */
+    protected Method $method = Method::POST;
+
     /**
      * The code from the Strava OAuth flow, either an authorization code or a refresh token
      */
@@ -26,11 +32,6 @@ class TokenExchange extends Request implements HasBody
         $this->code = $code;
         $this->grant_type = $grant_type;
     }
-
-    /**
-     * The HTTP method of the request
-     */
-    protected Method $method = Method::POST;
 
     /**
      * The endpoint for the request

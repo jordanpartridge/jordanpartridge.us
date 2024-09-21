@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<\App\Models\Post>
+ * @extends Factory<Post>
  */
 final class PostFactory extends Factory
 {
@@ -17,7 +19,7 @@ final class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id'          => \App\Models\User::factory(),
+            'user_id'          => User::factory(),
             'title'            => fake()->sentence(),
             'body'             => fake()->paragraphs(10, true),
             'image'            => 'https://picsum.photos/1280/720?random=' . fake()->unique()->slug(),

@@ -2,7 +2,9 @@
 
 namespace App\Settings;
 
-class FeaturedPodcastSettings extends \Spatie\LaravelSettings\Settings
+use Spatie\LaravelSettings\Settings;
+
+class FeaturedPodcastSettings extends Settings
 {
     /**
      * @var string

@@ -23,9 +23,30 @@ Welcome to my personal website, where I showcase my professional work, hobbies, 
 
 ## Getting Started
 Clone the repository and install the dependencies:
+
 ```bash
 git clone https://github.com/jordanpartridge/jordanpartridge.us.git
 cd jordanpartridge.us
 composer install
 npm install
 npm run dev
+```
+
+## Code Quality and Formatting
+
+## Card API
+
+This site uses jordanpartridge/card-api for Blackjack; please ensure your environment is set up.
+
+```dotenv
+CARD_API_URL=https://card-api.jordanpartridge.us
+CARD_API_KEY=some-secret-key
+```
+
+Running Duster will automatically fix most issues. However, if you prefer to run it manually, you can use the following command:
+
+```bash
+./vendor/bin/duster fix
+```
+
+Also, committing to the repo will automatically run the tests and linting.

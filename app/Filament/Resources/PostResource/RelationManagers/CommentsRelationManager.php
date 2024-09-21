@@ -2,10 +2,15 @@
 
 namespace App\Filament\Resources\PostResource\RelationManagers;
 
-use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,10 +22,10 @@ class CommentsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\RichEditor::make('content')
+                RichEditor::make('content')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Select::make('user_id')
+                Select::make('user_id')
                     ->options(
                         collect([Auth::user()])->pluck('name', 'id')->toArray()
                     )->label('User')
@@ -33,22 +38,20 @@ class CommentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('comments')
             ->columns([
-                Tables\Columns\TextColumn::make('comments'),
+                TextColumn::make('comments'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ]);
     }
 }

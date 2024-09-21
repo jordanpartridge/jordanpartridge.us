@@ -23,7 +23,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     use Notifiable;
     use SendsPasswordResetEmails;
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -46,6 +45,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'remember_token',
     ];
 
+    public function stravaToken(): HasOne
+    {
+        return $this->hasOne(StravaToken::class);
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar ? asset($this->avatar) : null;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -57,23 +71,5 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
         ];
-    }
-
-    public function stravaToken(): HasOne
-    {
-        return $this->hasOne(StravaToken::class);
-    }
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return true;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getFilamentAvatarUrl(): ?string
-    {
-        return  $this->avatar ? asset($this->avatar) : null;
     }
 }

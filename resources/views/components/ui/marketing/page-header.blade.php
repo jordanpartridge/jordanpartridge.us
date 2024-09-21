@@ -1,5 +1,5 @@
 @props([
-    'title' => 'Page Header Title', 
+    'title' => 'Page Header Title',
     'description' => 'Description goes here'
 ])
 

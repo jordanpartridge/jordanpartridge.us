@@ -75,7 +75,7 @@ Ready to deploy battle-tested solutions for your next big mission? Let's strateg
                     <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-10">
                         Field Operations</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        @foreach([
+                        @foreach ([
                             ['My Career Advisor', 'No cost career services platform connecting jobseekers with the resources they need to be successful in their career.', 'https://www.mycareeradvisor.com'],
                             ['Strava Integration', 'Wonder how often I ride my bike? Check it out on my personalized bike page that syncs from strava every hour whether it needs to or not.', '/bike'],
                         ] as [$project, $description, $link])

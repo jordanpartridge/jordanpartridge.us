@@ -25,7 +25,7 @@
     <!-- Hero content: will be in the middle -->
     <div class="hero-body">
         <div class="container has-text-centered">
-            {{ $slot}}
+            {{ $slot }}
         </div>
     </div>
 

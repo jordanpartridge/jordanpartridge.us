@@ -2,17 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\RidesResource\Pages;
+use App\Filament\Resources\RidesResource\Pages\CreateRides;
+use App\Filament\Resources\RidesResource\Pages\EditRides;
+use App\Filament\Resources\RidesResource\Pages\ListRides;
 use App\Models\Ride;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class RidesResource extends Resource
 {
@@ -97,15 +101,15 @@ class RidesResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->icon('heroicon-o-pencil')
                     ->color('warning'),
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->icon('heroicon-o-trash')
                     ->color('danger'),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make()
+                DeleteBulkAction::make()
                     ->icon('heroicon-o-trash')
                     ->color('danger'),
             ])
@@ -115,16 +119,16 @@ class RidesResource extends Resource
     public static function getRelations(): array
     {
         return [
-// Define any relations if needed
+            // Define any relations if needed
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListRides::route('/'),
-            'create' => Pages\CreateRides::route('/create'),
-            'edit'   => Pages\EditRides::route('/{record}/edit'),
+            'index'  => ListRides::route('/'),
+            'create' => CreateRides::route('/create'),
+            'edit'   => EditRides::route('/{record}/edit'),
         ];
     }
 }

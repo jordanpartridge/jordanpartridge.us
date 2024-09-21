@@ -4,7 +4,8 @@ namespace App\Filament\Resources\RidesResource\Pages;
 
 use App\Filament\Resources\RidesResource;
 use App\Jobs\SyncActivitiesJob;
-use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Notifications\Notification;
 
@@ -12,11 +13,20 @@ class ListRides extends ListRecords
 {
     protected static string $resource = RidesResource::class;
 
+    public function notifySyncCompleted(): void
+    {
+        Notification::make()
+            ->title('Sync Completed')
+            ->body('The sync process has been completed successfully.')
+            ->success()
+            ->send();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
-            Actions\Action::make('sync')
+            CreateAction::make(),
+            Action::make('sync')
                 ->label('Sync Rides')
                 ->color('primary')
                 ->icon('heroicon-o-arrows-up-down')
@@ -40,14 +50,5 @@ class ListRides extends ListRecords
         return array_merge(parent::getListeners(), [
             'syncCompleted' => 'notifySyncCompleted',
         ]);
-    }
-
-    public function notifySyncCompleted(): void
-    {
-        Notification::make()
-            ->title('Sync Completed')
-            ->body('The sync process has been completed successfully.')
-            ->success()
-            ->send();
     }
 }
