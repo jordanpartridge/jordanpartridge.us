@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\Cards\DeckInitializeController;
 use App\Http\Controllers\Strava\CallbackController;
 use App\Http\Controllers\Strava\RedirectController;
+use App\Http\Controllers\WebhookController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -33,5 +34,10 @@ Route::middleware('auth')->group(callback: function () {
     Route::prefix('strava')->as('strava:')->group(function () {
         Route::get('redirect', RedirectController::class)->name('redirect');
         Route::get('callback', CallbackController::class)->name('callback');
+    });
+
+    Route::prefix('cards')->as('cards:')->group(function () {
+        Route::get('initialize', DeckInitializeController::class)
+            ->name('initialize');
     });
 });

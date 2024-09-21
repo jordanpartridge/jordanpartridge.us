@@ -4,30 +4,34 @@ namespace App\Services;
 
 use App\Http\Integrations\CardApi\CardApi;
 use App\Http\Integrations\CardApi\Requests\CreateDeck;
+use App\Http\Integrations\CardApi\Requests\GetDeck;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
-final class CardService
+final readonly class CardService
 {
-    /**
-     * @throws FatalRequestException
-     * @throws RequestException
-     */
-    public function __construct(private readonly CardApi $cardApi)
-    {
+    public function __construct(
+        private CardApi $cardApi,
+        private string $deckName = 'jordan-partridge-us',
+    ) {
     }
 
     public function getDeck(): array
     {
-        return $this->cardApi->send(new GetDeck())->json();
+        return $this->cardApi->send(new GetDeck($this->deckName))->json();
     }
 
     /**
      * @throws FatalRequestException
-     * @throws RequestException
+     * @throws RequestException|\JsonException
      */
-    public function initializeDeck(): void
+    public function initializeDeck(): array
     {
-        $this->cardApi->send(new CreateDeck('jordan-partridge-us-deck'));
+        $existingDeck = $this->getDeck($this->deckName);
+        if ($existingDeck['name'] === $this->deckName) {
+            return $existingDeck;
+        }
+
+        return $this->cardApi->send(new CreateDeck($this->deckName))->json();
     }
 }
