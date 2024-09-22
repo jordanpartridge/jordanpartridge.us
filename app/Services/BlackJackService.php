@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use JsonException;
 use RuntimeException;
 
 class BlackJackService
@@ -49,11 +48,9 @@ class BlackJackService
         $players->each(function ($playerName) use (&$initialHands, $deck) {
             $cards = $this->cardService->drawCard($deck, 2);
             if ($cards->successful()) {
-                try {
-                    $initialHands[$playerName] = $cards->json();
-                } catch (JsonException $e) {
-                    throw new RuntimeException('Failed to draw card: ' . $e->getMessage());
-                }
+                $initialHands[$playerName] = $cards->json();
+            } else {
+                $initialHands['error'] = $cards->toException()->getMessage();
             }
         });
 

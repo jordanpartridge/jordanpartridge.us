@@ -5,10 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Game;
 use App\Services\BlackJackService;
 use Illuminate\Console\Command;
-use JsonException;
-use Laravel\Octane\Exceptions\DdException;
-use Saloon\Exceptions\Request\FatalRequestException;
-use Saloon\Exceptions\Request\RequestException;
 
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
@@ -19,26 +15,22 @@ class BlackJack extends Command
 
     protected $description = 'Play a game of blackjack';
 
-    /**
-     * @throws DdException
-     * @throws FatalRequestException
-     * @throws RequestException
-     * @throws JsonException
-     */
+
     public function handle(BlackJackService $blackJackService): void
     {
         $this->clearScreen();
         $this->displayTitle();
 
-        $name = $this->promptForName();
-        $num_players = suggest('How many players?', ['1', '2', '3', '4', '5'], default: 1, required: true);
-        $players = $this->players($num_players);
+        $game = $blackJackService
+            ->initializeGame(
+                name: $this->promptForName(),
+                players: $this->players(numberOfPlayers: $this->promptForNumPlayers())
+            );
 
         $this->clearScreen();
 
-        $game = $blackJackService->initializeGame($name, $players);
 
-        $deal = $blackJackService->deal($game);
+        $deal = $blackJackService->deal(game: $game);
 
         $dealerCard = $deal['dealer'][0];
 
@@ -57,12 +49,29 @@ class BlackJack extends Command
         );
     }
 
-    private function players(int $num_players): array
+    private function promptForNumPlayers(): int
+    {
+        return suggest(
+            'How many players?',
+            ['1', '2', '3', '4', '5'],
+            default: 1,
+            required: true,
+            validate: function ($value) {
+                $intValue = (int)$value;
+                if ($intValue < 1 || $intValue > 5) {
+                    return 'Please select a number between 1 and 5.';
+                }
+                return null;
+            }
+        );
+    }
+
+    private function players(int $numberOfPlayers): array
     {
         $this->info('Great! Who is playing?');
         $players = [];
 
-        foreach (range(1, $num_players) as $player) {
+        foreach (range(1, $numberOfPlayers) as $player) {
             $players[] = text("Player $player name", "Player $player", required: true);
         }
 

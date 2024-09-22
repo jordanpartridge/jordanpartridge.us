@@ -37,6 +37,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",
+        "barryvdh/laravel-ide-helper": "^3.1",
         "fakerphp/faker": "^1.23",
         "jasonmccreary/laravel-test-assertions": "^2.4",
         "laravel-shift/blueprint": "^2.10",
