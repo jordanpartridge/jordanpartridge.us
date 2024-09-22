@@ -13,6 +13,8 @@ return new class () extends Migration {
             $table->string('deck_slug');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['name', 'deck_slug']);
         });
     }
 
