@@ -47,19 +47,20 @@ class BlackJack extends Command
         );
     }
 
+
     private function promptForNumPlayers(): int
     {
-        return suggest(
+        $validOptions = ['1', '2', '3', '4', '5'];
+
+        return (int) suggest(
             'How many players?',
-            ['1', '2', '3', '4', '5'],
+            $validOptions,
             default: 1,
             required: true,
-            validate: function ($value) {
-                $intValue = (int) $value;
-                if ($intValue < 1 || $intValue > 5) {
-                    return 'Please select a number between 1 and 5.';
+            validate: function ($value) use ($validOptions) {
+                if (!in_array($value, $validOptions, true)) {
+                    return 'Please select a valid number between 1 and 5.';
                 }
-
                 return null;
             }
         );
@@ -81,23 +82,22 @@ class BlackJack extends Command
 
     private function formatCard(array $card): string
     {
-        const SUIT_COLORS = [
-            'Hearts' => 'red',
+        $suitColors = [
+            'Hearts'   => 'red',
             'Diamonds' => 'red',
         ];
-        const CARD_WIDTH = 12;
-        const CARD_HEIGHT = 7;
+        $cardWidth = 12;
 
         $rank = str_pad($card['rank'], 2, ' ', STR_PAD_LEFT);
         $suit = $card['suit']['symbol'];
-        $color = self::SUIT_COLORS[$card['suit']['name']] ?? 'black';
-        $emptyLine = str_repeat(' ', self::CARD_WIDTH);
+        $color = $suitColors[$card['suit']['name']] ?? 'black';
+        $emptyLine = str_repeat(' ', $cardWidth);
 
         return "
         <bg=white;fg=$color>{$emptyLine}</>
         <bg=white;fg=$color>  $rank        </>
         <bg=white;fg=$color>{$emptyLine}</>
-        <bg=white;fg=$color>     $suit     </>
+        <bg=white;fg=$color>     $suit      </>
         <bg=white;fg=$color>{$emptyLine}</>
         <bg=white;fg=$color>        $rank  </>
         <bg=white;fg=$color>{$emptyLine}</>";
