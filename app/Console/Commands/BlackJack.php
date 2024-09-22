@@ -15,10 +15,10 @@ class BlackJack extends Command
 
     protected $description = 'Play a game of blackjack';
 
-
     public function handle(BlackJackService $blackJackService): void
     {
         $this->clearScreen();
+        exec('clear');
         $this->displayTitle();
 
         $game = $blackJackService
@@ -80,13 +80,21 @@ class BlackJack extends Command
         return $players;
     }
 
-
     private function formatCard(array $card): string
     {
-        $color = $card['suit']['name'] === 'Hearts' || $card['suit']['name'] === 'Diamonds' ? 'red' : 'white';
-        return "<fg=$color>{$card['rank']} {$card['suit']['symbol']}</>";
-    }
+        $rank = str_pad($card['rank'], 2, ' ', STR_PAD_LEFT);
+        $suit = $card['suit']['symbol'];
+        $color = $card['suit']['name'] === 'Hearts' || $card['suit']['name'] === 'Diamonds' ? 'red' : 'black';
 
+        return "
+    <bg=white;fg=$color>            </>
+    <bg=white;fg=$color>  $rank        </>
+    <bg=white;fg=$color>            </>
+    <bg=white;fg=$color>     $suit      </>
+    <bg=white;fg=$color>            </>
+    <bg=white;fg=$color>        $rank  </>
+    <bg=white;fg=$color>            </>";
+    }
 
     private function clearScreen(): void
     {
