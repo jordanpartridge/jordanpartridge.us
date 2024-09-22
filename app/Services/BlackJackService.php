@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Game;
-use App\Models\Player;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -16,7 +15,6 @@ class BlackJackService
 
     public function __construct(
         private CardService $cardService,
-        private string $deckName = 'blackjack-deck',
     ) {
     }
 
@@ -32,7 +30,7 @@ class BlackJackService
      */
     public function initializeGame(string $name, array $players): Game
     {
-        $this->initializeDeck();
+        $this->initializeDeck($name);
         $this->validateGameData($name);
 
         $game = $this->createGame($name);
@@ -46,10 +44,10 @@ class BlackJackService
      *
      * @throws RuntimeException If deck initialization fails.
      */
-    private function initializeDeck(): void
+    private function initializeDeck(string $name): void
     {
 
-        $this->deck = $this->cardService->initializeDeck($this->deckName);
+        $this->deck = $this->cardService->initializeDeck($name);
 
     }
 
