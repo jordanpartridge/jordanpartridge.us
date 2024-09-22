@@ -22,7 +22,7 @@ class BlackJackService
     public function initializeGame(string $name, array $players): array
     {
         $this->deck = $this->cardService->initializeDeck($name);
-        $game = Game::create(['name' => $name, 'deck' => $this->deck['slug']]);
+        $game = Game::create(['name' => $name, 'deck_slug' => $this->deck['slug']]);
         Collection::make($players)->each(function ($player) use ($game) {
             $game->players()->create(['name' => $player]);
         });

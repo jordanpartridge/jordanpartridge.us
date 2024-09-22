@@ -10,7 +10,7 @@ class Game extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'deck'];
+    protected $fillable = ['name', 'deck_slug'];
 
     public function players(): BelongsToMany
     {
