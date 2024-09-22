@@ -6,7 +6,6 @@ use App\Http\Integrations\CardApi\CardApi;
 use App\Http\Integrations\CardApi\Requests\CreateDeck;
 use App\Http\Integrations\CardApi\Requests\DrawCard;
 use App\Http\Integrations\CardApi\Requests\GetDeck;
-use JsonException;
 use RuntimeException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -50,15 +49,15 @@ final readonly class CardService
 
     public function initializeDeck(string $name): array
     {
-        try {
-            $deck = $this->getDeck($name);
-            if ($deck->status() === 404) {
-                $deck = $this->createDeck($name);
-            }
-
-            return $deck->json();
-        } catch (JsonException) {
-            throw new RuntimeException('Failed to initialize deck: Invalid JSON response');
+        $deckResponse = $this->getDeck($name);
+        switch ($deckResponse->status()) {
+            case 200:
+                return $deckResponse->json();
+            case 404:
+                return $this->createDeck($name)->json();
+            default:
+                throw new RuntimeException('Failed to initialize deck: ' . $deckResponse->body());
         }
+
     }
 }
