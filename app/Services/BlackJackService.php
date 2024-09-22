@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
-use Saloon\Exceptions\Request\RequestException;
 
 class BlackJackService
 {
@@ -17,7 +16,7 @@ class BlackJackService
 
     public function __construct(
         private CardService $cardService,
-        private string $deckName = 'blackjack-deck'
+        private string $deckName = 'blackjack-deck',
     ) {
     }
 
@@ -49,11 +48,9 @@ class BlackJackService
      */
     private function initializeDeck(): void
     {
-        try {
-            $this->deck = $this->cardService->initializeDeck($this->deckName);
-        } catch (RequestException $e) {
-            throw new RuntimeException('Failed to initialize deck: ' . $e->getMessage());
-        }
+
+        $this->deck = $this->cardService->initializeDeck($this->deckName);
+
     }
 
     /**
