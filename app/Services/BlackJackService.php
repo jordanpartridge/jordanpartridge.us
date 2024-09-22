@@ -11,6 +11,7 @@ use Saloon\Exceptions\Request\RequestException;
 class BlackJackService
 {
     private array $deck;
+
     public function __construct(private CardService $cardService, private string $deckName = 'blackjack-deck')
     {
     }
@@ -25,8 +26,13 @@ class BlackJackService
         $this->deck = $this->cardService->initializeDeck($name);
         $game = Game::create(['name' => $name, 'deck_slug' => $this->deck['slug']]);
         Collection::make($players)->each(function ($player) use ($game) {
-            $game->players()->create(['name' => $player, 'email' => $player . '@example.com', 'password' => bcrypt(Str::uuid())]);
+            $game->players()
+                ->updateOrCreate(
+                    ['name' => $player, 'email' => $player . '@example.com'],
+                    ['password' => bcrypt(Str::uuid())]
+                );
         });
+
         return $game->load('players');
 
     }

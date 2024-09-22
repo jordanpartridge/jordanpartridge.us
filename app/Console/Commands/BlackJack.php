@@ -46,7 +46,6 @@ class BlackJack extends Command
         return text(
             label: 'What is the name of this game?',
             placeholder: 'BlackJack',
-            default: 'BlackJack',
             validate: fn ($value) => Game::where('name', $value)->exists() ?
                 'Game name already exists' : null
         );
