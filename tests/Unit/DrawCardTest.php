@@ -3,7 +3,7 @@
 use App\Http\Integrations\CardApi\Requests\DrawCard;
 use Saloon\Enums\Method;
 
-describe('DrawCard->__construct()', function () {
+describe('DrawCard->__construct() ', function () {
 
     test('sets properties correctly', function () {
         $deckName = 'test-deck';
