@@ -15,26 +15,44 @@ class BlackJack extends Command
 
     protected $description = 'Play a game of blackjack';
 
-    public function handle(BlackJackService $blackJackService): void
+    private BlackJackService $blackJackService;
+
+    private Game $game;
+
+    public function __construct(BlackJackService $blackJackService)
     {
-        $this->clearScreen();
-        $this->displayTitle();
+        parent::__construct();
+        $this->blackJackService = $blackJackService;
+    }
 
-        $game = $blackJackService
-            ->initializeGame(
-                name: $this->promptForName(),
-                players: $this->players(numberOfPlayers: $this->promptForNumPlayers())
-            );
+    public function handle(): void
+    {
+        $this
+            ->displayTitle()
+            ->initializeGame()
+            ->deal();
 
-        $this->clearScreen();
+    }
 
-        $deal = $blackJackService->deal(game: $game);
+    private function deal(): void
+    {
+        $deal = $this->blackJackService->deal(game: $this->game);
 
         $dealerCard = $deal['dealer'][0];
 
         $this->info('Dealer is showing: ' . $this->formatCard($dealerCard));
+    }
 
-        // Add your game logic here
+    private function initializeGame(): self
+    {
+        $this->game = $this->blackJackService
+            ->initializeGame(
+                name: $this->promptForName(),
+                players: $this->players(numberOfPlayers: $this->promptForNumPlayers())
+            );
+        $this->clearScreen();
+
+        return $this;
     }
 
     private function promptForName(): string
@@ -47,7 +65,6 @@ class BlackJack extends Command
         );
     }
 
-
     private function promptForNumPlayers(): int
     {
         $validOptions = ['1', '2', '3', '4', '5'];
@@ -58,9 +75,10 @@ class BlackJack extends Command
             default: 1,
             required: true,
             validate: function ($value) use ($validOptions) {
-                if (!in_array($value, $validOptions, true)) {
+                if (! in_array($value, $validOptions, true)) {
                     return 'Please select a valid number between 1 and 5.';
                 }
+
                 return null;
             }
         );
@@ -103,13 +121,16 @@ class BlackJack extends Command
         <bg=white;fg=$color>{$emptyLine}</>";
     }
 
-    private function clearScreen(): void
+    private function clearScreen(): self
     {
         $this->output->newLine(50);
+
+        return $this;
     }
 
-    private function displayTitle(): void
+    private function displayTitle(): self
     {
+        $this->clearScreen();
         $title = "
         ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
         ____  _        _    ____ _  __   _   _    ____ _  __
@@ -123,5 +144,7 @@ class BlackJack extends Command
 
         $this->line('<fg=green>' . $title . '</>');
         $this->info('<fg=yellow>Welcome to the Casino! Let\'s play Blackjack!</>');
+
+        return $this;
     }
 }
