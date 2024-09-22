@@ -38,6 +38,12 @@ class BlackJack extends Command
 
         $game = $blackJackService->initializeGame($name, $players);
 
+        $deal = $blackJackService->deal($game);
+
+        $dealerCard = $deal['dealer'][0];
+
+        $this->info('Dealer is showing: ' . $this->formatCard($dealerCard));
+
         // Add your game logic here
     }
 
@@ -64,6 +70,14 @@ class BlackJack extends Command
 
         return $players;
     }
+
+
+    private function formatCard(array $card): string
+    {
+        $color = $card['suit']['name'] === 'Hearts' || $card['suit']['name'] === 'Diamonds' ? 'red' : 'white';
+        return "<fg=$color>{$card['rank']} {$card['suit']['symbol']}</>";
+    }
+
 
     private function clearScreen(): void
     {

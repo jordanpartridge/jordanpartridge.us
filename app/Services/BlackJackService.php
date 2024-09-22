@@ -39,6 +39,22 @@ class BlackJackService
         return $game->load('players');
     }
 
+    public function deal(Game $game): array
+    {
+        $initialHands = [];
+        $players = $game->players->pluck('name')->push('dealer');
+
+        $deck = $game->deck_slug;
+        $players->each(function ($playerName) use (&$initialHands, $deck) {
+            $cards = $this->cardService->drawCard($deck, 2);
+            if ($cards->successful()) {
+                $initialHands[$playerName] = $cards->json();
+            }
+        });
+
+        return $initialHands;
+    }
+
     /**
      * Initialize the deck for the game.
      *

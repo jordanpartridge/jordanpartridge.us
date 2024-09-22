@@ -18,11 +18,11 @@ final readonly class CardService
     {
     }
 
-    public function drawCard(string $name): Response
+    public function drawCard(string $name, int $number = 1): Response
     {
 
         try {
-            return $this->cardApi->send(new DrawCard($name));
+            return $this->cardApi->send(new DrawCard($name, $number));
         } catch (FatalRequestException|RequestException $e) {
             throw new RuntimeException('Failed to draw card: ' . $e->getMessage());
         }
