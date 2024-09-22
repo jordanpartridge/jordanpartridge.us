@@ -36,6 +36,8 @@ jobs:
         echo "DB_USERNAME=root" >> .env
         echo "DB_PASSWORD=password" >> .env
         echo "OPENAI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> .env
+        echo "CARD_API_BASE_URL=${{ secrets.CARD_API_BASE_URL }}" >> .env
+        echo "CARD_API_KEY=${{ secrets.CARD_API_KEY }}" >> .env
         php -r "file_exists('.env.testing') || copy('.env', '.env.testing');"
 
     - name: Install Dependencies

@@ -5,10 +5,6 @@ namespace App\Console\Commands;
 use App\Models\Game;
 use App\Services\BlackJackService;
 use Illuminate\Console\Command;
-use JsonException;
-use Laravel\Octane\Exceptions\DdException;
-use Saloon\Exceptions\Request\FatalRequestException;
-use Saloon\Exceptions\Request\RequestException;
 
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
@@ -19,26 +15,48 @@ class BlackJack extends Command
 
     protected $description = 'Play a game of blackjack';
 
-    /**
-     * @throws DdException
-     * @throws FatalRequestException
-     * @throws RequestException
-     * @throws JsonException
-     */
-    public function handle(BlackJackService $blackJackService): void
+    private BlackJackService $blackJackService;
+
+    private Game $game;
+
+    public function __construct(BlackJackService $blackJackService)
     {
+        parent::__construct();
+        $this->blackJackService = $blackJackService;
+    }
+
+    public function handle(): void
+    {
+        $this
+            ->displayTitle()
+            ->initializeGame()
+            ->deal();
+
+    }
+
+    private function deal(): void
+    {
+        $hands = $this->blackJackService->deal(game: $this->game);
+        if (! $hands['dealer']) {
+            $this->error('Error Dealer could not be dealt cards');
+            return;
+        }
+
+        $dealerCard = $hands['dealer'][0];
+
+        $this->info('Dealer is showing: ' . $this->formatCard($dealerCard));
+    }
+
+    private function initializeGame(): self
+    {
+        $this->game = $this->blackJackService
+            ->initializeGame(
+                name: $this->promptForName(),
+                players: $this->players(numberOfPlayers: $this->promptForNumPlayers())
+            );
         $this->clearScreen();
-        $this->displayTitle();
 
-        $name = $this->promptForName();
-        $num_players = suggest('How many players?', ['1', '2', '3', '4', '5'], default: 1, required: true);
-        $players = $this->players($num_players);
-
-        $this->clearScreen();
-
-        $game = $blackJackService->initializeGame($name, $players);
-
-        // Add your game logic here
+        return $this;
     }
 
     private function promptForName(): string
@@ -51,12 +69,31 @@ class BlackJack extends Command
         );
     }
 
-    private function players(int $num_players): array
+    private function promptForNumPlayers(): int
+    {
+        $validOptions = ['1', '2', '3', '4', '5'];
+
+        return (int) suggest(
+            'How many players?',
+            $validOptions,
+            default: 1,
+            required: true,
+            validate: function ($value) use ($validOptions) {
+                if (! in_array($value, $validOptions, true)) {
+                    return 'Please select a valid number between 1 and 5.';
+                }
+
+                return null;
+            }
+        );
+    }
+
+    private function players(int $numberOfPlayers): array
     {
         $this->info('Great! Who is playing?');
         $players = [];
 
-        foreach (range(1, $num_players) as $player) {
+        foreach (range(1, $numberOfPlayers) as $player) {
             $players[] = text("Player $player name", "Player $player", required: true);
         }
 
@@ -65,13 +102,37 @@ class BlackJack extends Command
         return $players;
     }
 
-    private function clearScreen(): void
+    private function formatCard(array $card): string
     {
-        $this->output->newLine(50); // Add 50 new lines to simulate clearing the screen
+        $suitColors = [
+            'Hearts'   => 'red',
+            'Diamonds' => 'red',
+        ];
+        $cardWidth = 12;
+
+        $rank = str_pad($card['rank'], 2, ' ', STR_PAD_LEFT);
+        $suit = $card['suit']['symbol'];
+        $color = $suitColors[$card['suit']['name']] ?? 'black';
+        $emptyLine = str_repeat(' ', $cardWidth);
+
+        return "
+        <bg=white;fg=$color>{$emptyLine}</>
+        <bg=white;fg=$color>  $rank        </>
+        <bg=white;fg=$color>{$emptyLine}</>
+        <bg=white;fg=$color>     $suit      </>
+        <bg=white;fg=$color>{$emptyLine}</>
+        <bg=white;fg=$color>        $rank  </>
+        <bg=white;fg=$color>{$emptyLine}</>";
     }
 
-    private function displayTitle(): void
+    private function clearScreen(): void
     {
+        $this->output->newLine(50);
+    }
+
+    private function displayTitle(): self
+    {
+        $this->clearScreen();
         $title = "
         ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
         ____  _        _    ____ _  __   _   _    ____ _  __
@@ -85,5 +146,7 @@ class BlackJack extends Command
 
         $this->line('<fg=green>' . $title . '</>');
         $this->info('<fg=yellow>Welcome to the Casino! Let\'s play Blackjack!</>');
+
+        return $this;
     }
 }
