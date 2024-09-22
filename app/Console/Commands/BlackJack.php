@@ -81,18 +81,26 @@ class BlackJack extends Command
 
     private function formatCard(array $card): string
     {
+        const SUIT_COLORS = [
+            'Hearts' => 'red',
+            'Diamonds' => 'red',
+        ];
+        const CARD_WIDTH = 12;
+        const CARD_HEIGHT = 7;
+
         $rank = str_pad($card['rank'], 2, ' ', STR_PAD_LEFT);
         $suit = $card['suit']['symbol'];
-        $color = $card['suit']['name'] === 'Hearts' || $card['suit']['name'] === 'Diamonds' ? 'red' : 'black';
+        $color = self::SUIT_COLORS[$card['suit']['name']] ?? 'black';
+        $emptyLine = str_repeat(' ', self::CARD_WIDTH);
 
         return "
-    <bg=white;fg=$color>            </>
-    <bg=white;fg=$color>  $rank        </>
-    <bg=white;fg=$color>            </>
-    <bg=white;fg=$color>     $suit      </>
-    <bg=white;fg=$color>            </>
-    <bg=white;fg=$color>        $rank  </>
-    <bg=white;fg=$color>            </>";
+        <bg=white;fg=$color>{$emptyLine}</>
+        <bg=white;fg=$color>  $rank        </>
+        <bg=white;fg=$color>{$emptyLine}</>
+        <bg=white;fg=$color>     $suit     </>
+        <bg=white;fg=$color>{$emptyLine}</>
+        <bg=white;fg=$color>        $rank  </>
+        <bg=white;fg=$color>{$emptyLine}</>";
     }
 
     private function clearScreen(): void
