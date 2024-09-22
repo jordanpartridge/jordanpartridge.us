@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use JsonException;
 use RuntimeException;
 
 class BlackJackService
@@ -14,7 +15,7 @@ class BlackJackService
     private array $deck;
 
     public function __construct(
-        private CardService $cardService,
+        private readonly CardService $cardService,
     ) {
     }
 
@@ -42,13 +43,17 @@ class BlackJackService
     public function deal(Game $game): array
     {
         $initialHands = [];
-        $players = $game->players->pluck('name')->push('dealer');
+        $players = $game->players()->get()->pluck('name')->push('dealer');
 
-        $deck = $game->deck_slug;
+        $deck = $game->getAttribute('deck_slug');
         $players->each(function ($playerName) use (&$initialHands, $deck) {
             $cards = $this->cardService->drawCard($deck, 2);
             if ($cards->successful()) {
-                $initialHands[$playerName] = $cards->json();
+                try {
+                    $initialHands[$playerName] = $cards->json();
+                } catch (JsonException $e) {
+                    throw new RuntimeException('Failed to draw card: ' . $e->getMessage());
+                }
             }
         });
 
@@ -77,7 +82,10 @@ class BlackJackService
     private function validateGameData(string $name): void
     {
         $validator = Validator::make(
-            ['name' => $name, 'deck_slug' => $this->deck['slug']],
+            [
+                'name'      => $name,
+                'deck_slug' => $this->deck['slug'] ?? null,
+            ],
             [
                 'name'      => ['required', 'string', 'max:255', 'unique:games'],
                 'deck_slug' => ['required', 'string', 'max:255', 'unique:games'],
