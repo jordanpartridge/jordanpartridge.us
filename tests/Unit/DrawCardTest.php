@@ -3,40 +3,48 @@
 use App\Http\Integrations\CardApi\Requests\DrawCard;
 use Saloon\Enums\Method;
 
-it('has a constructor that sets properties correctly', function () {
-    $deckName = 'test-deck';
-    $cardCount = 5;
-    $request = new DrawCard($deckName, $cardCount);
+describe(DrawCard::class, function () {
 
-    $reflection = new ReflectionClass($request);
+    it('has a constructor that sets properties correctly', function () {
+        $deckName = 'test-deck';
+        $cardCount = 5;
+        $request = new DrawCard($deckName, $cardCount);
 
-    $deckNameProperty = $reflection->getProperty('deckName');
-    expect($deckNameProperty->getValue($request))->toBe($deckName);
+        $reflection = new ReflectionClass($request);
 
-    $cardCountProperty = $reflection->getProperty('cardCount');
-    expect($cardCountProperty->getValue($request))->toBe($cardCount);
-});
+        $deckNameProperty = $reflection->getProperty('deckName');
+        expect($deckNameProperty->getValue($request))->toBe($deckName);
 
-test('constructor uses default card count', function () {
-    $request = new DrawCard('test-deck');
-    $reflection = new ReflectionClass($request);
-    $cardCountProperty = $reflection->getProperty('cardCount');
-    expect($cardCountProperty->getValue($request))->toBe(1);
-});
+        $cardCountProperty = $reflection->getProperty('cardCount');
+        expect($cardCountProperty->getValue($request))->toBe($cardCount);
+    });
 
-test('constructor throws exception for invalid card count', function () {
-    expect(fn () => new DrawCard('test-deck', 0))
-        ->toThrow(InvalidArgumentException::class, 'Card count must be greater than 0');
-});
+    test('constructor uses default card count', function () {
+        $request = new DrawCard('test-deck');
+        $reflection = new ReflectionClass($request);
+        $cardCountProperty = $reflection->getProperty('cardCount');
+        expect($cardCountProperty->getValue($request))->toBe(1);
+    });
 
-test('method is PUT', function () {
-    $request = new DrawCard('test-deck');
+    test('constructor throws exception for invalid card count', function () {
+        expect(fn () => new DrawCard('test-deck', 0))
+            ->toThrow(InvalidArgumentException::class, 'Card count must be greater than 0');
+    });
 
-    expect($request->getMethod())->toBe(Method::PUT);
-});
+    test('constructor throws exception for negative card count', function () {
+        expect(fn () => new DrawCard('test-deck', -1))
+            ->toThrow(InvalidArgumentException::class, 'Card count must be greater than 0');
+    });
 
-test('resolveEndpoint returns correct endpoint', function () {
-    $request = new DrawCard('test-deck', 3);
+    test('method is PUT', function () {
+        $request = new DrawCard('test-deck');
 
-    expect($request->resolveEndpoint())->toBe('/decks/test-deck/draw?count=3');
+        expect($request->getMethod())->toBe(Method::PUT);
+    });
+
+    test('resolveEndpoint returns correct endpoint', function () {
+        $request = new DrawCard('test-deck', 3);
+
+        expect($request->resolveEndpoint())->toBe('/decks/test-deck/draw?count=3');
+    });
 });

@@ -15,6 +15,10 @@ class DrawCard extends Request
         if ($cardCount < 1) {
             throw new InvalidArgumentException('Card count must be greater than 0');
         }
+
+        if (! preg_match('/^[a-zA-Z0-9-]+$/', $this->deckName)) {
+            throw new InvalidArgumentException('Deck name should only contain alphanumeric characters and hyphens');
+        }
     }
 
     public function resolveEndpoint(): string

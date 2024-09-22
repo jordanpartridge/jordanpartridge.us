@@ -19,4 +19,8 @@ describe(DrawCard::class, function () {
     it('throws an exception for invalid count', function () {
         expect(fn () => new DrawCard('test-deck', -1))->toThrow(InvalidArgumentException::class);
     });
+
+    it('won\'t allow spaces in deck name', function () {
+        expect(fn () => new DrawCard('invalid deck name', 1))->toThrow(InvalidArgumentException::class);
+    });
 });
