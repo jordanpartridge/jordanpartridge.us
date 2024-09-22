@@ -18,7 +18,6 @@ class BlackJack extends Command
     public function handle(BlackJackService $blackJackService): void
     {
         $this->clearScreen();
-        exec('clear');
         $this->displayTitle();
 
         $game = $blackJackService
@@ -28,7 +27,6 @@ class BlackJack extends Command
             );
 
         $this->clearScreen();
-
 
         $deal = $blackJackService->deal(game: $game);
 
@@ -57,10 +55,11 @@ class BlackJack extends Command
             default: 1,
             required: true,
             validate: function ($value) {
-                $intValue = (int)$value;
+                $intValue = (int) $value;
                 if ($intValue < 1 || $intValue > 5) {
                     return 'Please select a number between 1 and 5.';
                 }
+
                 return null;
             }
         );
@@ -98,7 +97,7 @@ class BlackJack extends Command
 
     private function clearScreen(): void
     {
-        $this->output->newLine(50); // Add 50 new lines to simulate clearing the screen
+        $this->output->newLine(50);
     }
 
     private function displayTitle(): void
