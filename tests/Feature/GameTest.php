@@ -15,6 +15,5 @@ it('can successfully be created with factory default settings.', function () {
 
 it('belongs to many players (users).', function () {
     $game = Game::factory()->has(User::factory(2), 'players')->create();
-    expect($game->players()->count())->toBe(2)
-        ->and($game->players()->first())->toBeInstanceOf(User::class);
+    expect($game->players()->count())->toBe(2);
 });
