@@ -35,6 +35,11 @@ describe('DrawCard->__construct() ', function () {
         expect(fn () => new DrawCard('test-deck', -1))
             ->toThrow(InvalidArgumentException::class, 'Card count must be greater than 0');
     });
+
+    test('throws exception for invalid deck name', function () {
+        expect(fn () => new DrawCard('test deck with spaces'))
+            ->toThrow(InvalidArgumentException::class, 'Deck name must be a valid slug');
+    });
 });
 
 describe('DrawCard->resolveEndpoint', function () {

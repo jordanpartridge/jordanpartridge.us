@@ -36,9 +36,13 @@ class BlackJack extends Command
 
     private function deal(): void
     {
-        $deal = $this->blackJackService->deal(game: $this->game);
+        $hands = $this->blackJackService->deal(game: $this->game);
+        if (! $hands['dealer']) {
+            $this->error('Error Dealer could not be dealt cards');
+            return;
+        }
 
-        $dealerCard = $deal['dealer'][0];
+        $dealerCard = $hands['dealer'][0];
 
         $this->info('Dealer is showing: ' . $this->formatCard($dealerCard));
     }
@@ -121,11 +125,9 @@ class BlackJack extends Command
         <bg=white;fg=$color>{$emptyLine}</>";
     }
 
-    private function clearScreen(): self
+    private function clearScreen(): void
     {
         $this->output->newLine(50);
-
-        return $this;
     }
 
     private function displayTitle(): self

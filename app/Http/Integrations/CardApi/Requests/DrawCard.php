@@ -17,7 +17,7 @@ class DrawCard extends Request
         }
 
         if (! preg_match('/^[a-zA-Z0-9-]+$/', $this->deckName)) {
-            throw new InvalidArgumentException('Deck name should only contain alphanumeric characters and hyphens');
+            throw new InvalidArgumentException('Deck name must be a valid slug');
         }
     }
 
