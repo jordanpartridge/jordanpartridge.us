@@ -50,7 +50,7 @@ class BlackJackService
             if ($cards->successful()) {
                 $initialHands[$playerName] = $cards->json();
             } else {
-                $initialHands['error'] = $cards->toException()->getMessage();
+                $initialHands[$playerName]['error'] = $cards->toException()->getMessage();
             }
         });
 
