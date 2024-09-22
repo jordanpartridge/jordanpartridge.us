@@ -10,11 +10,9 @@ return new class () extends Migration {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('deck_slug');
+            $table->string('deck');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->unique(['name', 'deck_slug']);
         });
     }
 

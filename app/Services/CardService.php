@@ -6,11 +6,8 @@ use App\Http\Integrations\CardApi\CardApi;
 use App\Http\Integrations\CardApi\Requests\CreateDeck;
 use App\Http\Integrations\CardApi\Requests\DrawCard;
 use App\Http\Integrations\CardApi\Requests\GetDeck;
-use JsonException;
+use Exception;
 use RuntimeException;
-use Saloon\Exceptions\Request\FatalRequestException;
-use Saloon\Exceptions\Request\RequestException;
-use Saloon\Http\Response;
 
 final readonly class CardService
 {
@@ -28,7 +25,17 @@ final readonly class CardService
         }
     }
 
-    public function createDeck(string $name): Response
+    public function createDeck(string $name): array
+    {
+        try {
+            $deck = $this->cardApi->send(new CreateDeck($name))->json();
+        } catch (Exception $e) {
+            throw new RuntimeException('Failed to create deck: ' . $e->getMessage());
+        }
+        return $deck;
+    }
+
+    public function getDeck($name = null): array
     {
         try {
             return $this->cardApi->send(new CreateDeck($name));
@@ -38,28 +45,17 @@ final readonly class CardService
         }
     }
 
-    public function getDeck(string $name): Response
-    {
-        try {
-            return $this->cardApi->send(new GetDeck($name));
-        } catch (FatalRequestException|RequestException $e) {
-            throw new RuntimeException('Failed to get deck: ' . $e->getMessage());
-        }
-    }
-
     public function initializeDeck(string $name): array
     {
         try {
-            $deckResponse = $this->getDeck($name);
+            $existingDeck = $this->getDeck($name);
+            if (isset($existingDeck['message']) && $existingDeck['message'] === 'Not Found.') {
+                return $this->createDeck($name);
+            }
 
-            return match ($deckResponse->status()) {
-                200     => $deckResponse->json(),
-                404     => $this->createDeck($name)->json(),
-                default => throw new RuntimeException('Failed to initialize deck: ' . $deckResponse->body()),
-            };
-        } catch (JsonException $e) {
+            return $existingDeck;
+        } catch (Exception $e) {
             throw new RuntimeException('Failed to initialize deck: ' . $e->getMessage());
         }
-
     }
 }
