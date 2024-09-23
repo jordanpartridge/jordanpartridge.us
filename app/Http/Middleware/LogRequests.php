@@ -29,16 +29,4 @@ class LogRequests
 
         return $response;
     }
-
-    private function getRequestBody(Request $request): string
-    {
-        // Be careful with sensitive data
-        return $request->getContent();
-    }
-
-    private function getResponseContent(Response $response): string
-    {
-        // Be careful with sensitive data
-        return $response->getContent();
-    }
 }
