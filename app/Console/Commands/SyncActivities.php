@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 class SyncActivities extends Command
 {
     protected $signature = 'sync';
+
     protected $description = 'Sync activities from Strava API';
 
     public function handle(): void
@@ -75,18 +76,21 @@ class SyncActivities extends Command
             $response = $strava->send(new AthleteActivityRequest(['page' => $page, 'per_page' => 200]));
             if ($response->failed()) {
                 Log::error('Error getting activities', ['response' => $response->json()]);
+
                 return collect();
             }
+
             return collect($response->json());
         } catch (Exception $e) {
             Log::error('API request failed', ['exception' => $e->getMessage()]);
+
             return collect();
         }
     }
 
     private function isNewRideActivity(array $activity): bool
     {
-        return !Ride::query()->where('external_id', $activity['external_id'])->exists()
+        return ! Ride::query()->where('external_id', $activity['external_id'])->exists()
             && $activity['type'] === 'Ride';
     }
 
@@ -117,6 +121,7 @@ class SyncActivities extends Command
         }
 
         Log::warning('Map fetch failed, returning null');
+
         return null;
     }
 
@@ -124,6 +129,7 @@ class SyncActivities extends Command
     {
         $strava = new Strava($token->access_token);
         $response = $strava->send(new ActivityRequest($activityId));
+
         return $response->json()['calories'] ?? null;
     }
 
@@ -151,7 +157,10 @@ class SyncActivities extends Command
     private function logSyncResults(Collection $activities): void
     {
         if ($activities->isNotEmpty()) {
-            activity('sync')->withProperties($activities)->log('synced activities');
+            activity('sync')->withProperties([
+                'count'        => $activities->count(),
+                'activity_ids' => $activities->pluck('id')->toArray(),
+            ])->log('synced activities');
             Log::info('Synced activities count', ['count' => $activities->count()]);
             Notification::make()
                 ->title('Ride Sync Completed')

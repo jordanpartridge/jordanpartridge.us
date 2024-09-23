@@ -23,7 +23,9 @@ class Game extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logFillable()
+            ->logOnly(['name', 'deck_slug'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
             ->useLogName('system');
     }
 }

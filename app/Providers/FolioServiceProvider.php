@@ -22,7 +22,7 @@ class FolioServiceProvider extends ServiceProvider
     {
         Folio::path(resource_path('views/pages'))->middleware([
             '*' => [
-                //
+                'log-requests',
             ],
         ]);
     }
