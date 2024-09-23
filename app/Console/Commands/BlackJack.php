@@ -93,8 +93,8 @@ class BlackJack extends Command
         $this->info('Great! Who is playing?');
         $players = [];
 
-        foreach (range(1, $numberOfPlayers) as $player) {
-            $players[] = text("Player $player name", "Player $player", required: true);
+        foreach (range(1, $numberOfPlayers) as $playerNumber) {
+            $players[] = text("Player $playerNumber's name", "Player $playerNumber", required: true);
         }
 
         $this->info('Nice! So we have ' . implode(', ', $players) . ' playing!');
