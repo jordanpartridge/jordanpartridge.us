@@ -31,6 +31,7 @@ class BlackJackService
     public function initializeGame(string $name, array $players): Game
     {
         activity('blackjack-service')
+            ->event('initialize-game')
             ->withProperties(['name' => $name, 'players' => $players])
             ->log('initializing game');
 
@@ -58,6 +59,11 @@ class BlackJackService
             }
         });
 
+        activity('blackjack-service')
+            ->withProperties($initialHands)
+            ->event('deal')
+            ->log('dealing cards');
+
         return $initialHands;
     }
 
@@ -68,12 +74,13 @@ class BlackJackService
      */
     private function initializeDeck(string $name): void
     {
-        activity('blackjack-service')
-            ->withProperties(['name' => $name])
-            ->log('initializing deck');
 
         $this->deck = $this->cardService->initializeDeck($name);
 
+        activity('blackjack-service')
+            ->withProperties($this->deck)
+            ->event('initialized-deck')
+            ->log('deck initialized');
     }
 
     /**
@@ -101,7 +108,10 @@ class BlackJackService
         );
 
         if ($validator->fails()) {
-            activity('blackjack-service')->withProperties($validator)->log('validation failed');
+            activity('blackjack-service')
+                ->event('validation-failed')
+                ->withProperties($validator->errors()->toArray())
+                ->log('validation failed');
             throw new ValidationException($validator);
         }
     }
@@ -128,6 +138,12 @@ class BlackJackService
      */
     private function createPlayers(Game $game, array $players): void
     {
+        activity('blackjack-service')
+            ->on($game)
+            ->event('created-players')
+            ->withProperties(['players' => $players])
+            ->log('creating players');
+
         Collection::make($players)->each(function ($playerName) use ($game) {
             $game->players()->updateOrCreate(
                 ['name' => $playerName],

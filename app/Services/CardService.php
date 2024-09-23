@@ -22,7 +22,18 @@ final readonly class CardService
     {
 
         try {
-            return $this->cardApi->send(new DrawCard($name, $number));
+            $response = $this->cardApi->send(new DrawCard($name, $number));
+            activity('card-service')
+                ->event('draw-card')
+                ->withProperties(
+                    [
+                        'name'     => $name,
+                        'number'   => $number,
+                        'response' => $response->json(),
+                    ]
+                )->log('drawing card');
+
+            return $response;
         } catch (FatalRequestException|RequestException $e) {
             throw new RuntimeException('Failed to draw card: ' . $e->getMessage());
         }
@@ -31,7 +42,14 @@ final readonly class CardService
     public function createDeck(string $name): Response
     {
         try {
-            return $this->cardApi->send(new CreateDeck($name));
+            $deckResponse = $this->cardApi->send(new CreateDeck($name));
+            activity('card-service')->event('create-deck')->withProperties(
+                [
+                    'status'   => $deckResponse->status(),
+                    'name'     => $name,
+                    'response' => $deckResponse->json(),
+                ]
+            )->log('creating deck');
 
         } catch (FatalRequestException|RequestException $e) {
             throw new RuntimeException('Failed to create deck: ' . $e->getMessage());
@@ -41,16 +59,33 @@ final readonly class CardService
     public function getDeck(string $name): Response
     {
         try {
-            return $this->cardApi->send(new GetDeck($name));
+            $response = $this->cardApi->send(new GetDeck($name));
+            activity('card-service')->event('get-deck')->withProperties(
+                [
+                    'status'   => $response->status(),
+                    'name'     => $name,
+                    'response' => $response->json(),
+                ]
+            )->log('getting deck');
         } catch (FatalRequestException|RequestException $e) {
             throw new RuntimeException('Failed to get deck: ' . $e->getMessage());
         }
+
+        return $response;
     }
 
     public function initializeDeck(string $name): array
     {
         try {
             $deckResponse = $this->getDeck($name);
+
+            activity('card-service')->event('initialize-deck')->withProperties(
+                [
+                    'status'   => $deckResponse->status(),
+                    'name'     => $name,
+                    'response' => $deckResponse->json(),
+                ]
+            )->log('initializing deck');
 
             return match ($deckResponse->status()) {
                 200     => $deckResponse->json(),
