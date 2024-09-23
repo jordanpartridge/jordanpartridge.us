@@ -18,30 +18,15 @@ class LogRequests
         $response = $next($request);
 
         activity('request')
+            ->event($request->fullUrl())
             ->withProperties([
-                'url'              => $request->fullUrl(),
-                'method'           => $request->method(),
-                'ip'               => $request->ip(),
-                'user_agent'       => $request->userAgent(),
-                'headers'          => $request->headers->all(),
-                'body'             => $this->getRequestBody($request),
-                'response_status'  => $response->status(),
-                'response_content' => $this->getResponseContent($response),
+                'method'          => $request->method(),
+                'ip'              => $request->ip(),
+                'user_agent'      => $request->userAgent(),
+                'response_status' => $response->status(),
             ])
             ->log('Request processed');
 
         return $response;
-    }
-
-    private function getRequestBody(Request $request): string
-    {
-        // Be careful with sensitive data
-        return $request->getContent();
-    }
-
-    private function getResponseContent(Response $response): string
-    {
-        // Be careful with sensitive data
-        return $response->getContent();
     }
 }
