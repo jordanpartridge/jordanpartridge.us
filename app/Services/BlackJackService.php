@@ -30,6 +30,10 @@ class BlackJackService
      */
     public function initializeGame(string $name, array $players): Game
     {
+        activity('blackjack-service')
+            ->withProperties(['name' => $name, 'players' => $players])
+            ->log('initializing game');
+
         $this->initializeDeck($name);
         $this->validateGameData($name);
 
@@ -64,6 +68,9 @@ class BlackJackService
      */
     private function initializeDeck(string $name): void
     {
+        activity('blackjack-service')
+            ->withProperties(['name' => $name])
+            ->log('initializing deck');
 
         $this->deck = $this->cardService->initializeDeck($name);
 
@@ -78,6 +85,10 @@ class BlackJackService
      */
     private function validateGameData(string $name): void
     {
+        activity('blackjack-service')
+            ->withProperties(['name' => $name, 'deck_slug' => $this->deck['slug'] ?? null])
+            ->log('validating game data');
+
         $validator = Validator::make(
             [
                 'name'      => $name,
@@ -90,6 +101,7 @@ class BlackJackService
         );
 
         if ($validator->fails()) {
+            activity('blackjack-service')->withProperties($validator)->log('validation failed');
             throw new ValidationException($validator);
         }
     }

@@ -29,6 +29,7 @@ class ResetUserPassword extends Command
      */
     public function handle(): void
     {
+        activity('user:reset-password')->log('started');
         $email = suggest(
             label: 'Select a user',
             options: fn (string $value) => User::where('email', 'like', '%' . $value . '%')
@@ -61,6 +62,12 @@ class ResetUserPassword extends Command
         );
         $user->password = bcrypt($newPassword);
         $user->save();
+        activity('user:reset-password')->withProperties([
+            'user' => [
+                'name'  => $user->name,
+                'email' => $user->email,
+            ],
+        ])->log('password reset');
         $this->info('Password reset for ' . $user->name);
     }
 }

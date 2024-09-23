@@ -23,12 +23,14 @@ class SyncActivities extends Command
 
     public function handle(): void
     {
+        activity('sync')->log('started');
         try {
             $this->validateTokens();
             $this->syncActivities();
         } catch (Exception $e) {
             $this->error($e->getMessage());
             Log::error('Sync activities failed', ['exception' => $e]);
+            activity('sync')->withProperties(['exception' => $e])->log('failed');
         }
     }
 
@@ -41,6 +43,7 @@ class SyncActivities extends Command
 
     private function syncActivities(): void
     {
+        activity('sync')->log('syncing activities');
         StravaToken::query()->each(function ($token) {
             $activities = $this->getActivities($token)
                 ->filter(fn ($activity) => $this->isNewRideActivity($activity));
@@ -126,6 +129,7 @@ class SyncActivities extends Command
 
     private function createOrUpdateRide(array $activity): void
     {
+        activity('sync')->withProperties($activity)->log('creating or updating ride');
         Ride::query()->updateOrCreate(
             ['external_id' => $activity['external_id']],
             [
@@ -147,6 +151,7 @@ class SyncActivities extends Command
     private function logSyncResults(Collection $activities): void
     {
         if ($activities->isNotEmpty()) {
+            activity('sync')->withProperties($activities)->log('synced activities');
             Log::info('Synced activities count', ['count' => $activities->count()]);
             Notification::make()
                 ->title('Ride Sync Completed')
