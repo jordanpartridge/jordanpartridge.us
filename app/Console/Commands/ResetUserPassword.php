@@ -22,7 +22,7 @@ class ResetUserPassword extends Command
      *
      * @var string
      */
-    protected $description = 'reset user password';
+    protected $description = 'Reset a user\'s password by email';
 
     /**
      * Execute the console command.
@@ -50,7 +50,15 @@ class ResetUserPassword extends Command
             return;
         }
 
-        $newPassword = password('New password for ' . $user->name, placeholder: 'New password', required: true);
+        $newPassword = password(
+            'New password for ' . $user->name,
+            placeholder: 'New password',
+            required: true,
+            validate: fn (string $value) => match (true) {
+                strlen($value) < 8 => 'The password must be at least 8 characters.',
+                default            => null
+            }
+        );
         $user->password = bcrypt($newPassword);
         $user->save();
         $this->info('Password reset for ' . $user->name);
