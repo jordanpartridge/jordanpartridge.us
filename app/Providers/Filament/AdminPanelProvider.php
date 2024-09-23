@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\LogRequests;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -23,12 +24,16 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+
             ->default()
             ->id('admin')
             ->path('admin')
             ->login()
             ->passwordReset()
             ->profile()
+            ->resources([
+                config('filament-logger.activity_resource'),
+            ])
             ->colors([
                 'primary' => Color::Indigo,
             ])
@@ -52,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                LogRequests::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

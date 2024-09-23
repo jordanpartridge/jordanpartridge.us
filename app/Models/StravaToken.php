@@ -6,11 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
+
 use function Laravel\Prompts\table;
 
 class StravaToken extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     public $fillable = [
         'access_token',
@@ -55,7 +59,7 @@ class StravaToken extends Model
     /**
      * encrypt the access token before storing it in the database
      *
-     * @param  string  $value
+     * @param string $value
      */
     public function setAccessTokenAttribute($value): void
     {
@@ -76,5 +80,10 @@ class StravaToken extends Model
                 ],
             ],
         );
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logFillable()->useLogName('system');
     }
 }

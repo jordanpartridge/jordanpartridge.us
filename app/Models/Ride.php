@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Ride extends Model
 {
     use HasFactory;
+    use LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -86,5 +89,10 @@ class Ride extends Model
             $this->attributes['date'],
             'America/Phoenix'
         );
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logFillable()->useLogName('system');
     }
 }

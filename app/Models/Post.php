@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -12,6 +14,7 @@ class Post extends Model
 {
     use HasFactory;
     use HasSlug;
+    use LogsActivity;
     public const STATUS_DRAFT = 'DRAFT';
 
     public const STATUS_PUBLISHED = 'PUBLISHED';
@@ -70,5 +73,10 @@ class Post extends Model
         return SlugOptions::create()
             ->generateSlugsFrom('title')
             ->saveSlugsTo('slug');
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logFillable()->useLogName('system');
     }
 }

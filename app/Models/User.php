@@ -12,6 +12,8 @@ use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @method static updateOrCreate(string[] $array, array $array1)
@@ -20,6 +22,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     use hasApiTokens;
     use HasFactory;
+    use LogsActivity;
     use Notifiable;
     use SendsPasswordResetEmails;
 
@@ -58,6 +61,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar ? asset($this->avatar) : null;
+    }
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logFillable()->useLogName('system');
     }
 
     /**

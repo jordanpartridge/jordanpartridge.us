@@ -30,6 +30,11 @@ class BlackJackService
      */
     public function initializeGame(string $name, array $players): Game
     {
+        activity('blackjack-service')
+            ->event('initialize-game')
+            ->withProperties(['name' => $name, 'players' => $players])
+            ->log('initializing game');
+
         $this->initializeDeck($name);
         $this->validateGameData($name);
 
@@ -54,6 +59,11 @@ class BlackJackService
             }
         });
 
+        activity('blackjack-service')
+            ->withProperties($initialHands)
+            ->event('deal')
+            ->log('dealing cards');
+
         return $initialHands;
     }
 
@@ -67,6 +77,10 @@ class BlackJackService
 
         $this->deck = $this->cardService->initializeDeck($name);
 
+        activity('blackjack-service')
+            ->withProperties($this->deck)
+            ->event('initialized-deck')
+            ->log('deck initialized');
     }
 
     /**
@@ -78,6 +92,10 @@ class BlackJackService
      */
     private function validateGameData(string $name): void
     {
+        activity('blackjack-service')
+            ->withProperties(['name' => $name, 'deck_slug' => $this->deck['slug'] ?? null])
+            ->log('validating game data');
+
         $validator = Validator::make(
             [
                 'name'      => $name,
@@ -90,6 +108,10 @@ class BlackJackService
         );
 
         if ($validator->fails()) {
+            activity('blackjack-service')
+                ->event('validation-failed')
+                ->withProperties($validator->errors()->toArray())
+                ->log('validation failed');
             throw new ValidationException($validator);
         }
     }
@@ -116,6 +138,12 @@ class BlackJackService
      */
     private function createPlayers(Game $game, array $players): void
     {
+        activity('blackjack-service')
+            ->on($game)
+            ->event('created-players')
+            ->withProperties(['players' => $players])
+            ->log('creating players');
+
         Collection::make($players)->each(function ($playerName) use ($game) {
             $game->players()->updateOrCreate(
                 ['name' => $playerName],
