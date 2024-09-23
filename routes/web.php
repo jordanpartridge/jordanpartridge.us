@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::middleware(['redirect-to-dashboard', LogRequests::class])->group(function () {
+Route::middleware([LogRequests::class])->group(function () {
     Route::get('cards/{deckName}/initialize', DeckInitializeController::class)->name('cards:initialize');
     Route::redirect('home', '/')->name('home');
 
