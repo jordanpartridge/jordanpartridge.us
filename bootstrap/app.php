@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\LogRequests;
 use App\Http\Middleware\RedirectToDashboard;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,7 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'redirect-to-dashboard-x' => RedirectToDashboard::class,
+            'redirect-to-dashboard' => RedirectToDashboard::class,
+            'log-requests'          => LogRequests::class,
         ]);
         //
     })

@@ -6,6 +6,7 @@ use App\Http\Controllers\Cards\DeckInitializeController;
 use App\Http\Controllers\Strava\CallbackController;
 use App\Http\Controllers\Strava\RedirectController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Middleware\LogRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -19,25 +20,27 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::middleware(['redirect-to-dashboard', LogRequests::class])->group(function () {
+    Route::get('cards/{deckName}/initialize', DeckInitializeController::class)->name('cards:initialize');
+    Route::redirect('home', '/')->name('home');
 
-Route::redirect('home', '/')->name('home');
+    Route::post('slack', WebhookController::class)->name('web:hook')->withoutMiddleware(VerifyCsrfToken::class);
 
-Route::post('slack', WebhookController::class)->name('web:hook')->withoutMiddleware(VerifyCsrfToken::class);
+    Route::middleware('auth')->group(callback: function () {
+        Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
+            ->middleware('signed')
+            ->name('verification:verify');
+        Route::post('logout', LogoutController::class)
+            ->name('logout');
 
-Route::middleware('auth')->group(callback: function () {
-    Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
-        ->middleware('signed')
-        ->name('verification:verify');
-    Route::post('logout', LogoutController::class)
-        ->name('logout');
+        Route::prefix('strava')->as('strava:')->group(function () {
+            Route::get('redirect', RedirectController::class)->name('redirect');
+            Route::get('callback', CallbackController::class)->name('callback');
+        });
 
-    Route::prefix('strava')->as('strava:')->group(function () {
-        Route::get('redirect', RedirectController::class)->name('redirect');
-        Route::get('callback', CallbackController::class)->name('callback');
-    });
-
-    Route::prefix('cards')->as('cards:')->group(function () {
-        Route::get('initialize', DeckInitializeController::class)
-            ->name('initialize');
+        Route::prefix('cards')->as('cards:')->group(function () {
+            Route::get('initialize', DeckInitializeController::class)
+                ->name('initialize');
+        });
     });
 });
