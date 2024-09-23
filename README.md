@@ -15,10 +15,9 @@ Welcome to my personal website, where I showcase my professional work, hobbies, 
 - **GitHub Repository**: Access the complete codebase of this site on GitHub.
 
 ## Deployment Status
-[![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F1fcb3f58-585a-453a-8a5c-d4af80bf60f0%3Fdate%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/820904/sites/2398933)
+[![Laravel Forge Site Deployment Status](https://img.shields.io/endpoint?url=https%3A%2F%2Fforge.laravel.com%2Fsite-badges%2F1fcb3f58-585a-453a-8a5c-d4af80bf60f0%3Fdate%3D1%26label%3D1%26commit%3D1&style=plastic)](https://forge.laravel.com/servers/820904/sites/2398933)
 
 ## Continuous Integration
-[![Pint](https://github.com/jordanpartridge/jordanpartridge.us/actions/workflows/Pint.yml/badge.svg?branch=master)](https://github.com/jordanpartridge/jordanpartridge.us/actions/workflows/Pint.yml)
 [![Tests](https://github.com/jordanpartridge/jordanpartridge.us/actions/workflows/Tests.yml/badge.svg)](https://github.com/jordanpartridge/jordanpartridge.us/actions/workflows/Tests.yml)
 
 ## Getting Started
