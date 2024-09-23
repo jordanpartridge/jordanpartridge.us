@@ -24,12 +24,16 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+
             ->default()
             ->id('admin')
             ->path('admin')
             ->login()
             ->passwordReset()
             ->profile()
+            ->resources([
+                config('filament-logger.activity_resource'),
+            ])
             ->colors([
                 'primary' => Color::Indigo,
             ])
