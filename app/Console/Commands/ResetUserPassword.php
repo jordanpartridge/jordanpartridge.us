@@ -43,7 +43,7 @@ class ResetUserPassword extends Command
         );
 
         $user = User::where('email', $email)->first();
-        // guess it could happen very unlikely but possible.
+        // Double check to make sure the user exists, in case the user was deleted since the search.
         if (! $user) {
             $this->error('User not found');
 
