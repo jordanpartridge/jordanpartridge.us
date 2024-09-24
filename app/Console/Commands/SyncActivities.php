@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Events\CommandFailed;
+use App\Events\RideSynced;
 use App\Http\Integrations\Strava\Requests\ActivityRequest;
 use App\Http\Integrations\Strava\Requests\AthleteActivityRequest;
 use App\Http\Integrations\Strava\Strava;
@@ -9,12 +11,14 @@ use App\Models\Ride;
 use App\Models\StravaToken;
 use Carbon\Carbon;
 use Exception;
-use Filament\Notifications\Notification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use JsonException;
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
 
 class SyncActivities extends Command
 {
@@ -24,17 +28,18 @@ class SyncActivities extends Command
 
     public function handle(): void
     {
-        activity('sync')->log('started');
         try {
             $this->validateTokens();
             $this->syncActivities();
         } catch (Exception $e) {
             $this->error($e->getMessage());
-            Log::error('Sync activities failed', ['exception' => $e]);
-            activity('sync')->withProperties(['exception' => $e])->log('failed');
+            CommandFailed::fire($this->signature, $e);
         }
     }
 
+    /**
+     * @throws Exception
+     */
     private function validateTokens(): void
     {
         if (StravaToken::query()->count() === 0) {
@@ -44,14 +49,12 @@ class SyncActivities extends Command
 
     private function syncActivities(): void
     {
-        activity('sync')->log('syncing activities');
         StravaToken::query()->each(function ($token) {
             $activities = $this->getActivities($token)
                 ->filter(fn ($activity) => $this->isNewRideActivity($activity));
 
             $activities->each(fn ($activity) => $this->processActivity($activity, $token));
 
-            $this->logSyncResults($activities);
         });
     }
 
@@ -62,7 +65,9 @@ class SyncActivities extends Command
         $page = 1;
 
         do {
-            $currentPageActivities = $this->fetchActivitiesPage($strava, $page);
+            $currentPageActivities = $this->fetchActivitiesPage($strava, $page)
+                ->filter(fn ($activity) => $activity['type'] === 'Ride');
+
             $activities = $activities->concat($currentPageActivities);
             $page++;
         } while ($currentPageActivities->isNotEmpty());
@@ -75,7 +80,7 @@ class SyncActivities extends Command
         try {
             $response = $strava->send(new AthleteActivityRequest(['page' => $page, 'per_page' => 200]));
             if ($response->failed()) {
-                Log::error('Error getting activities', ['response' => $response->json()]);
+                report($response->toException());
 
                 return collect();
             }
@@ -83,6 +88,7 @@ class SyncActivities extends Command
             return collect($response->json());
         } catch (Exception $e) {
             Log::error('API request failed', ['exception' => $e->getMessage()]);
+            report($e);
 
             return collect();
         }
@@ -94,6 +100,11 @@ class SyncActivities extends Command
             && $activity['type'] === 'Ride';
     }
 
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
     private function processActivity(array $activity, StravaToken $token): void
     {
         $activity['map_url'] = $this->getMap($activity['map']['id'], $activity['map']['summary_polyline']);
@@ -117,26 +128,31 @@ class SyncActivities extends Command
                 }
             }
         } catch (Exception $e) {
-            Log::error('Error fetching map from Google', ['exception' => $e->getMessage()]);
+            report($e);
         }
-
-        Log::warning('Map fetch failed, returning null');
 
         return null;
     }
 
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
     private function getActivityCalories(string $activityId, StravaToken $token): ?float
     {
         $strava = new Strava($token->access_token);
         $response = $strava->send(new ActivityRequest($activityId));
+        if ($response->failed()) {
+            report(new Exception('Error getting activity calories'));
+        }
 
         return $response->json()['calories'] ?? null;
     }
 
     private function createOrUpdateRide(array $activity): void
     {
-        activity('sync')->withProperties($activity)->log('creating or updating ride');
-        Ride::query()->updateOrCreate(
+        $ride = Ride::query()->updateOrCreate(
             ['external_id' => $activity['external_id']],
             [
                 'date'          => Carbon::parse($activity['start_date_local']),
@@ -152,20 +168,7 @@ class SyncActivities extends Command
                 'elapsed_time'  => $activity['elapsed_time'],
             ]
         );
-    }
 
-    private function logSyncResults(Collection $activities): void
-    {
-        if ($activities->isNotEmpty()) {
-            activity('sync')->withProperties([
-                'count'        => $activities->count(),
-                'activity_ids' => $activities->pluck('id')->toArray(),
-            ])->log('synced activities');
-            Log::info('Synced activities count', ['count' => $activities->count()]);
-            Notification::make()
-                ->title('Ride Sync Completed')
-                ->success()
-                ->send();
-        }
+        RideSynced::fire($ride);
     }
 }
