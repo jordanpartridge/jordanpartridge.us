@@ -17,8 +17,6 @@ class BlackJack extends Command
 
     private BlackJackService $blackJackService;
 
-    private Game $game;
-
     public function __construct(BlackJackService $blackJackService)
     {
         parent::__construct();
@@ -30,32 +28,47 @@ class BlackJack extends Command
         $this
             ->displayTitle()
             ->initializeGame()
-            ->deal();
-
+            ->initializePlayers(numberOfPlayers: 2);
     }
 
-    private function deal(): void
+    private function displayTitle(): self
     {
-        $hands = $this->blackJackService->deal(game: $this->game);
-        if (! $hands['dealer']) {
-            $this->error('Error Dealer could not be dealt cards');
-            return;
-        }
+        $this->clearScreen();
+        $title = "
+        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
+        ____  _        _    ____ _  __   _   _    ____ _  __
+        | __ )| |      / \  / ___| |/ /  | | / \  / ___| |/ /
+        |  _ \| |     / _ \| |   | ' /   | |/ _ \| |   | ' /
+        | |_) | |___ / ___ \ |___| . \ \ | / ___ \ |___| . \
+        |____/|_____/_/   \_\____|_|\_\ \/_/   \_\____|_|\_\
 
-        $dealerCard = $hands['dealer'][0];
+        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
+        ";
 
-        $this->info('Dealer is showing: ' . $this->formatCard($dealerCard));
+        $this->line('<fg=green>' . $title . '</>');
+        $this->info('<fg=yellow>Welcome to the Casino! Let\'s play Blackjack!</>');
+
+        return $this;
     }
 
     private function initializeGame(): self
     {
-        $this->game = $this->blackJackService
+        $this->blackJackService
             ->initializeGame(
                 name: $this->promptForName(),
-                players: $this->players(numberOfPlayers: $this->promptForNumPlayers())
             );
         $this->clearScreen();
 
+        return $this;
+    }
+
+    private function initializePlayers(int $numberOfPlayers): self
+    {
+        $players = $this->players(numberOfPlayers: $this->promptForNumPlayers());
+        $this->info('players: ' . implode(', ', $players));
+
+        //fires PlayerJoined event which should set a current player, and then a collection of all players on the
+        //game state.
         return $this;
     }
 
@@ -128,25 +141,5 @@ class BlackJack extends Command
     private function clearScreen(): void
     {
         $this->output->newLine(50);
-    }
-
-    private function displayTitle(): self
-    {
-        $this->clearScreen();
-        $title = "
-        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
-        ____  _        _    ____ _  __   _   _    ____ _  __
-        | __ )| |      / \  / ___| |/ /  | | / \  / ___| |/ /
-        |  _ \| |     / _ \| |   | ' /   | |/ _ \| |   | ' /
-        | |_) | |___ / ___ \ |___| . \ \ | / ___ \ |___| . \
-        |____/|_____/_/   \_\____|_|\_\ \/_/   \_\____|_|\_\
-
-        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
-        ";
-
-        $this->line('<fg=green>' . $title . '</>');
-        $this->info('<fg=yellow>Welcome to the Casino! Let\'s play Blackjack!</>');
-
-        return $this;
     }
 }

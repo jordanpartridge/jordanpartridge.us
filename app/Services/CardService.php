@@ -58,20 +58,8 @@ final readonly class CardService
 
     public function getDeck(string $name): Response
     {
-        try {
-            $response = $this->cardApi->send(new GetDeck($name));
-            activity('card-service')->event('get-deck')->withProperties(
-                [
-                    'status'   => $response->status(),
-                    'name'     => $name,
-                    'response' => $response->json(),
-                ]
-            )->log('getting deck');
-        } catch (FatalRequestException|RequestException $e) {
-            throw new RuntimeException('Failed to get deck: ' . $e->getMessage());
-        }
+        return $this->cardApi->send(new GetDeck($name));
 
-        return $response;
     }
 
     public function initializeDeck(string $name): array

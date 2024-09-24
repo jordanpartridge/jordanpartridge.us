@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\GameStarted;
 use App\Models\Game;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
@@ -9,12 +10,10 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;
 
-class BlackJackService
+readonly class BlackJackService
 {
-    private array $deck;
-
     public function __construct(
-        private readonly CardService $cardService,
+        private CardService $cardService,
     ) {
     }
 
@@ -22,26 +21,16 @@ class BlackJackService
      * Initialize a new game of BlackJack.
      *
      * @param  string  $name  The name of the game.
-     * @param  array  $players  An array of player names.
-     * @return Game The newly created game with associated players.
      *
-     * @throws ValidationException If the game data is invalid.
-     * @throws RuntimeException If deck initialization fails.
+     * @return BlackJackService Self for method chaining.
      */
-    public function initializeGame(string $name, array $players): Game
+    public function initializeGame(string $name): self
     {
-        activity('blackjack-service')
-            ->event('initialize-game')
-            ->withProperties(['name' => $name, 'players' => $players])
-            ->log('initializing game');
+        $deck = $this->initializeDeck($name);
 
-        $this->initializeDeck($name);
-        $this->validateGameData($name);
+        GameStarted::fire(name: $name, deck: $deck['slug']);
 
-        $game = $this->createGame($name);
-        $this->createPlayers($game, $players);
-
-        return $game->load('players');
+        return $this;
     }
 
     public function deal(Game $game): array
@@ -72,15 +61,10 @@ class BlackJackService
      *
      * @throws RuntimeException If deck initialization fails.
      */
-    private function initializeDeck(string $name): void
+    private function initializeDeck(string $name): array
     {
+        return $this->cardService->initializeDeck($name);
 
-        $this->deck = $this->cardService->initializeDeck($name);
-
-        activity('blackjack-service')
-            ->withProperties($this->deck)
-            ->event('initialized-deck')
-            ->log('deck initialized');
     }
 
     /**
