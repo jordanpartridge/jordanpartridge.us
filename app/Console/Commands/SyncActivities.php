@@ -33,7 +33,7 @@ class SyncActivities extends Command
             $this->syncActivities();
         } catch (Exception $e) {
             $this->error($e->getMessage());
-            CommandFailed::fire($this->signature, $e);
+            CommandFailed::fire(command: $this->signature, message: $e->getMessage());
         }
     }
 
@@ -169,6 +169,6 @@ class SyncActivities extends Command
             ]
         );
 
-        RideSynced::fire($ride);
+        RideSynced::fire(ride: $ride);
     }
 }
