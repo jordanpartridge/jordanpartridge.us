@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Events\PlayerAdded;
 use App\Models\Game;
 use App\Services\BlackJackService;
+use App\States\GameState;
 use Illuminate\Console\Command;
 
 use function Laravel\Prompts\suggest;
@@ -16,7 +17,15 @@ class BlackJack extends Command
 
     protected $description = 'Play a game of blackjack';
 
-    protected int $game;
+    /**
+     * The current game of blackjack.
+     */
+    protected GameState $game;
+
+    /**
+     * The players in the current game of blackjack.
+     */
+    protected array $players = [];
 
     private BlackJackService $blackJackService;
 
@@ -59,23 +68,23 @@ class BlackJack extends Command
         $this->game = $this->blackJackService
             ->initializeGame(
                 name: $this->promptForName(),
-            )->game_id;
+            );
         $this->clearScreen();
 
         return $this;
     }
 
-
     private function initializePlayers(int $numberOfPlayers): void
     {
-        $players = $this->players(numberOfPlayers: $numberOfPlayers);
-        $this->info('players: ' . implode(', ', $players));
+        $playerNames = $this->players(numberOfPlayers: $numberOfPlayers);
 
-        collect($players)->each(function ($player) {
+        collect($playerNames)->each(function ($player) {
             $this->info('Adding player: ' . $player);
-            PlayerAdded::fire(game: $this->game, name: $player);
+            $playerAddedEvent = PlayerAdded::fire(game: $this->game, name: $player);
+            $this->players[] = $playerAddedEvent->player();
         });
 
+        $this->info('players added: ' . collect($this->players)->pluck('name')->join(', '));
     }
 
     private function promptForName(): string

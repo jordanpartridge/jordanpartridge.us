@@ -4,9 +4,6 @@ namespace App\Events;
 
 use App\States\GameState;
 use App\States\PlayerState;
-use Brick\Math\Exception\NumberFormatException;
-use Brick\Math\Exception\RoundingNecessaryException;
-use Brick\Money\Exception\UnknownCurrencyException;
 use Thunk\Verbs\Attributes\Autodiscovery\AppliesToState;
 use Thunk\Verbs\Event;
 
@@ -29,16 +26,25 @@ class PlayerAdded extends Event
         }
     }
 
-    /**
-     * @throws UnknownCurrencyException
-     * @throws RoundingNecessaryException
-     * @throws NumberFormatException
-     */
     public function applyToPlayer(PlayerState $player): void
     {
         $player->name = $this->name;
         $player->balance = 500;
         $player->setup = true;
         $player->hand = [];
+    }
+
+    public function handle(): void
+    {
+        activity('blackjack')->event('player-added')->withProperties([
+            'game_id'   => $this->game_id,
+            'player_id' => $this->player_id,
+            'name'      => $this->name,
+        ])->log('Player added: ' . $this->name);
+    }
+
+    public function player(): PlayerState
+    {
+        return PlayerState::load($this->player_id);
     }
 }

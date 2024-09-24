@@ -25,6 +25,11 @@ class GameStarted extends Event
         $this->assert(Game::where('name', $this->name)->doesntExist(), 'The game name must be unique');
     }
 
+    public function game(): GameState
+    {
+        return GameState::load($this->game_id);
+    }
+
     public function applyToGame(GameState $game): void
     {
         $game->started = true;

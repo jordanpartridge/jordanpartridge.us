@@ -4,14 +4,16 @@ namespace App\Services;
 
 use App\Events\GameStarted;
 use App\Models\Game;
-use Illuminate\Support\Collection;
+use App\States\GameState;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use JsonException;
 use RuntimeException;
 
 readonly class BlackJackService
 {
+    public GameState $game;
+
     public function __construct(
         private CardService $cardService,
     ) {
@@ -21,16 +23,17 @@ readonly class BlackJackService
      * Initialize a new game of BlackJack.
      *
      * @param  string  $name  The name of the game.
-     * @return GameStarted Self for method chaining.
+     *
+     * @throws JsonException
      */
-    public function initializeGame(string $name): GameStarted
+    public function initializeGame(string $name): GameState
     {
         $deck = $this->initializeDeck($name);
-        if ($deck['slug'] === null) {
+        if (! isset($deck['slug'])) {
             throw new RuntimeException('Failed to create deck', $deck['error']);
         }
 
-        return GameStarted::fire(name: $name, deck: $deck['slug']);
+        return $this->game = GameStarted::fire(name: $name, deck: $deck['slug'])->game();
     }
 
     public function deal(Game $game): array
@@ -59,14 +62,13 @@ readonly class BlackJackService
     /**
      * Initialize the deck for the game.
      *
-     * @throws RuntimeException If deck initialization fails.
+     * @throws RuntimeException|JsonException If deck initialization fails.
      */
     private function initializeDeck(string $name): array
     {
         $response = $this->cardService->initializeDeck($name);
 
         return $response->successful() ? $response->json() : ['error' => $response->toException()->getMessage()];
-
     }
 
     /**
@@ -114,30 +116,5 @@ readonly class BlackJackService
             'name'      => $name,
             'deck_slug' => $this->deck['slug'],
         ]);
-    }
-
-    /**
-     * Create players for the game.
-     *
-     * @param  Game  $game  The game to associate players with.
-     * @param  array  $players  An array of player names.
-     */
-    private function createPlayers(Game $game, array $players): void
-    {
-        activity('blackjack-service')
-            ->on($game)
-            ->event('created-players')
-            ->withProperties(['players' => $players])
-            ->log('creating players');
-
-        Collection::make($players)->each(function ($playerName) use ($game) {
-            $game->players()->updateOrCreate(
-                ['name' => $playerName],
-                [
-                    'email'    => $playerName . '@example.com',
-                    'password' => bcrypt(Str::uuid()),
-                ]
-            );
-        });
     }
 }
