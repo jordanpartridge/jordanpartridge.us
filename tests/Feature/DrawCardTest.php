@@ -20,6 +20,11 @@ describe(DrawCard::class, function () {
         expect(fn () => new DrawCard('test-deck', -1))->toThrow(InvalidArgumentException::class);
     });
 
+    it('throws an exception for a very long deck name', function () {
+        $longDeckName = str_repeat('a', 256);
+        expect(fn () => new DrawCard($longDeckName, 1))->toThrow(InvalidArgumentException::class);
+    });
+
     it('won\'t allow spaces in deck name', function () {
         expect(fn () => new DrawCard('invalid deck name', 1))->toThrow(InvalidArgumentException::class);
     });
