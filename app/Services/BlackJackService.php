@@ -21,16 +21,16 @@ readonly class BlackJackService
      * Initialize a new game of BlackJack.
      *
      * @param  string  $name  The name of the game.
-     *
-     * @return BlackJackService Self for method chaining.
+     * @return GameStarted Self for method chaining.
      */
-    public function initializeGame(string $name): self
+    public function initializeGame(string $name): GameStarted
     {
         $deck = $this->initializeDeck($name);
+        if ($deck['slug'] === null) {
+            throw new RuntimeException('Failed to create deck', $deck['error']);
+        }
 
-        GameStarted::fire(name: $name, deck: $deck['slug']);
-
-        return $this;
+        return GameStarted::fire(name: $name, deck: $deck['slug']);
     }
 
     public function deal(Game $game): array
@@ -63,7 +63,9 @@ readonly class BlackJackService
      */
     private function initializeDeck(string $name): array
     {
-        return $this->cardService->initializeDeck($name);
+        $response = $this->cardService->initializeDeck($name);
+
+        return $response->successful() ? $response->json() : ['error' => $response->toException()->getMessage()];
 
     }
 

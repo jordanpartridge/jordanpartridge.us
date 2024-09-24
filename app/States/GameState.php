@@ -11,6 +11,8 @@ class GameState extends State
 
     public ?string $name = null;
 
+    public int $active_player_id;
+
     public array $player_ids;
 
     public CarbonImmutable $started_at;

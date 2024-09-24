@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\PlayerAdded;
 use App\Models\Game;
 use App\Services\BlackJackService;
 use Illuminate\Console\Command;
@@ -14,6 +15,8 @@ class BlackJack extends Command
     protected $signature = 'play:blackjack';
 
     protected $description = 'Play a game of blackjack';
+
+    protected int $game;
 
     private BlackJackService $blackJackService;
 
@@ -28,7 +31,7 @@ class BlackJack extends Command
         $this
             ->displayTitle()
             ->initializeGame()
-            ->initializePlayers(numberOfPlayers: 2);
+            ->initializePlayers(numberOfPlayers: $this->promptForNumPlayers());
     }
 
     private function displayTitle(): self
@@ -53,23 +56,26 @@ class BlackJack extends Command
 
     private function initializeGame(): self
     {
-        $this->blackJackService
+        $this->game = $this->blackJackService
             ->initializeGame(
                 name: $this->promptForName(),
-            );
+            )->game_id;
         $this->clearScreen();
 
         return $this;
     }
 
-    private function initializePlayers(int $numberOfPlayers): self
+
+    private function initializePlayers(int $numberOfPlayers): void
     {
-        $players = $this->players(numberOfPlayers: $this->promptForNumPlayers());
+        $players = $this->players(numberOfPlayers: $numberOfPlayers);
         $this->info('players: ' . implode(', ', $players));
 
-        //fires PlayerJoined event which should set a current player, and then a collection of all players on the
-        //game state.
-        return $this;
+        collect($players)->each(function ($player) {
+            $this->info('Adding player: ' . $player);
+            PlayerAdded::fire(game: $this->game, name: $player);
+        });
+
     }
 
     private function promptForName(): string

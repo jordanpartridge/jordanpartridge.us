@@ -6,7 +6,6 @@ use App\Http\Integrations\CardApi\CardApi;
 use App\Http\Integrations\CardApi\Requests\CreateDeck;
 use App\Http\Integrations\CardApi\Requests\DrawCard;
 use App\Http\Integrations\CardApi\Requests\GetDeck;
-use JsonException;
 use RuntimeException;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -41,19 +40,16 @@ final readonly class CardService
 
     public function createDeck(string $name): Response
     {
-        try {
-            $deckResponse = $this->cardApi->send(new CreateDeck($name));
-            activity('card-service')->event('create-deck')->withProperties(
-                [
-                    'status'   => $deckResponse->status(),
-                    'name'     => $name,
-                    'response' => $deckResponse->json(),
-                ]
-            )->log('creating deck');
+        $deckResponse = $this->cardApi->send(new CreateDeck($name));
+        activity('card-service')->event('create-deck')->withProperties(
+            [
+                'status'   => $deckResponse->status(),
+                'name'     => $name,
+                'response' => $deckResponse->json(),
+            ]
+        )->log('creating deck');
 
-        } catch (FatalRequestException|RequestException $e) {
-            throw new RuntimeException('Failed to create deck: ' . $e->getMessage());
-        }
+        return $deckResponse;
     }
 
     public function getDeck(string $name): Response
@@ -62,27 +58,18 @@ final readonly class CardService
 
     }
 
-    public function initializeDeck(string $name): array
+    public function initializeDeck(string $name): Response
     {
-        try {
-            $deckResponse = $this->getDeck($name);
 
-            activity('card-service')->event('initialize-deck')->withProperties(
-                [
-                    'status'   => $deckResponse->status(),
-                    'name'     => $name,
-                    'response' => $deckResponse->json(),
-                ]
-            )->log('initializing deck');
+        $deckResponse = $this->createDeck($name);
 
-            return match ($deckResponse->status()) {
-                200     => $deckResponse->json(),
-                404     => $this->createDeck($name)->json(),
-                default => throw new RuntimeException('Failed to initialize deck: ' . $deckResponse->body()),
-            };
-        } catch (JsonException $e) {
-            throw new RuntimeException('Failed to initialize deck: ' . $e->getMessage());
-        }
-
+        activity('card-service')->event('initialize-deck')->withProperties(
+            [
+                'status'   => $deckResponse->status(),
+                'name'     => $name,
+                'response' => $deckResponse->json(),
+            ]
+        )->log('initializing deck');
+        return $deckResponse;
     }
 }
