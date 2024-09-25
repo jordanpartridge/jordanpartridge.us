@@ -9,7 +9,6 @@ use App\Http\Integrations\Strava\Requests\AthleteActivityRequest;
 use App\Http\Integrations\Strava\Strava;
 use App\Models\Ride;
 use App\Models\StravaToken;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
@@ -110,7 +109,7 @@ class SyncActivities extends Command
         $activity['map_url'] = $this->getMap($activity['map']['id'], $activity['map']['summary_polyline']);
         $activity['calories'] = $this->getActivityCalories($activity['id'], $token);
 
-        $this->createOrUpdateRide($activity);
+        RideSynced::fire(data: $activity);
     }
 
     private function getMap(string $mapId, string $polyline): ?string
@@ -148,27 +147,5 @@ class SyncActivities extends Command
         }
 
         return $response->json()['calories'] ?? null;
-    }
-
-    private function createOrUpdateRide(array $activity): void
-    {
-        $ride = Ride::query()->updateOrCreate(
-            ['external_id' => $activity['external_id']],
-            [
-                'date'          => Carbon::parse($activity['start_date_local']),
-                'name'          => $activity['name'],
-                'distance'      => $activity['distance'],
-                'polyline'      => $activity['map']['summary_polyline'],
-                'map_url'       => $activity['map_url'],
-                'max_speed'     => $activity['max_speed'],
-                'calories'      => $activity['calories'],
-                'elevation'     => $activity['total_elevation_gain'],
-                'average_speed' => $activity['average_speed'],
-                'moving_time'   => $activity['moving_time'],
-                'elapsed_time'  => $activity['elapsed_time'],
-            ]
-        );
-
-        RideSynced::fire(ride: $ride);
     }
 }
