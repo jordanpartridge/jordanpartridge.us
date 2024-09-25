@@ -10,7 +10,7 @@ Welcome to my personal website, where I showcase my professional work, hobbies, 
 - **Strava API**: Bike rides synced to site utilizing Laravel's Scheduler to check for new rides hourly
 - **Folio**: Route by blade file structure
 - **Filament**: Livewire powered Admin Panel
-- **Spatie/Activitylog: Log all the things that happen on the site.
+- **Spatie/Activitylog**: Log all the things that happen on the site.
 
 ## Features
 - **Professional Portfolio**: Highlighting my work and projects.
