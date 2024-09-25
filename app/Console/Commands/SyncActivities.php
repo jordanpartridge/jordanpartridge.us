@@ -109,7 +109,7 @@ class SyncActivities extends Command
         $activity['map_url'] = $this->getMap($activity['map']['id'], $activity['map']['summary_polyline']);
         $activity['calories'] = $this->getActivityCalories($activity['id'], $token);
 
-        RideSynced::fire(data: $activity);
+        RideSynced::fire(ride: $activity);
     }
 
     private function getMap(string $mapId, string $polyline): ?string
