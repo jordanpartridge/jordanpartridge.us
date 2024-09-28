@@ -30,7 +30,7 @@ readonly class BlackJackService
     {
         $deck = $this->initializeDeck($name);
         if (! isset($deck['slug'])) {
-            throw new RuntimeException('Failed to create deck', $deck['error']);
+            throw new RuntimeException('Failed to create deck' . $deck['error']);
         }
 
         return $this->game = GameStarted::fire(name: $name, deck: $deck['slug'])->game();

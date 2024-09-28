@@ -3,15 +3,18 @@
 namespace App\Events;
 
 use App\Models\Game;
+use App\States\DealerState;
 use App\States\GameState;
 use Thunk\Verbs\Attributes\Autodiscovery\AppliesToState;
 use Thunk\Verbs\Event;
 
 #[AppliesToState(GameState::class)]
+#[AppliesToState(DealerState::class)]
 class GameStarted extends Event
 {
     public function __construct(
         public ?int $game_id = null,
+        public ?int $dealer_id = null,
         public ?string $name = null,
         public ?string $deck = null,
     ) {
@@ -35,11 +38,17 @@ class GameStarted extends Event
         $game->started = true;
         $game->started_at = now()->toImmutable();
         $game->player_ids = [];
+        $game->dealer_id = $this->dealer_id;
         Game::create([
             'name'          => $this->name,
             'deck_slug'     => $this->deck,
             'game_state_id' => $game->id,
         ]);
 
+    }
+
+    public function applyToDealer(DealerState $dealer): void
+    {
+        $dealer->deck = $this->deck;
     }
 }

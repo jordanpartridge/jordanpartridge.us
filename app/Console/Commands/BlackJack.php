@@ -40,7 +40,8 @@ class BlackJack extends Command
         $this
             ->displayTitle()
             ->initializeGame()
-            ->initializePlayers(numberOfPlayers: $this->promptForNumPlayers());
+            ->initializePlayers(numberOfPlayers: $this->promptForNumPlayers())
+            ->dealCards();
     }
 
     private function displayTitle(): self
@@ -74,7 +75,7 @@ class BlackJack extends Command
         return $this;
     }
 
-    private function initializePlayers(int $numberOfPlayers): void
+    private function initializePlayers(int $numberOfPlayers): self
     {
         $playerNames = $this->players(numberOfPlayers: $numberOfPlayers);
 
@@ -85,6 +86,8 @@ class BlackJack extends Command
         });
 
         $this->info('players added: ' . collect($this->players)->pluck('name')->join(', '));
+
+        return $this;
     }
 
     private function promptForName(): string
@@ -156,5 +159,10 @@ class BlackJack extends Command
     private function clearScreen(): void
     {
         $this->output->newLine(50);
+    }
+
+    private function dealCards()
+    {
+
     }
 }
