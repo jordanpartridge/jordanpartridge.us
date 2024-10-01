@@ -16,6 +16,7 @@
         "filament/filament": "^3.2",
         "filament/notifications": "^3.2",
         "filament/spatie-laravel-settings-plugin": "^3.2",
+        "glhd/bits": "^0.5.0",
         "hirethunk/verbs": "^0.6.2",
         "laravel/folio": "^1.1",
         "laravel/framework": "^11.0",

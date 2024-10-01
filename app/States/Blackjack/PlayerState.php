@@ -1,15 +1,14 @@
 <?php
 
-namespace App\States;
+namespace App\States\Blackjack;
 
-use Brick\Money\Money;
 use Thunk\Verbs\State;
 
 class PlayerState extends State
 {
     public string $name;
 
-    public Money $balance;
+    public int $balance;
 
     public bool $setup;
 

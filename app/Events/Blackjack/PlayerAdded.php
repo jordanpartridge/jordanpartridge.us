@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Blackjack;
 
-use App\States\GameState;
-use App\States\PlayerState;
+use App\Models\Player;
+use App\States\Blackjack\GameState;
+use App\States\Blackjack\PlayerState;
 use Thunk\Verbs\Attributes\Autodiscovery\AppliesToState;
 use Thunk\Verbs\Event;
 
@@ -12,9 +13,10 @@ use Thunk\Verbs\Event;
 class PlayerAdded extends Event
 {
     public function __construct(
-        public ?int $game_id = null,
-        public ?int $player_id = null,
-        public ?string $name = null,
+        public ?int $game_id,
+        public ?int $player_id,
+        public ?string $name,
+        public int $starting_balance,
     ) {
     }
 
@@ -29,10 +31,16 @@ class PlayerAdded extends Event
     public function applyToPlayer(PlayerState $player): void
     {
         $player->name = $this->name;
-        $player->balance = 500;
+        $player->balance = $this->starting_balance;
         $player->setup = true;
         $player->hand = [];
         $player->game_id = $this->game_id;
+
+        Player::create([
+            'name'    => $this->name,
+            'balance' => $player->balance,
+            'game_id' => $this->game_id,
+        ]);
     }
 
     public function handle(): void

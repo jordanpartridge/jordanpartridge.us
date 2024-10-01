@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\System;
 
 use Thunk\Verbs\Event;
 

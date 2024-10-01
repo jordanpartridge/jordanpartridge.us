@@ -1,6 +1,6 @@
 <?php
 
-namespace App\States;
+namespace App\States\Blackjack;
 
 use App\Models\Game;
 use Carbon\CarbonImmutable;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Bikes;
 
 use App\Models\Ride;
 use App\Models\User;

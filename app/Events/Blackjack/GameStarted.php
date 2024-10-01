@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Blackjack;
 
 use App\Models\Game;
-use App\States\DealerState;
-use App\States\GameState;
+use App\States\Blackjack\DealerState;
+use App\States\Blackjack\GameState;
 use Thunk\Verbs\Attributes\Autodiscovery\AppliesToState;
 use Thunk\Verbs\Event;
 
@@ -16,7 +16,6 @@ class GameStarted extends Event
         public ?int $game_id = null,
         public ?int $dealer_id = null,
         public ?string $name = null,
-        public ?string $deck = null,
     ) {
     }
 
@@ -24,13 +23,7 @@ class GameStarted extends Event
     {
         $this->assert(! $game->started, 'The game has already started');
         $this->assert(! empty($this->name), 'The game must have a name');
-        $this->assert(! empty($this->deck), 'The game must have a deck');
         $this->assert(Game::where('name', $this->name)->doesntExist(), 'The game name must be unique');
-    }
-
-    public function game(): GameState
-    {
-        return GameState::load($this->game_id);
     }
 
     public function applyToGame(GameState $game): void
@@ -39,17 +32,20 @@ class GameStarted extends Event
         $game->started_at = now()->toImmutable();
         $game->player_ids = [];
         $game->dealer_id = $this->dealer_id;
-        Game::create([
-            'name'          => $this->name,
-            'deck_slug'     => $this->deck,
-            'game_state_id' => $game->id,
-        ]);
 
     }
 
     public function applyToDealer(DealerState $dealer): void
     {
-        $dealer->deck = $this->deck;
         $dealer->game_id = $this->game_id;
+    }
+
+    public function apply(GameState $gameState): Game
+    {
+        return Game::create([
+            'name'       => $this->name,
+            'game_id'    => $this->game_id,
+            'created_at' => $gameState->started_at,
+        ]);
     }
 }

@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Glhd\Bits\Database\HasSnowflakes;
+use Glhd\Bits\Snowflake;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -14,6 +15,7 @@ use function Laravel\Prompts\table;
 class StravaToken extends Model
 {
     use HasFactory;
+    use HasSnowflakes;
     use LogsActivity;
 
     public $fillable = [
@@ -29,6 +31,7 @@ class StravaToken extends Model
      * @var array<string, string>
      */
     protected $casts = [
+        'id'         => Snowflake::class,
         'expires_at' => 'datetime',
     ];
 
@@ -59,7 +62,7 @@ class StravaToken extends Model
     /**
      * encrypt the access token before storing it in the database
      *
-     * @param string $value
+     * @param  string  $value
      */
     public function setAccessTokenAttribute($value): void
     {

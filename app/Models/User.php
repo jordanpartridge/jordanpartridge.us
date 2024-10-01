@@ -5,6 +5,8 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
+use Glhd\Bits\Database\HasSnowflakes;
+use Glhd\Bits\Snowflake;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
@@ -21,10 +23,14 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     use hasApiTokens;
     use HasFactory;
+    use HasSnowflakes;
     use LogsActivity;
     use Notifiable;
     use SendsPasswordResetEmails;
 
+    protected $casts = [
+        'id' => Snowflake::class,
+    ];
     /**
      * The attributes that are mass assignable.
      *

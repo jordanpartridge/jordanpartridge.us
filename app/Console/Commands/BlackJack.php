@@ -2,40 +2,32 @@
 
 namespace App\Console\Commands;
 
-use App\Events\PlayerAdded;
 use App\Models\Game;
 use App\Services\BlackJackService;
-use App\States\GameState;
 use Illuminate\Console\Command;
+use JsonException;
 
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
 class BlackJack extends Command
 {
+    /**
+     * @var string
+     */
     protected $signature = 'play:blackjack';
 
+    /**
+     * @var string
+     */
     protected $description = 'Play a game of blackjack';
 
-    /**
-     * The current game of blackjack.
-     */
-    protected GameState $game;
-
-    /**
-     * The players in the current game of blackjack.
-     */
-    protected array $players = [];
-
-    private BlackJackService $blackJackService;
-
-    public function __construct(BlackJackService $blackJackService)
+    public function __construct(private readonly BlackJackService $blackJackService)
     {
         parent::__construct();
-        $this->blackJackService = $blackJackService;
     }
 
-    public function handle(): void
+    public function handle()
     {
         $this
             ->displayTitle()
@@ -64,9 +56,12 @@ class BlackJack extends Command
         return $this;
     }
 
+    /**
+     * @throws JsonException
+     */
     private function initializeGame(): self
     {
-        $this->game = $this->blackJackService
+        $this->blackJackService
             ->initializeGame(
                 name: $this->promptForName(),
             );
@@ -79,13 +74,9 @@ class BlackJack extends Command
     {
         $playerNames = $this->players(numberOfPlayers: $numberOfPlayers);
 
-        collect($playerNames)->each(function ($player) {
-            $this->info('Adding player: ' . $player);
-            $playerAddedEvent = PlayerAdded::fire(game: $this->game, name: $player);
-            $this->players[] = $playerAddedEvent->player();
-        });
+        $this->blackJackService->addPlayers($playerNames);
 
-        $this->info('players added: ' . collect($this->players)->pluck('name')->join(', '));
+        $this->info('players added: ' . implode(', ', $playerNames));
 
         return $this;
     }
@@ -161,8 +152,10 @@ class BlackJack extends Command
         $this->output->newLine(50);
     }
 
-    private function dealCards()
+    private function dealCards(): self
     {
+        $this->blackJackService->deal();
 
+        return $this;
     }
 }

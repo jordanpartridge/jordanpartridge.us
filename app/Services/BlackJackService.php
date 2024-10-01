@@ -2,20 +2,21 @@
 
 namespace App\Services;
 
-use App\Events\GameStarted;
+use App\Events\Blackjack\Deal;
+use App\Events\Blackjack\GameStarted;
+use App\Events\Blackjack\PlayerAdded;
 use App\Models\Game;
-use App\States\GameState;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use JsonException;
 use RuntimeException;
+use stdClass;
 
-readonly class BlackJackService
+class BlackJackService
 {
-    public GameState $game;
-
     public function __construct(
-        private CardService $cardService,
+        private readonly CardService $cardService,
+        private object $game = new stdClass(),
     ) {
     }
 
@@ -26,37 +27,34 @@ readonly class BlackJackService
      *
      * @throws JsonException
      */
-    public function initializeGame(string $name): GameState
+    public function initializeGame(string $name): void
     {
-        $deck = $this->initializeDeck($name);
-        if (! isset($deck['slug'])) {
-            throw new RuntimeException('Failed to create deck' . $deck['error']);
-        }
+        $this->game->name = $name;
 
-        return $this->game = GameStarted::fire(name: $name, deck: $deck['slug'])->game();
+        activity('blackjack')->withProperties(['game' => $this->game])->log('Game started');
+
+        $event = GameStarted::fire(name: $name);
+
+        $this->game->deck = $this->initializeDeck($name);
+
+        $this->game->id = $event->game_id;
     }
 
-    public function deal(Game $game): array
+    public function deal(): void
     {
-        $initialHands = [];
-        $players = $game->players()->get()->pluck('name')->push('dealer');
+        Deal::fire($this->game->id);
+    }
 
-        $deck = $game->getAttribute('deck_slug');
-        $players->each(function ($playerName) use (&$initialHands, $deck) {
-            $cards = $this->cardService->drawCard($deck, 2);
-            if ($cards->successful()) {
-                $initialHands[$playerName] = $cards->json();
-            } else {
-                $initialHands[$playerName]['error'] = $cards->toException()->getMessage();
-            }
+    public function addPlayers(array $playerNames): void
+    {
+        collect($playerNames)->each(function ($playerName) {
+            $event = PlayerAdded::fire(name: $playerName, game_id: $this->game->id);
+            $player = new stdClass();
+            $player->id = $event->player_id;
+            $player->name = $playerName;
+            $this->game->players[] = $player;
         });
-
-        activity('blackjack-service')
-            ->withProperties($initialHands)
-            ->event('deal')
-            ->log('dealing cards');
-
-        return $initialHands;
+        activity('blackjack')->withProperties(['game' => $this->game])->log('Players added');
     }
 
     /**
