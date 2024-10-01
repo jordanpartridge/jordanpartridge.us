@@ -50,5 +50,6 @@ class GameStarted extends Event
     public function applyToDealer(DealerState $dealer): void
     {
         $dealer->deck = $this->deck;
+        $dealer->game_id = $this->game_id;
     }
 }

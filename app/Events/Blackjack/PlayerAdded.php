@@ -32,6 +32,7 @@ class PlayerAdded extends Event
         $player->balance = 500;
         $player->setup = true;
         $player->hand = [];
+        $player->game_id = $this->game_id;
     }
 
     public function handle(): void

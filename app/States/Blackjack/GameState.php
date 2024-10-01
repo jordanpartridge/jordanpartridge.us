@@ -14,11 +14,11 @@ class GameState extends State
 
     public ?string $name = null;
 
-    public int $dealer_id;
+    public ?int $dealer_id = null;
 
     public int $active_player_id;
 
-    public array $player_ids;
+    public array $player_ids = [];
 
     public CarbonImmutable $started_at;
 
@@ -48,4 +48,5 @@ class GameState extends State
     {
         return DealerState::load($this->dealer_id);
     }
+
 }
