@@ -2,19 +2,21 @@
 
 namespace App\Services;
 
+use App\Events\Blackjack\Deal;
+use App\Events\Blackjack\GameStarted;
+use App\Events\Blackjack\PlayerAdded;
 use App\Models\Game;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use JsonException;
 use RuntimeException;
+use stdClass;
 
 class BlackJackService
 {
-    private array $deck;
-
     public function __construct(
         private readonly CardService $cardService,
+        private object $game = new stdClass(),
     ) {
     }
 
@@ -22,65 +24,49 @@ class BlackJackService
      * Initialize a new game of BlackJack.
      *
      * @param  string  $name  The name of the game.
-     * @param  array  $players  An array of player names.
-     * @return Game The newly created game with associated players.
      *
-     * @throws ValidationException If the game data is invalid.
-     * @throws RuntimeException If deck initialization fails.
+     * @throws JsonException
      */
-    public function initializeGame(string $name, array $players): Game
+    public function initializeGame(string $name): void
     {
-        activity('blackjack-service')
-            ->event('initialize-game')
-            ->withProperties(['name' => $name, 'players' => $players])
-            ->log('initializing game');
+        $this->game->name = $name;
 
-        $this->initializeDeck($name);
-        $this->validateGameData($name);
+        activity('blackjack')->withProperties(['game' => $this->game])->log('Game started');
 
-        $game = $this->createGame($name);
-        $this->createPlayers($game, $players);
+        $event = GameStarted::fire(name: $name);
 
-        return $game->load('players');
+        $this->game->deck = $this->initializeDeck($name);
+
+        $this->game->id = $event->game_id;
     }
 
-    public function deal(Game $game): array
+    public function deal(): void
     {
-        $initialHands = [];
-        $players = $game->players()->get()->pluck('name')->push('dealer');
+        Deal::fire($this->game->id);
+    }
 
-        $deck = $game->getAttribute('deck_slug');
-        $players->each(function ($playerName) use (&$initialHands, $deck) {
-            $cards = $this->cardService->drawCard($deck, 2);
-            if ($cards->successful()) {
-                $initialHands[$playerName] = $cards->json();
-            } else {
-                $initialHands[$playerName]['error'] = $cards->toException()->getMessage();
-            }
+    public function addPlayers(array $playerNames): void
+    {
+        collect($playerNames)->each(function ($playerName) {
+            $event = PlayerAdded::fire(name: $playerName, game_id: $this->game->id);
+            $player = new stdClass();
+            $player->id = $event->player_id;
+            $player->name = $playerName;
+            $this->game->players[] = $player;
         });
-
-        activity('blackjack-service')
-            ->withProperties($initialHands)
-            ->event('deal')
-            ->log('dealing cards');
-
-        return $initialHands;
+        activity('blackjack')->withProperties(['game' => $this->game])->log('Players added');
     }
 
     /**
      * Initialize the deck for the game.
      *
-     * @throws RuntimeException If deck initialization fails.
+     * @throws RuntimeException|JsonException If deck initialization fails.
      */
-    private function initializeDeck(string $name): void
+    private function initializeDeck(string $name): array
     {
+        $response = $this->cardService->initializeDeck($name);
 
-        $this->deck = $this->cardService->initializeDeck($name);
-
-        activity('blackjack-service')
-            ->withProperties($this->deck)
-            ->event('initialized-deck')
-            ->log('deck initialized');
+        return $response->successful() ? $response->json() : ['error' => $response->toException()->getMessage()];
     }
 
     /**
@@ -128,30 +114,5 @@ class BlackJackService
             'name'      => $name,
             'deck_slug' => $this->deck['slug'],
         ]);
-    }
-
-    /**
-     * Create players for the game.
-     *
-     * @param  Game  $game  The game to associate players with.
-     * @param  array  $players  An array of player names.
-     */
-    private function createPlayers(Game $game, array $players): void
-    {
-        activity('blackjack-service')
-            ->on($game)
-            ->event('created-players')
-            ->withProperties(['players' => $players])
-            ->log('creating players');
-
-        Collection::make($players)->each(function ($playerName) use ($game) {
-            $game->players()->updateOrCreate(
-                ['name' => $playerName],
-                [
-                    'email'    => $playerName . '@example.com',
-                    'password' => bcrypt(Str::uuid()),
-                ]
-            );
-        });
     }
 }

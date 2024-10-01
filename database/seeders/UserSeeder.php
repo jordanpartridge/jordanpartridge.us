@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Events\UserUpdateOrCreated;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -12,11 +12,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate([
-            'email' => 'jordan@partridge.rocks',
-        ], [
-            'name'     => 'Jordan Partridge',
-            'password' => bcrypt(random_bytes(10)),
-        ]);
+        UserUpdateOrCreated::fire(queryArray: ['email' => 'jordan@partridge.rocks'], updateArray: ['name' => 'Jordan Partridge', 'password' => bcrypt(random_bytes(10))]);
     }
 }

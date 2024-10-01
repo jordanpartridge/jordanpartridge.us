@@ -5,56 +5,78 @@ namespace App\Console\Commands;
 use App\Models\Game;
 use App\Services\BlackJackService;
 use Illuminate\Console\Command;
+use JsonException;
 
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
 class BlackJack extends Command
 {
+    /**
+     * @var string
+     */
     protected $signature = 'play:blackjack';
 
+    /**
+     * @var string
+     */
     protected $description = 'Play a game of blackjack';
 
-    private BlackJackService $blackJackService;
-
-    private Game $game;
-
-    public function __construct(BlackJackService $blackJackService)
+    public function __construct(private readonly BlackJackService $blackJackService)
     {
         parent::__construct();
-        $this->blackJackService = $blackJackService;
     }
 
-    public function handle(): void
+    public function handle()
     {
         $this
             ->displayTitle()
             ->initializeGame()
-            ->deal();
-
+            ->initializePlayers(numberOfPlayers: $this->promptForNumPlayers())
+            ->dealCards();
     }
 
-    private function deal(): void
+    private function displayTitle(): self
     {
-        $hands = $this->blackJackService->deal(game: $this->game);
-        if (! $hands['dealer']) {
-            $this->error('Error Dealer could not be dealt cards');
-            return;
-        }
+        $this->clearScreen();
+        $title = "
+        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
+        ____  _        _    ____ _  __   _   _    ____ _  __
+        | __ )| |      / \  / ___| |/ /  | | / \  / ___| |/ /
+        |  _ \| |     / _ \| |   | ' /   | |/ _ \| |   | ' /
+        | |_) | |___ / ___ \ |___| . \ \ | / ___ \ |___| . \
+        |____/|_____/_/   \_\____|_|\_\ \/_/   \_\____|_|\_\
 
-        $dealerCard = $hands['dealer'][0];
+        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
+        ";
 
-        $this->info('Dealer is showing: ' . $this->formatCard($dealerCard));
+        $this->line('<fg=green>' . $title . '</>');
+        $this->info('<fg=yellow>Welcome to the Casino! Let\'s play Blackjack!</>');
+
+        return $this;
     }
 
+    /**
+     * @throws JsonException
+     */
     private function initializeGame(): self
     {
-        $this->game = $this->blackJackService
+        $this->blackJackService
             ->initializeGame(
                 name: $this->promptForName(),
-                players: $this->players(numberOfPlayers: $this->promptForNumPlayers())
             );
         $this->clearScreen();
+
+        return $this;
+    }
+
+    private function initializePlayers(int $numberOfPlayers): self
+    {
+        $playerNames = $this->players(numberOfPlayers: $numberOfPlayers);
+
+        $this->blackJackService->addPlayers($playerNames);
+
+        $this->info('players added: ' . implode(', ', $playerNames));
 
         return $this;
     }
@@ -130,22 +152,9 @@ class BlackJack extends Command
         $this->output->newLine(50);
     }
 
-    private function displayTitle(): self
+    private function dealCards(): self
     {
-        $this->clearScreen();
-        $title = "
-        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
-        ____  _        _    ____ _  __   _   _    ____ _  __
-        | __ )| |      / \  / ___| |/ /  | | / \  / ___| |/ /
-        |  _ \| |     / _ \| |   | ' /   | |/ _ \| |   | ' /
-        | |_) | |___ / ___ \ |___| . \ \ | / ___ \ |___| . \
-        |____/|_____/_/   \_\____|_|\_\ \/_/   \_\____|_|\_\
-
-        ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦ ♠♥♣♦
-        ";
-
-        $this->line('<fg=green>' . $title . '</>');
-        $this->info('<fg=yellow>Welcome to the Casino! Let\'s play Blackjack!</>');
+        $this->blackJackService->deal();
 
         return $this;
     }

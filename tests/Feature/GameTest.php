@@ -1,12 +1,13 @@
 <?php
 
 use App\Models\Game;
+use App\Models\Player;
+use Glhd\Bits\Snowflake;
 use Illuminate\Support\Carbon;
-use App\Models\User;
 
 it('can successfully be created with factory default settings.', function () {
     $game = Game::factory()->create();
-    expect($game->deck_slug)->toBeString()->not()->toBeEmpty()
+    expect($game->game_id)->toBeInstanceOf(Snowflake::class)
         ->and($game->name)->toBeString()->not()->toBeEmpty()
         ->and($game->created_at)->toBeInstanceOf(Carbon::class)
         ->and($game->updated_at)->toBeInstanceOf(Carbon::class)
@@ -14,7 +15,7 @@ it('can successfully be created with factory default settings.', function () {
 });
 
 it('belongs to many players (users).', function () {
-    $game = Game::factory()->has(User::factory(2), 'players')->create();
+    $game = Game::factory()->has(Player::factory(2), 'players')->create();
     expect($game->players()->count())->toBe(2)
-        ->and($game->players()->first())->toBeInstanceOf(User::class);
+        ->and($game->players()->first())->toBeInstanceOf(Player::class);
 });
