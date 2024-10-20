@@ -2,22 +2,29 @@
 
 namespace App\Models;
 
+use Glhd\Bits\Database\HasSnowflakes;
+use Glhd\Bits\Snowflake;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Game extends Model
 {
     use HasFactory;
+    use HasSnowflakes;
     use LogsActivity;
 
-    protected $fillable = ['name', 'deck_slug'];
+    protected $casts = [
+        'id' => Snowflake::class,
+    ];
 
-    public function players(): BelongsToMany
+    protected $fillable = ['name', 'game_id'];
+
+    public function players(): HasMany
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(Player::class);
     }
 
     public function getActivitylogOptions(): LogOptions

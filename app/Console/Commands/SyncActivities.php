@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Events\CommandFailed;
-use App\Events\RideSynced;
+use App\Events\Bikes\RideSynced;
+use App\Events\System\CommandFailed;
 use App\Http\Integrations\Strava\Requests\ActivityRequest;
 use App\Http\Integrations\Strava\Requests\AthleteActivityRequest;
 use App\Http\Integrations\Strava\Strava;

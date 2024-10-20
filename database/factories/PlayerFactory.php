@@ -2,13 +2,12 @@
 
 namespace Database\Factories;
 
-use Glhd\Bits\Snowflake;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Game>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Player>
  */
-class GameFactory extends Factory
+class PlayerFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +17,7 @@ class GameFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'    => fake()->words(3, true),
-            'game_id' => Snowflake::make(),
+            'name' => fake()->name(),
         ];
     }
 }
