@@ -2,10 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Integrations\Strava\Requests\TokenExchange;
-use App\Http\Integrations\Strava\Strava;
 use App\Models\StravaToken;
 use Illuminate\Console\Command;
+use JordanPartridge\StravaClient\Facades\StravaClient;
 
 class RefreshExpiredStravaToken extends Command
 {
@@ -34,10 +33,11 @@ class RefreshExpiredStravaToken extends Command
 
         // Refresh each token
         $tokens->each(function (StravaToken $token) {
-            $strava = new Strava();
-            $response = new TokenExchange($token->refresh_token, 'refresh_token');
 
-            $response = $strava->send($response)->json();
+
+
+            $response = StravaClient::exchangeToken($token->refresh_token, 'refresh_token');
+
             activity('strava:token-refresh')
                 ->withProperties(['response' => $response])
                 ->log('strava response');
