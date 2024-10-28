@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\Strava;
 
-use App\Http\Integrations\Strava\Requests\TokenExchange;
-use App\Http\Integrations\Strava\Strava;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
+use JordanPartridge\StravaClient\Facades\StravaClient;
+use JsonException;
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
 
 class CallbackController
 {
-    public function __construct(private readonly Strava $strava)
-    {
-    }
-
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     * @throws JsonException
+     */
     public function __invoke(Request $request)
     {
 
@@ -20,15 +23,8 @@ class CallbackController
             return response(['error' => 'No code provided'], 400);
         }
 
-        $tokenExchange = new TokenExchange($request->input('code'));
 
-        $response = $this->strava->send($tokenExchange);
-
-        if (! $response->ok()) {
-            return response(['error' => 'Failed to exchange token'], 500);
-        }
-
-        $data = $response->json();
+        $data = StravaClient::exchangeToken($request->input('code'));
 
         $request->user()->stravaToken()->create([
             'access_token'  => $data['access_token'],
