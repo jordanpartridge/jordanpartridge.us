@@ -16,7 +16,7 @@
         "filament/notifications": "^3.2",
         "filament/spatie-laravel-settings-plugin": "^3.2",
         "hirethunk/verbs": "^0.6.2",
-        "jordanpartridge/strava-client": "^0.1.0",
+        "jordanpartridge/strava-client": "*",
         "laravel/folio": "^1.1",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.24",
@@ -100,5 +100,14 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": {
+        "jordanpartridge/strava-client": {
+            "type": "path",
+            "url": "../../packages/jordanpartridge/strava-client",
+            "options": {
+                "symlink": true
+            }
+        }
+    }
 }

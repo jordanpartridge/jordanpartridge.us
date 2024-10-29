@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4520b52bf8fd838578d703660253f53a",
+    "content-hash": "c11dd44f010696da38611b7f1b0ff42e",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3472,17 +3472,11 @@
         },
         {
             "name": "jordanpartridge/strava-client",
-            "version": "v0.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jordanpartridge/strava-client.git",
-                "reference": "d07e0bb1cbcf4404530f7db3c8f95e47e83d07e8"
-            },
+            "version": "dev-main",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jordanpartridge/strava-client/zipball/d07e0bb1cbcf4404530f7db3c8f95e47e83d07e8",
-                "reference": "d07e0bb1cbcf4404530f7db3c8f95e47e83d07e8",
-                "shasum": ""
+                "type": "path",
+                "url": "../../packages/jordanpartridge/strava-client",
+                "reference": "8ff823ff0b0050c489893e677a022cd02a047f90"
             },
             "require": {
                 "illuminate/contracts": "^10.0||^11.0",
@@ -3519,7 +3513,44 @@
                     "JordanPartridge\\StravaClient\\Database\\Factories\\": "database/factories/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "JordanPartridge\\StravaClient\\Tests\\": "tests/",
+                    "Workbench\\App\\": "workbench/app/"
+                }
+            },
+            "scripts": {
+                "post-autoload-dump": [
+                    "@composer run prepare"
+                ],
+                "clear": [
+                    "@php vendor/bin/testbench package:purge-strava-client --ansi"
+                ],
+                "prepare": [
+                    "@php vendor/bin/testbench package:discover --ansi"
+                ],
+                "build": [
+                    "@composer run prepare",
+                    "@php vendor/bin/testbench workbench:build --ansi"
+                ],
+                "start": [
+                    "Composer\\Config::disableProcessTimeout",
+                    "@composer run build",
+                    "@php vendor/bin/testbench serve"
+                ],
+                "analyse": [
+                    "vendor/bin/phpstan analyse"
+                ],
+                "test": [
+                    "vendor/bin/pest"
+                ],
+                "test-coverage": [
+                    "vendor/bin/pest --coverage"
+                ],
+                "format": [
+                    "vendor/bin/pint"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -3537,17 +3568,10 @@
                 "laravel",
                 "strava-client"
             ],
-            "support": {
-                "issues": "https://github.com/jordanpartridge/strava-client/issues",
-                "source": "https://github.com/jordanpartridge/strava-client/tree/v0.1.1"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/JordanPartridge",
-                    "type": "github"
-                }
-            ],
-            "time": "2024-10-28T21:08:43+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "justinrainbow/json-schema",
