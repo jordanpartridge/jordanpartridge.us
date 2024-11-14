@@ -1,30 +1,191 @@
-<div x-data="{ expanded: false, darkMode: false }"
-     x-init="darkMode = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)"
-     :class="{ 'dark': darkMode }"
-     class="mt-8 space-y-6 transition-colors duration-300 ease-in-out">
-    <h2 class="text-4xl font-extrabold text-center bg-gradient-to-r from-blue-600 to-teal-400 text-transparent bg-clip-text transition-all duration-300">About Me: From Signal Corps to Software Engineering</h2>
+<div class="max-w-7xl mx-auto p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <i class="fab fa-github"></i>
+                        laravel-strava-client
+                    </h2>
+                    <div class="flex items-center gap-3 mt-2">
+                        <span class="px-2.5 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full">PHP</span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Last updated 2 days ago</span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button class="px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                        3M
+                    </button>
+                    <button class="px-3 py-1 rounded-full text-sm text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        6M
+                    </button>
+                    <button class="px-3 py-1 rounded-full text-sm text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700">
+                        1Y
+                    </button>
+                </div>
+            </div>
+        </div>
 
-    <x-signal-corps-insignia/>
+        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200 dark:divide-gray-700">
+            <!-- GitHub Stats -->
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- GitHub Quick Stats -->
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Stars</div>
+                            <i class="fas fa-star text-yellow-400"></i>
+                        </div>
+                        <div class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                            142
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Forks</div>
+                            <i class="fas fa-code-branch text-blue-500"></i>
+                        </div>
+                        <div class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                            23
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Issues</div>
+                            <i class="fas fa-exclamation-circle text-red-500"></i>
+                        </div>
+                        <div class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                            5
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Contributors</div>
+                            <i class="fas fa-users text-green-500"></i>
+                        </div>
+                        <div class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                            8
+                        </div>
+                    </div>
+                </div>
 
-    <div class="text-lg text-gray-700 dark:text-gray-200 leading-relaxed transition-colors duration-300">
-        <p>Picture this: a <span class="text-green-600 dark:text-green-400 font-semibold">kid tinkering</span> with BASIC on an MS-DOS computer, fast-forwarding through <span class="text-yellow-600 dark:text-yellow-300 font-semibold">four years in the United States Army Signal Corps</span>, and landing as a <span class="text-blue-600 dark:text-blue-400 font-semibold">full-stack software engineer</span> with over a decade of experience. That's me – <span class="text-pink-600 dark:text-pink-400 font-bold text-xl">Jordan Partridge</span>, your friendly neighborhood <span class="text-purple-600 dark:text-purple-400 font-semibold">code warrior</span> with a military-grade background in communications!</p>
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div class="text-sm font-medium text-gray-900 dark:text-white mb-2">Latest Release</div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 rounded-full">
+                            v2.1.0
+                        </span>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">
+                            5 days ago
+                        </span>
+                    </div>
+                </div>
+            </div>
 
-        <div x-show="expanded" x-collapse>
-            <p class="mt-4">My stint in the Signal Corps wasn't just about keeping radios humming. As a <span class="text-orange-600 dark:text-orange-400 font-semibold">communication specialist</span>, I was the mastermind behind our unit's <span class="text-cyan-600 dark:text-cyan-400 font-semibold">communication plans</span>. I learned that in both military ops and software development, <span class="text-red-600 dark:text-red-400 font-semibold">redundancy isn't just a buzzword—it's a lifeline</span>. Whether it's planning multiple comm routes for a mission or designing fault-tolerant systems, I've got <span class="text-green-600 dark:text-green-300 font-semibold">backup plans for my backup plans</span>.</p>
+            <!-- WakaTime Stats -->
+            <div class="p-6 space-y-6">
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="text-sm text-gray-500 dark:text-gray-400">Total Coding Time</div>
+                        <i class="fas fa-clock text-blue-500"></i>
+                    </div>
+                    <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                        248.5h
+                    </div>
+                </div>
 
-            <p class="mt-4">In the Army, my role went beyond just keeping the lines open. I was the <span class="text-yellow-600 dark:text-yellow-400 font-semibold">go-to troubleshooter</span> for complex systems, the <span class="text-blue-600 dark:text-blue-300 font-semibold">guardian of secure networks</span>, and the ensure of timely information delivery. Fast forward to today, and you'll find me doing much the same—albeit with <span class="text-pink-600 dark:text-pink-300 font-semibold">less camo and more caffeine</span>. I navigate intricate codebases, fortify data security, and optimize information flow in applications with the precision of a <span class="text-purple-600 dark:text-purple-300 font-semibold">well-executed military operation</span>.</p>
+                <div class="space-y-4">
+                    <h3 class="text-sm font-medium text-gray-900 dark:text-white">Languages</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-300">PHP</span>
+                            <span class="text-gray-900 dark:text-white font-medium">68%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="bg-blue-600 h-2 rounded-full" style="width: 68%"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-300">Markdown</span>
+                            <span class="text-gray-900 dark:text-white font-medium">15%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 15%"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-300">YAML</span>
+                            <span class="text-gray-900 dark:text-white font-medium">12%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 12%"></div>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600 dark:text-gray-300">JSON</span>
+                            <span class="text-gray-900 dark:text-white font-medium">5%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                            <div class="bg-purple-500 h-2 rounded-full" style="width: 5%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Packagist Stats -->
+            <div class="p-6 space-y-6">
+                <div class="grid grid-cols-1 gap-4">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Total Downloads</div>
+                            <i class="fas fa-download text-green-500"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                            28,750
+                        </div>
+                        <div class="mt-1 text-sm text-green-600 dark:text-green-400 flex items-center gap-1">
+                            <i class="fas fa-arrow-up"></i>
+                            12% this month
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Monthly Downloads</div>
+                            <i class="fas fa-chart-line text-blue-500"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-gray-900 dark:text-white">
+                            2,780
+                        </div>
+                        <div class="flex items-center gap-2 mt-2">
+                            <div class="h-1 flex-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                                <div class="h-1 bg-blue-500 rounded-full" style="width: 85%"></div>
+                            </div>
+                            <span class="text-sm text-gray-500 dark:text-gray-400">85%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div class="text-sm font-medium text-gray-900 dark:text-white mb-2">Package Health</div>
+                    <div class="flex items-center gap-4">
+                        <span class="px-2.5 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full">
+                            v2.1.0
+                        </span>
+                        <div class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-code-branch"></i>
+                            15 dependents
+                        </div>
+                        <div class="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-check-circle text-green-500"></i>
+                            All tests passing
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <button
-        @click="expanded = !expanded"
-        class="mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-teal-400 text-white rounded-full hover:from-blue-600 hover:to-teal-500 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 shadow-lg"
-        x-text="expanded ? 'Read Less' : 'Read More'"
-        aria-expanded="expanded"
-    ></button>
-    <p class="mt-4">
-        <a href="/software-development" class="text-blue-500 hover:text-blue-600 transition-colors duration-200">
-            Learn more about my software development expertise →
-        </a>
-    </p>
 </div>
