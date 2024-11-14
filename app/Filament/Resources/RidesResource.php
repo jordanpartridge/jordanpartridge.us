@@ -193,9 +193,9 @@ class RidesResource extends Resource
                 SelectFilter::make('distance_range')
                     ->label('Distance Range')
                     ->options([
-                        '0-5'  => 'Short (0-5 mph)',
-                        '5-15' => 'Medium (5-15 mph)',
-                        '15+'  => 'Long (15+ mph)',
+                        '0-5'  => 'Short (0-5 mi)',
+                        '5-15' => 'Medium (5-15 mi)',
+                        '15+'  => 'Long (15+ mi)',
                     ])
                     ->query(function (Builder $query, array $data) {
                         if (empty($data['value'])) {
