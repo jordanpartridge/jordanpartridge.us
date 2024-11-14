@@ -40,7 +40,9 @@ class RidesResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return cache()->remember('rides_count_4', now()->addMinutes(10), function () {
+            return static::getModel()::count();
+        });
     }
 
     public static function form(Form $form): Form
@@ -168,7 +170,7 @@ class RidesResource extends Resource
                         thousandsSeparator: ','
                     )
                     ->description(
-                        fn (Ride $record): string => number_format($record->average_speed, 1) . ' Mph avg'
+                        fn (Ride $record): string => number_format($record->average_speed, 1) . ' mph avg'
                     )
                     ->icon('heroicon-o-map-pin'),
 
@@ -179,7 +181,7 @@ class RidesResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->description(
-                        fn (Ride $record): string => ($record->max_speed ? $record->max_speed . ' km/h max' : 'No max speed')
+                        fn (Ride $record): string => ($record->max_speed ? $record->max_speed . ' mph max' : 'No max speed')
                     )
                     ->icon('heroicon-o-arrow-trending-up'),
             ])
@@ -191,9 +193,9 @@ class RidesResource extends Resource
                 SelectFilter::make('distance_range')
                     ->label('Distance Range')
                     ->options([
-                        '0-5'  => 'Short (0-5 km)',
-                        '5-15' => 'Medium (5-15 km)',
-                        '15+'  => 'Long (15+ km)',
+                        '0-5'  => 'Short (0-5 mph)',
+                        '5-15' => 'Medium (5-15 mph)',
+                        '15+'  => 'Long (15+ mph)',
                     ])
                     ->query(function (Builder $query, array $data) {
                         if (empty($data['value'])) {
@@ -219,13 +221,12 @@ class RidesResource extends Resource
                 DeleteBulkAction::make()
                     ->icon('heroicon-o-trash'),
             ])
-            ->emptyStateIcon('heroicon-o-bicycle')
             ->emptyStateHeading('No rides recorded')
             ->emptyStateDescription('Start tracking your bike rides to see them appear here.')
             ->emptyStateActions([
                 Action::make('create')
                     ->label('Record New Ride')
-                    ->url(route('filament.admin.resources.rides.create'))
+                    ->url(static::getUrl('create'))
                     ->icon('heroicon-o-plus'),
             ]);
     }
@@ -248,6 +249,6 @@ class RidesResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'date'];
+        return ['name'];
     }
 }
