@@ -44,7 +44,7 @@
                             </svg>
                         </span>
                         <span class="text-sm font-medium text-white">
-                            {{ number_format($ride->average_speed * 2.23694, 1) }} <span class="text-white/60">mph</span>
+                            {{ $ride->average_speed }} <span class="text-white/60">mph</span>
                         </span>
                     </span>
                 </div>
@@ -56,7 +56,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 11l7-7 7 7M5 19l7-7 7 7" />
                         </svg>
                         <span class="text-xs font-medium text-white/60">
-                            {{ number_format($ride->elevation * 3.28084) }} <span class="text-white/40">ft</span>
+                            {{ $ride->elevation }} <span class="text-white/40">ft</span>
                         </span>
                     </span>
                     @if ($ride->moving_time)
