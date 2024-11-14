@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -44,6 +45,11 @@ class Ride extends Model
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('date', 'desc');
         });
+    }
+
+    public function getMapUrlSignedAttribute(): string
+    {
+        return Storage::disk('s3')->temporaryUrl($this->map_url, now()->addMinutes(5));
     }
 
     public function getRideDiffAttribute(): string
