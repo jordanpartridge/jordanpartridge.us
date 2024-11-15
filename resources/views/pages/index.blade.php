@@ -15,31 +15,6 @@
                             class="w-32 h-32 border-4 border-blue-500 dark:border-blue-400 rounded-full shadow-xl"/>
                         <!-- Badges -->
                         <x-ui.badge.marquee></x-ui.badge.marquee>
-                        <div class="absolute -right-2 top-0">
-                            <x-menu class="bg-gray-800/80 backdrop-blur-sm border border-gray-700/50 rounded-lg shadow-xl">
-                                <x-menu-sub title="Profile Actions" icon="o-user" class="text-gray-200">
-                                    <x-menu-item title="View Profile" icon="o-eye" />
-                                    <x-menu-item title="Bikes" icon="o-bolt" link="/bike" />
-                                    <x-menu-item title="Settings" icon="o-cog-6-tooth" />
-                                </x-menu-sub>
-
-                                <x-menu-separator title="Content" class="text-gray-400" />
-
-                                <x-menu-item title="YouTube" icon="o-video-camera" link="https://www.youtube.com/@JordanCodesLaravel" external>
-                                    <x-badge value="New" class="bg-red-500 text-white" />
-                                </x-menu-item>
-
-                                <x-menu-item title="GitHub" icon="o-code-bracket" link="http://www.github.com/jordanpartridge" external />
-
-                                <x-menu-separator />
-
-                                <x-menu-sub title="Tech Stack" icon="o-command-line" class="text-gray-200">
-                                    <x-menu-item title="Backend" icon="o-server" />
-                                    <x-menu-item title="Frontend" icon="o-computer-desktop" />
-                                    <x-menu-item title="Testing" icon="o-beaker" />
-                                </x-menu-sub>
-                            </x-menu>
-                        </div>
                     </div>
 
                     <!-- Name heading - Added appropriate margin-top to account for badge -->
