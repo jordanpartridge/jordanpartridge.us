@@ -2,21 +2,21 @@
 
 namespace App\Jobs;
 
-use App\Models\StravaToken;
-use App\Models\Ride;
 use App\Http\Integrations\Strava\Requests\ActivityRequest;
 use App\Http\Integrations\Strava\Requests\AthleteActivityRequest;
 use App\Http\Integrations\Strava\Strava;
+use App\Models\Ride;
+use App\Models\StravaToken;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class SyncActivitiesJob implements ShouldQueue
 {
@@ -27,6 +27,7 @@ class SyncActivitiesJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
      * @throws Exception
      */
     public function handle(): void
@@ -34,6 +35,7 @@ class SyncActivitiesJob implements ShouldQueue
         Artisan::call('strava:token-refresh');
         if (StravaToken::query()->count() === 0) {
             Log::channel('slack')->info('No token found. Please add a token first.');
+
             return;
         }
 

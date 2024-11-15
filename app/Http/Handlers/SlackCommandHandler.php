@@ -23,9 +23,6 @@ class SlackCommandHandler implements WebhookHandlerInterface
 
     /**
      * Handle the incoming webhook payload.
-     *
-     * @param array $payload
-     * @return IlluminateResponse
      */
     public function handle(array $payload): IlluminateResponse
     {
@@ -33,18 +30,15 @@ class SlackCommandHandler implements WebhookHandlerInterface
 
         if ($command && array_key_exists($command, $this->commands)) {
             $methodName = $this->commands[$command];
+
             return $this->$methodName(); // Call the method based on the command
         }
 
         return response(['message' => 'Unknown command: ' . $command], 400);
     }
 
-
     /**
      * Determine if the handler should handle the incoming payload.
-     *
-     * @param array $payload
-     * @return bool
      */
     public function shouldHandle(array $payload): bool
     {
@@ -57,14 +51,15 @@ class SlackCommandHandler implements WebhookHandlerInterface
     private function listRides(): IlluminateResponse
     {
         $rides = Ride::all();
-        $header = sprintf("%-50s %-50s", "Ride Name", "Ride Distance");
+        $header = sprintf('%-50s %-50s', 'Ride Name', 'Ride Distance');
 
         // Collecting log messages, to be simplified
         $logMessages = $rides->map(function ($ride) use ($header) {
-            return $header . "\n" . sprintf("%-50s %-50s", $ride->name, $ride->distance);
+            return $header . "\n" . sprintf('%-50s %-50s', $ride->name, $ride->distance);
         })->implode("\n");
 
         Log::channel('slack')->info($logMessages);
+
         return response('Listing Rides please wait', 200);
     }
 
