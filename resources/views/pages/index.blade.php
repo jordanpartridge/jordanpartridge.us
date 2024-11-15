@@ -1,316 +1,214 @@
+<?php
+
+use function Livewire\Volt\state;
+
+state([
+    'projects' => [
+        [
+            'name'         => 'MyCareerAdvisor',
+            'description'  => 'Full-featured e-commerce platform with real-time inventory, payments, and analytics. Built with Laravel and modern web technologies.',
+            'url'          => 'https://www.mycareeradvisor.com',
+            'github'       => 'https://github.com/username/shopmaster-pro',
+            'headerClass'  => 'bg-gradient-to-r from-red-500 to-pink-600',
+            'preview'      => 'No cost career services platform for job seekers seeks to remove the barriers to entry for job seekers.',
+            'technologies' => [
+                ['name' => 'Laravel', 'color' => 'red'],
+                ['name' => 'Vue', 'color' => 'blue'],
+                ['name' => 'API', 'color' => 'green'],
+                ['name' => 'Webhooks', 'color' => 'red']
+            ]
+        ],
+        [
+            'name'         => 'Jordan Partridge.us',
+            'description'  => 'Modern analytics dashboard providing real-time insights and custom reporting for SaaS businesses.',
+            'url'          => 'https://www.jordanpartridge.us',
+            'github'       => 'https://github.com/username/saas-metrics',
+            'headerClass'  => 'bg-gradient-to-r from-blue-500 to-indigo-600',
+            'preview'      => 'Track MRR, ARR, customer behavior, and engagement metrics in real-time with customizable reporting.',
+            'technologies' => [
+                ['name' => 'Laravel', 'color' => 'red'],
+                ['name' => 'Vue.js', 'color' => 'green'],
+                ['name' => 'PostgreSQL', 'color' => 'blue'],
+                ['name' => 'Redis', 'color' => 'purple']
+            ]
+        ],
+        [
+            'name'         => 'TaskFlow',
+            'description'  => 'Collaborative task management platform featuring real-time updates and automated workflows.',
+            'url'          => 'https://tasks.example.com',
+            'github'       => 'https://github.com/username/taskflow',
+            'headerClass'  => 'bg-gradient-to-r from-green-500 to-teal-600',
+            'preview'      => 'Streamline team collaboration with real-time notifications, automated task assignment, and performance tracking.',
+            'technologies' => [
+                ['name' => 'Laravel', 'color' => 'red'],
+                ['name' => 'Tailwind', 'color' => 'blue'],
+                ['name' => 'Alpine.js', 'color' => 'indigo'],
+                ['name' => 'SQLite', 'color' => 'gray']
+            ]
+        ]
+    ]
+]);
+?>
 <x-layouts.marketing>
     @volt('home')
-    <div class="relative flex flex-col items-center justify-center w-full min-h-screen overflow-hidden bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 transition-colors duration-300" x-cloak>
-        <x-svg-header class="absolute top-0 left-0 w-full h-auto opacity-10 dark:opacity-5"></x-svg-header>
+    <div
+        class="relative flex flex-col items-center justify-center w-full min-h-screen overflow-hidden bg-gradient-to-br from-red-50 to-pink-50 dark:from-gray-900 dark:to-red-950 transition-colors duration-300"
+        x-cloak>
+        <div
+            class="absolute inset-0 [background:radixaal-gradient(circle_500px_at_50%_200px,rgba(255,45,48,0.1),transparent)]"></div>
 
-        <div class="flex items-center w-full max-w-6xl px-8 pt-8 pb-16 mx-auto text-gray-800 dark:text-white">
-            <div class="container relative max-w-4xl mx-auto mt-12 text-center space-y-8">
+        <div class="flex items-center w-full max-w-6xl px-8 pt-8 pb-16 mx-auto">
+            <div class="container relative max-w-4xl mx-auto mt-12 text-center space-y-16"
+                 x-data="{
+                    commandHistory: [],
+                    currentCommand: '',
+                    currentPath: '~/portfolio',
+                    currentSection: 'intro',
+                    sections: ['intro', 'skills', 'projects', 'contact'],
+                    terminalOutput: [],
+                    availableCommands: [
+                        'help',
+                        'ls',
+                        'cd',
+                        'clear',
+                        'php artisan about',
+                        'php artisan show:skills',
+                        'php artisan show:projects',
+                        'php artisan make:contact',
+                        'composer require'
+                    ],
+                    async executeCommand(cmd) {
+                        this.commandHistory.push(cmd);
+                        this.terminalOutput.push({ type: 'command', content: cmd });
 
-                <!-- Enhanced Hero Section -->
-                <div class="mb-12 text-center">
-                    <div class="relative">
-                        <x-ui.avatar class="w-32 h-32 mx-auto mb-6 border-4 border-blue-500 dark:border-blue-400 rounded-full shadow-xl"/>
-                        <!-- Animated Type Effect - requires Alpine.js -->
-                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-teal-400 text-white px-4 py-1 rounded-full text-sm font-medium">
-                            <span x-data="{ titles: ['Engineering Manager', 'Laravel Developer', 'Army Veteran', 'Cycling Enthusiast'], currentIndex: 0 }"
-                                  x-init="setInterval(() => { currentIndex = (currentIndex + 1) % titles.length }, 3000)"
-                                  x-text="titles[currentIndex]"
-                                  class="inline-block min-w-[150px] text-center">
-                            </span>
+                        switch(cmd) {
+                            case 'clear':
+                                this.terminalOutput = [];
+                                break;
+                            case 'help':
+                                this.terminalOutput.push({
+                                    type: 'output',
+                                    content: `Available commands:
+                                    ${this.availableCommands.join('\n')}`
+                                });
+                                break;
+                            case 'php artisan about':
+                                this.currentSection = 'intro';
+                                this.terminalOutput.push({
+                                    type: 'output',
+                                    content: 'Loading developer profile...'
+                                });
+                                break;
+                            case 'php artisan show:skills':
+                                this.currentSection = 'skills';
+                                break;
+                            case 'php artisan show:projects':
+                                this.currentSection = 'projects';
+                                break;
+                            case 'php artisan make:contact':
+                                this.currentSection = 'contact';
+                                break;
+                            default:
+                                if(cmd.startsWith('cd ')) {
+                                    this.currentPath = '~/' + cmd.slice(3);
+                                } else {
+                                    this.terminalOutput.push({
+                                        type: 'error',
+                                        content: `Command not found: ${cmd}`
+                                    });
+                                }
+                        }
+                        this.currentCommand = '';
+                    }
+                 }">
+
+                <!-- Interactive Terminal -->
+                <div class="relative p-8 bg-gray-900 rounded-lg border border-red-500/20 shadow-2xl overflow-hidden">
+                    <!-- Terminal Header -->
+                    <div class="absolute top-0 left-0 right-0 h-6 bg-gray-800 flex items-center px-4">
+                        <div class="flex space-x-2">
+                            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
                         </div>
                     </div>
 
-                    <h1 class="mt-6 text-4xl font-bold bg-gradient-to-r from-blue-500 to-teal-400 text-transparent bg-clip-text mb-3">
-                        Jordan Partridge
-                    </h1>
-
-                    <!-- Quick Overview Card -->
-                    <div class="mt-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            <!-- Backend -->
-                            <div class="space-y-4">
-                                <h3 class="font-semibold text-blue-500 dark:text-blue-400 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
-                                    </svg>
-                                    Backend Development
-                                </h3>
-                                <div class="space-y-3">
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Core Framework</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Laravel</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">PHP 8.2</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Composer</span>
-                                        </div>
+                    <!-- Terminal Content -->
+                    <div class="mt-4 text-left font-mono h-96 overflow-y-auto">
+                        <!-- Command History -->
+                        <template x-for="output in terminalOutput" :key="output.content">
+                            <div :class="{
+                                'text-red-400': output.type === 'error',
+                                'text-green-400': output.type === 'output',
+                                'text-blue-400': output.type === 'command'
+                            }">
+                                <template x-if="output.type === 'command'">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-red-400">➜</span>
+                                        <span class="text-blue-400" x-text="currentPath"></span>
+                                        <span x-text="output.content"></span>
                                     </div>
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Authentication & Security</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Sanctum</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Gates</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Policies</span>
-                                        </div>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Debugging & Monitoring</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Telescope</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Horizon</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Debug Bar</span>
-                                        </div>
-                                    </div>
-                                </div>
+                                </template>
+                                <template x-if="output.type !== 'command'">
+                                    <div x-text="output.content"></div>
+                                </template>
                             </div>
+                        </template>
 
-                            <!-- Frontend -->
-                            <div class="space-y-4">
-                                <h3 class="font-semibold text-teal-500 dark:text-teal-400 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                    </svg>
-                                    Frontend Stack
-                                </h3>
-                                <div class="space-y-3">
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Core Technologies</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Livewire</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Alpine.js</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Tailwind</span>
-                                        </div>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Build Tools</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Vite</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">PostCSS</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">npm</span>
-                                        </div>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">UI Components</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Blade Components</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">HeadlessUI</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Forms</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Quality & Testing -->
-                            <div class="space-y-4">
-                                <h3 class="font-semibold text-purple-500 dark:text-purple-400 flex items-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Quality & Testing
-                                </h3>
-                                <div class="space-y-3">
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Testing Frameworks</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Pest</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">PHPUnit</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">TDD</span>
-                                        </div>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">Code Quality</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Pint</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">PHPStan</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Duster</span>
-                                        </div>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <h4 class="text-sm font-medium text-gray-600 dark:text-gray-300">CI/CD</h4>
-                                        <div class="flex flex-wrap gap-2">
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">GitHub Actions</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Docker</span>
-                                            <span class="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-700 rounded-full">Forge</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                        <!-- Current Command Input -->
+                        <div class="flex items-center space-x-2 mt-2">
+                            <span class="text-red-400">➜</span>
+                            <span class="text-blue-400" x-text="currentPath"></span>
+                            <input
+                                type="text"
+                                x-model="currentCommand"
+                                @keydown.enter="executeCommand(currentCommand)"
+                                class="flex-1 bg-transparent border-none outline-none text-white font-mono"
+                                placeholder="Type 'help' for available commands"
+                            >
                         </div>
-
-                        <!-- Additional Development Tools -->
-                        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-                            <h3 class="font-semibold text-gray-700 dark:text-gray-300 mb-4">Additional Tools & Practices</h3>
-                            <div class="flex flex-wrap gap-3">
-                                <span class="px-4 py-2 text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full">Event Sourcing</span>
-                                <span class="px-4 py-2 text-sm bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full">Service Container</span>
-                                <span class="px-4 py-2 text-sm bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-full">Package Development</span>
-                                <span class="px-4 py-2 text-sm bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full">API Development</span>
-                                <span class="px-4 py-2 text-sm bg-pink-50 dark:bg-pink-900/30 text-pink-600 dark:text-pink-400 rounded-full">Queue Management</span>
-                                <span class="px-4 py-2 text-sm bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full">Webhooks</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Technical Mastery Section -->
-                    <div class="space-y-12 mt-16">
-                        <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-blue-500 to-teal-400 text-transparent bg-clip-text">Technical Expertise</h2>
-
-                        <!-- Architecture & Development -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                                <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                                    <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                    </svg>
-                                    Event-Driven Systems
-                                </h3>
-                                <ul class="space-y-3">
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Event Sourcing Architecture
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Event Broadcasting & Webhooks
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Domain Events & Listeners
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Projections & Read Models
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                                <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                                    <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                    </svg>
-                                    Error Detection & Monitoring
-                                </h3>
-                                <ul class="space-y-3">
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-red-500 rounded-full"></span>
-                                        Sentry Integration & Setup
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-red-500 rounded-full"></span>
-                                        Telescope Debugging
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-red-500 rounded-full"></span>
-                                        Exception Handling & Recovery
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-red-500 rounded-full"></span>
-                                        Real-time Error Notifications
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                                <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                                    <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Advanced Logging
-                                </h3>
-                                <ul class="space-y-3">
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                        Slack Integration for Alerts
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                        Log Aggregation & Analysis
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
-                                        Custom Log Channels
-                                    </li>
-                                </ul>
-                            </div>
-
-                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-                                <h3 class="text-xl font-semibold mb-4 flex items-center gap-2">
-                                    <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                    Performance Monitoring
-                                </h3>
-                                <ul class="space-y-3">
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        New Relic APM Integration
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        Query Performance Analysis
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        Memory Leak Detection
-                                    </li>
-                                    <li class="flex items-center gap-2">
-                                        <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        System Health Metrics
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Enhanced Social Links -->
-                    <div class="mt-8 flex justify-center space-x-6">
-                        <a href="https://www.linkedin.com/in/jordan-partridge-8284897/"
-                           class="group relative"
-                           aria-label="LinkedIn">
-                            <i class="fab fa-linkedin fa-2x text-blue-500 group-hover:text-blue-600 transition-colors duration-200"></i>
-                            <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">Connect</span>
-                        </a>
-                        <a href="http://www.github.com/jordanpartridge"
-                           class="group relative"
-                           aria-label="GitHub">
-                            <i class="fab fa-github fa-2x text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-200"></i>
-                            <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">Follow</span>
-                        </a>
-                        <a href="https://www.youtube.com/@JordanCodesLaravel"
-                           class="group relative"
-                           aria-label="YouTube">
-                            <i class="fab fa-youtube fa-2x text-red-500 group-hover:text-red-600 transition-colors duration-200"></i>
-                            <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">Subscribe</span>
-                        </a>
                     </div>
                 </div>
 
-                <!-- Rest of your existing content -->
-                <x-home.about-me/>
-
-                <!-- Enhanced Call-to-Action Buttons -->
-                <div class="flex flex-wrap justify-center gap-4 mt-8">
-                    <x-button-link href="https://www.linkedin.com/in/jordan-partridge-8284897/" target="_blank"
-                                   icon="fab fa-linkedin"
-                                   class="group px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-full transition-all duration-200 transform hover:scale-105">
-                        Connect on LinkedIn
-                    </x-button-link>
-                    <x-button-link href="http://www.github.com/jordanpartridge" target="_blank"
-                                   icon="fab fa-github"
-                                   class="group px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-full transition-all duration-200 transform hover:scale-105">
-                        Follow on GitHub
-                    </x-button-link>
-                    <x-button-link href="https://www.youtube.com/@JordanCodesLaravel" target="_blank"
-                                   icon="fab fa-youtube"
-                                   class="group px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full transition-all duration-200 transform hover:scale-105">
-                        Watch on YouTube
-                    </x-button-link>
+                <!-- Dynamic Content Section -->
+                <div x-show="currentSection === 'intro'" x-transition>
+                    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-red-200 dark:border-red-900">
+                        <x-ui.avatar class="w-24 h-24 mx-auto border-2 border-red-500 rounded-lg shadow-xl"/>
+                        <h2 class="text-2xl font-bold text-red-500 mt-4">Senior Laravel Developer</h2>
+                        <p class="text-gray-600 dark:text-gray-300 mt-2">
+                            Crafting elegant solutions with Laravel and modern web technologies
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Keep your existing components -->
-                <x-ui.contact-form class="mt-16 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 transition-colors duration-200"/>
+                <!-- Skills Section -->
+                <div x-show="currentSection === 'skills'" x-transition>
+                    <!-- Your existing skills grid here -->
+                </div>
 
-                <!-- Rest of your existing content... -->
+                <!-- Projects Section -->
+                <div x-show="currentSection === 'projects'" x-transition>
+                    <x-project-showcase :projects="$projects"></x-project-showcase>
+                    <!-- Your existing projects grid here -->
+                </div>
+
+                <!-- Contact Section -->
+                <div x-show="currentSection === 'contact'" x-transition>
+                    <x-ui.contact-form
+                        class="bg-white dark:bg-gray-800 rounded-lg p-8 border border-red-200 dark:border-red-900"/>
+                </div>
+
+                <!-- Command Helper -->
+                <div
+                    class="fixed bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-lg border border-red-500/20"
+                    x-show="currentCommand.length > 0">
+                    <div class="font-mono text-sm">
+                        <div>Suggestions:</div>
+                        <template x-for="cmd in availableCommands.filter(c => c.startsWith(currentCommand))" :key="cmd">
+                            <div class="text-gray-400" x-text="cmd"></div>
+                        </template>
+                    </div>
+                </div>
 
             </div>
         </div>
