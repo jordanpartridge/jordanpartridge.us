@@ -55,21 +55,26 @@ state([
         class="relative flex flex-col items-center justify-center w-full min-h-screen overflow-hidden bg-gradient-to-br from-red-50 to-pink-50 dark:from-gray-900 dark:to-red-950 transition-colors duration-300"
         x-cloak>
         <div
-            class="absolute inset-0 [background:radixaal-gradient(circle_500px_at_50%_200px,rgba(255,45,48,0.1),transparent)]"></div>
+            class="absolute inset-0 [background:radial-gradient(circle_500px_at_50%_200px,rgba(255,45,48,0.1),transparent)]">
+        </div>
 
         <div class="flex items-center w-full max-w-6xl px-8 pt-8 pb-16 mx-auto">
             <div class="container relative max-w-4xl mx-auto mt-12 text-center space-y-16"
                  x-data="{
                     commandHistory: [],
                     currentCommand: '',
-                    currentPath: '~/portfolio',
+                    currentPath: '~/jordanpartridge.us',
                     currentSection: 'intro',
                     sections: ['intro', 'skills', 'projects', 'contact'],
                     terminalOutput: [],
+                    cursorPosition: 0,
+                    historyIndex: -1,
+                    showSuggestions: false,
                     availableCommands: [
                         'help',
                         'ls',
                         'cd',
+                        'cls',
                         'clear',
                         'php artisan about',
                         'php artisan show:skills',
@@ -77,19 +82,27 @@ state([
                         'php artisan make:contact',
                         'composer require'
                     ],
+                    get filteredSuggestions() {
+                        return this.currentCommand.length > 0
+                            ? this.availableCommands.filter(cmd => cmd.toLowerCase().startsWith(this.currentCommand.toLowerCase()))
+                            : [];
+                    },
+                    selectedSuggestionIndex: 0,
                     async executeCommand(cmd) {
                         this.commandHistory.push(cmd);
+                        this.historyIndex = -1;
                         this.terminalOutput.push({ type: 'command', content: cmd });
+                        this.showSuggestions = false;
 
                         switch(cmd) {
                             case 'clear':
                                 this.terminalOutput = [];
+                                this.currentSection = 'intro';
                                 break;
                             case 'help':
                                 this.terminalOutput.push({
                                     type: 'output',
-                                    content: `Available commands:
-                                    ${this.availableCommands.join('\n')}`
+                                    content: `Available commands:\n${this.availableCommands.join('\n')}`
                                 });
                                 break;
                             case 'php artisan about':
@@ -120,7 +133,39 @@ state([
                         }
                         this.currentCommand = '';
                     }
-                 }">
+                }"
+                 @keydown.up.prevent="
+                    if (showSuggestions && filteredSuggestions.length > 0) {
+                        selectedSuggestionIndex = (selectedSuggestionIndex - 1 + filteredSuggestions.length) % filteredSuggestions.length;
+                    } else if (commandHistory.length > 0) {
+                        historyIndex = Math.min(historyIndex + 1, commandHistory.length - 1);
+                        currentCommand = commandHistory[commandHistory.length - 1 - historyIndex];
+                    }
+                "
+                 @keydown.down.prevent="
+                    if (showSuggestions && filteredSuggestions.length > 0) {
+                        selectedSuggestionIndex = (selectedSuggestionIndex + 1) % filteredSuggestions.length;
+                    } else if (historyIndex > 0) {
+                        historyIndex--;
+                        currentCommand = commandHistory[commandHistory.length - 1 - historyIndex];
+                    } else if (historyIndex === 0) {
+                        historyIndex = -1;
+                        currentCommand = '';
+                    }
+                "
+                 @keydown.tab.prevent="
+                    if (filteredSuggestions.length > 0) {
+                        currentCommand = filteredSuggestions[selectedSuggestionIndex];
+                        showSuggestions = false;
+                    }
+                "
+                 @keydown.enter.prevent="
+                    if (filteredSuggestions.length > 0) {
+                        currentCommand = filteredSuggestions[selectedSuggestionIndex];
+                        showSuggestions = false;
+                    }
+                    "l
+                 @keydown.esc="showSuggestions = false">
 
                 <!-- Interactive Terminal -->
                 <div class="relative p-8 bg-gray-900 rounded-lg border border-red-500/20 shadow-2xl overflow-hidden">
@@ -134,7 +179,7 @@ state([
                     </div>
 
                     <!-- Terminal Content -->
-                    <div class="mt-4 text-left font-mono h-96 overflow-y-auto">
+                    <div class="mt-4 text-left font-mono h-96 overflow-y-auto" id="terminal-content">
                         <!-- Command History -->
                         <template x-for="output in terminalOutput" :key="output.content">
                             <div :class="{
@@ -156,60 +201,58 @@ state([
                         </template>
 
                         <!-- Current Command Input -->
-                        <div class="flex items-center space-x-2 mt-2">
-                            <span class="text-red-400">➜</span>
-                            <span class="text-blue-400" x-text="currentPath"></span>
-                            <input
-                                type="text"
-                                x-model="currentCommand"
-                                @keydown.enter="executeCommand(currentCommand)"
-                                class="flex-1 bg-transparent border-none outline-none text-white font-mono"
-                                placeholder="Type 'help' for available commands"
-                            >
+                        <div class="relative">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-red-400">➜</span>
+                                <span class="text-blue-400" x-text="currentPath"></span>
+                                <input
+                                    type="text"
+                                    x-model="currentCommand"
+                                    @input="showSuggestions = currentCommand.length > 0"
+                                    @keydown.enter="executeCommand(currentCommand)"
+                                    @click="showSuggestions = currentCommand.length > 0"
+                                    class="flex-1 bg-transparent border-none outline-none text-white font-mono"
+                                    placeholder="Type 'help' for available commands"
+                                >
+                            </div>
+
+                            <!-- In-Terminal Suggestions -->
+                            <div
+                                x-show="showSuggestions && filteredSuggestions.length > 0"
+                                class="absolute left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-md overflow-hidden z-10">
+                                <template x-for="(suggestion, index) in filteredSuggestions" :key="suggestion">
+                                    <div
+                                        @click="currentCommand = suggestion; executeCommand(suggestion)"
+                                        @mouseover="selectedSuggestionIndex = index"
+                                        :class="{
+                                            'px-4 py-2 cursor-pointer hover:bg-gray-700': true,
+                                            'bg-gray-700': selectedSuggestionIndex === index
+                                        }"
+                                        class="text-gray-300">
+                                        <span x-text="suggestion"></span>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Dynamic Content Section -->
+                <!-- Dynamic Content Sections remain the same -->
                 <div x-show="currentSection === 'intro'" x-transition>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg p-6 border border-red-200 dark:border-red-900">
-                        <x-ui.avatar class="w-24 h-24 mx-auto border-2 border-red-500 rounded-lg shadow-xl"/>
-                        <h2 class="text-2xl font-bold text-red-500 mt-4">Senior Laravel Developer</h2>
-                        <p class="text-gray-600 dark:text-gray-300 mt-2">
-                            Crafting elegant solutions with Laravel and modern web technologies
-                        </p>
-                    </div>
+                    <h1>Comming soon</h1>
                 </div>
 
-                <!-- Skills Section -->
                 <div x-show="currentSection === 'skills'" x-transition>
-                    <!-- Your existing skills grid here -->
+                    <!-- ... -->
                 </div>
 
-                <!-- Projects Section -->
                 <div x-show="currentSection === 'projects'" x-transition>
                     <x-project-showcase :projects="$projects"></x-project-showcase>
-                    <!-- Your existing projects grid here -->
                 </div>
 
-                <!-- Contact Section -->
                 <div x-show="currentSection === 'contact'" x-transition>
-                    <x-ui.contact-form
-                        class="bg-white dark:bg-gray-800 rounded-lg p-8 border border-red-200 dark:border-red-900"/>
+                    <!-- ... -->
                 </div>
-
-                <!-- Command Helper -->
-                <div
-                    class="fixed bottom-4 left-4 right-4 bg-gray-900 text-white p-4 rounded-lg border border-red-500/20"
-                    x-show="currentCommand.length > 0">
-                    <div class="font-mono text-sm">
-                        <div>Suggestions:</div>
-                        <template x-for="cmd in availableCommands.filter(c => c.startsWith(currentCommand))" :key="cmd">
-                            <div class="text-gray-400" x-text="cmd"></div>
-                        </template>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
