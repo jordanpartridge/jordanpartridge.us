@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware([LogRequests::class])->group(function () {
+    Route::redirect('login', '/admin/login')->name('login');
+
     Route::get('cards/{deckName}/initialize', DeckInitializeController::class)->name('cards:initialize');
     Route::redirect('home', '/')->name('home');
     Route::post('slack', WebhookController::class)->name('web:hook')->withoutMiddleware(VerifyCsrfToken::class);
@@ -27,7 +29,6 @@ Route::middleware([LogRequests::class])->group(function () {
         Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
             ->middleware('signed')
             ->name('verification:verify');
-        Route::redirect('login', '/admin/login')->name('login');
 
         Route::post('logout', LogoutController::class)
             ->name('logout');
