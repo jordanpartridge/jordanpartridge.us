@@ -14,12 +14,7 @@ class RideObserver
      */
     public function created(Ride $ride): void
     {
-        Notification::send(User::all(), new RideSynced($ride));
-        // Get the user who should receive the notificationn
-
-        User::all()->each(function ($user) use ($ride) {
-            $user->notify(new RideSynced($ride));
-        });
+        Notification::send(User::first(), new RideSynced($ride));
     }
 
     /**
