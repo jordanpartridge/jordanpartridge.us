@@ -3,10 +3,7 @@
 namespace App\Events;
 
 use App\Models\Ride;
-use App\Models\User;
-use App\Notifications\RideSynced as RideSyncedNotification;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 use Thunk\Verbs\Event;
 
 class RideSynced extends Event
@@ -31,28 +28,5 @@ class RideSynced extends Event
                 'elapsed_time'  => $this->ride['elapsed_time'],
             ]
         );
-
-        // Get the user who should receive the notification
-        $user = User::first();
-
-        if (! $user) {
-            Log::error('No users found to notify about synced ride');
-
-            return;
-        }
-
-        $user->notify(new RideSyncedNotification($ride));
-
-        Log::stack(['slack'])->info('Ride synced', [
-            'ride'              => $ride,
-            'notification_sent' => true,
-            'user_id'           => $user->id,
-        ]);
-
-        activity('bikes')
-            ->event('synced')
-            ->on($ride)
-            ->withProperties(['name' => $this->ride['name'], 'distance' => $this->ride['distance']])
-            ->log('Ride synced');
     }
 }

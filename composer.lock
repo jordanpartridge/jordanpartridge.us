@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "156ba9e6b9f66fdabac7bcd141565b48",
+    "content-hash": "e2332c9f666322b31b1d40fb5b2b45f3",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3472,16 +3472,16 @@
         },
         {
             "name": "jordanpartridge/strava-client",
-            "version": "v0.3",
+            "version": "v0.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jordanpartridge/strava-client.git",
-                "reference": "f90a467dbde6329af0541a0e8c871a6bc701eda4"
+                "reference": "c6e6f2f15fb7b70b53653dc0ac88827e6e731598"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jordanpartridge/strava-client/zipball/f90a467dbde6329af0541a0e8c871a6bc701eda4",
-                "reference": "f90a467dbde6329af0541a0e8c871a6bc701eda4",
+                "url": "https://api.github.com/repos/jordanpartridge/strava-client/zipball/c6e6f2f15fb7b70b53653dc0ac88827e6e731598",
+                "reference": "c6e6f2f15fb7b70b53653dc0ac88827e6e731598",
                 "shasum": ""
             },
             "require": {
@@ -3539,7 +3539,7 @@
             ],
             "support": {
                 "issues": "https://github.com/jordanpartridge/strava-client/issues",
-                "source": "https://github.com/jordanpartridge/strava-client/tree/v0.3"
+                "source": "https://github.com/jordanpartridge/strava-client/tree/v0.3.1"
             },
             "funding": [
                 {
@@ -3547,7 +3547,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-11-18T02:33:02+00:00"
+            "time": "2024-11-18T05:49:08+00:00"
         },
         {
             "name": "justinrainbow/json-schema",
