@@ -7,9 +7,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Slack\BlockKit\Blocks\ActionsBlock;
-use Illuminate\Notifications\Slack\BlockKit\Blocks\ContextBlock;
-use Illuminate\Notifications\Slack\BlockKit\Blocks\SectionBlock;
 use Illuminate\Notifications\Slack\SlackMessage;
 use Illuminate\Support\Facades\Storage;
 
@@ -55,26 +52,15 @@ class RideSynced extends Notification implements ShouldQueue
      */
     public function toSlack(object $notifiable): SlackMessage
     {
-        $rideUrl = url("/rides/{$this->ride->id}");
-        $qrCodeUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($rideUrl);
-        $mapUrl = $this->getTemporaryMapUrl();
-
         return (new SlackMessage())
-            ->headerBlock('🚴 ' . $this->ride->name)
-            ->sectionBlock(function (SectionBlock $block) {
-                $block->text('🗓️ ' . $this->formatDate($this->ride->start_date));
+            ->headerBlock('🚴 Ride Synced: ' . $this->ride->name)
+            ->dividerBlock()
+            ->sectionBlock(function ($section) {
+                $section->text($this->getStatsMarkdown());
             })
-            ->imageBlock($mapUrl, 'Route Map')
-            ->sectionBlock(function (SectionBlock $block) {
-                $block->text($this->getStatsMarkdown());
-            })
-            ->contextBlock(function (ContextBlock $block) use ($qrCodeUrl) {
-                $block->image($qrCodeUrl, 'QR Code for ride details');
-                $block->text('Scan for full details (or tap the button below on mobile)');
-            })
-            ->actionsBlock(function (ActionsBlock $block) use ($rideUrl) {
-                $block->button('📊 View Full Stats')->url($rideUrl)->style('primary');
-                $block->button('🌟 Share Ride')->url('https://www.strava.com/upload/manual');
+            ->dividerBlock()
+            ->actionsBlock(function ($actions) {
+                $actions->button('View Details', url("/rides/{$this->ride->id}"));
             });
     }
 

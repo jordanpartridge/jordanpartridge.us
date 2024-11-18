@@ -2,19 +2,15 @@
 
 namespace App\Console\Commands;
 
-use App\Events\CommandFailed;
 use App\Events\RideSynced;
 use App\Models\Ride;
-use App\Models\StravaToken;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use JordanPartridge\StravaClient\Facades\StravaClient;
-use JsonException;
-use Saloon\Exceptions\Request\FatalRequestException;
-use Saloon\Exceptions\Request\RequestException;
+use JordanPartridge\StravaClient\Models\StravaToken;
 
 class SyncActivities extends Command
 {
@@ -22,25 +18,26 @@ class SyncActivities extends Command
 
     protected $description = 'Sync activities from Strava API';
 
+    /**
+     * @throws Exception
+     */
     public function handle(): void
     {
-        try {
-            $this->validateTokens();
-            $this->syncActivities();
-        } catch (Exception $e) {
-            $this->error($e->getMessage());
-            CommandFailed::fire(command: $this->signature, message: $e->getMessage());
-        }
+        $this->validateTokens()
+            ->syncActivities();
+
     }
 
     /**
      * @throws Exception
      */
-    private function validateTokens(): void
+    private function validateTokens(): self
     {
         if (StravaToken::query()->count() === 0) {
             throw new Exception('No token found. Please add a token first.');
         }
+
+        return $this;
     }
 
     private function syncActivities(): void
@@ -71,11 +68,6 @@ class SyncActivities extends Command
             && $activity['type'] === 'Ride';
     }
 
-    /**
-     * @throws FatalRequestException
-     * @throws RequestException
-     * @throws JsonException
-     */
     private function processActivity(array $activity, StravaToken $token): void
     {
         $this->info('Processing activity: ' . $activity['name']);
@@ -85,6 +77,9 @@ class SyncActivities extends Command
         RideSynced::fire(ride: $activity);
     }
 
+    /**
+     * @todo make strava-client or another package to handle this
+     */
     private function getMap(string $mapId, string $polyline): ?string
     {
         $apiKey = config('services.google_maps.key');
@@ -107,9 +102,7 @@ class SyncActivities extends Command
     }
 
     /**
-     * @throws FatalRequestException
-     * @throws RequestException
-     * @throws JsonException
+     * Get calories from getActivity endpoint.
      */
     private function getActivityCalories(string $activityId, StravaToken $token): ?float
     {

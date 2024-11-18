@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Ride;
 use App\Models\User;
 use App\Notifications\RideSynced;
+use Illuminate\Support\Facades\Notification;
 
 class RideObserver
 {
@@ -13,9 +14,8 @@ class RideObserver
      */
     public function created(Ride $ride): void
     {
-        if (config('app.env') === 'testing') {
-            return;
-        }
+        Notification::send(User::all(), new RideSynced($ride));
+        // Get the user who should receive the notificationn
 
         User::all()->each(function ($user) use ($ride) {
             $user->notify(new RideSynced($ride));

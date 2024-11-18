@@ -58,7 +58,7 @@ class StravaToken extends Model
     /**
      * encrypt the access token before storing it in the database
      *
-     * @param string $value
+     * @param  string  $value
      */
     public function setAccessTokenAttribute($value): void
     {
