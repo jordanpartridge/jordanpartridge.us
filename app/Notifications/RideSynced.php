@@ -29,7 +29,7 @@ class RideSynced extends Notification implements ShouldQueue
      *
      * @return array<int, string>
      */
-    public function via(object $notifiable): array
+    public function via(): array
     {
         return ['mail', 'slack', 'database'];
     }
@@ -72,18 +72,16 @@ class RideSynced extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'ride_id'    => $this->ride->id,
-            'name'       => $this->ride->name,
-            'start_date' => $this->ride->start_date->toIso8601String(),
-            'end_date'   => $this->ride->end_date->toIso8601String(),
-            'distance'   => [
+            'ride_id'  => $this->ride->id,
+            'name'     => $this->ride->name,
+            'distance' => [
                 'value'     => $this->ride->distance,
                 'unit'      => 'miles',
                 'formatted' => $this->formatNumber($this->ride->distance, 2) . ' mi',
             ],
             'duration' => [
                 'value'     => $this->ride->moving_time,
-                'formatted' => $this->formatDuration($this->ride->moving_time),
+                'formatted' => $this->ride->moving_time,
             ],
             'speed' => [
                 'average' => [
@@ -119,7 +117,6 @@ class RideSynced extends Notification implements ShouldQueue
     private function getStatsMarkdown(): string
     {
         return "*📏 Distance*\n{$this->formatNumber($this->ride->distance, 2)} mi\n\n" .
-            "*⏱️ Duration*\n{$this->formatDuration($this->ride->moving_time)}\n\n" .
             "*🚀 Avg Speed*\n{$this->formatNumber($this->ride->average_speed, 1)} mph\n\n" .
             "*💨 Max Speed*\n{$this->formatNumber($this->ride->max_speed, 1)} mph\n\n" .
             "*⛰️ Elevation*\n{$this->formatNumber($this->ride->elevation)} ft\n\n" .
@@ -140,18 +137,6 @@ class RideSynced extends Notification implements ShouldQueue
     private function formatNumber(float $number, int $decimals = 0): string
     {
         return number_format($number, $decimals);
-    }
-
-    /**
-     * Format the duration in HH:MM:SS format.
-     */
-    private function formatDuration(int $seconds): string
-    {
-        $hours = floor($seconds / 3600);
-        $minutes = floor(($seconds % 3600) / 60);
-        $remainingSeconds = $seconds % 60;
-
-        return sprintf('%02d:%02d:%02d', $hours, $minutes, $remainingSeconds);
     }
 
     /**
