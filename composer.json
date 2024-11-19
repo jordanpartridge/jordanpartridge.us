@@ -16,7 +16,7 @@
         "filament/notifications": "^3.2",
         "filament/spatie-laravel-settings-plugin": "^3.2",
         "hirethunk/verbs": "^0.6.2",
-        "jordanpartridge/strava-client": "@dev",
+        "jordanpartridge/strava-client": "^v0.3",
         "laravel/folio": "^1.1",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.24",
@@ -37,7 +37,6 @@
         "spatie/laravel-login-link": "^1.2",
         "spatie/laravel-markdown": "^2.5",
         "spatie/laravel-settings": "^3.3",
-        "spatie/laravel-slack-alerts": "^1.5",
         "spatie/laravel-sluggable": "^3.6",
         "z3d0x/filament-logger": "^0.7.2"
     },
@@ -98,13 +97,6 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        }
-    },
-    "repositories": {
-        "strava-client": {
-            "type": "path",
-            "url": "~/packages/jordanpartridge/strava-client",
-            "syslink": true
         }
     },
     "minimum-stability": "stable",
