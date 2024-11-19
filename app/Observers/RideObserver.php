@@ -17,7 +17,11 @@ class RideObserver
      */
     public function created(Ride $ride): void
     {
-        if (! User::first() && app()->environment() !== 'testing') {
+        if (app()->environment('testing')) {
+            return;
+        }
+
+        if (!User::first()) {
             throw new Exception('No users to notify or rides.');
         }
 
