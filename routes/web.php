@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Cards\DeckInitializeController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Middleware\LogRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -38,24 +37,6 @@ Route::middleware([LogRequests::class])->group(function () {
     Route::post('slack', WebhookController::class)
         ->name('web:hook')
         ->withoutMiddleware(VerifyCsrfToken::class);
-
-    /*
-    |--------------------------------------------------------------------------
-    | Card Management
-    |--------------------------------------------------------------------------
-    */
-    Route::prefix('cards')->as('cards:')->group(function () {
-        // Public card routes
-        Route::get('{deckName}/initialize', DeckInitializeController::class)
-            ->name('initialize');
-
-        // Authenticated card routes
-        Route::middleware('auth')->group(function () {
-            Route::get('initialize', DeckInitializeController::class)
-                ->name('initialize');
-        });
-    });
-
     /*
     |--------------------------------------------------------------------------
     | Authentication & Verification Routes
