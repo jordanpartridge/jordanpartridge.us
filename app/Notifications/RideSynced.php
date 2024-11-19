@@ -35,7 +35,7 @@ class RideSynced extends Notification implements ShouldQueue
     /**
      * Get the Slack representation of the notification.
      */
-    public function toSlack(mixed $notifiable): SlackMessage
+    public function toSlack($notifiable): SlackMessage
     {
         $message = (new SlackMessage())
             ->text('New cycling achievement unlocked! 🚴' . $this->ride->name)
@@ -48,7 +48,6 @@ class RideSynced extends Notification implements ShouldQueue
 
         });
 
-
         // Add ride stats
         $message->sectionBlock(function (SectionBlock $block) {
             $block->field("*Distance*\n{$this->ride->distance} miles")->markdown();
@@ -58,5 +57,4 @@ class RideSynced extends Notification implements ShouldQueue
 
         return $message;
     }
-
 }
