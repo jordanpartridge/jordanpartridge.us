@@ -5,60 +5,64 @@ namespace App\Notifications;
 use App\Models\Ride;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\SlackAttachment;
+use Illuminate\Notifications\Messages\SlackMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Slack\SlackMessage;
 
 class RideSynced extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    private Ride $ride;
-
-    public function __construct(Ride $ride)
-    {
-        $this->ride = $ride;
+    /**
+     * Create a new notification instance.
+     */
+    public function __construct(
+        private readonly Ride $ride
+    ) {
     }
 
-    public function via(): array
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @return array<int, string>
+     */
+    public function via(mixed $notifiable): array
     {
         return ['slack'];
     }
 
-    public function toSlack(object $notifiable): SlackMessage
+    /**
+     * Get the Slack representation of the notification.
+     */
+    public function toSlack(mixed $notifiable): SlackMessage
     {
         return (new SlackMessage())
-            ->from('Ride Tracker')
+            ->success()
             ->content("🚴 New ride synced: {$this->ride->name}")
-            ->attachment(function ($attachment) {
-                $attachment
+            ->attachment(function (SlackAttachment $attachment): SlackAttachment {
+                return $attachment
                     ->fields([
-                        [
-                            'title' => '📏 Distance',
-                            'value' => "{$this->ride->distance} mi",
-                            'short' => true
-                        ],
-                        [
-                            'title' => '🚀 Average Speed',
-                            'value' => "{$this->ride->average_speed} mph",
-                            'short' => true
-                        ],
-                        [
-                            'title' => '💨 Max Speed',
-                            'value' => "{$this->ride->max_speed} mph",
-                            'short' => true
-                        ],
-                        [
-                            'title' => '⛰️ Elevation',
-                            'value' => "{$this->ride->elevation} ft",
-                            'short' => true
-                        ],
-                        [
-                            'title' => '🔥 Calories',
-                            'value' => "{$this->ride->calories} cal",
-                            'short' => true
-                        ]
+                        $this->createField('📏 Distance', "{$this->ride->distance} mi"),
+                        $this->createField('🚀 Average Speed', "{$this->ride->average_speed} mph"),
+                        $this->createField('💨 Max Speed', "{$this->ride->max_speed} mph"),
+                        $this->createField('⛰️ Elevation', "{$this->ride->elevation} ft"),
+                        $this->createField('🔥 Calories', "{$this->ride->calories} cal"),
                     ])
                     ->image($this->ride->map_url);
             });
+    }
+
+    /**
+     * Create a field for the Slack attachment.
+     *
+     * @return array<string, mixed>
+     */
+    private function createField(string $title, string $value): array
+    {
+        return [
+            'title' => $title,
+            'value' => $value,
+            'short' => true,
+        ];
     }
 }

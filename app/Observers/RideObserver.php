@@ -5,15 +5,20 @@ namespace App\Observers;
 use App\Models\Ride;
 use App\Models\User;
 use App\Notifications\RideSynced;
+use Exception;
 use Illuminate\Support\Facades\Notification;
 
 class RideObserver
 {
     /**
      * Handle the Ride "created" event.
+     * @throws Exception
      */
     public function created(Ride $ride): void
     {
+        if (! User::first()) {
+            throw new Exception('No users to notify or rides.');
+        }
         Notification::send(User::first(), new RideSynced($ride));
     }
 

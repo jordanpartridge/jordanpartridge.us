@@ -18,5 +18,6 @@ class SyncActivities extends Command
     public function handle(): void
     {
         SyncActivitiesJob::dispatch();
+        $this->info('SyncActivitiesJob has been dispatched. (This is a queueable job)');
     }
 }

@@ -13,29 +13,62 @@ use Illuminate\Support\Facades\Route;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| Routes are organized into logical groups:
+| 1. Public Redirects
+| 2. Webhook Endpoints
+| 3. Card Management
+| 4. Authentication & Verification
 |
 */
+
 Route::middleware([LogRequests::class])->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Public Redirects
+    |--------------------------------------------------------------------------
+    */
     Route::redirect('login', '/admin/login')->name('login');
-
-    Route::get('cards/{deckName}/initialize', DeckInitializeController::class)->name('cards:initialize');
     Route::redirect('home', '/')->name('home');
-    Route::post('slack', WebhookController::class)->name('web:hook')->withoutMiddleware(VerifyCsrfToken::class);
 
-    Route::middleware('auth')->group(callback: function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook Endpoints
+    |--------------------------------------------------------------------------
+    */
+    Route::post('slack', WebhookController::class)
+        ->name('web:hook')
+        ->withoutMiddleware(VerifyCsrfToken::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Card Management
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('cards')->as('cards:')->group(function () {
+        // Public card routes
+        Route::get('{deckName}/initialize', DeckInitializeController::class)
+            ->name('initialize');
+
+        // Authenticated card routes
+        Route::middleware('auth')->group(function () {
+            Route::get('initialize', DeckInitializeController::class)
+                ->name('initialize');
+        });
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication & Verification Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('auth')->group(function () {
+        // Email verification
         Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
             ->middleware('signed')
             ->name('verification:verify');
 
+        // Logout
         Route::post('logout', LogoutController::class)
             ->name('logout');
-
-        Route::prefix('cards')->as('cards:')->group(function () {
-            Route::get('initialize', DeckInitializeController::class)
-                ->name('initialize');
-        });
     });
 });
