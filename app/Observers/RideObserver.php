@@ -12,6 +12,7 @@ class RideObserver
 {
     /**
      * Handle the Ride "created" event.
+     *
      * @throws Exception
      */
     public function created(Ride $ride): void
@@ -19,7 +20,9 @@ class RideObserver
         if (! User::first()) {
             throw new Exception('No users to notify or rides.');
         }
-        Notification::send(User::first(), new RideSynced($ride));
+
+        Notification::route('slack', config('services.slack.webhook_url'))
+            ->notify(new RideSynced($ride));
     }
 
     /**

@@ -49,6 +49,9 @@ class Ride extends Model
 
     public function getMapUrlSignedAttribute(): string
     {
+        if (!$this->map_url) {
+            return '';
+        }
         return Storage::disk('s3')->temporaryUrl($this->map_url, now()->addMinutes(5));
     }
 
