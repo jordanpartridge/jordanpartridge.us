@@ -5,21 +5,28 @@ namespace App\Observers;
 use App\Models\Ride;
 use App\Models\User;
 use App\Notifications\RideSynced;
+use Exception;
+use Illuminate\Support\Facades\Notification;
 
 class RideObserver
 {
     /**
      * Handle the Ride "created" event.
+     *
+     * @throws Exception
      */
     public function created(Ride $ride): void
     {
-        if (config('app.env') === 'testing') {
+        if (app()->environment('testing')) {
             return;
         }
 
-        User::all()->each(function ($user) use ($ride) {
-            $user->notify(new RideSynced($ride));
-        });
+        if (!User::first()) {
+            throw new Exception('No users to notify or rides.');
+        }
+
+        Notification::route('slack', config('services.slack.webhook_url'))
+            ->notify(new RideSynced($ride));
     }
 
     /**

@@ -2,21 +2,18 @@
 
 namespace App\Jobs;
 
-use App\Models\StravaToken;
-use App\Models\Ride;
-use App\Http\Integrations\Strava\Requests\ActivityRequest;
-use App\Http\Integrations\Strava\Requests\AthleteActivityRequest;
-use App\Http\Integrations\Strava\Strava;
-use Carbon\Carbon;
+use App\Events\RideSynced;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use JordanPartridge\StravaClient\Facades\StravaClient;
+use JordanPartridge\StravaClient\Models\StravaToken;
 
 class SyncActivitiesJob implements ShouldQueue
 {
@@ -27,79 +24,82 @@ class SyncActivitiesJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
      * @throws Exception
      */
     public function handle(): void
     {
-        Artisan::call('strava:token-refresh');
+        $this->validateTokens()
+            ->syncActivities();
+
+    }
+
+    private function validateTokens(): self
+    {
         if (StravaToken::query()->count() === 0) {
-            Log::channel('slack')->info('No token found. Please add a token first.');
-            return;
+            throw new Exception('No token found. Please add a token first.');
         }
 
+        return $this;
+    }
+
+    private function syncActivities(): void
+    {
         StravaToken::query()->each(function ($token) {
-            $response = $this->getActivities($token);
-            $activities = $response->filter(function ($activity) use ($token) {
-                $existingRide = Ride::query()->where('external_id', $activity['external_id'])->first();
-                if ($existingRide || $activity['type'] !== 'Ride') {
-                    return false;
-                }
-
-                $strava = new Strava($token->access_token);
-                $moreDataResponse = $strava->send(new ActivityRequest($activity['id']));
-                $activity['calories'] = $moreDataResponse->json()['calories'];
-
-                Ride::query()->updateOrCreate([
-                    'external_id' => $activity['external_id'],
-                ], [
-                    'date'          => Carbon::parse($activity['start_date_local']),
-                    'name'          => $activity['name'],
-                    'distance'      => $activity['distance'],
-                    'polyline'      => $activity['map']['summary_polyline'],
-                    'max_speed'     => $activity['max_speed'],
-                    'calories'      => $activity['calories'],
-                    'elevation'     => $activity['total_elevation_gain'],
-                    'average_speed' => $activity['average_speed'],
-                    'moving_time'   => $activity['moving_time'],
-                    'elapsed_time'  => $activity['elapsed_time'],
-                ]);
-
-                return $activity;
-            });
-
-            if ($activities->isNotEmpty()) {
-                Log::info('Synced activities count', ['count' => $activities->count()]);
-            }
+            $activities = $this->getActivities($token);
+            $activities->each(fn ($activity) => $this->processActivity($activity, $token));
         });
     }
 
-    /**
-     * Get activities from Strava
-     */
+    private function processActivity(array $activity, StravaToken $token): void
+    {
+        $activity['map_url'] = $this->getMap($activity['map']['id'], $activity['map']['summary_polyline']);
+        $activity['calories'] = $this->getActivityCalories($activity['id'], $token);
+
+        RideSynced::fire(ride: $activity);
+    }
+
     private function getActivities(StravaToken $token): Collection
     {
-        $strava = new Strava($token->access_token);
-        $activities = collect();
-        $page = 1;
+        StravaClient::setToken($token->access_token, $token->refresh_token);
 
-        do {
-            try {
-                $response = $strava->send(new AthleteActivityRequest(['page' => $page, 'per_page' => 200]));
-                if ($response->failed()) {
-                    Log::error('Error getting activities', ['response' => $response->json()]);
-                    break;
+        return $this->fetchActivitiesPage(1);
+    }
+
+    private function fetchActivitiesPage(int $page): Collection
+    {
+        return collect(StravaClient::activityForAthlete($page, 200));
+    }
+
+    /**
+     * Get calories from getActivity endpoint.
+     */
+    private function getActivityCalories(string $activityId, StravaToken $token): ?float
+    {
+        StravaClient::setToken($token->access_token, $token->refresh_token);
+        $activity = StravaClient::getActivity($activityId);
+
+        return $activity['calories'] ?? null;
+    }
+
+    private function getMap(string $mapId, string $polyline): ?string
+    {
+        $apiKey = config('services.google_maps.key');
+        $encodedPolyline = urlencode($polyline);
+        $url = "https://maps.googleapis.com/maps/api/staticmap?size=600x600&maptype=roadmap&path=enc:{$encodedPolyline}&key={$apiKey}";
+
+        try {
+            $response = Http::get($url);
+            if ($response->successful()) {
+                $filename = "rides/{$mapId}.png";
+                if (Storage::disk('s3')->put($filename, $response->body())) {
+                    return $filename;
                 }
-
-                $currentPageActivities = collect($response->json());
-                $activities = $activities->concat($currentPageActivities);
-                $page++;
-                sleep(1);
-            } catch (Exception $e) {
-                Log::error('API request failed', ['exception' => $e->getMessage()]);
-                break;
             }
-        } while ($currentPageActivities->isNotEmpty());
+        } catch (Exception $e) {
+            report($e);
+        }
 
-        return $activities;
+        return null;
     }
 }

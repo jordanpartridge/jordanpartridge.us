@@ -6,11 +6,12 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
+use JordanPartridge\StravaClient\Concerns\HasStravaTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use JordanPartridge\StravaClient\Contracts\HasStravaToken;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -18,9 +19,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 /**
  * @method static updateOrCreate(string[] $array, array $array1)
  */
-class User extends Authenticatable implements FilamentUser, HasAvatar
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasStravaToken
 {
-    use hasApiTokens;
+    use HasApiTokens;
+    use HasStravaTokens;
     use HasFactory;
     use LogsActivity;
     use Notifiable;
@@ -48,10 +50,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'remember_token',
     ];
 
-    public function stravaToken(): HasOne
-    {
-        return $this->hasOne(StravaToken::class);
-    }
 
     public function canAccessPanel(Panel $panel): bool
     {

@@ -3,8 +3,6 @@
 namespace App\Events;
 
 use App\Models\Ride;
-use App\Models\User;
-use App\Notifications\RideSynced as RideSyncedNotification;
 use Carbon\Carbon;
 use Thunk\Verbs\Event;
 
@@ -30,12 +28,5 @@ class RideSynced extends Event
                 'elapsed_time'  => $this->ride['elapsed_time'],
             ]
         );
-
-        User::first()->notify(new RideSyncedNotification($ride));
-        activity('bikes')
-            ->event('synced')
-            ->on($ride)
-            ->withProperties(['name' => $this->ride['name'], 'distance' => $this->ride['distance']])
-            ->log('Ride synced');
     }
 }

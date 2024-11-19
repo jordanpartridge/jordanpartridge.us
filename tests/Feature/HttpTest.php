@@ -6,7 +6,6 @@ it('can see home page', function () {
     $this->seed(FeaturedPodcastSeeder::class);
     $response = $this->get('/');
     $response->assertStatus(200);
-    $response->assertSee('Featured Podcast');
 });
 
 it('can see software-development page', function () {

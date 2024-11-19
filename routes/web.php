@@ -3,8 +3,6 @@
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Cards\DeckInitializeController;
-use App\Http\Controllers\Strava\CallbackController;
-use App\Http\Controllers\Strava\RedirectController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Middleware\LogRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -15,32 +13,62 @@ use Illuminate\Support\Facades\Route;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| Routes are organized into logical groups:
+| 1. Public Redirects
+| 2. Webhook Endpoints
+| 3. Card Management
+| 4. Authentication & Verification
 |
 */
+
 Route::middleware([LogRequests::class])->group(function () {
-    Route::get('cards/{deckName}/initialize', DeckInitializeController::class)->name('cards:initialize');
+    /*
+    |--------------------------------------------------------------------------
+    | Public Redirects
+    |--------------------------------------------------------------------------
+    */
+    Route::redirect('login', '/admin/login')->name('login');
     Route::redirect('home', '/')->name('home');
 
-    Route::post('slack', WebhookController::class)->name('web:hook')->withoutMiddleware(VerifyCsrfToken::class);
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook Endpoints
+    |--------------------------------------------------------------------------
+    */
+    Route::post('slack', WebhookController::class)
+        ->name('web:hook')
+        ->withoutMiddleware(VerifyCsrfToken::class);
 
-    Route::middleware('auth')->group(callback: function () {
-        Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
-            ->middleware('signed')
-            ->name('verification:verify');
-        Route::post('logout', LogoutController::class)
-            ->name('logout');
+    /*
+    |--------------------------------------------------------------------------
+    | Card Management
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('cards')->as('cards:')->group(function () {
+        // Public card routes
+        Route::get('{deckName}/initialize', DeckInitializeController::class)
+            ->name('initialize');
 
-        Route::prefix('strava')->as('strava:')->group(function () {
-            Route::get('redirect', RedirectController::class)->name('redirect');
-            Route::get('callback', CallbackController::class)->name('callback');
-        });
-
-        Route::prefix('cards')->as('cards:')->group(function () {
+        // Authenticated card routes
+        Route::middleware('auth')->group(function () {
             Route::get('initialize', DeckInitializeController::class)
                 ->name('initialize');
         });
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication & Verification Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('auth')->group(function () {
+        // Email verification
+        Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
+            ->middleware('signed')
+            ->name('verification:verify');
+
+        // Logout
+        Route::post('logout', LogoutController::class)
+            ->name('logout');
     });
 });

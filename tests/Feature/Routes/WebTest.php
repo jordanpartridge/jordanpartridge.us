@@ -36,16 +36,6 @@ test('logout route', function () {
     $this->assertGuest();
 });
 
-test('strava redirect route', function () {
-    $user = User::factory()->create();
-    $this->actingAs($user);
-
-    $response = $this->get('/strava/redirect');
-
-    $response->assertStatus(302);
-    $response->assertRedirect();
-});
-
 test('strava callback route', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
