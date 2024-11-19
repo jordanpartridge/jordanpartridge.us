@@ -38,8 +38,7 @@ class RideSynced extends Notification implements ShouldQueue
     public function toSlack(mixed $notifiable): SlackMessage
     {
         $message = (new SlackMessage())
-            ->text('New cycling achievement unlocked! 🚴')
-            ->headerBlock('🏆 New Cycling Achievements')
+            ->text('New cycling achievement unlocked! 🚴' . $this->ride->name)
             ->contextBlock(function (ContextBlock $block) {
                 $block->text("Ride from {$this->ride->date->format('F j, Y')}");
             });
