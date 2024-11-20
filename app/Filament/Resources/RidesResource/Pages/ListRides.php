@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\RidesResource\Pages;
 
+use App\Filament\Resources\RideResource\Widgets\RidingStreakWidget;
 use App\Filament\Resources\RidesResource;
 use App\Jobs\SyncActivitiesJob;
 use Filament\Actions\Action;
@@ -42,6 +43,14 @@ class ListRides extends ListRecords
                 ->modalHeading('Sync Rides')
                 ->modalSubheading('Are you sure you want to start the sync process? This may take a few minutes.')
                 ->modalButton('Start Sync'),
+        ];
+    }
+
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            RidingStreakWidget::class,
         ];
     }
 
