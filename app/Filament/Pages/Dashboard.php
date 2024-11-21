@@ -22,7 +22,7 @@ class Dashboard extends BasePage
     {
         return [
             'default' => 1,
-            'sm'      => null,
+            'sm'      => 2,
             'class'   => 'items-start', // or items-stretch
         ];
 

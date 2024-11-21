@@ -54,4 +54,5 @@ class RideGoalsWidget extends StatsOverviewWidget
                 ->color($progressPercentage >= 100 ? 'success' : 'info'),
         ];
     }
+
 }
