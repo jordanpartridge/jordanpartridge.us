@@ -12,40 +12,73 @@ class RidingStreakWidget extends ChartWidget
 
     protected int|string|array $columnSpan = 'full';
 
+    public function getColumnSpan(): int|string|array
+    {
+        return 'full';
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+        ];
+    }
+
+    // Add this method to make it collapsible
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->collapsible(),
+        ];
+    }
+
     protected function getData(): array
     {
-        $weeks = collect();
-        $distances = collect();
+        $now = now();
+        $startDate = $now->copy()->subWeeks(7)->startOfWeek();
+        $endDate = $now->copy()->endOfWeek();
 
-        // Get last 8 weeks
+        $rides = Ride::query()
+            ->select('date', 'distance')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date')
+            ->get();
+
+        $weeklyData = [];
+
+        // Initialize weeks with zero
         for ($i = 7; $i >= 0; $i--) {
-            $startOfWeek = Carbon::now()->subWeeks($i)->startOfWeek();
-            $endOfWeek = Carbon::now()->subWeeks($i)->endOfWeek();
+            $weekStart = $now->copy()->subWeeks($i)->startOfWeek();
+            $weekKey = $weekStart->format('Y-m-d');
 
-            $weekDistance = Ride::whereBetween('date', [
-                $startOfWeek,
-                $endOfWeek
-            ])->sum('distance');
+            $weeklyData[$weekKey] = [
+                'label' => $weekStart->format('M d') . '-' .
+                    $weekStart->copy()->endOfWeek()->format('d'),
+                'distance' => 0,
+            ];
+        }
 
-            // Convert meters to miles
-            $milesDistance = round($weekDistance * 0.000621371, 1);
-
-            // Format date range like "Oct 23-29"
-            $weekLabel = $startOfWeek->format('M d') . '-' . $endOfWeek->format('d');
-
-            $weeks->push($weekLabel);
-            $distances->push($milesDistance);
+        // Sum distances by week
+        foreach ($rides as $ride) {
+            $weekStart = Carbon::parse($ride->date)->startOfWeek()->format('Y-m-d');
+            if (isset($weeklyData[$weekStart])) {
+                $weeklyData[$weekStart]['distance'] += floatval($ride->distance);
+            }
         }
 
         return [
             'datasets' => [
                 [
                     'label'           => 'Weekly Distance (miles)',
-                    'data'            => $distances->toArray(),
+                    'data'            => array_map(fn ($data) => round($data['distance'], 1), $weeklyData),
                     'backgroundColor' => '#3b82f6',
                 ],
             ],
-            'labels' => $weeks->toArray(),
+            'labels' => array_column($weeklyData, 'label'),
         ];
     }
 
