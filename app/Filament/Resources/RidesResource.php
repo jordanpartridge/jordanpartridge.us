@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\RideResource\Widgets\RidingStreakWidget;
 use App\Filament\Resources\RidesResource\Pages\CreateRides;
 use App\Filament\Resources\RidesResource\Pages\EditRides;
 use App\Filament\Resources\RidesResource\Pages\ListRides;
@@ -244,6 +245,13 @@ class RidesResource extends Resource
             'index'  => ListRides::route('/'),
             'create' => CreateRides::route('/create'),
             'edit'   => EditRides::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            RidingStreakWidget::make(),
         ];
     }
 
