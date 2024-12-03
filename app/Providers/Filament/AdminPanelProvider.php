@@ -43,6 +43,7 @@ class AdminPanelProvider extends PanelProvider
                     return Blade::render('<x-login-link />');
                 }
             )
+            ->renderHook(PanelsRenderHook::BODY_END, fn () => Blade::render('<livewire:chat-side-bar />'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

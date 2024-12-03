@@ -13,8 +13,8 @@ class FilamentServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-
     }
+
     /**
      * Bootstrap services.
      */
@@ -32,5 +32,4 @@ class FilamentServiceProvider extends ServiceProvider
             ]);
         });
     }
-
 }
