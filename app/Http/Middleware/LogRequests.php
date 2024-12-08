@@ -11,21 +11,14 @@ class LogRequests
     /**
      * Handle an incoming request.
      *
-     * @param  Closure(Request): (Response)  $next
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $response = $next($request);
 
-        activity('request')
-            ->event($request->fullUrl())
-            ->withProperties([
-                'method'          => $request->method(),
-                'ip'              => $request->ip(),
-                'user_agent'      => $request->userAgent(),
-                'response_status' => $response->status(),
-            ])
-            ->log('Request processed');
+        // Add security headers
+        $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
 
         return $response;
     }
