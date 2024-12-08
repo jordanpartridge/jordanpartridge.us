@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Observers\RideObserver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,8 +17,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this
+            ->registerComponents()
             ->registerObservers()
             ->registerGates();
+    }
+
+    /**
+     * Register components
+     */
+    private function registerComponents(): self
+    {
+        Blade::component('app-layout', \App\View\Components\AppLayout::class);
+
+        return $this;
     }
 
     /**
