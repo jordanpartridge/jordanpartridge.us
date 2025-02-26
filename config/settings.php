@@ -79,7 +79,9 @@ return [
     'global_casts' => [
         DateTimeInterface::class => Spatie\LaravelSettings\SettingsCasts\DateTimeInterfaceCast::class,
         DateTimeZone::class      => Spatie\LaravelSettings\SettingsCasts\DateTimeZoneCast::class,
-//        Spatie\DataTransferObject\DataTransferObject::class => Spatie\LaravelSettings\SettingsCasts\DtoCast::class,
+        // The DataTransferObject cast is commented out as we're using the newer Laravel Data package
+        // Uncomment if you need to use the older DTO package
+        // Spatie\DataTransferObject\DataTransferObject::class => Spatie\LaravelSettings\SettingsCasts\DtoCast::class,
         Spatie\LaravelData\Data::class => Spatie\LaravelSettings\SettingsCasts\DataCast::class,
     ],
 
