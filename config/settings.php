@@ -32,18 +32,19 @@ return [
 
     /*
      * Settings will be stored and loaded from these repositories.
+     * The configuration options determine how and where settings are stored.
      */
     'repositories' => [
         'database' => [
             'type'       => Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository::class,
-            'model'      => null,
-            'table'      => null,
-            'connection' => null,
+            'model'      => null, // Uses the default model if null
+            'table'      => null, // Uses 'settings' table if null
+            'connection' => null, // Uses the default database connection if null
         ],
         'redis' => [
             'type'       => Spatie\LaravelSettings\SettingsRepositories\RedisSettingsRepository::class,
-            'connection' => null,
-            'prefix'     => null,
+            'connection' => null, // Uses the default Redis connection if null
+            'prefix'     => null, // No prefix is applied to Redis keys if null
         ],
     ],
 
