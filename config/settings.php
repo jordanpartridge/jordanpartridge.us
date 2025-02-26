@@ -60,9 +60,13 @@ return [
      * The contents of settings classes can be cached through your application,
      * settings will be stored within a provided Laravel store and can have an
      * additional prefix.
+     *
+     * Caching is enabled by default in production for better performance.
+     * It can be explicitly enabled/disabled using the SETTINGS_CACHE_ENABLED
+     * environment variable.
      */
     'cache' => [
-        'enabled' => env('SETTINGS_CACHE_ENABLED', false),
+        'enabled' => env('SETTINGS_CACHE_ENABLED', env('APP_ENV') === 'production'),
         'store'   => null,
         'prefix'  => null,
         'ttl'     => null,
