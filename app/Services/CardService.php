@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Contracts\CardServiceInterface;
 use App\Http\Integrations\CardApi\CardApi;
 use App\Http\Integrations\CardApi\Requests\CreateDeck;
 use App\Http\Integrations\CardApi\Requests\DrawCard;
@@ -12,7 +13,7 @@ use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 use Saloon\Http\Response;
 
-final readonly class CardService
+final readonly class CardService implements CardServiceInterface
 {
     public function __construct(private CardApi $cardApi)
     {
@@ -51,6 +52,7 @@ final readonly class CardService
                 ]
             )->log('creating deck');
 
+            return $deckResponse;
         } catch (FatalRequestException|RequestException $e) {
             throw new RuntimeException('Failed to create deck: ' . $e->getMessage());
         }
