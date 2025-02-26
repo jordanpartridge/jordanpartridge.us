@@ -18,6 +18,11 @@ return new class () extends Migration {
             $table->timestamps();
 
             $table->unique(['group', 'name']);
+
+            // Add indexes for frequently queried columns
+            // This improves query performance when filtering by group or name
+            $table->index('group');
+            $table->index('name');
         });
     }
 
