@@ -5,9 +5,6 @@ use App\Domain\BlackJack\Actions\InitializeGameAction;
 use App\Domain\BlackJack\DataTransferObjects\GameDto;
 use App\Domain\BlackJack\Events\GameInitializedEvent;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
-use Mockery;
-use RuntimeException;
 
 beforeEach(function () {
     Log::shouldReceive('info')->byDefault();
@@ -104,7 +101,7 @@ it('throws exception after max retry attempts', function (): void {
 
     // Act & Assert
     expect(fn () => $action->execute('test-game', ['player1']))
-        ->toThrow(RuntimeException::class, 'Failed to initialize deck after 3 attempts');
+        ->toThrow(RuntimeException::class, 'Failed to initialize deck after 3 attempts:');
 });
 
 it('validates game name', function (): void {
