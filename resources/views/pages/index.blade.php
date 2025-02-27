@@ -6,26 +6,41 @@
         <div class="flex items-center w-full max-w-6xl px-8 pt-8 pb-16 mx-auto text-gray-800 dark:text-white">
             <div class="container relative max-w-4xl mx-auto mt-12 text-center space-y-8">
 
-                <!-- Enhanced Hero Section -->
-                <div class="mb-12 text-center">
+                <!-- Enhanced Hero Section with Modern Design -->
+                <div class="mb-16 text-center relative">
+                    <!-- Decorative Elements -->
+                    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div class="absolute -top-20 -left-20 w-64 h-64 bg-primary-400/10 dark:bg-primary-600/10 rounded-full blur-3xl"></div>
+                        <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-secondary-400/10 dark:bg-secondary-600/10 rounded-full blur-3xl"></div>
+                    </div>
+
                     <div class="relative">
-                        <x-ui.avatar class="w-32 h-32 mx-auto mb-6 border-4 border-blue-500 dark:border-blue-400 rounded-full shadow-xl"/>
-                        <!-- Animated Type Effect - requires Alpine.js -->
-                        <div class="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-500 to-teal-400 text-white px-4 py-1 rounded-full text-sm font-medium">
+                        <!-- Avatar with animated glow effect -->
+                        <div class="relative mx-auto w-36 h-36 mb-8">
+                            <div class="absolute inset-0 rounded-full bg-gradient-to-r from-primary-400 to-secondary-400 blur-lg opacity-30 dark:opacity-40 animate-pulse-slow"></div>
+                            <x-ui.avatar class="relative w-36 h-36 mx-auto border-4 border-white dark:border-gray-800 rounded-full shadow-xl animate-float"/>
+                        </div>
+
+                        <!-- Animated Type Effect with enhanced styling -->
+                        <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-5 py-1.5 rounded-full text-sm font-medium shadow-lg">
                             <span x-data="{ titles: ['Engineering Manager', 'Laravel Developer', 'Army Veteran', 'Cycling Enthusiast'], currentIndex: 0 }"
                                   x-init="setInterval(() => { currentIndex = (currentIndex + 1) % titles.length }, 3000)"
                                   x-text="titles[currentIndex]"
-                                  class="inline-block min-w-[150px] text-center">
+                                  class="inline-block min-w-[170px] text-center">
                             </span>
                         </div>
                     </div>
 
-                    <h1 class="mt-6 text-4xl font-bold bg-gradient-to-r from-blue-500 to-teal-400 text-transparent bg-clip-text mb-3">
+                    <h1 class="mt-8 text-5xl font-bold bg-gradient-to-r from-primary-500 to-secondary-500 text-transparent bg-clip-text mb-4">
                         Jordan Partridge
                     </h1>
 
-                    <!-- Quick Overview Card -->
-                    <div class="mt-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+                    <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300">
+                        Building modern web applications with Laravel and a passion for clean code.
+                    </p>
+
+                    <!-- Quick Overview Card with enhanced styling -->
+                    <div class="mt-12 p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             <!-- Backend -->
                             <div class="space-y-4">
@@ -262,25 +277,31 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Social Links -->
-                    <div class="mt-8 flex justify-center space-x-6">
+                    <!-- Enhanced Social Links with Floating Animation -->
+                    <div class="mt-10 flex justify-center space-x-8">
                         <a href="https://www.linkedin.com/in/jordan-partridge-8284897/"
                            class="group relative"
                            aria-label="LinkedIn">
-                            <i class="fab fa-linkedin fa-2x text-blue-500 group-hover:text-blue-600 transition-colors duration-200"></i>
-                            <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">Connect</span>
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-full shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1">
+                                <i class="fab fa-linkedin fa-2x text-primary-500 group-hover:text-primary-600 transition-colors duration-200"></i>
+                            </div>
+                            <span class="absolute -bottom-10 left-1/2 transform -translate-x-1/2 px-3 py-1.5 text-xs font-medium bg-gray-900 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg">Connect</span>
                         </a>
                         <a href="http://www.github.com/jordanpartridge"
                            class="group relative"
                            aria-label="GitHub">
-                            <i class="fab fa-github fa-2x text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-200"></i>
-                            <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">Follow</span>
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-full shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1">
+                                <i class="fab fa-github fa-2x text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-200"></i>
+                            </div>
+                            <span class="absolute -bottom-10 left-1/2 transform -translate-x-1/2 px-3 py-1.5 text-xs font-medium bg-gray-900 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg">Follow</span>
                         </a>
                         <a href="https://www.youtube.com/@JordanCodesLaravel"
                            class="group relative"
                            aria-label="YouTube">
-                            <i class="fab fa-youtube fa-2x text-red-500 group-hover:text-red-600 transition-colors duration-200"></i>
-                            <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">Subscribe</span>
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-full shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:scale-110 group-hover:-translate-y-1">
+                                <i class="fab fa-youtube fa-2x text-red-500 group-hover:text-red-600 transition-colors duration-200"></i>
+                            </div>
+                            <span class="absolute -bottom-10 left-1/2 transform -translate-x-1/2 px-3 py-1.5 text-xs font-medium bg-gray-900 text-white rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg">Subscribe</span>
                         </a>
                     </div>
                 </div>
@@ -288,22 +309,33 @@
                 <!-- Rest of your existing content -->
                 <x-home.about-me/>
 
-                <!-- Enhanced Call-to-Action Buttons -->
-                <div class="flex flex-wrap justify-center gap-4 mt-8">
+                <!-- Enhanced Call-to-Action Buttons with Modern Design -->
+                <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mt-12">
                     <x-button-link href="https://www.linkedin.com/in/jordan-partridge-8284897/" target="_blank"
-                                   icon="fab fa-linkedin"
-                                   class="group px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-full transition-all duration-200 transform hover:scale-105">
-                        Connect on LinkedIn
+                                  icon="fab fa-linkedin"
+                                  class="group px-8 py-3.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-full shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-medium">
+                        <div class="flex items-center justify-center">
+                            <i class="fab fa-linkedin text-xl mr-3 group-hover:animate-pulse"></i>
+                            <span>Connect on LinkedIn</span>
+                        </div>
                     </x-button-link>
+
                     <x-button-link href="http://www.github.com/jordanpartridge" target="_blank"
-                                   icon="fab fa-github"
-                                   class="group px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-800 hover:to-gray-900 text-white rounded-full transition-all duration-200 transform hover:scale-105">
-                        Follow on GitHub
+                                  icon="fab fa-github"
+                                  class="group px-8 py-3.5 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-900 hover:to-black text-white rounded-full shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-medium">
+                        <div class="flex items-center justify-center">
+                            <i class="fab fa-github text-xl mr-3 group-hover:animate-pulse"></i>
+                            <span>Follow on GitHub</span>
+                        </div>
                     </x-button-link>
+
                     <x-button-link href="https://www.youtube.com/@JordanCodesLaravel" target="_blank"
-                                   icon="fab fa-youtube"
-                                   class="group px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full transition-all duration-200 transform hover:scale-105">
-                        Watch on YouTube
+                                  icon="fab fa-youtube"
+                                  class="group px-8 py-3.5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-full shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-medium">
+                        <div class="flex items-center justify-center">
+                            <i class="fab fa-youtube text-xl mr-3 group-hover:animate-pulse"></i>
+                            <span>Watch on YouTube</span>
+                        </div>
                     </x-button-link>
                 </div>
 
