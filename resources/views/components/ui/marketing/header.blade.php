@@ -17,6 +17,9 @@
             </div>
 
             <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 overflow-hidden rounded-full shadow-sm">
+                    <x-ui.light-dark-switch></x-ui.light-dark-switch>
+                </div>
                 <button @click="mobileMenuOpen = !mobileMenuOpen"
                         class="relative flex items-center justify-center w-10 h-10 md:hidden focus:outline-none"
                         aria-label="Toggle mobile menu">
