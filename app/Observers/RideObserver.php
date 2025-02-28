@@ -5,11 +5,25 @@ namespace App\Observers;
 use App\Models\Ride;
 use App\Models\User;
 use App\Notifications\RideSynced;
+use App\Services\RideMetricService;
 use Exception;
 use Illuminate\Support\Facades\Notification;
 
 class RideObserver
 {
+    /**
+     * The RideMetricService instance.
+     */
+    protected RideMetricService $rideMetricService;
+
+    /**
+     * Create a new observer instance.
+     */
+    public function __construct(RideMetricService $rideMetricService)
+    {
+        $this->rideMetricService = $rideMetricService;
+    }
+
     /**
      * Handle the Ride "created" event.
      *
@@ -25,6 +39,9 @@ class RideObserver
             throw new Exception('No users to notify or rides.');
         }
 
+        // Clear the cache when a new ride is created
+        $this->rideMetricService->clearCache();
+
         Notification::route('slack', config('services.slack.webhook_url'))
             ->notify(new RideSynced($ride));
     }
@@ -34,7 +51,8 @@ class RideObserver
      */
     public function updated(Ride $ride): void
     {
-        //
+        // Clear the cache when a ride is updated
+        $this->rideMetricService->clearCache();
     }
 
     /**
@@ -42,7 +60,8 @@ class RideObserver
      */
     public function deleted(Ride $ride): void
     {
-        //
+        // Clear the cache when a ride is deleted
+        $this->rideMetricService->clearCache();
     }
 
     /**
@@ -50,7 +69,8 @@ class RideObserver
      */
     public function restored(Ride $ride): void
     {
-        //
+        // Clear the cache when a ride is restored
+        $this->rideMetricService->clearCache();
     }
 
     /**
@@ -58,6 +78,7 @@ class RideObserver
      */
     public function forceDeleted(Ride $ride): void
     {
-        //
+        // Clear the cache when a ride is force deleted
+        $this->rideMetricService->clearCache();
     }
 }
