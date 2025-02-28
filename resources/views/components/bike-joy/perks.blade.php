@@ -5,39 +5,47 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <!-- Perk Card -->
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 camo-border">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center mb-2">
-                            Exercise 💪
-                        </h3>
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-2">💪</span>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white military-font">
+                                COMBAT READY
+                            </h3>
+                        </div>
                         <p class="text-gray-600 dark:text-gray-300">
-                          Road bikes are cute, fat bikers embrace the weight and don't try to fight it. It's a
-                            different kind of workout, and it's a lot of fun.
+                            Road bikes are for cadets. Fat bikes embrace the resistance and turn it into strength.
+                            It's not a workout, it's training for battle against the terrain.
                         </p>
                     </div>
                 </div>
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 camo-border">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center mb-2">
-                            Mental Health 🧠
-                        </h3>
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-2">🧠</span>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white military-font">
+                                MENTAL FORTITUDE
+                            </h3>
+                        </div>
                         <p class="text-gray-600 dark:text-gray-300">
-                            My bike park is my happy place. It's how I start my day, and it's how I end my day. It's
-                            where I go to clear my head and get a fresh perspective.
+                            A fat bike ride is therapeutic for veterans. The focus on terrain clears the mind like nothing else.
+                            Mission start to mission end, it's about conquering the battlefield of your thoughts.
                         </p>
                     </div>
                 </div>
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
+                    class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300 camo-border">
                     <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center mb-2">
-                            Explore 🚴‍♀️
-                        </h3>
+                        <div class="flex items-center mb-3">
+                            <span class="text-3xl mr-2">🏆</span>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white military-font">
+                                ALL-TERRAIN OPERATIONS
+                            </h3>
+                        </div>
                         <p class="text-gray-600 dark:text-gray-300">
-                            Biking allows you to clear your mind and look at problems from new perspectives, often
-                            leading to creative solutions once you're back at your desk. It's nice to transition from
-                            roads to dirt trails one of the joys of fat biking.
+                            From desert sand to mountain snow, a fat bike deploys where other bikes can't.
+                            Never retreat, never surrender - when the trail gets tough, fat bikes keep rolling.
                         </p>
                     </div>
                 </div>
