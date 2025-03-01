@@ -44,7 +44,7 @@ class Post extends Model
     public function scopeExcludeFeatured($query): void
     {
         $featured = Post::where('featured', 1)->where('type', 'post')->first();
-        $query->where('id', '!=', ($featured->id) ?? 0);
+        $query->where('id', '!=', $featured?->id ?? 0);
     }
 
     public function scopeTypePost($query): void
@@ -79,7 +79,7 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
-    
+
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class)
