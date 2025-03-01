@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
@@ -32,6 +34,11 @@ class Post extends Model
         'type',
         'featured',
         'user_id',
+        'excerpt',
+        'meta_title',
+        'meta_description',
+        'meta_schema',
+        'meta_data',
     ];
 
     public function scopeExcludeFeatured($query): void
@@ -66,6 +73,17 @@ class Post extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+    
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class)
+                    ->withTimestamps();
     }
 
     public function getSlugOptions(): SlugOptions

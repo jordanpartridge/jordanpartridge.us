@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PostResource\Pages\CreatePost;
 use App\Filament\Resources\PostResource\Pages\EditPost;
 use App\Filament\Resources\PostResource\Pages\ListPosts;
+use App\Filament\Resources\PostResource\RelationManagers\CategoriesRelationManager;
 use App\Filament\Resources\PostResource\RelationManagers\CommentsRelationManager;
 use App\Models\Post;
 use Exception;
@@ -38,11 +39,11 @@ class PostResource extends Resource
     protected static ?string $model = Post::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
+    
     protected static ?string $navigationGroup = 'Blog Management';
-
+    
     protected static ?int $navigationSort = 1;
-
+    
     protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Form $form): Form
@@ -63,7 +64,7 @@ class PostResource extends Resource
                                                     ->disk('public')
                                                     ->required()
                                                     ->columnSpanFull(),
-
+                                                
                                                 TextInput::make('title')
                                                     ->label('Post Title')
                                                     ->required()
@@ -71,7 +72,7 @@ class PostResource extends Resource
                                                     ->maxLength(400)
                                                     ->placeholder('Enter the title of the post')
                                                     ->columnSpan(1),
-
+                                                    
                                                 Select::make('status')
                                                     ->label('Post Status')
                                                     ->options([
@@ -81,13 +82,13 @@ class PostResource extends Resource
                                                     ->default('draft')
                                                     ->required()
                                                     ->columnSpan(1),
-
+                                                    
                                                 Textarea::make('excerpt')
                                                     ->label('Excerpt')
                                                     ->maxLength(300)
                                                     ->hint('A short summary of the post content')
                                                     ->columnSpanFull(),
-
+                                                    
                                                 Select::make('type')
                                                     ->label('Content Type')
                                                     ->options([
@@ -97,12 +98,12 @@ class PostResource extends Resource
                                                     ->default('post')
                                                     ->required()
                                                     ->columnSpan(1),
-
+                                                    
                                                 Checkbox::make('featured')
                                                     ->label('Featured Post')
                                                     ->helperText('Display this post in featured sections')
                                                     ->columnSpan(1),
-
+                                                    
                                                 Select::make('user_id')
                                                     ->label('Author')
                                                     ->relationship('user', 'name')
@@ -110,6 +111,21 @@ class PostResource extends Resource
                                                     ->required()
                                                     ->searchable()
                                                     ->preload()
+                                                    ->columnSpan(1),
+                                                    
+                                                Select::make('categories')
+                                                    ->label('Categories')
+                                                    ->relationship('categories', 'name')
+                                                    ->multiple()
+                                                    ->preload()
+                                                    ->searchable()
+                                                    ->createOptionForm([
+                                                        TextInput::make('name')
+                                                            ->required()
+                                                            ->maxLength(255),
+                                                        ColorPicker::make('color')
+                                                            ->required(),
+                                                    ])
                                                     ->columnSpan(1),
                                             ]),
                                     ]),
@@ -143,13 +159,13 @@ class PostResource extends Resource
                                             ->maxLength(60)
                                             ->placeholder('Enter the meta title')
                                             ->helperText('Optimal length: 50-60 characters'),
-
+                                        
                                         Textarea::make('meta_description')
                                             ->label('Meta Description')
                                             ->maxLength(160)
                                             ->placeholder('Enter the meta description')
                                             ->helperText('Optimal length: 150-160 characters'),
-
+                                            
                                         Textarea::make('meta_schema')
                                             ->label('Schema Markup')
                                             ->placeholder('Enter JSON-LD schema markup')
@@ -174,13 +190,13 @@ class PostResource extends Resource
                     ->label('Image')
                     ->circular()
                     ->toggleable(),
-
+                    
                 TextColumn::make('title')
                     ->label('Title')
                     ->searchable()
                     ->sortable()
                     ->limit(40),
-
+                
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -190,17 +206,22 @@ class PostResource extends Resource
                     })
                     ->sortable()
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)),
-
+                    
+                TextColumn::make('categories.name')
+                    ->label('Categories')
+                    ->badge()
+                    ->color(fn ($record) => $record->categories->isNotEmpty() ? $record->categories->first()->color : 'gray'),
+                    
                 TextColumn::make('type')
                     ->label('Type')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->toggleable(),
-
+                    
                 CheckboxColumn::make('featured')
                     ->label('Featured')
                     ->toggleable(),
-
+                
                 TextColumn::make('user.name')
                     ->label('Author')
                     ->searchable()
@@ -226,14 +247,20 @@ class PostResource extends Resource
                         'published' => 'Published',
                     ])
                     ->label('Filter by Status'),
-
+                    
                 SelectFilter::make('type')
                     ->options([
                         'post' => 'Blog Post',
                         'page' => 'Page',
                     ])
                     ->label('Filter by Type'),
-
+                    
+                SelectFilter::make('categories')
+                    ->relationship('categories', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->label('Filter by Category'),
+                    
                 TernaryFilter::make('featured')
                     ->label('Featured Posts'),
             ])
@@ -251,6 +278,7 @@ class PostResource extends Resource
     public static function getRelations(): array
     {
         return [
+            CategoriesRelationManager::class,
             CommentsRelationManager::class,
         ];
     }
@@ -263,10 +291,10 @@ class PostResource extends Resource
             'edit'   => EditPost::route('/{record}/edit'),
         ];
     }
-
+    
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->with(['user']);
+            ->with(['user', 'categories']);
     }
 }
