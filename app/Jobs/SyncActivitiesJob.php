@@ -53,8 +53,19 @@ class SyncActivitiesJob implements ShouldQueue
 
     private function processActivity(array $activity, StravaToken $token): void
     {
-        $activity['map_url'] = $this->getMap($activity['map']['id'], $activity['map']['summary_polyline']);
-        $activity['calories'] = $this->getActivityCalories($activity['id'], $token);
+        // Ensure map data exists before trying to access it
+        if (isset($activity['map']) && isset($activity['map']['id']) && isset($activity['map']['summary_polyline'])) {
+            $activity['map_url'] = $this->getMap($activity['map']['id'], $activity['map']['summary_polyline']);
+        } else {
+            $activity['map_url'] = null;
+        }
+
+        // Get calories if activity ID exists
+        if (isset($activity['id'])) {
+            $activity['calories'] = $this->getActivityCalories($activity['id'], $token);
+        } else {
+            $activity['calories'] = null;
+        }
 
         RideSynced::fire(ride: $activity);
     }
