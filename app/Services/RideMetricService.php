@@ -38,7 +38,7 @@ class RideMetricService
                     'elevation'     => $rides->sum('elevation'),
                     'ride_count'    => $rides->count(),
                     'max_speed'     => $rides->max('max_speed'),
-                    'average_speed' => number_format($rides->avg('average_speed'), 1),
+                    'average_speed' => $rides->count() > 0 ? number_format($rides->avg('average_speed'), 1) : 0,
                 ],
                 $startDate,
                 $endDate,
