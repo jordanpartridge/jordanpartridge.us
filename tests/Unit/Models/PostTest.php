@@ -53,6 +53,35 @@ class PostTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
+    public function excludeFeatured_scope_handles_null_featured_posts()
+    {
+        // Create some non-featured posts but no featured posts
+        Post::factory()->count(3)->create([
+            'featured' => false,
+            'type'     => 'post'
+        ]);
+
+        // Get posts with excludeFeatured scope
+        $posts = Post::excludeFeatured()->get();
+
+        // Assert that the query works without errors when no featured posts exist
+        $this->assertCount(3, $posts);
+
+        // Now create a featured post
+        $featuredPost = Post::factory()->create([
+            'featured' => true,
+            'type'     => 'post'
+        ]);
+
+        // Get posts with excludeFeatured scope again
+        $excludedPosts = Post::excludeFeatured()->get();
+
+        // Assert that the featured post is excluded
+        $this->assertCount(3, $excludedPosts);
+        $this->assertEmpty($excludedPosts->where('featured', true));
+    }
+
+    #[\PHPUnit\Framework\Attributes\Test]
     public function it_can_be_scoped_to_posts_only()
     {
         // Create posts of different types
