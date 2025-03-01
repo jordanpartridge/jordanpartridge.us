@@ -5,9 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\PostResource\Pages\CreatePost;
 use App\Filament\Resources\PostResource\Pages\EditPost;
 use App\Filament\Resources\PostResource\Pages\ListPosts;
+use App\Filament\Resources\PostResource\RelationManagers\CommentsRelationManager;
 use App\Models\Post;
 use Exception;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -21,16 +24,26 @@ use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationGroup = 'Blog Management';
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function form(Form $form): Form
     {
@@ -42,35 +55,63 @@ class PostResource extends Resource
                             ->tabs([
                                 Tab::make('Details')
                                     ->schema([
-                                        FileUpload::make('image')
-                                            ->label('Featured Image')
-                                            ->image()
-                                            ->disk('public')
-                                            ->required()
-                                            ->columnSpanFull(),
+                                        Grid::make(2)
+                                            ->schema([
+                                                FileUpload::make('image')
+                                                    ->label('Featured Image')
+                                                    ->image()
+                                                    ->disk('public')
+                                                    ->required()
+                                                    ->columnSpanFull(),
 
-                                        TextInput::make('title')
-                                            ->label('Post Title')
-                                            ->required()
-                                            ->reactive()
-                                            ->maxLength(400)
-                                            ->placeholder('Enter the title of the post'),
+                                                TextInput::make('title')
+                                                    ->label('Post Title')
+                                                    ->required()
+                                                    ->reactive()
+                                                    ->maxLength(400)
+                                                    ->placeholder('Enter the title of the post')
+                                                    ->columnSpan(1),
 
-                                        Select::make('status')
-                                            ->label('Post Status')
-                                            ->options([
-                                                'draft'     => 'Draft',
-                                                'published' => 'Published',
-                                            ])
-                                            ->default('draft')
-                                            ->required(),
+                                                Select::make('status')
+                                                    ->label('Post Status')
+                                                    ->options([
+                                                        'draft'     => 'Draft',
+                                                        'published' => 'Published',
+                                                    ])
+                                                    ->default('draft')
+                                                    ->required()
+                                                    ->columnSpan(1),
 
-                                        Select::make('user_id')
-                                            ->label('Author')
-                                            ->relationship('user', 'name')
-                                            ->default(Auth::user()->id)
-                                            ->required()
-                                            ->dehydrated(fn ($state) => Auth::user()->id),
+                                                Textarea::make('excerpt')
+                                                    ->label('Excerpt')
+                                                    ->maxLength(300)
+                                                    ->hint('A short summary of the post content')
+                                                    ->columnSpanFull(),
+
+                                                Select::make('type')
+                                                    ->label('Content Type')
+                                                    ->options([
+                                                        'post' => 'Blog Post',
+                                                        'page' => 'Page',
+                                                    ])
+                                                    ->default('post')
+                                                    ->required()
+                                                    ->columnSpan(1),
+
+                                                Checkbox::make('featured')
+                                                    ->label('Featured Post')
+                                                    ->helperText('Display this post in featured sections')
+                                                    ->columnSpan(1),
+
+                                                Select::make('user_id')
+                                                    ->label('Author')
+                                                    ->relationship('user', 'name')
+                                                    ->default(Auth::user()->id)
+                                                    ->required()
+                                                    ->searchable()
+                                                    ->preload()
+                                                    ->columnSpan(1),
+                                            ]),
                                     ]),
                                 Tab::make('Content')
                                     ->schema([
@@ -100,12 +141,20 @@ class PostResource extends Resource
                                         TextInput::make('meta_title')
                                             ->label('Meta Title')
                                             ->maxLength(60)
-                                            ->placeholder('Enter the meta title'),
+                                            ->placeholder('Enter the meta title')
+                                            ->helperText('Optimal length: 50-60 characters'),
 
                                         Textarea::make('meta_description')
                                             ->label('Meta Description')
                                             ->maxLength(160)
-                                            ->placeholder('Enter the meta description'),
+                                            ->placeholder('Enter the meta description')
+                                            ->helperText('Optimal length: 150-160 characters'),
+
+                                        Textarea::make('meta_schema')
+                                            ->label('Schema Markup')
+                                            ->placeholder('Enter JSON-LD schema markup')
+                                            ->helperText('Optional: Add structured data for better SEO')
+                                            ->columnSpanFull(),
                                     ]),
                             ])
                             ->columnSpanFull(),
@@ -121,9 +170,16 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('image')
+                    ->label('Image')
+                    ->circular()
+                    ->toggleable(),
+
                 TextColumn::make('title')
                     ->label('Title')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->limit(40),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -134,6 +190,22 @@ class PostResource extends Resource
                     })
                     ->sortable()
                     ->formatStateUsing(fn (string $state): string => ucfirst($state)),
+
+                TextColumn::make('type')
+                    ->label('Type')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->toggleable(),
+
+                CheckboxColumn::make('featured')
+                    ->label('Featured')
+                    ->toggleable(),
+
+                TextColumn::make('user.name')
+                    ->label('Author')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('created_at')
                     ->label('Created At')
@@ -146,12 +218,6 @@ class PostResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
-                TextColumn::make('deleted_at')
-                    ->label('Deleted At')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -159,8 +225,17 @@ class PostResource extends Resource
                         'draft'     => 'Draft',
                         'published' => 'Published',
                     ])
-                    ->default('draft')
                     ->label('Filter by Status'),
+
+                SelectFilter::make('type')
+                    ->options([
+                        'post' => 'Blog Post',
+                        'page' => 'Page',
+                    ])
+                    ->label('Filter by Type'),
+
+                TernaryFilter::make('featured')
+                    ->label('Featured Posts'),
             ])
             ->actions([
                 EditAction::make(),
@@ -173,6 +248,13 @@ class PostResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            CommentsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
@@ -180,5 +262,11 @@ class PostResource extends Resource
             'create' => CreatePost::route('/create'),
             'edit'   => EditPost::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['user']);
     }
 }
