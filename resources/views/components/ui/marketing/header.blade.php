@@ -1,4 +1,5 @@
-<header x-data="{ mobileMenuOpen: false }" class="w-full bg-white dark:bg-gray-900 shadow-sm">
+
+.<header x-data="{ mobileMenuOpen: false }" class="w-full bg-white dark:bg-gray-900 shadow-sm">
     <div class="relative z-20 flex items-center justify-between w-full h-20 max-w-6xl px-6 mx-auto">
         <div class="flex items-center justify-between w-full">
             <div class="flex items-center space-x-4 md:space-x-8">
@@ -7,9 +8,11 @@
                 </a>
 
                 <nav class="hidden md:flex space-x-1 md:space-x-4">
-                    <x-ui.nav-link href="/">Home</x-ui.nav-link>
+                    <x-ui.nav-link href="/" dusk="nav-home">Home</x-ui.nav-link>
                     <x-ui.nav-link href="/bike">Bike Joy</x-ui.nav-link>
-                    <x-ui.nav-link href="/software-development">Software Development</x-ui.nav-link>
+                    <x-ui.nav-link href="/software-development" dusk="nav-software-development">Software Development</x-ui.nav-link>
+                    <x-ui.nav-link href="/services" dusk="nav-services">Services</x-ui.nav-link>
+                    <x-ui.nav-link href="/contact" dusk="nav-contact">Contact</x-ui.nav-link>
                     @if (view()->exists('pages.blog.index'))
                         <x-ui.nav-link href="/blog">Blog</x-ui.nav-link>
                     @endif
@@ -17,6 +20,9 @@
             </div>
 
             <div class="flex items-center space-x-4">
+                <a href="/work-with-me" dusk="nav-work-with-me" class="hidden md:flex items-center px-4 py-2 font-medium text-white transition-all duration-200 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-md hover:shadow-lg">
+                    Work With Me
+                </a>
                 <div class="w-10 h-10 overflow-hidden rounded-full shadow-sm">
                     <x-ui.light-dark-switch></x-ui.light-dark-switch>
                 </div>
@@ -48,12 +54,17 @@
          @click.away="mobileMenuOpen = false"
          x-cloak>
         <nav class="flex flex-col items-center space-y-4 text-lg">
-            <x-ui.nav-link href="/">Home</x-ui.nav-link>
+            <x-ui.nav-link href="/" dusk="nav-home">Home</x-ui.nav-link>
             <x-ui.nav-link href="/bike">Bike Joy</x-ui.nav-link>
-            <x-ui.nav-link href="/software-development">Software Development</x-ui.nav-link>
+            <x-ui.nav-link href="/software-development" dusk="nav-software-development">Software Development</x-ui.nav-link>
+            <x-ui.nav-link href="/services" dusk="nav-services">Services</x-ui.nav-link>
+            <x-ui.nav-link href="/contact" dusk="nav-contact">Contact</x-ui.nav-link>
             @if (view()->exists('pages.blog.index'))
                 <x-ui.nav-link href="/blog">Blog</x-ui.nav-link>
             @endif
+            <x-ui.nav-link href="/work-with-me" dusk="nav-work-with-me" class="mt-4 px-4 py-2 font-medium text-white transition-all duration-200 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 hover:from-primary-600 hover:to-secondary-600 shadow-md hover:shadow-lg">
+                Work With Me
+            </x-ui.nav-link>
         </nav>
     </div>
 </header>

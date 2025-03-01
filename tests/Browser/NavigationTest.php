@@ -25,10 +25,10 @@ it('can follow the home link', function () {
     });
 });
 
-it('can follow the admin link', function () {
+it('can follow the contact link', function () {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
-            ->click('@nav-admin')
-            ->assertPathIs('/admin/login');
+            ->click('@nav-contact')
+            ->assertPathIs('/contact');
     });
 });
