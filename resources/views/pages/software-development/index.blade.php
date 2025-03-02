@@ -32,7 +32,7 @@
             <!-- GitHub Arsenal -->
             <div class="mb-20">
                 <x-software-development.github-arsenal/>
-                
+
                 <!-- Field Operations -->
                 <div class="mb-20">
                     <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-10">
@@ -61,6 +61,7 @@
                         @endforeach
                     </div>
                 </div>
+
 
                 <!-- Call to Action -->
                 <div class="text-center">

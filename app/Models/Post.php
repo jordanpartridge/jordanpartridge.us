@@ -12,28 +12,30 @@ use Spatie\Sluggable\SlugOptions;
 
 class Post extends Model
 {
-    use HasFactory, HasSlug;
+    use HasFactory;
+    use HasSlug;
 
-    const TYPE_POST = 'post';
-    const TYPE_PAGE = 'page';
+    public const TYPE_POST = 'post';
+    public const TYPE_PAGE = 'page';
 
-    const STATUS_DRAFT = 'draft';
-    const STATUS_PUBLISHED = 'published';
-    const STATUS_SCHEDULED = 'scheduled';
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_PUBLISHED = 'published';
+    public const STATUS_SCHEDULED = 'scheduled';
 
     protected $fillable = [
         'title',
         'slug',
-        'content',
+        'body',
         'excerpt',
         'type',
         'status',
-        'featured_image',
+        'image',
         'user_id',
+        'featured',
         'meta_title',
         'meta_description',
         'meta_keywords',
-        'schema_markup',
+        'meta_schema',
     ];
 
     protected $casts = [];

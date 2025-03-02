@@ -26,17 +26,11 @@
 
     <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ $description }}</p>
 
-    @php
-    $technologiesArray = is_string($technologies)
-        ? explode(',', $technologies)
-        : (is_array($technologies) ? $technologies : []);
-    @endphp
-
-    <div class="flex flex-wrap gap-2 mb-4">
-        @foreach ($technologiesArray as $tech)
-            <span class="px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 text-xs">{{ trim($tech) }}</span>
+    <!-- <div class="flex flex-wrap gap-2 mb-4">
+        @foreach ($technologies as $tech)
+            <span class="px-2 py-1 rounded-full bg-primary-100 dark:bg-primary-900/50 text-primary-600 dark:text-primary-400 text-xs">{{ $tech }}</span>
         @endforeach
-    </div>
+    </div> -->
 
     <div class="flex justify-between items-center mt-auto">
         <div class="text-xs text-gray-500 dark:text-gray-400">Updated: {{ $updated }}</div>
