@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,7 +12,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Post extends Model
 {
-    use HasFactory, HasUuids, HasSlug;
+    use HasFactory, HasSlug;
 
     const TYPE_POST = 'post';
     const TYPE_PAGE = 'page';
@@ -23,7 +22,6 @@ class Post extends Model
     const STATUS_SCHEDULED = 'scheduled';
 
     protected $fillable = [
-        'uuid',
         'title',
         'slug',
         'content',
@@ -65,17 +63,19 @@ class Post extends Model
      */
     public function scopeList($query): mixed
     {
-        return $query->orderBy('created_at', 'DESC')
-            ->paginate(12);
+        return $query->published()
+            ->typePost()
+            ->excludeFeatured()
+            ->orderBy('created_at', 'DESC');
     }
 
     /**
      * @param $query
      * @return mixed
      */
-    public function scopeExcludeFeatured($query, $featured): mixed
+    public function scopeExcludeFeatured($query, $featured = null): mixed
     {
-        return $query->where('id', '!=', $featured);
+        return $query->where('featured', false);
     }
 
     public function getSlugOptions(): SlugOptions
