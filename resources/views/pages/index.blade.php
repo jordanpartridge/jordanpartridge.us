@@ -23,7 +23,7 @@
 
                         <!-- Animated Type Effect with enhanced styling -->
                         <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-5 py-1.5 rounded-full text-sm font-medium shadow-lg">
-                            <span x-data="{ titles: ['Engineering Manager', 'Laravel Developer', 'Army Veteran', 'Cycling Enthusiast'], currentIndex: 0 }"
+                            <span x-data="{ titles: ['Laravel Artisan', 'Full-Stack Developer', 'TALL Stack Expert', 'Code Architect'], currentIndex: 0 }"
                                   x-init="setInterval(() => { currentIndex = (currentIndex + 1) % titles.length }, 3000)"
                                   x-text="titles[currentIndex]"
                                   class="inline-block min-w-[170px] text-center">
@@ -36,7 +36,7 @@
                     </h1>
 
                     <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300">
-                        Building modern web applications with Laravel and a passion for clean code.
+                        Crafting elegant Laravel applications that combine performance, beauty, and reliability.
                     </p>
 
                     <!-- Quick Overview Card with enhanced styling -->

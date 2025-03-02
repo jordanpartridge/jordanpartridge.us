@@ -5,65 +5,27 @@
         <div class="container mx-auto px-4 py-16">
             <x-software-development.header/>
 
-            <!-- Mission Brief -->
-            <div
-                class="mb-20 bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-8 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 relative overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-br from-primary-50/30 to-secondary-50/30 dark:from-primary-900/20 dark:to-secondary-900/20 opacity-10 animate-pulse"></div>
-                <h2 class="text-3xl font-semibold text-primary-600 dark:text-primary-400 mb-4 relative">Mission Brief</h2>
-                <div
-                    x-data="{
-            text: '',
-            fullText: `Veteran of both military and digital battlefields, with over a decade of combat-tested experience in software engineering. My tour of duty spans the full stack, with a specialization in Laravel and cutting-edge web technologies.
-
-Mission Objective: To engineer robust, scalable, and secure software solutions that drive mission-critical business operations. My code is my weapon, efficiency is my strategy, and your success is my endgame.
-
-Core Values:
-1. Precision: Every line of code is meticulously crafted for optimal performance.
-2. Adaptability: Rapidly adjusting to new tech terrains and mission parameters.
-3. Teamwork: Collaborating seamlessly with cross-functional units to achieve objectives.
-4. Innovation: Constantly exploring new tactics and technologies to maintain our competitive edge.
-
-Lessons from the Front Lines: My time in the Army Signal Corps ingrained the paramount importance of redundancy. In both military communications and software architecture, I ensure multiple layers of reliability to guarantee uninterrupted operations.
-
-Ready to deploy battle-tested solutions for your next big mission? Let's strategize.`,
-            isTyping: true,
-            skipAnimation: localStorage.getItem('SkipTypewriter') === 'true'
-        }"
-                    x-init="
-            if (skipAnimation) {
-                text = fullText;
-                isTyping = false;
-            } else {
-                let i = 0;
-                const intervalId = setInterval(() => {
-                    text += fullText[i];
-                    i++;
-                    if (i === fullText.length) {
-                        clearInterval(intervalId);
-                        isTyping = false;
-                        localStorage.setItem('skipAnimation', 'true');
-                    }
-                }, 20);
-            }
-        "
-                    class="relative"
-                >
-                    <p
-                        class="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line"
-                        x-text="text"
-                        aria-live="polite"
-                    ></p>
-                    <span
-                        x-show="isTyping"
-                        class="inline-block w-2 h-5 ml-1 bg-primary-500 animate-blink"
-                    ></span>
-                    <button
-                        x-show="isTyping"
-                        @click="text = fullText; isTyping = false; localStorage.setItem('skipAnimation', 'true');"
-                        class="mt-4 px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600 transition duration-300"
-                    >
-                        Skip Animation
-                    </button>
+            <!-- About Me -->
+            <div class="mb-20 bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-8 shadow-xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary-50/30 to-secondary-50/30 dark:from-primary-900/20 dark:to-secondary-900/20 opacity-10"></div>
+                <div class="relative">
+                    <h2 class="text-3xl font-semibold text-primary-600 dark:text-primary-400 mb-6">Hey there! 👋</h2>
+                    
+                    <div class="space-y-4 text-gray-700 dark:text-gray-300">
+                        <p>I'm Jordan, a full-stack developer with a passion for creating <span class="text-primary-600 dark:text-primary-400 font-semibold">fast</span>, <span class="text-secondary-600 dark:text-secondary-400 font-semibold">beautiful</span>, and <span class="text-green-600 dark:text-green-400 font-semibold">reliable</span> web applications using Laravel.</p>
+                        
+                        <p>After serving in the Army Signal Corps, I turned my problem-solving skills toward tech, where I build modern web apps that look good and work flawlessly.</p>
+                        
+                        <h3 class="text-xl font-semibold text-primary-600 dark:text-primary-400 mt-6 mb-2">What I'm all about:</h3>
+                        <ul class="space-y-2 ml-5 list-disc">
+                            <li><span class="font-medium">Clean Code</span>: Writing maintainable, well-tested code that's easy to understand and extend</li>
+                            <li><span class="font-medium">Modern Stack</span>: Leveraging Laravel, Livewire, Alpine.js, and Tailwind CSS to build responsive applications</li>
+                            <li><span class="font-medium">Performance Focus</span>: Optimizing for speed and efficiency so your users have the best experience</li>
+                            <li><span class="font-medium">Continuous Learning</span>: Always exploring new tools and techniques to stay on the cutting edge</li>
+                        </ul>
+                        
+                        <p class="mt-6">Whether you need a custom web app, API integration, or performance optimization, I'm here to transform your ideas into reality.</p>
+                    </div>
                 </div>
             </div>
 

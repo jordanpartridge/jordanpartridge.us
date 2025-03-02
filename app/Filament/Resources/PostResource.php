@@ -123,7 +123,7 @@ class PostResource extends Resource
                                                         TextInput::make('name')
                                                             ->required()
                                                             ->maxLength(255),
-                                                        ColorPicker::make('color')
+                                                        \Filament\Forms\Components\ColorPicker::make('color')
                                                             ->required(),
                                                     ])
                                                     ->columnSpan(1),
