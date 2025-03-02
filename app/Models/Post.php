@@ -2,57 +2,58 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
 class Post extends Model
 {
-    use HasFactory;
-    use HasSlug;
-    use LogsActivity;
-    public const STATUS_DRAFT = 'DRAFT';
+    use HasFactory, HasUuids, HasSlug;
 
-    public const STATUS_PUBLISHED = 'PUBLISHED';
+    const TYPE_POST = 'post';
+    const TYPE_PAGE = 'page';
 
-    public const TYPE_POST = 'post';
-
-    public const TYPE_PAGE = 'page';
+    const STATUS_DRAFT = 'draft';
+    const STATUS_PUBLISHED = 'published';
+    const STATUS_SCHEDULED = 'scheduled';
 
     protected $fillable = [
+        'uuid',
         'title',
-        'body',
-        'status',
         'slug',
-        'image',
-        'type',
-        'featured',
-        'user_id',
+        'content',
         'excerpt',
+        'type',
+        'status',
+        'featured_image',
+        'user_id',
         'meta_title',
         'meta_description',
-        'meta_schema',
-        'meta_data',
+        'meta_keywords',
+        'schema_markup',
     ];
 
-    public function scopeExcludeFeatured($query): void
+    protected $casts = [];
+
+    public function user(): BelongsTo
     {
-        $featured = Post::where('featured', 1)->where('type', 'post')->first();
-        $query->where('id', '!=', $featured?->id ?? 0);
+        return $this->belongsTo(User::class);
+    }
+
+    public function featured($featured): mixed
+    {
+        return $featured?->id ?? 0;
     }
 
     public function scopeTypePost($query): void
     {
         $query->where('type', 'post');
     }
-
-
 
     public function scopePublished($query): void
     {
@@ -65,25 +66,16 @@ class Post extends Model
     public function scopeList($query): mixed
     {
         return $query->orderBy('created_at', 'DESC')
-            ->excludeFeatured()
-            ->typePost()
-            ->published();
+            ->paginate(12);
     }
 
-    public function user(): BelongsTo
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeExcludeFeatured($query, $featured): mixed
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function comments(): HasMany
-    {
-        return $this->hasMany(Comment::class);
-    }
-
-    public function categories(): BelongsToMany
-    {
-        return $this->belongsToMany(Category::class)
-                    ->withTimestamps();
+        return $query->where('id', '!=', $featured);
     }
 
     public function getSlugOptions(): SlugOptions
@@ -93,8 +85,14 @@ class Post extends Model
             ->saveSlugsTo('slug');
     }
 
-    public function getActivitylogOptions(): LogOptions
+    public function categories(): BelongsToMany
     {
-        return LogOptions::defaults()->logFillable()->useLogName('system');
+        return $this->belongsToMany(Category::class)
+            ->withTimestamps();
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 }

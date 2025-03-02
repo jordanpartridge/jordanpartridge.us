@@ -10,12 +10,12 @@
                 <div class="absolute inset-0 bg-gradient-to-br from-primary-50/30 to-secondary-50/30 dark:from-primary-900/20 dark:to-secondary-900/20 opacity-10"></div>
                 <div class="relative">
                     <h2 class="text-3xl font-semibold text-primary-600 dark:text-primary-400 mb-6">Hey there! 👋</h2>
-                    
+
                     <div class="space-y-4 text-gray-700 dark:text-gray-300">
                         <p>I'm Jordan, a full-stack developer with a passion for creating <span class="text-primary-600 dark:text-primary-400 font-semibold">fast</span>, <span class="text-secondary-600 dark:text-secondary-400 font-semibold">beautiful</span>, and <span class="text-green-600 dark:text-green-400 font-semibold">reliable</span> web applications using Laravel.</p>
-                        
+
                         <p>After serving in the Army Signal Corps, I turned my problem-solving skills toward tech, where I build modern web apps that look good and work flawlessly.</p>
-                        
+
                         <h3 class="text-xl font-semibold text-primary-600 dark:text-primary-400 mt-6 mb-2">What I'm all about:</h3>
                         <ul class="space-y-2 ml-5 list-disc">
                             <li><span class="font-medium">Clean Code</span>: Writing maintainable, well-tested code that's easy to understand and extend</li>
@@ -23,16 +23,17 @@
                             <li><span class="font-medium">Performance Focus</span>: Optimizing for speed and efficiency so your users have the best experience</li>
                             <li><span class="font-medium">Continuous Learning</span>: Always exploring new tools and techniques to stay on the cutting edge</li>
                         </ul>
-                        
+
                         <p class="mt-6">Whether you need a custom web app, API integration, or performance optimization, I'm here to transform your ideas into reality.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Arsenal -->
+            <!-- GitHub Arsenal -->
             <div class="mb-20">
-                <x-software-development.arsenal/>
-                <x-software-development.github-arsenal/>                <!-- Field Operations -->
+                <x-software-development.github-arsenal/>
+                
+                <!-- Field Operations -->
                 <div class="mb-20">
                     <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-10">
                         Field Operations</h2>

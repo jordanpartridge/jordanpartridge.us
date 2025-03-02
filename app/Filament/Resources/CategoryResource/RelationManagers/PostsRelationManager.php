@@ -32,27 +32,27 @@ class PostsRelationManager extends RelationManager
                 TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                    
+
                 Select::make('status')
                     ->options([
-                        'draft' => 'Draft',
+                        'draft'     => 'Draft',
                         'published' => 'Published',
                     ])
                     ->required(),
-                    
+
                 FileUpload::make('image')
                     ->image()
                     ->disk('public')
                     ->required()
                     ->columnSpanFull(),
-                    
+
                 RichEditor::make('body')
                     ->required()
                     ->columnSpanFull(),
-                    
+
                 Select::make('user_id')
                     ->relationship('user', 'name')
-                    ->default(Auth::user()->id)
+                    ->default(fn () => Auth::check() ? Auth::user()->id : null)
                     ->required(),
             ]);
     }
@@ -64,23 +64,23 @@ class PostsRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('image')
                     ->circular(),
-                    
+
                 TextColumn::make('title')
                     ->searchable()
                     ->limit(40),
-                    
+
                 TextColumn::make('status')
                     ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'warning',
+                        'draft'     => 'warning',
                         'published' => 'success',
-                        default => 'gray',
+                        default     => 'gray',
                     }),
-                    
+
                 TextColumn::make('user.name')
                     ->label('Author'),
-                    
+
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
