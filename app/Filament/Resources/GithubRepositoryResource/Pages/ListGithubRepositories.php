@@ -18,10 +18,10 @@ class ListGithubRepositories extends ListRecords
                 ->icon('heroicon-o-arrow-path')
                 ->action(function (): void {
                     $syncService = app(\App\Services\GitHub\GitHubSyncService::class);
-                    
+
                     try {
                         $result = $syncService->syncAllRepositories();
-                        
+
                         \Filament\Notifications\Notification::make()
                             ->title("Synced {$result->count()} repositories")
                             ->success()
@@ -40,11 +40,11 @@ class ListGithubRepositories extends ListRecords
                                 ->danger()
                                 ->persistent()
                                 ->send();
-                        } else if (strpos($e->getMessage(), 'No active repositories found') !== false) {
+                        } elseif (strpos($e->getMessage(), 'No active repositories found') !== false) {
                             // No repositories error
                             \Filament\Notifications\Notification::make()
                                 ->title('No active repositories')
-                                ->body('Add repositories through the Create button first')
+                                ->body('Syncing will automatically import your GitHub repositories. Please try again.')
                                 ->warning()
                                 ->send();
                         } else {

@@ -5,8 +5,6 @@ namespace App\Console\Commands;
 use App\Models\GithubRepository;
 use App\Services\GitHub\GitHubSyncService;
 use Illuminate\Console\Command;
-use JordanPartridge\GithubClient\Facades\Github;
-use JordanPartridge\GithubClient\ValueObjects\Repo;
 
 class SyncGitHubRepositories extends Command
 {
@@ -31,18 +29,18 @@ class SyncGitHubRepositories extends Command
     {
         $username = $this->option('user') ?? config('services.github.username');
         $specificRepo = $this->option('repo');
-        
+
         if ($specificRepo) {
             // Sync specific repository
             $this->info("Syncing repository {$username}/{$specificRepo}...");
-            
+
             // Check if repository exists in database
             $repository = GithubRepository::where('repository', $specificRepo)->first();
-            
+
             if ($repository) {
                 // Update existing repository
                 $success = $syncService->syncRepository($repository);
-                
+
                 if ($success) {
                     $repository = $repository->fresh();
                     $this->info("Repository {$repository->name} synced successfully.");
@@ -63,7 +61,7 @@ class SyncGitHubRepositories extends Command
             } else {
                 // Create new repository
                 $repository = $syncService->fetchAndCreateRepository($username, $specificRepo);
-                
+
                 if ($repository) {
                     $this->info("Repository {$repository->name} fetched and created successfully.");
                     $this->table(
@@ -85,14 +83,14 @@ class SyncGitHubRepositories extends Command
             // Sync all repositories
             $this->info("Syncing all active repositories...");
             $results = $syncService->syncAllRepositories();
-            
+
             if ($results->isEmpty()) {
-                $this->info("No repositories to sync. Add repositories through the admin panel first.");
+                $this->info("No active repositories found. The system will try to import repositories from GitHub.");
                 return 0;
             }
-            
+
             $this->info("{$results->count()} repositories synced successfully.");
-            
+
             // Display table of synced repositories
             $tableData = $results->map(function ($repo) {
                 return [
@@ -102,10 +100,10 @@ class SyncGitHubRepositories extends Command
                     implode(', ', $repo->technologies ?? []),
                 ];
             })->toArray();
-            
+
             $this->table(['Name', 'Stars', 'Forks', 'Technologies'], $tableData);
         }
-        
+
         return 0;
     }
 }
