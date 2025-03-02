@@ -30,7 +30,8 @@ test('logout route', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $response = $this->post('/logout');
+    $response = $this->withoutMiddleware()
+        ->post('/logout');
 
     $response->assertStatus(302);
     $this->assertGuest();

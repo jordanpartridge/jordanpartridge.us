@@ -23,7 +23,7 @@
 
                         <!-- Animated Type Effect with enhanced styling -->
                         <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-5 py-1.5 rounded-full text-sm font-medium shadow-lg">
-                            <span x-data="{ titles: ['Engineering Manager', 'Laravel Developer', 'Army Veteran', 'Cycling Enthusiast'], currentIndex: 0 }"
+                            <span x-data="{ titles: ['Laravel Artisan', 'Full-Stack Developer', 'TALL Stack Expert', 'Code Architect'], currentIndex: 0 }"
                                   x-init="setInterval(() => { currentIndex = (currentIndex + 1) % titles.length }, 3000)"
                                   x-text="titles[currentIndex]"
                                   class="inline-block min-w-[170px] text-center">
@@ -36,7 +36,7 @@
                     </h1>
 
                     <p class="max-w-2xl mx-auto text-lg text-gray-600 dark:text-gray-300">
-                        Building modern web applications with Laravel and a passion for clean code.
+                        Crafting elegant Laravel applications that combine performance, beauty, and reliability.
                     </p>
 
                     <!-- Quick Overview Card with enhanced styling -->
@@ -306,11 +306,96 @@
                     </div>
                 </div>
 
-                <!-- Rest of your existing content -->
+                <!-- About Me Section -->
                 <x-home.about-me/>
+                
+                <!-- Featured Projects Showcase -->
+                <div class="mt-20 mb-16">
+                    <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-primary-600 to-secondary-500 text-transparent bg-clip-text mb-8">
+                        Latest Projects
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Project Card 1: AI Integration -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                            <div class="h-48 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 flex items-center justify-center">
+                                <i class="fas fa-robot text-5xl text-primary-500 dark:text-primary-400 group-hover:scale-110 transition-transform duration-300"></i>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">AI-Powered Blog Assistant</h3>
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">Integrating OpenAI's API with Laravel to auto-generate blog content outlines and enhance writer productivity.</p>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">Laravel</span>
+                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">OpenAI API</span>
+                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">Alpine.js</span>
+                                </div>
+                                <a href="/software-development" class="inline-flex items-center font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">
+                                    View Project
+                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Project Card 2: Strava Integration -->
+                        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
+                            <div class="h-48 bg-gradient-to-r from-secondary-500/20 to-purple-500/20 flex items-center justify-center">
+                                <i class="fas fa-chart-line text-5xl text-secondary-500 dark:text-secondary-400 group-hover:scale-110 transition-transform duration-300"></i>
+                            </div>
+                            <div class="p-6">
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Strava Analytics Dashboard</h3>
+                                <p class="text-gray-600 dark:text-gray-300 mb-4">A personal dashboard for cyclists with advanced metrics, achievement tracking, and route visualization.</p>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-secondary-100 dark:bg-secondary-900 text-secondary-700 dark:text-secondary-300">Laravel</span>
+                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300">Livewire</span>
+                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">Strava API</span>
+                                </div>
+                                <a href="/bike" class="inline-flex items-center font-medium text-secondary-600 dark:text-secondary-400 hover:text-secondary-800 dark:hover:text-secondary-300">
+                                    View Project
+                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 text-center">
+                        <a href="/software-development" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            Explore More Projects
+                            <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
 
-                <!-- Enhanced Call-to-Action Buttons with Modern Design -->
-                <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mt-12">
+                <!-- AI Chat Assistant Banner -->
+                <div class="mt-20 mb-16 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 rounded-2xl p-8 border border-primary-200 dark:border-primary-800">
+                    <div class="flex flex-col md:flex-row items-center">
+                        <div class="md:w-1/2 mb-6 md:mb-0 md:mr-8">
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">AI Developer Assistant</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">Get instant answers to your Laravel and web development questions with my custom-trained AI assistant. Built with OpenAI and fine-tuned on my own coding expertise.</p>
+                            <div class="flex items-center">
+                                <i class="fas fa-robot text-primary-500 dark:text-primary-400 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Powered by GPT-4 & Laravel</span>
+                            </div>
+                        </div>
+                        <div class="md:w-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+                                <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fas fa-robot text-sm"></i>
+                                </div>
+                                <div class="text-sm font-medium text-gray-800 dark:text-white">Ask me anything about Laravel, web development, or my projects!</div>
+                            </div>
+                            <a href="/software-development" class="block w-full py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center font-medium rounded-lg hover:shadow-lg transition-all duration-300">
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Call-to-Action Buttons -->
+                <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4 mt-16">
                     <x-button-link href="https://www.linkedin.com/in/jordan-partridge-8284897/" target="_blank"
                                   icon="fab fa-linkedin"
                                   class="group px-8 py-3.5 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white rounded-full shadow-md hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-medium">
@@ -339,7 +424,7 @@
                     </x-button-link>
                 </div>
 
-                <!-- Keep your existing components -->
+                <!-- Contact Form -->
                 <x-ui.contact-form class="mt-16 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 transition-colors duration-200"/>
 
                 <!-- Rest of your existing content... -->

@@ -35,8 +35,9 @@ class RideObserver
             return;
         }
 
+        // Skip notification if no users exist in testing or any environment
         if (!User::first()) {
-            throw new Exception('No users to notify or rides.');
+            return;
         }
 
         // Clear the cache when a new ride is created

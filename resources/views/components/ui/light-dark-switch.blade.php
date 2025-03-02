@@ -1,7 +1,7 @@
 <button
     @click="darkMode = !darkMode"
     class="relative w-full h-full flex items-center justify-center rounded-full bg-gradient-to-r from-gray-100 to-white dark:from-gray-800 dark:to-gray-900 text-primary-600 dark:text-primary-400 hover:shadow-md transition-all duration-300 transform hover:scale-105"
-    :class="{ 'rotate-180': darkMode }"
+    :class="{ 'rotate-0': darkMode }"
     aria-label="Toggle dark mode"
 >
     <div class="absolute inset-0 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full opacity-0 hover:opacity-10 dark:hover:opacity-20 transition-opacity duration-300"></div>

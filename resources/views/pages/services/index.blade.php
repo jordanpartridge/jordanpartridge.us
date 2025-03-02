@@ -4,11 +4,11 @@
         <div class="container mx-auto px-4 py-16">
             <!-- Hero Section -->
             <div class="mb-16 text-center">
-                <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-6">
-                    Laravel Engineering & Consulting Services
+                <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500 dark:from-primary-400 dark:to-secondary-400 mb-6">
+                    Laravel Development Services
                 </h1>
                 <p class="max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-300 mb-8">
-                    Veteran of both military and digital battlefields, I bring precision, adaptability, and strategic thinking to every Laravel project. As your Laravel Marksman, I deliver battle-tested solutions that hit the target every time.
+                    Elevate your web applications with expert Laravel development. I specialize in creating fast, scalable, and maintainable solutions that empower your business and delight your users.
                 </p>
                 <div class="flex justify-center">
                     <a href="/work-with-me" class="px-8 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
@@ -19,8 +19,8 @@
 
             <!-- Service Categories Grid -->
             <div class="mb-20">
-                <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-10">
-                    Mission Capabilities
+                <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500 dark:from-primary-400 dark:to-secondary-400 mb-10">
+                    Services Offered
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 service-grid">
                     <!-- Code Audit Service -->
@@ -34,10 +34,10 @@
                             </div>
                             <h3 class="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-400">Code Audit</h3>
                             <p class="text-gray-600 dark:text-gray-300 mb-6">
-                                Comprehensive assessment of your codebase to identify vulnerabilities, performance bottlenecks, and opportunities for optimization. Like military reconnaissance, I'll map out your terrain and identify potential threats.
+                                Comprehensive assessment of your codebase to identify vulnerabilities, performance bottlenecks, and opportunities for optimization. I'll provide detailed recommendations to improve code quality and security.
                             </p>
                             <a href="/services/code-audit" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors duration-300">
-                                Mission Details
+                                Learn More
                                 <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
@@ -59,7 +59,7 @@
                                 Strategic enhancement of your application's speed, efficiency, and resource utilization. I'll optimize your database queries, implement caching strategies, and streamline your codebase for maximum performance.
                             </p>
                             <a href="/services/performance-optimization" class="inline-flex items-center text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 font-medium transition-colors duration-300">
-                                Mission Details
+                                Learn More
                                 <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
@@ -78,10 +78,10 @@
                             </div>
                             <h3 class="text-xl font-semibold mb-4 text-purple-600 dark:text-purple-400">Custom Development</h3>
                             <p class="text-gray-600 dark:text-gray-300 mb-6">
-                                Bespoke Laravel solutions built with military precision. From API integrations to complex business logic implementation, I'll architect and deploy robust applications that meet your specific objectives.
+                                Bespoke Laravel solutions tailored to your business needs. From API integrations to complex business logic implementation, I'll architect and deploy robust applications that meet your specific objectives.
                             </p>
                             <a href="/services/custom-development" class="inline-flex items-center text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-medium transition-colors duration-300">
-                                Mission Details
+                                Learn More
                                 <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
@@ -93,8 +93,8 @@
 
             <!-- Social Proof Section -->
             <div class="mb-20">
-                <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-10">
-                    Mission Reports
+                <h2 class="text-3xl font-semibold text-center text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500 dark:from-primary-400 dark:to-secondary-400 mb-10">
+                    Client Testimonials
                 </h2>
                 <div class="bg-white dark:bg-gray-800 bg-opacity-80 dark:bg-opacity-30 rounded-lg p-8 shadow-2xl backdrop-filter backdrop-blur-lg border border-gray-200 dark:border-gray-700 relative overflow-hidden">
                     <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 opacity-50"></div>
@@ -112,7 +112,7 @@
                                     </div>
                                 </div>
                                 <p class="text-gray-600 dark:text-gray-300 italic">
-                                    "Jordan's military background truly shines through in his work. The precision and attention to detail in his code is remarkable. Our Laravel application performance improved by 40% after his optimization work."
+                                    "Jordan's attention to detail and coding standards are exceptional. His precision and thoroughness are remarkable. Our Laravel application performance improved by 40% after his optimization work."
                                 </p>
                             </div>
 
@@ -138,21 +138,18 @@
 
             <!-- CTA Section -->
             <div class="text-center">
-                <h2 class="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mb-6">
-                    Ready to Deploy Your Next Mission?
+                <h2 class="text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500 dark:from-primary-400 dark:to-secondary-400 mb-6">
+                    Ready to Build Something Amazing?
                 </h2>
                 <p class="max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-300 mb-8">
-                    Let's discuss how my Laravel engineering and consulting services can help you achieve your objectives with military precision and efficiency.
+                    Let's discuss how my Laravel development expertise can help transform your ideas into elegant, high-performing web applications.
                 </p>
                 <div class="relative group inline-block">
                     <a href="/work-with-me"
-                       class="inline-block bg-gradient-to-r from-blue-500 to-green-500 dark:from-purple-500 dark:to-pink-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-blue-500/50 dark:hover:shadow-purple-500/50 transition duration-300 relative overflow-hidden">
+                       class="inline-block bg-gradient-to-r from-primary-500 to-secondary-500 dark:from-primary-600 dark:to-secondary-600 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-primary-500/50 dark:hover:shadow-secondary-500/50 transition duration-300 relative overflow-hidden">
                         <span class="relative z-10">Book a Consultation</span>
                         <span class="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300"></span>
                     </a>
-                    <span class="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2 whitespace-nowrap">
-                        Initiate Contact Protocol
-                    </span>
                 </div>
             </div>
         </div>

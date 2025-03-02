@@ -182,7 +182,7 @@ class RidesResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->description(
-                        fn (Ride $record): string => ($record->max_speed ? $record->max_speed . ' mph max' : 'No max speed')
+                        fn (Ride $record): string => (isset($record->max_speed) && $record->max_speed > 0 ? $record->max_speed . ' mph max' : 'No max speed')
                     )
                     ->icon('heroicon-o-arrow-trending-up'),
             ])

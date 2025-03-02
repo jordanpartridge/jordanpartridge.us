@@ -18,33 +18,53 @@ class CommentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'comments';
 
+    protected static ?string $recordTitleAttribute = 'content';
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 RichEditor::make('content')
                     ->required()
-                    ->maxLength(255),
+                    ->columnSpanFull()
+                    ->label('Comment Content'),
+
                 Select::make('user_id')
-                    ->options(
-                        collect([Auth::user()])->pluck('name', 'id')->toArray()
-                    )->label('User')
-                    ->default(Auth::user()->getAuthIdentifier()),
+                    ->relationship('user', 'name')
+                    ->label('Comment Author')
+                    ->default(Auth::user()->id)
+                    ->required()
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('comments')
+            ->recordTitleAttribute('content')
             ->columns([
-                TextColumn::make('comments'),
+                TextColumn::make('content')
+                    ->html()
+                    ->limit(100)
+                    ->searchable(),
+
+                TextColumn::make('user.name')
+                    ->label('Author')
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->label('Add Comment'),
             ])
             ->actions([
                 EditAction::make(),

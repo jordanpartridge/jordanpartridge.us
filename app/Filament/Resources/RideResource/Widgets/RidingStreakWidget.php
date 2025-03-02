@@ -172,7 +172,8 @@ class RidingStreakWidget extends ChartWidget
             }
         }
 
-        $this->avgDistance = round(array_sum($distances) / count(array_filter($distances)), 1);
+        $filteredDistances = array_filter($distances);
+        $this->avgDistance = !empty($filteredDistances) ? round(array_sum($filteredDistances) / count($filteredDistances), 1) : 0;
 
         return [
             'datasets' => [
