@@ -4,7 +4,8 @@ $repositories = \App\Models\GithubRepository::featured()
     ->orderByDesc('stars_count')
     ->get();
 
-$username = \App\Settings\GitHubSettings::get('username') ?? 'jordanpartridge';
+$settings = app(\App\Settings\GitHubSettings::class);
+$username = $settings->username ?? 'jordanpartridge';
 @endphp
 
 <div class="mb-20 relative overflow-hidden">
@@ -16,19 +17,19 @@ $username = \App\Settings\GitHubSettings::get('username') ?? 'jordanpartridge';
         <p class="text-center text-gray-600 dark:text-gray-400 mb-2 max-w-2xl mx-auto">Open-source projects and real-world code deployments</p>
         <div class="w-24 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-8 rounded-full"></div>
     </div>
-    
+
     {{-- GitHub Contribution Graph --}}
     <div class="mb-12">
         <x-software-development.github-contributions :username="$username" />
     </div>
-    
+
     {{-- Featured Repositories --}}
     <div class="mt-12">
         <h3 class="text-2xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-8">
             Featured Repositories
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            @forelse($repositories as $repo)
+            @forelse ($repositories as $repo)
                 <x-software-development.github-repo-card
                     :name="$repo->name"
                     :description="$repo->description"
@@ -82,7 +83,7 @@ $username = \App\Settings\GitHubSettings::get('username') ?? 'jordanpartridge';
             @endforelse
         </div>
     </div>
-    
+
     <div class="mt-10 text-center">
         <a href="https://github.com/{{ $username }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 dark:bg-primary-700 dark:hover:bg-primary-600 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg">
             <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
