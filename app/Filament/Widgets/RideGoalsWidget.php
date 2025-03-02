@@ -37,7 +37,7 @@ class RideGoalsWidget extends StatsOverviewWidget
             ->whereBetween('created_at', [$weekStart, $weekEnd])
             ->sum('distance') * 0.000621371;
 
-        $progressPercentage = min(($currentWeekDistance / $weeklyTarget) * 100, 100);
+        $progressPercentage = $weeklyTarget > 0 ? min(($currentWeekDistance / $weeklyTarget) * 100, 100) : 0;
 
         // Get last 7 days of rides for the chart
         $dailyDistances = Ride::query()

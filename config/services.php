@@ -46,4 +46,8 @@ return [
     'google_maps' => [
         'key' => env('GOOGLE_MAP_API_KEY'),
     ],
+    'github' => [
+        'token' => env('GITHUB_API_TOKEN'),
+        'username' => env('GITHUB_USERNAME', 'jordanpartridge'),
+    ],
 ];
