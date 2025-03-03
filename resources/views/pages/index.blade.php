@@ -176,24 +176,24 @@
                                     <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                                     </svg>
-                                    Event-Driven Systems
+                                    Laravel Development
                                 </h3>
                                 <ul class="space-y-3">
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Event Sourcing Architecture
+                                        Livewire & Volt Components
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Event Broadcasting & Webhooks
+                                        Filament Admin Panels
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Domain Events & Listeners
+                                        Event Broadcasting & Queues
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                        Projections & Read Models
+                                        Custom Package Development
                                     </li>
                                 </ul>
                             </div>
@@ -253,24 +253,24 @@
                                     <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                     </svg>
-                                    Performance Monitoring
+                                    API Integrations
                                 </h3>
                                 <ul class="space-y-3">
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        New Relic APM Integration
+                                        Strava API for Cycling Data
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        Query Performance Analysis
+                                        GitHub API for Repository Integration
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        Memory Leak Detection
+                                        RESTful API Development
                                     </li>
                                     <li class="flex items-center gap-2">
                                         <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                                        System Health Metrics
+                                        Webhook Processing
                                     </li>
                                 </ul>
                             </div>
@@ -312,56 +312,12 @@
                 <!-- Featured Projects Showcase -->
                 <div class="mt-20 mb-16">
                     <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-primary-600 to-secondary-500 text-transparent bg-clip-text mb-8">
-                        Latest Projects
+                        Featured GitHub Projects
                     </h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <!-- Project Card 1: AI Integration -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                            <div class="h-48 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 flex items-center justify-center">
-                                <i class="fas fa-robot text-5xl text-primary-500 dark:text-primary-400 group-hover:scale-110 transition-transform duration-300"></i>
-                            </div>
-                            <div class="p-6">
-                                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">AI-Powered Blog Assistant</h3>
-                                <p class="text-gray-600 dark:text-gray-300 mb-4">Integrating OpenAI's API with Laravel to auto-generate blog content outlines and enhance writer productivity.</p>
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300">Laravel</span>
-                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">OpenAI API</span>
-                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">Alpine.js</span>
-                                </div>
-                                <a href="/software-development" class="inline-flex items-center font-medium text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">
-                                    View Project
-                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-
-                        <!-- Project Card 2: Strava Integration -->
-                        <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
-                            <div class="h-48 bg-gradient-to-r from-secondary-500/20 to-purple-500/20 flex items-center justify-center">
-                                <i class="fas fa-chart-line text-5xl text-secondary-500 dark:text-secondary-400 group-hover:scale-110 transition-transform duration-300"></i>
-                            </div>
-                            <div class="p-6">
-                                <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Strava Analytics Dashboard</h3>
-                                <p class="text-gray-600 dark:text-gray-300 mb-4">A personal dashboard for cyclists with advanced metrics, achievement tracking, and route visualization.</p>
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-secondary-100 dark:bg-secondary-900 text-secondary-700 dark:text-secondary-300">Laravel</span>
-                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300">Livewire</span>
-                                    <span class="text-xs font-medium py-1 px-2 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300">Strava API</span>
-                                </div>
-                                <a href="/bike" class="inline-flex items-center font-medium text-secondary-600 dark:text-secondary-400 hover:text-secondary-800 dark:hover:text-secondary-300">
-                                    View Project
-                                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <x-software-development.github-repositories :limit="2" :columns="2" />
                     <div class="mt-8 text-center">
-                        <a href="/software-development" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                            Explore More Projects
+                        <a href="https://github.com/jordanpartridge" target="_blank" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                            View More on GitHub
                             <svg class="w-5 h-5 ml-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                             </svg>
@@ -369,27 +325,55 @@
                     </div>
                 </div>
 
-                <!-- AI Chat Assistant Banner -->
+                <!-- Personal Coding Projects -->
                 <div class="mt-20 mb-16 bg-gradient-to-r from-primary-500/10 to-secondary-500/10 rounded-2xl p-8 border border-primary-200 dark:border-primary-800">
                     <div class="flex flex-col md:flex-row items-center">
                         <div class="md:w-1/2 mb-6 md:mb-0 md:mr-8">
-                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">AI Developer Assistant</h3>
-                            <p class="text-gray-600 dark:text-gray-300 mb-4">Get instant answers to your Laravel and web development questions with my custom-trained AI assistant. Built with OpenAI and fine-tuned on my own coding expertise.</p>
+                            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-4">Current Projects</h3>
+                            <p class="text-gray-600 dark:text-gray-300 mb-4">From my cycling dashboard with Strava API to Laravel package development, I'm constantly building new tools and applications.</p>
                             <div class="flex items-center">
-                                <i class="fas fa-robot text-primary-500 dark:text-primary-400 mr-2"></i>
-                                <span class="text-sm text-gray-500 dark:text-gray-400">Powered by GPT-4 & Laravel</span>
+                                <i class="fas fa-code text-primary-500 dark:text-primary-400 mr-2"></i>
+                                <span class="text-sm text-gray-500 dark:text-gray-400">Always learning, always building</span>
                             </div>
                         </div>
-                        <div class="md:w-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl p-4 border border-gray-200 dark:border-gray-700">
-                            <div class="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
-                                <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white mr-3">
-                                    <i class="fas fa-robot text-sm"></i>
+                        <div class="md:w-1/2 bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                            <div class="p-6">
+                                <div class="space-y-4">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center mr-4">
+                                            <i class="fas fa-bicycle text-primary-500"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">Cycling Dashboard</h4>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">Strava API integration with real-time stats</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mr-4">
+                                            <i class="fas fa-box-open text-purple-500"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">Laravel Packages</h4>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">Reusable open-source components</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-4">
+                                            <i class="fas fa-code-branch text-blue-500"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800 dark:text-gray-200">GitHub Integration</h4>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">Featured repositories showcased live</p>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="text-sm font-medium text-gray-800 dark:text-white">Ask me anything about Laravel, web development, or my projects!</div>
+
+                                <a href="/bike" class="block w-full py-3 mt-6 bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center font-medium rounded-lg hover:shadow-lg transition-all duration-300">
+                                    View Cycling Dashboard
+                                </a>
                             </div>
-                            <a href="/software-development" class="block w-full py-3 bg-gradient-to-r from-primary-500 to-secondary-500 text-white text-center font-medium rounded-lg hover:shadow-lg transition-all duration-300">
-                                Learn More
-                            </a>
                         </div>
                     </div>
                 </div>
