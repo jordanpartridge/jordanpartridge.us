@@ -141,6 +141,13 @@ mount(function (RideMetricService $service) {
                     </div>
                 </div>
 
+                <!-- Fat Bike Division logo section -->
+                <div class="flex justify-center items-center p-5 mt-2">
+                    <div class="camo-border rounded-lg shadow-lg overflow-hidden" style="max-width: 400px;">
+                        <img src="/img/FAT-BIKE-DIVISION.png" alt="Fat Bike Division Logo" class="w-full">
+                    </div>
+                </div>
+
                 <div class="m-2 p-2">
                     <div
                         style="background-image:linear-gradient(160deg, #5D8233, #A4B494, #4A6741)"
@@ -338,4 +345,3 @@ mount(function (RideMetricService $service) {
     </div>
     @endvolt
 </x-layouts.marketing>
-
