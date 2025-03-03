@@ -1,9 +1,4 @@
 @php
-$repositories = \App\Models\GithubRepository::featured()
-    ->orderBy('display_order')
-    ->orderByDesc('stars_count')
-    ->get();
-
 $settings = app(\App\Settings\GitHubSettings::class);
 $username = $settings->username ?? 'jordanpartridge';
 @endphp
@@ -28,60 +23,7 @@ $username = $settings->username ?? 'jordanpartridge';
         <h3 class="text-2xl font-semibold text-center text-gray-800 dark:text-gray-200 mb-8">
             Featured Repositories
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            @forelse ($repositories as $repo)
-                <x-software-development.github-repo-card
-                    :name="$repo->name"
-                    :description="$repo->description"
-                    :stars="$repo->stars_count"
-                    :forks="$repo->forks_count"
-                    :technologies="$repo->technologies"
-                    :updated="$repo->last_fetched_at ? $repo->last_fetched_at->format('M d, Y') : ''"
-                    :url="$repo->url"
-                />
-            @empty
-                {{-- Fallback to hardcoded repositories if none are in the database --}}
-                <x-software-development.github-repo-card
-                    name="packagist-client"
-                    description="Simple integration library for the Packagist API, allowing seamless access to PHP package information, downloads, and statistics."
-                    :stars="8"
-                    :forks="2"
-                    :technologies="['PHP', 'Laravel', 'Composer', 'API Integration']"
-                    updated="Feb 12, 2025"
-                    url="https://github.com/jordanpartridge/packagist-client"
-                />
-
-                <x-software-development.github-repo-card
-                    name="user-make"
-                    description="Laravel package that extends the built-in user management with advanced role-based permissions, team capabilities, and custom authentication options."
-                    :stars="12"
-                    :forks="4"
-                    :technologies="['Laravel', 'PHP', 'Authentication', 'Authorization']"
-                    updated="Jan 8, 2025"
-                    url="https://github.com/jordanpartridge/user-make"
-                />
-
-                <x-software-development.github-repo-card
-                    name="github-client"
-                    description="An elegant GitHub API integration built for Laravel, providing a clean interface for accessing repositories, issues, pull requests, and more."
-                    :stars="10"
-                    :forks="3"
-                    :technologies="['Laravel', 'PHP', 'GitHub API', 'API Client']"
-                    updated="Mar 1, 2025"
-                    url="https://github.com/jordanpartridge/github-client"
-                />
-
-                <x-software-development.github-repo-card
-                    name="laravel-deployment-toolkit"
-                    description="An all-in-one solution for deploying Laravel applications to different environments with automated testing, database migrations, and rollback capabilities."
-                    :stars="15"
-                    :forks="7"
-                    :technologies="['Laravel', 'DevOps', 'CI/CD', 'Bash']"
-                    updated="Dec 25, 2024"
-                    url="https://github.com/jordanpartridge/laravel-deployment-toolkit"
-                />
-            @endforelse
-        </div>
+        <x-software-development.github-repositories :limit="4" :columns="2" />
     </div>
 
     <div class="mt-10 text-center">

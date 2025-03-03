@@ -122,11 +122,13 @@ mount(function (RideMetricService $service) {
             bottom: 10px;
         }
     </style>
+    <link rel="stylesheet" href="{{ asset('css/bike-joy-enhancements.css') }}">
 </head>
 <body>
 <x-layouts.marketing>
     @volt('bike')
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden fade-in" x-cloak>
+
         <x-svg-header></x-svg-header>
 
         <div class="tire-track flex items-center w-full max-w-6xl px-8 pt-12 pb-20 mx-auto bg-gray-100 dark:bg-gray-900">
@@ -134,10 +136,8 @@ mount(function (RideMetricService $service) {
 
                 <div class="flex justify-center items-center p-5">
                     <div class="relative rounded-lg overflow-hidden camo-border" style="max-width: 500px;">
-                        <x-ui.image-rounded src="/img/bike-joy.jpg"/>
-                        <div class="absolute top-0 right-0 bg-green-800 text-white px-3 py-1 rounded-bl-lg military-font">
-                            FAT BIKE DIVISION
-                        </div>
+                        <x-ui.image-rounded src="/img/FAT-BIKE-DIVISION.png"/>
+
                     </div>
                 </div>
 
@@ -266,16 +266,19 @@ mount(function (RideMetricService $service) {
                 </div>
 
                 <!-- Fat Bike Creed Section -->
-                <div class="mt-12 p-6 bg-gray-800 text-white rounded-lg camo-border">
-                    <h3 class="text-2xl font-bold mb-4 military-font">THE FAT BIKER'S CREED</h3>
-                    <p class="italic text-lg">
-                        This is my fat bike. There are many like it, but this one is mine.<br>
-                        My fat bike is my best friend. It is my life.<br>
-                        Without me, my fat bike is useless. Without my fat bike, I am without joy.<br>
-                        I will ride my fat bike true. I will conquer snow, sand, and mud that hinders other bikes.<br>
-                        I will...
-                    </p>
-                </div>
+                <div class="mt-12 p-6 bg-gray-800 text-white rounded-lg camo-border creed-container">
+    <div class="creed-background"></div>
+    <div class="creed-content">
+        <h3 class="text-2xl font-bold mb-4 military-font military-section-header">THE FAT BIKER'S CREED</h3>
+        <p class="italic text-lg">
+            This is my fat bike. There are many like it, but this one is mine.<br>
+            My fat bike is my best friend. It is my life.<br>
+            Without me, my fat bike is useless. Without my fat bike, I am without joy.<br>
+            I will ride my fat bike true. I will conquer snow, sand, and mud that hinders other bikes.<br>
+            I will...
+        </p>
+    </div>
+</div>
             </div>
         </div>
 
@@ -284,9 +287,19 @@ mount(function (RideMetricService $service) {
                 <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6 text-center military-font">
                     RECENT DEPLOYMENT LOGS
                 </h2>
-                @foreach ($this->rides as $ride)
-                    <x-bike-joy.ride :ride="$ride"/>
-                @endforeach
+                @if (count($this->rides) > 0)
+    @foreach ($this->rides as $ride)
+        <x-bike-joy.ride :ride="$ride"/>
+    @endforeach
+@else
+    <div class="empty-deployment-logs">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+        </svg>
+        <p class="text-gray-600 dark:text-gray-400 text-center mb-2">No recent deployments recorded</p>
+        <p class="text-gray-500 dark:text-gray-500 text-sm text-center">Plan your next mission using the date selectors above</p>
+    </div>
+@endif
             </div>
         </div>
 
