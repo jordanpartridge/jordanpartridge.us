@@ -36,7 +36,7 @@
             <h3 class="font-semibold text-teal-500 dark:text-teal-400">Latest Insights →</h3>
             <p class="text-sm text-gray-600 dark:text-gray-300">Read about my experiences and technical insights</p>
         </a>
-        <a href="/software-development#github-projects"
+        <a href="/projects"
            class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
             <h3 class="font-semibold text-purple-500 dark:text-purple-400">Featured Projects →</h3>
             <p class="text-sm text-gray-600 dark:text-gray-300">View my latest work and contributions</p>
