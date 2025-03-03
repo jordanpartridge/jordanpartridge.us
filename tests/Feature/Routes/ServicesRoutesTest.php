@@ -5,7 +5,7 @@ use function Pest\Laravel\get;
 it('can access services overview page', function () {
     get('/services')
         ->assertStatus(200)
-        ->assertSee('Laravel Engineering', false);
+        ->assertSee('Laravel Development Services', false);
 });
 
 it('can access code audit service page', function () {
