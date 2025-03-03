@@ -22,7 +22,7 @@
                     <span class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ $tech }}</span>
                 </div>
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ $description }}</p>
-                @if($link !== '#')
+                @if ($link !== '#')
                 <a href="{{ $link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 text-sm font-medium">
                     Learn more
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">

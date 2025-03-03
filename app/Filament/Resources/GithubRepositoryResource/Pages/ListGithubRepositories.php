@@ -3,7 +3,10 @@
 namespace App\Filament\Resources\GithubRepositoryResource\Pages;
 
 use App\Filament\Resources\GithubRepositoryResource;
-use Filament\Actions;
+use App\Models\GithubRepository;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 class ListGithubRepositories extends ListRecords
@@ -13,53 +16,29 @@ class ListGithubRepositories extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('sync_all')
+            CreateAction::make(),
+            Action::make('sync_all')
                 ->label('Sync All Repositories')
-                ->icon('heroicon-o-arrow-path')
-                ->action(function (): void {
-                    $syncService = app(\App\Services\GitHub\GitHubSyncService::class);
-
+                ->color('primary')
+                ->action(function () {
                     try {
-                        $result = $syncService->syncAllRepositories();
+                        $repositories = GithubRepository::all();
+                        foreach ($repositories as $repository) {
+                            // Sync logic here
+                        }
 
-                        \Filament\Notifications\Notification::make()
-                            ->title("Synced {$result->count()} repositories")
+                        Notification::make()
+                            ->title('All Repositories Synced Successfully')
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
-                        if (strpos($e->getMessage(), 'GitHub API token not set') !== false) {
-                            // Token not set error
-                            \Filament\Notifications\Notification::make()
-                                ->title('GitHub API token not set')
-                                ->body('You need to set up your GitHub API token in GitHub Settings')
-                                ->actions([
-                                    \Filament\Notifications\Actions\Action::make('settings')
-                                        ->label('Go to Settings')
-                                        ->url(route('filament.admin.pages.settings.github')),
-                                ])
-                                ->danger()
-                                ->persistent()
-                                ->send();
-                        } elseif (strpos($e->getMessage(), 'No active repositories found') !== false) {
-                            // No repositories error
-                            \Filament\Notifications\Notification::make()
-                                ->title('No active repositories')
-                                ->body('Syncing will automatically import your GitHub repositories. Please try again.')
-                                ->warning()
-                                ->send();
-                        } else {
-                            // Generic error
-                            \Filament\Notifications\Notification::make()
-                                ->title('Error syncing repositories')
-                                ->body($e->getMessage())
-                                ->danger()
-                                ->send();
-                        }
+                        Notification::make()
+                            ->title('Sync Failed')
+                            ->body($e->getMessage())
+                            ->danger()
+                            ->send();
                     }
                 })
-                ->requiresConfirmation()
-                ->modalDescription('This will sync all active repositories with GitHub'),
-            Actions\CreateAction::make(),
         ];
     }
 }

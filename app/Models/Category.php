@@ -15,27 +15,27 @@ class Category extends Model
     use HasFactory;
     use HasSlug;
     use LogsActivity;
-    
+
     protected $fillable = [
         'name',
         'slug',
         'description',
         'color',
     ];
-    
+
     public function posts(): BelongsToMany
     {
         return $this->belongsToMany(Post::class)
                     ->withTimestamps();
     }
-    
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
-    
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logFillable()->useLogName('system');

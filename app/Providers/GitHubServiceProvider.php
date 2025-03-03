@@ -20,14 +20,14 @@ class GitHubServiceProvider extends ServiceProvider
             $settings = $app->make(GitHubSettings::class);
             return new GithubConnector($settings->getToken());
         });
-        
+
         // Register the GitHub client
         $this->app->singleton(Github::class, function ($app) {
             return new Github(
                 $app->make(GithubConnectorInterface::class)
             );
         });
-        
+
         // Register facades
         $this->app->alias(Github::class, 'github');
     }

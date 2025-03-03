@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
             ->at('02:00')
             ->withoutOverlapping()
             ->runInBackground()
-            ->emailOutputOnFailure(env('ADMIN_EMAIL'));
+            ->emailOutputOnFailure(config('mail.from.address'));
     }
 
     /**
@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands(): void
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

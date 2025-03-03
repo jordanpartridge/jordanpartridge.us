@@ -308,7 +308,7 @@
 
                 <!-- About Me Section -->
                 <x-home.about-me/>
-                
+
                 <!-- Featured Projects Showcase -->
                 <div class="mt-20 mb-16">
                     <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-primary-600 to-secondary-500 text-transparent bg-clip-text mb-8">
@@ -336,7 +336,7 @@
                                 </a>
                             </div>
                         </div>
-                        
+
                         <!-- Project Card 2: Strava Integration -->
                         <div class="bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 group">
                             <div class="h-48 bg-gradient-to-r from-secondary-500/20 to-purple-500/20 flex items-center justify-center">

@@ -2,12 +2,15 @@
 
 namespace App\Services\GitHub;
 
+use Exception;
 use App\Models\GithubRepository;
 use App\Settings\GitHubSettings;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use JordanPartridge\GithubClient\Facades\Github;
 use JordanPartridge\GithubClient\ValueObjects\Repo;
+
+// Added missing import
 
 class GitHubSyncService
 {
@@ -24,9 +27,9 @@ class GitHubSyncService
     public function syncRepository(GithubRepository $repository): bool
     {
         // First check if GitHub token is set
-        if (!$this->settings->getToken()) {
+        if (!$this->settings->getToken() ?? config('services.github.token')) {
             Log::error('GitHub API token not set. Please configure it in GitHub Settings');
-            throw new \Exception('GitHub API token not set. Please configure it in GitHub Settings');
+            throw new Exception('GitHub API token not set. Please configure it in GitHub Settings'); // Fixed \Exception
         }
 
         try {
@@ -41,7 +44,7 @@ class GitHubSyncService
             }
 
             // Create a repo value object
-            $repoObject = new Repo("{$parts['owner']}/{$parts['repo']}");
+            $repoObject = Repo::fromFullName("{$parts['owner']}/{$parts['repo']}");
 
             // Get repository data
             $repoData = Github::repos()->get($repoObject);
@@ -71,7 +74,7 @@ class GitHubSyncService
             ]);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error syncing repository', [
                 'repository' => $repository->id,
                 'message'    => $e->getMessage(),
@@ -88,9 +91,9 @@ class GitHubSyncService
     public function syncAllRepositories(): Collection
     {
         // First check if GitHub token is set
-        if (!$this->settings->getToken()) {
+        if (!$this->settings->getToken() ?? config('services.github.token')) {
             Log::error('GitHub API token not set. Please configure it in GitHub Settings');
-            throw new \Exception('GitHub API token not set. Please configure it in GitHub Settings');
+            throw new Exception('GitHub API token not set. Please configure it in GitHub Settings'); // Fixed \Exception
         }
 
         $repositories = GithubRepository::where('is_active', true)->get();
@@ -100,35 +103,35 @@ class GitHubSyncService
         if ($repositories->isEmpty()) {
             // Get the username from settings
             $username = $this->settings->username;
-            
+
             // Create a GitHub client
-            $client = new \App\Services\GitHub\GitHubClient($this->settings->getToken());
-            
+            $client = new GitHubClient($this->settings->getToken()); // Fixed \App\Services\GitHub\GitHubClient
+
             // Fetch repositories from GitHub
-            $githubRepos = $client->getUserRepositories($username);
-            
+            $githubRepos = $client->getUserRepositories($username, ['type' => 'all']);
+
             // Create repositories in the database
             foreach ($githubRepos as $repo) {
                 // Skip forks unless you want to include them
                 if ($repo['fork'] ?? false) {
                     continue;
                 }
-                
+
                 // Create basic repository record
                 $newRepo = GithubRepository::create([
-                    'name' => $repo['name'],
-                    'repository' => $repo['name'],
-                    'description' => $repo['description'] ?? null,
-                    'url' => $repo['html_url'],
-                    'technologies' => [$repo['language']],
-                    'stars_count' => $repo['stargazers_count'] ?? 0,
-                    'forks_count' => $repo['forks_count'] ?? 0,
-                    'featured' => false,
-                    'is_active' => true,
-                    'display_order' => 0,
+                    'name'            => $repo['name'],
+                    'repository'      => $repo['name'],
+                    'description'     => $repo['description'] ?? null,
+                    'url'             => $repo['html_url'],
+                    'technologies'    => [$repo['language']],
+                    'stars_count'     => $repo['stargazers_count'] ?? 0,
+                    'forks_count'     => $repo['forks_count'] ?? 0,
+                    'featured'        => false,
+                    'is_active'       => true,
+                    'display_order'   => 0,
                     'last_fetched_at' => now(),
                 ]);
-                
+
                 // Update repositories collection with the new ones
                 $repositories->push($newRepo);
             }
@@ -151,7 +154,7 @@ class GitHubSyncService
         // First check if GitHub token is set
         if (!$this->settings->getToken()) {
             Log::error('GitHub API token not set. Please configure it in GitHub Settings');
-            throw new \Exception('GitHub API token not set. Please configure it in GitHub Settings');
+            throw new Exception('GitHub API token not set. Please configure it in GitHub Settings'); // Fixed \Exception
         }
 
         try {
@@ -187,7 +190,7 @@ class GitHubSyncService
             ]);
 
             return $repo;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error fetching and creating repository', [
                 'username'   => $username,
                 'repository' => $repository,

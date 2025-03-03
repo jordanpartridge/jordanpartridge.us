@@ -7,24 +7,24 @@
         </svg>
         GitHub Contributions
     </h3>
-    
+
     <div class="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-lg">
-        <img 
-            src="https://ghchart.rshah.org/{{ $username }}" 
+        <img
+            src="https://ghchart.rshah.org/{{ $username }}"
             alt="{{ $username }}'s GitHub Contribution Chart"
-            class="w-full h-auto" 
+            class="w-full h-auto"
             loading="lazy"
         />
     </div>
-    
+
     <div class="mt-4 flex items-center justify-between">
         <div class="text-sm text-gray-600 dark:text-gray-400">
             <span class="font-medium">View my contribution activity and coding activity on GitHub</span>
         </div>
-        <a 
-            href="https://github.com/{{ $username }}" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+        <a
+            href="https://github.com/{{ $username }}"
+            target="_blank"
+            rel="noopener noreferrer"
             class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 transition-colors font-medium"
         >
             @{{ $username }}

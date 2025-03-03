@@ -13,12 +13,12 @@ class GitHubSettingsSeeder extends Seeder
     public function run(): void
     {
         $settings = app(GitHubSettings::class);
-        
+
         // Initialize with empty values if not set
         if (empty($settings->username)) {
             $settings->username = 'jordanpartridge';
         }
-        
+
         $settings->save();
     }
 }

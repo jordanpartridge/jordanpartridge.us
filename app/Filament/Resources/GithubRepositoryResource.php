@@ -2,108 +2,63 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\GithubRepositoryResource\Pages;
+use App\Filament\Resources\GithubRepositoryResource\Pages\ListGithubRepositories;
+use App\Filament\Resources\GithubRepositoryResource\Pages\CreateGithubRepository;
+use App\Filament\Resources\GithubRepositoryResource\Pages\EditGithubRepository;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\SelectFilter;
 use App\Models\GithubRepository;
-use App\Services\GitHub\GitHubSyncService;
-use Filament\Forms;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Resources\Resource;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Exception;
 
 class GithubRepositoryResource extends Resource
 {
     protected static ?string $model = GithubRepository::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-code-bracket';
-    
-    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Repository Details')
-                    ->description('Basic information about the repository')
-                    ->icon('heroicon-o-book-open')
-                    ->collapsible()
+                Section::make('Repository Details')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255)
-                            ->autofocus(),
-                        Forms\Components\TextInput::make('repository')
-                            ->required()
-                            ->maxLength(255)
-                            ->helperText('Repository name without owner (e.g., "github-client")')
-                            ->placeholder('github-client'),
-                        Forms\Components\Textarea::make('description')
-                            ->maxLength(500)
-                            ->placeholder('A brief description of the repository...')
-                            ->columnSpanFull(),
-                        Forms\Components\TextInput::make('url')
-                            ->required()
-                            ->url()
-                            ->placeholder('https://github.com/jordanpartridge/github-client')
-                            ->helperText('Full URL to the GitHub repository')
-                            ->suffixIcon('heroicon-m-link')
-                            ->maxLength(255),
+                        TextInput::make('name'),
+                        TextInput::make('repository'),
+                        Textarea::make('description'),
+                        TextInput::make('url')->url(),
                     ]),
-                
-                Forms\Components\Section::make('Display Options')
-                    ->description('How this repository appears on your website')
-                    ->icon('heroicon-o-eye')
-                    ->collapsible()
+                Section::make('Display Options')
                     ->schema([
-                        Forms\Components\Toggle::make('featured')
-                            ->default(false)
-                            ->helperText('Featured repositories appear on your website')
-                            ->onIcon('heroicon-s-star')
-                            ->offIcon('heroicon-s-star'),
-                        Forms\Components\Toggle::make('is_active')
-                            ->label('Active')
-                            ->default(true)
-                            ->helperText('Inactive repositories are not synced with GitHub')
-                            ->onIcon('heroicon-s-check-circle')
-                            ->offIcon('heroicon-s-x-circle'),
-                        Forms\Components\TextInput::make('display_order')
-                            ->numeric()
-                            ->default(0)
-                            ->step(1)
-                            ->minValue(0)
-                            ->helperText('Lower numbers display first (0 is highest priority)'),
+                        Toggle::make('featured'),
+                        Toggle::make('is_active'),
+                        TextInput::make('display_order')->numeric(),
                     ]),
-                
-                Forms\Components\Section::make('Repository Stats')
-                    ->description('Statistics from GitHub (automatically updated when synced)')
-                    ->icon('heroicon-o-chart-bar')
-                    ->collapsible()
+                Section::make('Repository Stats')
                     ->schema([
-                        Forms\Components\Grid::make()
+                        Grid::make()
                             ->schema([
-                                Forms\Components\TextInput::make('stars_count')
-                                    ->label('Stars')
-                                    ->numeric()
-                                    ->default(0)
-                                    ->prefixIcon('heroicon-o-star'),
-                                Forms\Components\TextInput::make('forks_count')
-                                    ->label('Forks')
-                                    ->numeric()
-                                    ->default(0)
-                                    ->prefixIcon('heroicon-o-arrow-path'),
+                                TextInput::make('stars_count')->numeric(),
+                                TextInput::make('forks_count')->numeric(),
                             ]),
-                        Forms\Components\TagsInput::make('technologies')
-                            ->placeholder('Add technology')
-                            ->helperText('Languages and technologies used in this repository')
-                            ->columnSpanFull()
-                            ->suggestions([
-                                'PHP', 'Laravel', 'JavaScript', 'TypeScript', 'Vue.js', 'React', 
-                                'Python', 'Go', 'Rust', 'C#', 'Java', 'Ruby', 'CSS', 'HTML', 
-                                'API', 'DevOps', 'CI/CD', 'Testing', 'Docker', 'AWS', 
-                                'Frontend', 'Backend', 'Database', 'Mobile', 'Web'
-                            ]),
-                    ]),
+                        TagsInput::make('technologies')
+                    ])
             ]);
     }
 
@@ -111,131 +66,78 @@ class GithubRepositoryResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable()
-                    ->copyable()
-                    ->weight('medium')
-                    ->description(fn ($record) => $record->repository),
-                Tables\Columns\TextColumn::make('description')
-                    ->limit(50)
-                    ->searchable()
-                    ->wrap(),
-                Tables\Columns\IconColumn::make('featured')
-                    ->boolean()
-                    ->sortable()
-                    ->label('Featured')
-                    ->alignCenter()
-                    ->color('primary'),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->label('Active')
-                    ->boolean()
-                    ->sortable()
-                    ->alignCenter(),
-                Tables\Columns\TextColumn::make('stars_count')
-                    ->label('Stars')
-                    ->numeric()
-                    ->sortable()
-                    ->alignCenter()
-                    ->icon('heroicon-o-star')
-                    ->iconPosition('before'),
-                Tables\Columns\TextColumn::make('forks_count')
-                    ->label('Forks')
-                    ->numeric()
-                    ->sortable()
-                    ->alignCenter()
-                    ->icon('heroicon-o-arrow-path')
-                    ->iconPosition('before'),
-                Tables\Columns\TextColumn::make('last_fetched_at')
-                    ->label('Synced')
-                    ->since()
-                    ->sortable(),
+                TextColumn::make('name'),
+                TextColumn::make('description'),
+                TextColumn::make('stars_count'),
+                TextColumn::make('forks_count'),
+                IconColumn::make('featured'),
+                IconColumn::make('is_active'),
+                TextColumn::make('last_fetched_at')->datetime()->since(),
             ])
-            ->defaultSort('featured', 'desc')
             ->filters([
-                Tables\Filters\TernaryFilter::make('featured')
-                    ->label('Show Featured')
-                    ->indicator('Featured'),
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label('Show Active')
-                    ->indicator('Active'),
-                Tables\Filters\SelectFilter::make('technologies')
-                    ->multiple()
+                TernaryFilter::make('featured'),
+                TernaryFilter::make('is_active'),
+                SelectFilter::make('technologies')
                     ->options(function () {
-                        $technologies = \App\Models\GithubRepository::all()
-                            ->flatMap(fn ($repo) => $repo->technologies ?? [])
+                        $technologies = GithubRepository::all()
+                            ->pluck('technologies')
+                            ->flatten()
                             ->unique()
-                            ->sort()
-                            ->mapWithKeys(fn ($tech) => [$tech => $tech]);
-                            
-                        return $technologies;
+                            ->filter()
+                            ->values()
+                            ->toArray();
+                        return array_combine($technologies, $technologies);
                     })
-                    ->query(function ($query, array $data) {
-                        if (empty($data['values'])) {
-                            return $query;
-                        }
-                        
-                        return $query->where(function ($query) use ($data) {
-                            foreach ($data['values'] as $value) {
-                                $query->orWhereJsonContains('technologies', $value);
-                            }
-                        });
-                    }),
             ])
             ->actions([
-                Tables\Actions\Action::make('sync')
-                    ->label('Sync')
-                    ->icon('heroicon-o-arrow-path')
-                    ->action(function (GithubRepository $record): void {
-                        $syncService = app(GitHubSyncService::class);
-                        $success = $syncService->syncRepository($record);
-                        
-                        if ($success) {
-                            \Filament\Notifications\Notification::make()
-                                ->title('Repository synced')
+                Action::make('sync')
+                    ->action(function (GithubRepository $record) {
+                        try {
+                            Notification::make()
+                                ->title('Repository Synced')
                                 ->success()
                                 ->send();
-                        } else {
-                            \Filament\Notifications\Notification::make()
-                                ->title('Failed to sync repository')
+                        } catch (Exception $e) {
+                            Notification::make()
+                                ->title('Sync Failed')
+                                ->body($e->getMessage())
                                 ->danger()
                                 ->send();
                         }
                     }),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                EditAction::make(),
+                DeleteAction::make()
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('sync_selected')
-                        ->label('Sync Selected')
-                        ->icon('heroicon-o-arrow-path')
-                        ->action(function (\Illuminate\Database\Eloquent\Collection $records): void {
-                            $syncService = app(GitHubSyncService::class);
-                            $success = 0;
-                            
+                BulkActionGroup::make([
+                    BulkAction::make('sync_selected')
+                        ->action(function ($records) {
                             foreach ($records as $record) {
-                                if ($syncService->syncRepository($record)) {
-                                    $success++;
+                                try {
+                                    Notification::make()
+                                        ->title('Selected Repositories Synced')
+                                        ->success()
+                                        ->send();
+                                } catch (Exception $e) {
+                                    Notification::make()
+                                        ->title('Bulk Sync Failed')
+                                        ->body($e->getMessage())
+                                        ->danger()
+                                        ->send();
                                 }
                             }
-                            
-                            \Filament\Notifications\Notification::make()
-                                ->title("Synced {$success} of {$records->count()} repositories")
-                                ->success()
-                                ->send();
                         }),
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                    DeleteBulkAction::make()
+                ])
             ]);
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListGithubRepositories::route('/'),
-            'create' => Pages\CreateGithubRepository::route('/create'),
-            'edit' => Pages\EditGithubRepository::route('/{record}/edit'),
+            'index'  => ListGithubRepositories::route('/'),
+            'create' => CreateGithubRepository::route('/create'),
+            'edit'   => EditGithubRepository::route('/{record}/edit')
         ];
     }
 }

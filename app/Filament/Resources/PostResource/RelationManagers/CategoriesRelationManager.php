@@ -31,11 +31,11 @@ class CategoriesRelationManager extends RelationManager
                     ->required()
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
-                
+
                 Textarea::make('description')
                     ->maxLength(500)
                     ->columnSpanFull(),
-                
+
                 ColorPicker::make('color')
                     ->required(),
             ]);
@@ -49,13 +49,13 @@ class CategoriesRelationManager extends RelationManager
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                    
+
                 TextColumn::make('description')
                     ->limit(50)
                     ->toggleable(),
-                    
+
                 ColorColumn::make('color'),
-                
+
                 TextColumn::make('posts_count')
                     ->counts('posts')
                     ->label('Posts Count')
