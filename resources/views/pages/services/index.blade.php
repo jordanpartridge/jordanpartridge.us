@@ -112,7 +112,7 @@
                                     </div>
                                 </div>
                                 <p class="text-gray-600 dark:text-gray-300 italic">
-                                    "Doing business with Jordan was paramount! He helped optimize queries in a database I work on and the speed of how efficient it runs is Elite!! His knowledge and  strategic planning to elevate a business by demonstrating his technology expertise is a true asset"
+                                    "Doing business with Jordan was paramount! He helped optimize queries in a database I work on, and the speed and efficiency of the system is elite. His knowledge and strategic planning to elevate a business by demonstrating his technology expertise is a true asset."
                                 </p>
                             </div>
 
