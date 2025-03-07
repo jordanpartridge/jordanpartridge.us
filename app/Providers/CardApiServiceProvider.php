@@ -15,7 +15,7 @@ class CardApiServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(CardApi::class, function ($app) {
-            return new CardApi(config('services.card_api.api_key'), config('services.card_api.base_url'));
+            return new CardApi(config('services.card_api.api_key', ''), config('services.card_api.base_url', ''));
         });
 
         $this->app->singleton(CardService::class, function ($app) {
