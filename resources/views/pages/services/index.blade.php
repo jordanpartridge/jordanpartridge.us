@@ -104,15 +104,15 @@
                             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
                                 <div class="flex items-center mb-4">
                                     <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/50 rounded-full flex items-center justify-center mr-4">
-                                        <span class="text-blue-600 dark:text-blue-400 font-bold text-xl">A</span>
+                                        <span class="text-blue-600 dark:text-blue-400 font-bold text-xl">S</span>
                                     </div>
                                     <div>
-                                        <h4 class="font-semibold text-gray-800 dark:text-gray-200">Alex Johnson</h4>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400">CTO, TechForward</p>
+                                        <h4 class="font-semibold text-gray-800 dark:text-gray-200">Scott Foley</h4>
+                                        <p class="text-sm text-gray-500 dark:text-gray-400">Database Engineer/Scott docs Tech Platform Owner</p>
                                     </div>
                                 </div>
                                 <p class="text-gray-600 dark:text-gray-300 italic">
-                                    "Jordan's attention to detail and coding standards are exceptional. His precision and thoroughness are remarkable. Our Laravel application performance improved by 40% after his optimization work."
+                                    "Doing business with Jordan was paramount! He helped optimize queries in a database I work on and the speed of how efficient it runs is Elite!! His knowledge and  strategic planning to elevate a business by demonstrating his technology expertise is a true asset"
                                 </p>
                             </div>
 
