@@ -1,7 +1,52 @@
-<x-layouts.marketing>
+<?php
+// Prepare SEO metadata based on post content
+$metaTitle = $post->meta_title ?? $post->title . ' | Jordan Partridge';
+$metaDescription = $post->meta_description ?? (strlen(strip_tags($post->body)) > 160 ? substr(strip_tags($post->body), 0, 157) . '...' : strip_tags($post->body));
+$metaImage = $post->image ? (str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http') ? $post->image : asset('storage/' . $post->image)) : null;
+$categoryNames = $post->categories->pluck('name')->toArray();
+
+// Prepare JSON-LD for article
+$jsonLd = [
+    '@context'      => 'https://schema.org',
+    '@type'         => 'BlogPosting',
+    'headline'      => $post->title,
+    'description'   => $metaDescription,
+    'datePublished' => $post->created_at->toIso8601String(),
+    'dateModified'  => $post->updated_at->toIso8601String(),
+    'author'        => [
+        '@type' => 'Person',
+        'name'  => $post->user->name ?? 'Jordan Partridge'
+    ],
+    'publisher' => [
+        '@type' => 'Organization',
+        'name'  => 'Jordan Partridge',
+        'logo'  => [
+            '@type' => 'ImageObject',
+            'url'   => asset('images/logo.png')
+        ]
+    ]
+];
+
+if ($metaImage) {
+    $jsonLd['image'] = $metaImage;
+}
+
+if (!empty($categoryNames)) {
+    $jsonLd['keywords'] = implode(', ', $categoryNames);
+}
+?>
+
+<x-layouts.marketing
+    :metaTitle="$metaTitle"
+    :metaDescription="$metaDescription"
+    :metaImage="$metaImage"
+    :metaType="'article'"
+    :metaUrl="url('/blog/' . $post->slug)"
+    :metaJsonLd="$jsonLd"
+>
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <nav class="flex items-center justify-between mb-12">
+            <nav class="flex items-center justify-between mb-8">
                 <x-ui.marketing.breadcrumbs :crumbs="[
                     ['href' => '/blog', 'text' => 'Blog'],
                     ['text' => $post->title]
@@ -23,71 +68,75 @@
                 @endif
 
                 <div class="px-6 py-8 sm:px-8">
+                    <!-- Categories -->
+                    @if ($post->categories->count() > 0)
+                        <div class="flex flex-wrap gap-2 mb-5">
+                            @foreach ($post->categories as $category)
+                                <a href="/category/{{ $category->slug }}"
+                                   class="px-3 py-1 text-xs font-medium rounded-full transition-colors"
+                                   style="background-color: {{ $category->color }}20; color: {{ $category->color }};">
+                                    {{ $category->name }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white leading-tight mb-4">
                         {{ $post->title }}
                     </h1>
-                    <p class="text-sm text-gray-600 dark:text-white mb-8">Posted on {{ $post->created_at->format('F j, Y') }}</p>
 
-                    <div class="prose prose-lg max-w-none dark:prose-invert dark:text-white">
+                    <div class="flex items-center mb-8 text-sm text-gray-600 dark:text-gray-400">
+                        <div class="flex items-center">
+                            @if ($post->user && $post->user->avatar)
+                                <img src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}" class="w-8 h-8 rounded-full mr-3">
+                            @else
+                                <div class="w-8 h-8 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 rounded-full flex items-center justify-center mr-3">
+                                    {{ substr($post->user->name ?? 'A', 0, 1) }}
+                                </div>
+                            @endif
+                            <span>{{ $post->user->name ?? 'Jordan Partridge' }}</span>
+                        </div>
+                        <span class="mx-3">•</span>
+                        <time datetime="{{ $post->created_at->toIso8601String() }}">
+                            {{ $post->created_at->format('F j, Y') }}
+                        </time>
+                    </div>
+
+                    <div class="prose prose-lg max-w-none dark:prose-invert prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-img:rounded-lg prose-headings:font-bold">
                         {!! $post->body !!}
                     </div>
                 </div>
             </article>
 
+            <!-- Author bio -->
+            @if ($post->user)
+            <div class="mt-10 bg-blue-50 dark:bg-gray-700 rounded-lg p-6">
+                <div class="flex items-center">
+                    @if ($post->user->avatar)
+                        <img src="{{ $post->user->avatar }}" alt="{{ $post->user->name }}" class="w-16 h-16 rounded-full mr-4">
+                    @else
+                        <div class="w-16 h-16 bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-200 rounded-full flex items-center justify-center mr-4 text-xl font-bold">
+                            {{ substr($post->user->name ?? 'J', 0, 1) }}
+                        </div>
+                    @endif
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $post->user->name }}</h3>
+                        @if ($post->user->bio)
+                            <p class="text-gray-700 dark:text-gray-300 mt-1">{{ $post->user->bio }}</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            @endif
+
             <div class="mt-12 text-center">
-                <a href="/blog" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                <a href="/blog" class="inline-flex items-center px-5 py-3 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+                    </svg>
                     More Articles
                 </a>
             </div>
         </div>
     </div>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .prose {
-            --tw-prose-body: theme('colors.gray.700');
-            --tw-prose-headings: theme('colors.gray.900');
-            --tw-prose-links: theme('colors.blue.600');
-            --tw-prose-links-hover: theme('colors.blue.700');
-            --tw-prose-underline: theme('colors.blue.500 / 0.2');
-            --tw-prose-underline-hover: theme('colors.blue.500');
-            --tw-prose-bold: theme('colors.gray.900');
-            --tw-prose-counters: theme('colors.gray.500');
-            --tw-prose-bullets: theme('colors.gray.300');
-            --tw-prose-hr: theme('colors.gray.200');
-            --tw-prose-quote-borders: theme('colors.gray.200');
-            --tw-prose-captions: theme('colors.gray.500');
-            --tw-prose-code: theme('colors.gray.900');
-            --tw-prose-pre-code: theme('colors.gray.200');
-            --tw-prose-pre-bg: theme('colors.gray.800');
-            --tw-prose-pre-border: theme('colors.transparent');
-            --tw-prose-th-borders: theme('colors.gray.300');
-            --tw-prose-td-borders: theme('colors.gray.200');
-        }
-
-        .dark .prose {
-            --tw-prose-body: theme('colors.gray-300');
-            --tw-prose-headings: theme('colors.white');
-            --tw-prose-links: theme('colors.blue-400');
-            --tw-prose-links-hover: theme('colors.blue-300');
-            --tw-prose-underline: theme('colors.blue-400 / 0.3');
-            --tw-prose-underline-hover: theme('colors.blue-400');
-            --tw-prose-bold: theme('colors.white');
-            --tw-prose-counters: theme('colors.gray-400');
-            --tw-prose-bullets: theme('colors.gray-600');
-            --tw-prose-hr: theme('colors.gray-700');
-            --tw-prose-quote-borders: theme('colors.gray-600');
-            --tw-prose-captions: theme('colors.gray-400');
-            --tw-prose-code: theme('colors.white');
-            --tw-prose-pre-code: theme('colors.gray-300');
-            --tw-prose-pre-bg: theme('colors.gray-900');
-            --tw-prose-th-borders: theme('colors.gray-600');
-            --tw-prose-td-borders: theme('colors.gray-700');
-        }
-    </style>
 </x-layouts.marketing>

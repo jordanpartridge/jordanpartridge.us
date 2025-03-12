@@ -25,14 +25,20 @@
             }
         </script>
 
+        <!-- SEO Component -->
+        <x-seo
+            :title="$metaTitle ?? $title ?? 'Jordan Partridge'"
+            :description="$metaDescription ?? 'Personal website of Jordan Partridge - Engineering Manager, Laravel Developer, Army Veteran, and Cycling Enthusiast'"
+            :image="$metaImage ?? null"
+            :type="$metaType ?? 'website'"
+            :url="$metaUrl ?? null"
+            :twitter-card-type="$metaTwitterCardType ?? 'summary_large_image'"
+            :json-ld="$metaJsonLd ?? null"
+        />
+
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <script src="https://kit.fontawesome.com/d1901f5db9.js" crossorigin="anonymous"></script>
-
-        <title>{{ $title ?? 'Jordan Partridge' }}</title>
-
-        <!-- Meta description for SEO -->
-        <meta name="description" content="Personal website of Jordan Partridge - Engineering Manager, Laravel Developer, Army Veteran, and Cycling Enthusiast">
     </head>
     <body class="min-h-screen antialiased bg-gradient-to-tr from-white to-gray-50 dark:bg-gradient-to-br dark:from-gray-950 dark:to-gray-900 transition-colors duration-300">
         {{ $slot }}

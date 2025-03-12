@@ -16,6 +16,6 @@ class CardApi extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return $this->base_url ?: 'https://card-api.jordanpartridge.com/api/v1';
+        return $this->base_url ?? 'https://card-api.jordanpartridge.com/api/v1';
     }
 }
