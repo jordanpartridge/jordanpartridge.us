@@ -7,9 +7,11 @@ use Saloon\Http\Connector;
 
 class CardApi extends Connector
 {
-    public function __construct(string $token, private readonly string $base_url)
+    public function __construct(?string $token = null, private readonly ?string $base_url = null)
     {
-        $this->authenticate(new TokenAuthenticator($token));
+        if ($token) {
+            $this->authenticate(new TokenAuthenticator($token));
+        }
     }
 
     public function resolveBaseUrl(): string
