@@ -1,7 +1,6 @@
 # CLAUDE.md - Essential Commands and Guidelines
 
 ## Build & Development Commands
-- PHP Server: `php artisan serve`
 - Development: `npm run dev`
 - Production Build: `npm run build`
 - Database Migration: `php artisan migrate`
