@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
@@ -44,6 +45,12 @@ class UserResource extends Resource
                                 ->email()
                                 ->required()
                                 ->maxLength(255),
+
+                            Textarea::make('bio')
+                                ->label('Biography')
+                                ->helperText('A short bio to display on blog posts you author')
+                                ->maxLength(500)
+                                ->columnSpanFull(),
                         ]),
                     Step::make('Password')
                         ->schema([
@@ -73,6 +80,11 @@ class UserResource extends Resource
                 ImageColumn::make('avatar')->label('Avatar')->circular(),
                 TextColumn::make('name')->searchable()->label('Full Name'),
                 TextColumn::make('email')->searchable()->label('Email Address'),
+                TextColumn::make('bio')
+                    ->label('Biography')
+                    ->limit(50)
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')->date()->label('Created At'),
                 TextColumn::make('updated_at')->date()->label('Updated At'),
             ])

@@ -14,13 +14,23 @@ class PostObserver
     {
         // Only auto-generate excerpt if it's empty
         if (empty($post->excerpt)) {
-            // Get the first 200 characters of the body content
-            $rawContent = strip_tags($post->body);
+            // Add spaces before block-level HTML tags to prevent words from being squished together
+            $spacedContent = preg_replace('/<\/(p|div|h[1-6]|ul|ol|li|blockquote)><(p|div|h[1-6]|ul|ol|li|blockquote)>/i', ' ', $post->body);
+
+            // Get the content without HTML tags
+            $rawContent = strip_tags($spacedContent);
 
             // Clean the content - convert HTML entities and remove special characters
             $cleanContent = html_entity_decode($rawContent, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-            $cleanContent = preg_replace('/\s+/', ' ', $cleanContent); // Replace multiple spaces with single space
-            $cleanContent = trim($cleanContent); // Remove leading/trailing whitespace
+
+            // Replace multiple spaces with single space
+            $cleanContent = preg_replace('/\s+/', ' ', $cleanContent);
+
+            // Remove leading/trailing whitespace
+            $cleanContent = trim($cleanContent);
+
+            // Escape HTML-like characters for safety
+            $cleanContent = htmlspecialchars($cleanContent, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
             // Generate excerpt (200 chars or less if content is shorter)
             $excerpt = Str::limit($cleanContent, 200, '...');

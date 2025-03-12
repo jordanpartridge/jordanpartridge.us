@@ -36,6 +36,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
     protected $fillable = [
         'name',
         'avatar',
+        'bio',
         'email',
         'password',
     ];
