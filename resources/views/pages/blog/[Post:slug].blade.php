@@ -1,12 +1,14 @@
-<?php
-// Prepare SEO metadata based on post content
+@php
+// First capture the Post model from Folio's route model binding
+// and prepare all the variables needed by your layout component
 $metaTitle = $post->meta_title ?? $post->title . ' | Jordan Partridge';
 $metaDescription = $post->meta_description ?? (strlen(strip_tags($post->body)) > 160 ? substr(strip_tags($post->body), 0, 157) . '...' : strip_tags($post->body));
 $metaImage = $post->image ? (str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http') ? $post->image : asset('storage/' . $post->image)) : null;
+$metaUrl = url()->current();
 $categoryNames = $post->categories->pluck('name')->toArray();
 
 // Prepare JSON-LD for article
-$jsonLd = [
+$metaJsonLd = [
     '@context'      => 'https://schema.org',
     '@type'         => 'BlogPosting',
     'headline'      => $post->title,
@@ -28,22 +30,29 @@ $jsonLd = [
 ];
 
 if ($metaImage) {
-    $jsonLd['image'] = $metaImage;
+    $metaJsonLd['image'] = $metaImage;
 }
 
 if (!empty($categoryNames)) {
-    $jsonLd['keywords'] = implode(', ', $categoryNames);
+    $metaJsonLd['keywords'] = implode(', ', $categoryNames);
 }
-?>
+@endphp
 
 <x-layouts.marketing
     :metaTitle="$metaTitle"
     :metaDescription="$metaDescription"
     :metaImage="$metaImage"
     :metaType="'article'"
-    :metaUrl="url('/blog/' . $post->slug)"
-    :metaJsonLd="$jsonLd"
+    :metaUrl="$metaUrl"
+    :metaJsonLd="$metaJsonLd"
 >
+    <?php
+    use function Livewire\Volt\{state};
+
+    state(['post' => fn () => $post]);
+    ?>
+
+    @volt('blog-post')
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <nav class="flex items-center justify-between mb-8">
@@ -139,4 +148,5 @@ if (!empty($categoryNames)) {
             </div>
         </div>
     </div>
+    @endvolt
 </x-layouts.marketing>
