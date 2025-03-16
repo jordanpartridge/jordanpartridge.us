@@ -1,5 +1,18 @@
 <button
-    @click="darkMode = !darkMode"
+    x-data="{
+        darkMode: localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
+        toggleDarkMode() {
+            this.darkMode = !this.darkMode;
+            localStorage.theme = this.darkMode ? 'dark' : 'light';
+
+            if (this.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+    }"
+    @click="toggleDarkMode()"
     class="relative w-full h-full flex items-center justify-center rounded-full bg-gradient-to-r from-gray-100 to-white dark:from-gray-800 dark:to-gray-900 text-primary-600 dark:text-primary-400 hover:shadow-md transition-all duration-300 transform hover:scale-105"
     :class="{ 'rotate-0': darkMode }"
     aria-label="Toggle dark mode"
