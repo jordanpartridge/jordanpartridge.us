@@ -9,5 +9,5 @@ Route::get('user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Social sharing endpoints
-Route::get('share-count', [ShareCountController::class, 'getCount']);
-Route::post('track-share', [ShareCountController::class, 'trackShare']);
+Route::get('share-count', [ShareCountController::class, 'getCount'])->middleware('throttle:api');
+Route::post('track-share', [ShareCountController::class, 'trackShare'])->middleware('throttle:api');
