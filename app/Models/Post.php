@@ -97,4 +97,42 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    /**
+     * Get the social shares for this post.
+     */
+    public function socialShares(): HasMany
+    {
+        return $this->hasMany(SocialShare::class);
+    }
+
+    /**
+     * Get the share count for a specific platform
+     */
+    public function getShareCount(string $platform = null): int
+    {
+        $query = $this->socialShares();
+
+        if ($platform) {
+            $query->where('platform', $platform);
+        }
+
+        return $query->count();
+    }
+
+    /**
+     * Get the route key for the model.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
+     * Get the URL to the post.
+     */
+    public function route(): string
+    {
+        return url("/blog/{$this->slug}");
+    }
 }

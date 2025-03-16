@@ -1,11 +1,12 @@
 @php
-// First capture the Post model from Folio's route model binding
-// and prepare all the variables needed by your layout component
 $metaTitle = $post->meta_title ?? $post->title . ' | Jordan Partridge';
 $metaDescription = $post->meta_description ?? (strlen(strip_tags($post->body)) > 160 ? substr(strip_tags($post->body), 0, 157) . '...' : strip_tags($post->body));
 $metaImage = $post->image ? (str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http') ? $post->image : asset('storage/' . $post->image)) : null;
 $metaUrl = url()->current();
 $categoryNames = $post->categories->pluck('name')->toArray();
+$authorName = $post->user->name ?? 'Jordan Partridge';
+$authorTwitter = $post->user->twitter_handle ?? '@jordanpartridge';
+$publishedTime = $post->created_at->toIso8601String();
 
 // Prepare JSON-LD for article
 $metaJsonLd = [
@@ -13,11 +14,11 @@ $metaJsonLd = [
     '@type'         => 'BlogPosting',
     'headline'      => $post->title,
     'description'   => $metaDescription,
-    'datePublished' => $post->created_at->toIso8601String(),
+    'datePublished' => $publishedTime,
     'dateModified'  => $post->updated_at->toIso8601String(),
     'author'        => [
         '@type' => 'Person',
-        'name'  => $post->user->name ?? 'Jordan Partridge'
+        'name'  => $authorName
     ],
     'publisher' => [
         '@type' => 'Organization',
@@ -46,13 +47,6 @@ if (!empty($categoryNames)) {
     :metaUrl="$metaUrl"
     :metaJsonLd="$metaJsonLd"
 >
-    <?php
-    use function Livewire\Volt\{state};
-
-    state(['post' => fn () => $post]);
-    ?>
-
-    @volt('blog-post')
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <nav class="flex items-center justify-between mb-8">
@@ -111,8 +105,36 @@ if (!empty($categoryNames)) {
                         </time>
                     </div>
 
+                    <!-- Social Share Buttons Above Content -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-sm font-medium text-gray-600 dark:text-gray-400">Share this article:</h2>
+                            <livewire:social-share
+                                :title="$post->title"
+                                :url="$metaUrl"
+                                :description="$metaDescription"
+                                :hashtags="implode(',', $categoryNames)"
+                                :showCount="true"
+                            />
+                        </div>
+                    </div>
+
                     <div class="prose prose-lg max-w-none dark:prose-invert prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-img:rounded-lg prose-headings:font-bold">
                         {!! $post->body !!}
+                    </div>
+
+                    <!-- Social Share Buttons Below Content -->
+                    <div class="mt-10 pt-6 border-t border-gray-200 dark:border-gray-700">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-sm font-medium text-gray-600 dark:text-gray-400">If you enjoyed this article, please share:</h2>
+                            <livewire:social-share
+                                :title="$post->title"
+                                :url="$metaUrl"
+                                :description="$metaDescription"
+                                :hashtags="implode(',', $categoryNames)"
+                                :showCount="true"
+                            />
+                        </div>
                     </div>
                 </div>
             </article>
@@ -148,5 +170,4 @@ if (!empty($categoryNames)) {
             </div>
         </div>
     </div>
-    @endvolt
 </x-layouts.marketing>
