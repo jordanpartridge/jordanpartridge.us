@@ -95,7 +95,7 @@ class ShareCountController extends Controller
     }
 
     /**
-     * Fetch share count from various platforms
+     * Fetch share count from database
      *
      * @param string $url
      * @param string $platform
@@ -109,29 +109,7 @@ class ShareCountController extends Controller
                 ->where('platform', $platform)
                 ->count();
 
-            // If we have data, return it
-            if ($count > 0) {
-                return $count;
-            }
-
-            // Otherwise fall back to API-based or mock counts
-            switch ($platform) {
-                case 'facebook':
-                    // Facebook requires a Graph API token for accurate counts
-                    // This is a simplified implementation
-                    return rand(5, 50); // Mock data for demo purposes
-
-                case 'twitter':
-                    // Twitter no longer provides a public API for share counts
-                    return rand(3, 30); // Mock data for demo purposes
-
-                case 'linkedin':
-                    // LinkedIn no longer provides share counts via public API
-                    return rand(2, 25); // Mock data for demo purposes
-
-                default:
-                    return 0;
-            }
+            return $count;
         } catch (\Exception $e) {
             Log::error('Error fetching share count', [
                 'url'      => $url,

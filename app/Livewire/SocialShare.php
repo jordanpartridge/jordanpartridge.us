@@ -44,15 +44,15 @@ class SocialShare extends Component
         };
 
         $this->twitterCount = Cache::remember($cacheKey('twitter'), 1800, function () {
-            return SocialShareModel::where('url', $this->url)->where('platform', 'twitter')->count() ?: rand(3, 30);
+            return SocialShareModel::where('url', $this->url)->where('platform', 'twitter')->count();
         });
 
         $this->linkedinCount = Cache::remember($cacheKey('linkedin'), 1800, function () {
-            return SocialShareModel::where('url', $this->url)->where('platform', 'linkedin')->count() ?: rand(2, 25);
+            return SocialShareModel::where('url', $this->url)->where('platform', 'linkedin')->count();
         });
 
         $this->facebookCount = Cache::remember($cacheKey('facebook'), 1800, function () {
-            return SocialShareModel::where('url', $this->url)->where('platform', 'facebook')->count() ?: rand(5, 50);
+            return SocialShareModel::where('url', $this->url)->where('platform', 'facebook')->count();
         });
     }
 
