@@ -115,6 +115,7 @@ if (!empty($categoryNames)) {
                                 :description="$metaDescription"
                                 :hashtags="implode(',', $categoryNames)"
                                 :showCount="true"
+                                :postId="$post->id"
                             />
                         </div>
                     </div>
@@ -133,6 +134,7 @@ if (!empty($categoryNames)) {
                                 :description="$metaDescription"
                                 :hashtags="implode(',', $categoryNames)"
                                 :showCount="true"
+                                :postId="$post->id"
                             />
                         </div>
                     </div>

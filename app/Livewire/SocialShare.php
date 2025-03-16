@@ -2,9 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Models\Post;
 use App\Models\SocialShare as SocialShareModel;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class SocialShare extends Component
@@ -14,6 +16,7 @@ class SocialShare extends Component
     public string $description = '';
     public string $hashtags = '';
     public bool $showCount = false;
+    public ?int $postId = null;
 
     public $twitterCount = 0;
     public $linkedinCount = 0;
@@ -24,13 +27,20 @@ class SocialShare extends Component
         string $title = '',
         string $description = '',
         string $hashtags = '',
-        bool $showCount = false
+        bool $showCount = false,
+        ?int $postId = null
     ) {
         $this->url = $url ?: url()->current();
         $this->title = $title;
         $this->description = $description;
         $this->hashtags = $hashtags;
         $this->showCount = $showCount;
+        $this->postId = $postId;
+
+        // If postId is not directly provided, try to extract it from the URL
+        if (!$this->postId) {
+            $this->extractPostIdFromUrl();
+        }
 
         if ($showCount) {
             $this->loadCounts();
@@ -66,7 +76,7 @@ class SocialShare extends Component
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'user_id'    => Auth::id(),
-                // We could extract post_id here if needed
+                'post_id'    => $this->postId,
             ]);
 
             // Increment the count in cache
@@ -86,7 +96,8 @@ class SocialShare extends Component
             // Track with any analytics
             $this->dispatch('analytics', [
                 'platform' => $platform,
-                'url'      => $this->url
+                'url'      => $this->url,
+                'post_id'  => $this->postId
             ]);
         } catch (\Exception $e) {
             // Log if needed
@@ -96,5 +107,21 @@ class SocialShare extends Component
     public function render()
     {
         return view('livewire.social-share');
+    }
+
+    /**
+     * Extract post ID from URL if it's a blog post URL
+     */
+    protected function extractPostIdFromUrl()
+    {
+        $path = parse_url($this->url, PHP_URL_PATH);
+
+        if ($path && Str::contains($path, '/blog/')) {
+            $slug = Str::afterLast($path, '/');
+            $post = Post::where('slug', $slug)->first();
+            if ($post) {
+                $this->postId = $post->id;
+            }
+        }
     }
 }
