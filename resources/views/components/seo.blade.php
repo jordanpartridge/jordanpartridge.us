@@ -45,6 +45,10 @@
 <meta name="twitter:creator" content="{{ $authorTwitter }}">
 @endif
 
+<!-- LinkedIn -->
+<meta property="linkedin:owner" content="{{ config('app.name') }}">
+<meta property="linkedin:page_type" content="{{ $type }}">
+
 <!-- Canonical URL -->
 <link rel="canonical" href="{{ $url }}" />
 
