@@ -48,6 +48,11 @@
 <!-- LinkedIn -->
 <meta property="linkedin:owner" content="{{ config('app.name') }}">
 <meta property="linkedin:page_type" content="{{ $type }}">
+<meta name="linkedin:title" content="{{ $title }}">
+<meta name="linkedin:description" content="{{ $description }}">
+<!-- Explicitly adding standard meta descriptions in formats LinkedIn might use -->
+<meta name="description" content="{{ $description }}">
+<meta itemprop="description" content="{{ $description }}">
 
 <!-- Canonical URL -->
 <link rel="canonical" href="{{ $url }}" />
