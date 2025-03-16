@@ -17,7 +17,7 @@
 
     <!-- LinkedIn Share -->
     <a
-        href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($url) }}"
+        href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode($url) }}&title={{ urlencode($title) }}&summary={{ urlencode($description) }}&source=JordanPartridge"
         target="_blank"
         class="flex items-center text-gray-600 hover:text-blue-700 dark:text-gray-400 dark:hover:text-blue-600 transition-colors"
         wire:click="trackShare('linkedin')"
