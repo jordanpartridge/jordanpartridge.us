@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class SocialMediaService
 {
     protected AIContentService $aiContentService;
-    
+
     /**
      * Create a new Social Media Service instance.
      */
@@ -18,7 +18,7 @@ class SocialMediaService
     {
         $this->aiContentService = $aiContentService;
     }
-    
+
     /**
      * Generate and post content to LinkedIn.
      *
@@ -33,22 +33,22 @@ class SocialMediaService
             $content = Cache::remember($cacheKey, now()->addHours(24), function () use ($post) {
                 return $this->aiContentService->generateSocialPost($post, 'linkedin');
             });
-            
+
             // TODO: Implement actual LinkedIn API integration using league/oauth2-linkedin
             // This is a placeholder for future implementation
             $this->logSocialPost($post, 'linkedin', $content);
-            
+
             return true;
         } catch (\Exception $e) {
             Log::error('Error posting to LinkedIn', [
                 'post_id' => $post->id,
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
             ]);
-            
+
             return false;
         }
     }
-    
+
     /**
      * Generate and post content to Twitter.
      *
@@ -63,22 +63,44 @@ class SocialMediaService
             $content = Cache::remember($cacheKey, now()->addHours(24), function () use ($post) {
                 return $this->aiContentService->generateSocialPost($post, 'twitter');
             });
-            
+
             // TODO: Implement actual Twitter API integration using abraham/twitteroauth
             // This is a placeholder for future implementation
             $this->logSocialPost($post, 'twitter', $content);
-            
+
             return true;
         } catch (\Exception $e) {
             Log::error('Error posting to Twitter', [
                 'post_id' => $post->id,
-                'error' => $e->getMessage()
+                'error'   => $e->getMessage()
             ]);
-            
+
             return false;
         }
     }
-    
+
+    /**
+     * Generate and post content to all configured social media platforms.
+     *
+     * @param Post $post
+     * @param array $platforms Platforms to post to (defaults to all)
+     * @return array Results by platform
+     */
+    public function postToAllPlatforms(Post $post, array $platforms = ['linkedin', 'twitter']): array
+    {
+        $results = [];
+
+        if (in_array('linkedin', $platforms)) {
+            $results['linkedin'] = $this->postToLinkedIn($post);
+        }
+
+        if (in_array('twitter', $platforms)) {
+            $results['twitter'] = $this->postToTwitter($post);
+        }
+
+        return $results;
+    }
+
     /**
      * Log social media posts for debugging and tracking.
      *
@@ -90,34 +112,12 @@ class SocialMediaService
     private function logSocialPost(Post $post, string $platform, string $content): void
     {
         Log::info('Social media post created', [
-            'post_id' => $post->id,
+            'post_id'  => $post->id,
             'platform' => $platform,
-            'content' => $content
+            'content'  => $content
         ]);
-        
+
         // In a real implementation, we would save this to a database table
         // to track social media posts and their performance
-    }
-    
-    /**
-     * Generate and post content to all configured social media platforms.
-     *
-     * @param Post $post
-     * @param array $platforms Platforms to post to (defaults to all)
-     * @return array Results by platform
-     */
-    public function postToAllPlatforms(Post $post, array $platforms = ['linkedin', 'twitter']): array
-    {
-        $results = [];
-        
-        if (in_array('linkedin', $platforms)) {
-            $results['linkedin'] = $this->postToLinkedIn($post);
-        }
-        
-        if (in_array('twitter', $platforms)) {
-            $results['twitter'] = $this->postToTwitter($post);
-        }
-        
-        return $results;
     }
 }

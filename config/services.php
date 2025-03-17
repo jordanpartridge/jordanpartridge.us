@@ -60,7 +60,26 @@ return [
     |
     */
     'prism' => [
-        'model' => env('PRISM_DEFAULT_MODEL', 'ollama/mistral:latest'),
-        'api_key' => env('PRISM_API_KEY'),
+        // API Connection Settings
+        'api_key'  => env('PRISM_API_KEY'),
+        'base_url' => env('PRISM_BASE_URL', 'https://api.prism.ai'),
+        'timeout'  => env('PRISM_REQUEST_TIMEOUT', 30),
+
+        // Default Model Settings
+        'model'          => env('PRISM_DEFAULT_MODEL', 'ollama/mistral:latest'),
+        'fallback_model' => env('PRISM_FALLBACK_MODEL', 'ollama/mistral:7b-instruct-q4_0'),
+
+        // Content Generation Parameters
+        'default_temperature' => env('PRISM_DEFAULT_TEMPERATURE', 0.7),
+        'default_max_tokens'  => env('PRISM_DEFAULT_MAX_TOKENS', 500),
+
+        // Prompt Storage
+        'template_storage' => env('PRISM_TEMPLATE_STORAGE', 'database'), // Options: database, json, yaml
+        'template_path'    => env('PRISM_TEMPLATE_PATH', database_path('ai/templates')),
+
+        // Logging & Debug
+        'log_level'     => env('PRISM_LOG_LEVEL', 'info'), // Options: debug, info, warning, error
+        'log_prompts'   => env('PRISM_LOG_PROMPTS', false),
+        'log_responses' => env('PRISM_LOG_RESPONSES', false),
     ],
 ];

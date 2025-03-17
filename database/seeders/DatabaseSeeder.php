@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             FeaturedPodcastSeeder::class,
+            PromptTemplateSeeder::class,
         ]);
 
     }
