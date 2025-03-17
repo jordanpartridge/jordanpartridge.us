@@ -66,6 +66,34 @@ class SocialShare extends Component
         });
     }
 
+    /**
+     * Get sharing URL for a specific platform with properly pre-populated content
+     *
+     * @param string $platform Platform name (twitter, linkedin, facebook)
+     * @return string The sharing URL
+     */
+    public function getSharingUrl(string $platform): string
+    {
+        $encodedUrl = urlencode($this->url);
+        $encodedTitle = urlencode($this->title);
+
+        switch ($platform) {
+            case 'twitter':
+                return "https://twitter.com/intent/tweet?url={$encodedUrl}&text={$encodedTitle}&hashtags={$this->hashtags}";
+
+            case 'linkedin':
+                // Pre-populate the post text with the description for LinkedIn
+                $encodedDescription = urlencode($this->description);
+                return "https://www.linkedin.com/sharing/share-offsite/?url={$encodedUrl}&summary={$encodedDescription}";
+
+            case 'facebook':
+                return "https://www.facebook.com/sharer/sharer.php?u={$encodedUrl}";
+
+            default:
+                return $this->url;
+        }
+    }
+
     public function trackShare($platform)
     {
         try {
