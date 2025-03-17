@@ -31,6 +31,17 @@ Route::middleware([LogRequests::class])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
+    | Test Routes (for development only)
+    |--------------------------------------------------------------------------
+    */
+    if (app()->environment('local')) {
+        Route::get('test-linkedin-meta', function () {
+            return view('tests.linkedin-meta-test');
+        })->name('test.linkedin-meta');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | Webhook Endpoints
     |--------------------------------------------------------------------------
     */

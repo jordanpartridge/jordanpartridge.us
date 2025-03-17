@@ -23,6 +23,7 @@
 <meta property="og:title" content="{{ $title }}">
 <meta property="og:description" content="{{ $description }}">
 <meta property="og:image" content="{{ $image }}">
+<meta property="og:image:alt" content="{{ $title }}">
 <meta property="og:site_name" content="{{ config('app.name') }}">
 @if ($type === 'article')
 <meta property="article:published_time" content="{{ $publishedTime ?? now()->toIso8601String() }}">
@@ -50,7 +51,13 @@
 <meta property="linkedin:page_type" content="{{ $type }}">
 <meta name="linkedin:title" content="{{ $title }}">
 <meta name="linkedin:description" content="{{ $description }}">
-<!-- Explicitly adding standard meta descriptions in formats LinkedIn might use -->
+<meta name="linkedin:image" content="{{ $image }}">
+<meta property="linkedin:image:alt" content="{{ $title }}">
+<!-- LinkedIn recommends image dimensions of at least 1200×627 pixels (1.91:1 ratio) -->
+@if ($type === 'article')
+<meta property="linkedin:author" content="{{ $authorName ?? 'Jordan Partridge' }}">
+@endif
+<!-- Explicitly adding standard meta descriptions as LinkedIn might use either format -->
 <meta name="description" content="{{ $description }}">
 <meta itemprop="description" content="{{ $description }}">
 
@@ -64,5 +71,32 @@
 @if ($jsonLd)
 <script type="application/ld+json">
     {!! json_encode($jsonLd) !!}
+</script>
+@else
+<!-- Default structured data for professional profile -->
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "{{ $type === 'article' ? 'Article' : 'WebPage' }}",
+        "headline": "{{ $title }}",
+        "description": "{{ $description }}",
+        "image": "{{ $image }}",
+        "url": "{{ $url }}",
+        "publisher": {
+            "@type": "Organization",
+            "name": "{{ config('app.name') }}",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "{{ asset('images/logo.png') }}"
+            }
+        }
+        @if ($type === 'article')
+        ,"datePublished": "{{ $publishedTime ?? now()->toIso8601String() }}",
+        "author": {
+            "@type": "Person",
+            "name": "{{ $authorName ?? 'Jordan Partridge' }}"
+        }
+        @endif
+    }
 </script>
 @endif
