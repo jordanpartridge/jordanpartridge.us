@@ -50,4 +50,17 @@ return [
         'token'    => env('GITHUB_API_TOKEN'),
         'username' => env('GITHUB_USERNAME', 'jordanpartridge'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Prism AI Service Configuration
+    |--------------------------------------------------------------------------
+    |
+    | This section configures the Prism PHP package for AI content generation.
+    |
+    */
+    'prism' => [
+        'model' => env('PRISM_DEFAULT_MODEL', 'ollama/mistral:latest'),
+        'api_key' => env('PRISM_API_KEY'),
+    ],
 ];
