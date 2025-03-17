@@ -1,7 +1,7 @@
 <div class="flex items-center space-x-3">
     <!-- Twitter Share -->
     <a
-        href="https://twitter.com/intent/tweet?url={{ urlencode($url) }}&text={{ urlencode($title) }}&hashtags={{ $hashtags }}"
+        href="{{ $this->getSharingUrl('twitter') }}"
         target="_blank"
         class="flex items-center text-gray-600 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
         wire:click="trackShare('twitter')"
@@ -17,7 +17,7 @@
 
     <!-- LinkedIn Share -->
     <a
-        href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($url) }}"
+        href="{{ $this->getSharingUrl('linkedin') }}"
         target="_blank"
         class="flex items-center text-gray-600 hover:text-blue-700 dark:text-gray-400 dark:hover:text-blue-600 transition-colors"
         wire:click="trackShare('linkedin')"
@@ -33,7 +33,7 @@
 
     <!-- Facebook Share -->
     <a
-        href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($url) }}"
+        href="{{ $this->getSharingUrl('facebook') }}"
         target="_blank"
         class="flex items-center text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-500 transition-colors"
         wire:click="trackShare('facebook')"
