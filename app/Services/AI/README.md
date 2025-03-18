@@ -60,6 +60,46 @@ The service is configured in `config/services.php` under the `prism` key with ex
 - `PRISM_LOG_PROMPTS`: Whether to log prompt details (default: false)
 - `PRISM_LOG_RESPONSES`: Whether to log AI responses (default: false)
 
+## Using AI Features in the Admin Panel
+
+### Creating a New Post
+
+1. Navigate to **Blog Management > Posts > Create Post**
+2. Fill in the post title and content in the **Details** and **Content** tabs
+3. Use the AI features in the following tabs:
+
+#### SEO Tab
+
+1. After adding your post title and content, click on the **SEO** tab
+2. Click the **Generate with AI** button next to "SEO Metadata"
+3. The system will generate an optimized meta title, description, and keywords
+4. Review and edit the generated content if needed
+
+#### Social Media Tab
+
+1. Enable the **Automatically generate social media posts** toggle
+2. Select which platforms you want to generate content for (LinkedIn, Twitter/X)
+3. Preview the AI-generated social media posts that will be published when your post goes live
+4. To regenerate any content, use the "Regenerate" button in the preview
+
+### Publishing a Post with Social Sharing
+
+1. Set your post status to **Published**
+2. If you've enabled auto-generate social media posts, the system will automatically:
+   - Generate optimized social media content for your selected platforms
+   - Share the content to those platforms upon post publication
+3. You'll receive a notification confirming successful social media sharing
+
+### Social Preview Modal
+
+You can preview how your social media posts will look before publishing:
+
+1. While editing a post, go to the **Content** tab
+2. Click the **Preview Social Media Posts** button
+3. A modal will display AI-generated previews for LinkedIn and Twitter/X
+4. Click **Regenerate** to get new AI-generated versions
+5. Click **Close** when done
+
 ## Usage Examples
 
 ### Generating Social Media Posts
@@ -130,20 +170,6 @@ $formatted = $template->format([
     'excerpt' => 'An excerpt...',
     'platform' => 'linkedin'
 ]);
-
-// Version control for templates
-$template->createVersion($userId);
-```
-
-### Template Version History
-The system maintains version history for all prompt templates, allowing you to track changes and rollback if needed.
-
-```php
-// Get all versions of a template
-$versions = $template->versions()->orderBy('version', 'desc')->get();
-
-// Get specific version
-$version = $template->versions()->where('version', 2)->first();
 ```
 
 ## Error Handling and Fallbacks
@@ -153,52 +179,6 @@ The service includes comprehensive error handling:
 1. **Primary Model Failure**: If the primary model fails, the service attempts to use the fallback model if configured.
 2. **Fallback Template**: If all AI generation attempts fail, the service falls back to template-based content.
 3. **Detailed Logging**: All errors are logged with context including error messages, file, line, and stack traces.
-
-## Advanced Logging
-
-Enable detailed logging by setting the environment variables:
-
-```
-PRISM_LOG_LEVEL=debug
-PRISM_LOG_PROMPTS=true
-PRISM_LOG_RESPONSES=true
-```
-
-This will log:
-- All prompt templates being used
-- System and user prompts sent to the AI
-- Model parameters for each request
-- Complete AI responses
-- Performance metrics and tokens used
-
-## Performance Optimization
-
-### Caching
-Consider caching generated content for improved performance:
-
-```php
-use Illuminate\Support\Facades\Cache;
-
-// With cache
-$socialPost = Cache::remember("social_post_{$post->id}_{$platform}", now()->addDays(7), function () use ($post, $platform) {
-    return $this->aiService->generateSocialPost($post, $platform);
-});
-```
-
-### Queue Processing
-For batch processing or to prevent timeout issues:
-
-```php
-use App\Jobs\GenerateAIContentJob;
-
-// Queue the generation job
-GenerateAIContentJob::dispatch($post, $platform);
-```
-
-### Token Usage Optimization
-- Keep prompt templates concise and focused
-- Use appropriate max_tokens settings for each content type
-- Consider using smaller models for simpler tasks
 
 ## Testing
 
