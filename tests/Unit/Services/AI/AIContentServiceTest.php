@@ -12,6 +12,7 @@ use Mockery;
 use Prism\Prism;
 use Prism\PrismResponse;
 use Tests\TestCase;
+use Tests\Unit\Services\AI\TestableAIContentService;
 
 class AIContentServiceTest extends TestCase
 {
@@ -230,7 +231,3 @@ class AIContentServiceTest extends TestCase
 }
 
 // Test subclass to ensure consistent test results
-class TestableAIContentService extends AIContentService
-{
-    // No need to override anything, just use the parent implementation
-}
