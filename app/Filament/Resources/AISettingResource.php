@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\AISettingResource\Pages\ListAISettings;
+use App\Filament\Resources\AISettingResource\Pages\CreateAISetting;
+use App\Filament\Resources\AISettingResource\Pages\EditAISetting;
 use App\Models\AISetting;
-use ListAISettings;
-use CreateAISetting;
-use EditAISetting;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
