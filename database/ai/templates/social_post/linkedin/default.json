@@ -1,8 +1,8 @@
 {
   "name": "LinkedIn Post Template - Default",
-  "key": "social_post",
-  "system_prompt": "You are a professional content creator specializing in tech and software engineering content for LinkedIn. Your posts are insightful, professional, and engaging for a technical audience. Include appropriate hashtags at the end. Keep content between 180-220 words. Be concise but thoughtful.",
-  "user_prompt": "Create a LinkedIn post announcing my new blog article titled \"{title}\". The post is about: {description}. Here's an excerpt: \"{excerpt}...\". Include a call to action to read the full article and use appropriate hashtags for software engineering, Laravel, and tech topics.",
+  "key": "social_post_linkedin",
+  "system_prompt": "You are a professional content creator specializing in tech and software engineering content for LinkedIn. Your posts are insightful, professional, and engaging for a technical audience. Include 2-3 appropriate hashtags at the end. Keep content between 120-150 words. Be concise but thoughtful.",
+  "user_prompt": "Create a LinkedIn post announcing my new blog article titled \"{title}\". The post should provide value by highlighting key insights or lessons from the article. Here's what the article is about: {description}. Include a call to action to read the full article.",
   "content_type": "social_post",
   "platform": "linkedin",
   "variables": ["title", "description", "excerpt", "platform"],

@@ -61,13 +61,13 @@ return [
     */
     'prism' => [
         // API Connection Settings
-        'api_key'  => env('PRISM_API_KEY'),
-        'base_url' => env('PRISM_BASE_URL', 'https://api.prism.ai'),
-        'timeout'  => env('PRISM_REQUEST_TIMEOUT', 30),
+        'api_key'  => env('PRISM_API_KEY', ''), // Not needed for Ollama
+        'base_url' => env('PRISM_BASE_URL', 'http://10.0.3.199:11434'), // Direct IP for Ollama
+        'timeout'  => env('PRISM_REQUEST_TIMEOUT', 60), // Increased timeout
 
         // Default Model Settings
-        'model'          => env('PRISM_DEFAULT_MODEL', 'ollama/mistral:latest'),
-        'fallback_model' => env('PRISM_FALLBACK_MODEL', 'ollama/mistral:7b-instruct-q4_0'),
+        'model'          => env('PRISM_DEFAULT_MODEL', 'ollama/mistral'),
+        'fallback_model' => env('PRISM_FALLBACK_MODEL', 'ollama/mistral'),
 
         // Content Generation Parameters
         'default_temperature' => env('PRISM_DEFAULT_TEMPERATURE', 0.7),
@@ -78,8 +78,8 @@ return [
         'template_path'    => env('PRISM_TEMPLATE_PATH', database_path('ai/templates')),
 
         // Logging & Debug
-        'log_level'     => env('PRISM_LOG_LEVEL', 'info'), // Options: debug, info, warning, error
-        'log_prompts'   => env('PRISM_LOG_PROMPTS', false),
-        'log_responses' => env('PRISM_LOG_RESPONSES', false),
+        'log_level'     => env('PRISM_LOG_LEVEL', 'debug'), // Changed to debug for testing
+        'log_prompts'   => env('PRISM_LOG_PROMPTS', true),  // Enable prompt logging for testing
+        'log_responses' => env('PRISM_LOG_RESPONSES', true), // Enable response logging for testing
     ],
 ];
