@@ -143,13 +143,13 @@ class CreatePostTest extends TestCase
         // as that would require complex Livewire testing setup
         // Instead, we'll verify our AI service gets called with the right data
 
-        // Rather than checking for specific UI elements, we'll verify that 
+        // Rather than checking for specific UI elements, we'll verify that
         // our AI content service has been configured with the expected mock behaviors
         // This focuses on testing the functionality rather than the UI, which might change
-        
+
         $this->assertTrue(app()->bound(AIContentService::class), 'AIContentService should be bound in the container');
         $service = app(AIContentService::class);
-        
+
         // We won't actually test the UI here, but we verify the service mock was properly set up
         $this->assertInstanceOf(Mockery\MockInterface::class, $service);
     }

@@ -4,7 +4,6 @@ namespace Tests\Unit\Services\AI;
 
 use App\Models\Post;
 use App\Models\PromptTemplate;
-use App\Services\AI\AIContentService;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Config;
@@ -12,7 +11,6 @@ use Mockery;
 use Prism\Prism;
 use Prism\PrismResponse;
 use Tests\TestCase;
-use Tests\Unit\Services\AI\TestableAIContentService;
 
 class AIContentServiceTest extends TestCase
 {

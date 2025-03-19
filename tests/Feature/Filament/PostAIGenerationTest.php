@@ -4,7 +4,6 @@ namespace Tests\Feature\Filament;
 
 use App\Models\Post;
 use App\Services\AI\AIContentService;
-use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 use Tests\TestCase;
@@ -110,7 +109,7 @@ class PostAIGenerationTest extends TestCase
 
         // Call the service
         $result = app(AIContentService::class)->generateSocialPost($post, 'linkedin');
-        
+
         // Assert that we got the expected content
         $this->assertStringContainsString("I'm excited to share my latest article", $result);
         $this->assertStringContainsString($post->title, $result);
