@@ -1,0 +1,16 @@
+{
+  "name": "SEO Metadata Template - Default",
+  "key": "seo_metadata",
+  "system_prompt": "You are an SEO expert who helps writers optimize their content for search engines. Create metadata that accurately represents the content while being optimized for search. Follow SEO best practices for title and description length.",
+  "user_prompt": "Create SEO metadata for this blog post titled '{title}'. The post is about: {description}. Here's an excerpt: \"{content}...\". Generate a JSON object with the following fields: meta_title (60-65 characters max), meta_description (150-160 characters max), and keywords (as an array, 5-7 keywords).",
+  "content_type": "seo_metadata",
+  "platform": null,
+  "variables": ["title", "description", "content"],
+  "parameters": {
+    "temperature": 0.6,
+    "max_tokens": 300,
+    "response_format": {"type": "json_object"}
+  },
+  "version": 1,
+  "description": "Standard template for generating SEO metadata for blog posts"
+}

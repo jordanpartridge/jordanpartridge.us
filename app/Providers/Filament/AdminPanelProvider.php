@@ -69,4 +69,14 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
     }
+
+    // Register Modals
+    protected function bootLivewireComponents(): void
+    {
+        parent::bootLivewireComponents();
+
+        $this->registerLivewireComponents([
+            \App\Livewire\SocialPreviewModal::class,
+        ]);
+    }
 }

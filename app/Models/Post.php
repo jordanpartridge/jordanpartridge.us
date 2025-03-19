@@ -31,11 +31,15 @@ class Post extends Model
         'status',
         'image',
         'user_id',
+        'active',
         'featured',
         'meta_title',
         'meta_description',
         'meta_keywords',
         'meta_schema',
+        'meta_data',
+        'description',
+        'content'
     ];
 
     protected $casts = [];

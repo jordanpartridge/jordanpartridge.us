@@ -5,7 +5,6 @@ namespace Tests;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Illuminate\Support\Collection;
 use Laravel\Dusk\TestCase as BaseTestCase;
 use PHPUnit\Framework\Attributes\BeforeClass;
 
@@ -17,8 +16,7 @@ abstract class DuskTestCase extends BaseTestCase
     #[BeforeClass]
     public static function prepare(): void
     {
-        // Skip starting ChromeDriver as it's being blocked by macOS security
-        // We'll use the browser directly instead
+        // Don't start ChromeDriver, we'll do it manually
     }
 
     /**
@@ -31,14 +29,9 @@ abstract class DuskTestCase extends BaseTestCase
             // Add additional options to help with macOS security issues
             '--no-sandbox',
             '--disable-dev-shm-usage',
-        ])->unless($this->hasHeadlessDisabled(), function (Collection $items) {
-            return $items->merge([
-                '--disable-gpu',
-                '--headless=new',
-            ]);
-        })->all());
+        ])->all());
 
-        // Try to use a different port
+        // Use default port
         return RemoteWebDriver::create(
             $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515',
             DesiredCapabilities::chrome()->setCapability(
