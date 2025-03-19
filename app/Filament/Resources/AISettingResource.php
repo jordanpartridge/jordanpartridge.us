@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\AISettingResource\Pages;
 use App\Models\AISetting;
+use ListAISettings;
+use CreateAISetting;
+use EditAISetting;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
@@ -75,9 +77,9 @@ class AISettingResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'  => Pages\ListAISettings::route('/'),
-            'create' => Pages\CreateAISetting::route('/create'),
-            'edit'   => Pages\EditAISetting::route('/{record}/edit'),
+            'index'  => ListAISettings::route('/'),
+            'create' => CreateAISetting::route('/create'),
+            'edit'   => EditAISetting::route('/{record}/edit'),
         ];
     }
 }
