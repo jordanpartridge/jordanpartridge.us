@@ -40,20 +40,20 @@ class AIContentService
             );
 
             $params = [
-                'model' => config('services.prism.model', 'ollama/mistral:latest'),
+                'model'    => config('services.prism.model', 'ollama/mistral:latest'),
                 'messages' => [
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => $userPrompt]
                 ],
                 'temperature' => $template->parameters['temperature'] ?? 0.7,
-                'max_tokens' => $template->parameters['max_tokens'] ?? 500,
+                'max_tokens'  => $template->parameters['max_tokens'] ?? 500,
             ];
 
             $response = $this->prism->run($params);
             return $response->content();
         } catch (Exception $e) {
             $this->recordError('generateSocialPost', $post->id, $platform, $e->getMessage());
-            
+
             // Check for fallback model configuration
             $fallbackModel = config('services.prism.fallback_model');
             if ($fallbackModel) {
@@ -65,7 +65,7 @@ class AIContentService
                     $this->recordError('generateSocialPost-fallback', $post->id, $platform, $fallbackException->getMessage());
                 }
             }
-            
+
             // Return fallback content
             return "I'm excited to share my latest article: \"{$post->title}\"\n\n{$post->description}\n\nCheck it out on my website!";
         }
@@ -91,13 +91,13 @@ class AIContentService
             );
 
             $params = [
-                'model' => config('services.prism.model', 'ollama/mistral:latest'),
+                'model'    => config('services.prism.model', 'ollama/mistral:latest'),
                 'messages' => [
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => $userPrompt]
                 ],
                 'temperature' => $template->parameters['temperature'] ?? 0.7,
-                'max_tokens' => $template->parameters['max_tokens'] ?? 150,
+                'max_tokens'  => $template->parameters['max_tokens'] ?? 150,
             ];
 
             $response = $this->prism->run($params);
@@ -130,13 +130,13 @@ class AIContentService
             );
 
             $params = [
-                'model' => config('services.prism.model', 'ollama/mistral:latest'),
+                'model'    => config('services.prism.model', 'ollama/mistral:latest'),
                 'messages' => [
                     ['role' => 'system', 'content' => $systemPrompt],
                     ['role' => 'user', 'content' => $userPrompt]
                 ],
-                'temperature' => $template->parameters['temperature'] ?? 0.7,
-                'max_tokens' => $template->parameters['max_tokens'] ?? 500,
+                'temperature'     => $template->parameters['temperature'] ?? 0.7,
+                'max_tokens'      => $template->parameters['max_tokens'] ?? 500,
                 'response_format' => ['type' => 'json_object'],
             ];
 
@@ -150,7 +150,7 @@ class AIContentService
             ];
         } catch (Exception $e) {
             $this->recordError('generateSeoMetadata', $post->id, null, $e->getMessage());
-            
+
             // Return basic metadata as fallback
             return [
                 'meta_title'       => $post->title . ' | Jordan Partridge',
@@ -184,7 +184,7 @@ class AIContentService
         return PromptTemplate::where('key', $key)
             ->when($platform, fn ($query) => $query->where('platform', $platform))
             ->where('is_active', true)
-            ->first() 
+            ->first()
             ?? (object) [
                 'system_prompt' => "You are a professional content creator specializing in writing for " . ($platform ?? $type) . ".",
                 'user_prompt'   => 'Create content about {title}. Use this description: {description}',
@@ -215,7 +215,7 @@ class AIContentService
         if (empty($text)) {
             return '';
         }
-        
+
         return strlen($text) > $length ? substr($text, 0, $length) . '...' : $text;
     }
 }
