@@ -10,15 +10,28 @@ class FailedTask extends Model
     use HasFactory;
 
     protected $fillable = [
-        'post_id',
-        'platform',
-        'method',
+        'task_type',
+        'entity_type',
+        'entity_id',
         'error',
+        'context',
         'attempts',
     ];
 
-    public function post()
+    protected $casts = [
+        'context'  => 'array',
+        'attempts' => 'integer',
+    ];
+
+    /**
+     * Get the related entity (post, etc.)
+     */
+    public function entity()
     {
-        return $this->belongsTo(Post::class);
+        if ($this->entity_type === 'post') {
+            return $this->belongsTo(Post::class, 'entity_id');
+        }
+
+        return null;
     }
 }

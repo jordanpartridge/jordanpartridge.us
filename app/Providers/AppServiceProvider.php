@@ -12,7 +12,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register the AIServiceProvider
+        $this->app->register(AIServiceProvider::class);
     }
 
     /**
