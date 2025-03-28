@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "**" ]  # Run on all branches
   pull_request:
-    branches: [ "master" ]
+    branches: [ "**" ]  # Run on PRs to all branches
 
 jobs:
   laravel-tests:
@@ -51,7 +51,7 @@ jobs:
       run: php artisan key:generate --env=testing
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
-    - name: Migrate the damn database
+    - name: Migrate the database
       run: php artisan migrate
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       run: php artisan test --parallel
