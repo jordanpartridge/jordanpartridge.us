@@ -5,7 +5,6 @@ namespace Tests;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Illuminate\Support\Collection;
 use Laravel\Dusk\TestCase as BaseTestCase;
 use PHPUnit\Framework\Attributes\BeforeClass;
 
@@ -17,8 +16,10 @@ abstract class DuskTestCase extends BaseTestCase
     #[BeforeClass]
     public static function prepare(): void
     {
-        // Skip starting ChromeDriver as it's being blocked by macOS security
-        // We'll use the browser directly instead
+        if (!isset($_ENV['CI'])) {
+            // Only start ChromeDriver if we're not in a CI environment
+            static::startChromeDriver();
+        }
     }
 
     /**
@@ -26,25 +27,34 @@ abstract class DuskTestCase extends BaseTestCase
      */
     protected function driver(): RemoteWebDriver
     {
-        $options = (new ChromeOptions())->addArguments(collect([
+        $options = (new ChromeOptions())->addArguments([
             $this->shouldStartMaximized() ? '--start-maximized' : '--window-size=1920,1080',
-            // Add additional options to help with macOS security issues
+            '--disable-gpu',
+            '--headless=new',
             '--no-sandbox',
             '--disable-dev-shm-usage',
-        ])->unless($this->hasHeadlessDisabled(), function (Collection $items) {
-            return $items->merge([
-                '--disable-gpu',
-                '--headless=new',
-            ]);
-        })->all());
+            '--disable-extensions',
+            '--disable-software-rasterizer',
+            '--disable-setuid-sandbox',
+            '--enable-file-cookies',
+            '--ignore-certificate-errors',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+        ]);
 
-        // Try to use a different port
+        // Set page load timeout to prevent long-running operations from timing out
+        $capabilities = DesiredCapabilities::chrome()
+            ->setCapability(ChromeOptions::CAPABILITY, $options);
+
+        // Use the environment variable for driver URL or default to localhost:9515
+        $driverUrl = $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515';
+
+        // Create with extended timeout configurations
         return RemoteWebDriver::create(
-            $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515',
-            DesiredCapabilities::chrome()->setCapability(
-                ChromeOptions::CAPABILITY,
-                $options
-            )
+            $driverUrl,
+            $capabilities,
+            120000, // Connection timeout in milliseconds
+            120000  // Request timeout in milliseconds
         );
     }
 

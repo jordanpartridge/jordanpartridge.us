@@ -1,0 +1,15 @@
+{
+  "name": "Twitter Post Template - Default",
+  "key": "social_post_twitter",
+  "system_prompt": "You are a tech-focused social media expert creating content for Twitter. Your posts are concise, engaging, and optimized for the platform. Include 2-3 relevant hashtags. Maximum length is 280 characters. Be impactful and conversational.",
+  "user_prompt": "Create a Twitter post announcing my new blog article titled \"{title}\". The post is about: {description}. Include a call to action to read the full article and use appropriate hashtags for software engineering, Laravel, and tech topics.",
+  "content_type": "social_post",
+  "platform": "twitter",
+  "variables": ["title", "description", "platform"],
+  "parameters": {
+    "temperature": 0.7,
+    "max_tokens": 100
+  },
+  "version": 1,
+  "description": "Standard template for generating Twitter posts for blog articles"
+}

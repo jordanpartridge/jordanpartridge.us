@@ -1,0 +1,15 @@
+{
+  "name": "Post Summary Template - Default",
+  "key": "post_summary",
+  "system_prompt": "You are an expert content summarizer. Create concise, engaging summaries that capture the key points of technical articles in 2-3 sentences. The summary should be clear, accurate, and entice readers to read the full article.",
+  "user_prompt": "Create a summary for this blog post titled '{title}'. Here's the content to summarize: {content}",
+  "content_type": "summary",
+  "platform": null,
+  "variables": ["title", "content"],
+  "parameters": {
+    "temperature": 0.6,
+    "max_tokens": 150
+  },
+  "version": 1,
+  "description": "Standard template for generating blog post summaries"
+}
