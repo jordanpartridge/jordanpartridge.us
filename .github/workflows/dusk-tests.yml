@@ -2,9 +2,9 @@ name: Dusk Tests
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
   # Allow manual trigger
   workflow_dispatch:
 
@@ -31,70 +31,70 @@ jobs:
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.4'
-        extensions: mbstring, dom, fileinfo, mysql, gd, redis
-        coverage: none
-    
-    - name: Get Composer Cache Directory
-      id: composer-cache
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-    
-    - name: Cache Composer dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: ${{ runner.os }}-composer-
-    
-    - name: Install Composer dependencies
-      run: composer install --prefer-dist --no-interaction --no-progress
-    
-    - name: Prepare Laravel
-      run: |
-        php -r "file_exists('.env') || copy('.env.example', '.env');"
-        php artisan key:generate
-        
-        # Update environment settings
-        sed -i "s/APP_URL=.*/APP_URL=http:\/\/127.0.0.1:8000/" .env
-        sed -i "s/DB_DATABASE=.*/DB_DATABASE=test_jordanpartridge/" .env
-        sed -i "s/DB_USERNAME=.*/DB_USERNAME=root/" .env
-        sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=/" .env
-        
-        # Run migrations
-        php artisan migrate:fresh --seed --force
-    
-    - name: Use Fixed Chrome Driver Version
-      run: php artisan dusk:chrome-driver 126
-    
-    - name: Start Chrome Driver
-      run: ./vendor/laravel/dusk/bin/chromedriver-linux &
-    
-    - name: Run Laravel Server
-      run: php artisan serve --no-reload &
-    
-    - name: Wait for Server to Start
-      run: sleep 5
-    
-    - name: Run Dusk Tests
-      env:
-        APP_URL: "http://127.0.0.1:8000"
-      run: php artisan dusk
-    
-    - name: Upload Screenshots
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: screenshots
-        path: tests/Browser/screenshots
-    
-    - name: Upload Console Logs
-      if: failure()
-      uses: actions/upload-artifact@v4
-      with:
-        name: console
-        path: tests/Browser/console
+      - uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, dom, fileinfo, mysql, gd, redis
+          coverage: none
+      
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+      
+      - name: Prepare Laravel
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          php artisan key:generate
+          
+          # Update environment settings
+          sed -i "s/APP_URL=.*/APP_URL=http:\/\/127.0.0.1:8000/" .env
+          sed -i "s/DB_DATABASE=.*/DB_DATABASE=test_jordanpartridge/" .env
+          sed -i "s/DB_USERNAME=.*/DB_USERNAME=root/" .env
+          sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=/" .env
+          
+          # Run migrations
+          php artisan migrate:fresh --seed --force
+      
+      - name: Use Fixed Chrome Driver Version
+        run: php artisan dusk:chrome-driver 126
+      
+      - name: Start Chrome Driver
+        run: ./vendor/laravel/dusk/bin/chromedriver-linux &
+      
+      - name: Run Laravel Server
+        run: php artisan serve --no-reload &
+      
+      - name: Wait for Server to Start
+        run: sleep 5
+      
+      - name: Run Dusk Tests
+        env:
+          APP_URL: "http://127.0.0.1:8000"
+        run: php artisan dusk
+      
+      - name: Upload Screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: tests/Browser/screenshots
+      
+      - name: Upload Console Logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: console
+          path: tests/Browser/console
