@@ -11,7 +11,7 @@ class PostPublishedStatusTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function post_can_be_published_using_is_published_column()
     {
         // Create a user
@@ -39,7 +39,7 @@ class PostPublishedStatusTest extends TestCase
         $this->assertFalse($publishedPosts->contains($draftPost));
     }
 
-    /** @test */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function post_can_be_published_using_set_published_method()
     {
         // Create a user

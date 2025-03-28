@@ -27,6 +27,7 @@ final class PostFactory extends Factory
             'excerpt'          => fake()->optional()->word,
             'type'             => fake()->word,
             'status'           => 'published',
+            'is_published'     => true, // Default to published
             'active'           => 1,
             'featured'         => fake()->boolean,
             'meta_title'       => fake()->optional()->word,
@@ -34,5 +35,31 @@ final class PostFactory extends Factory
             'meta_schema'      => fake()->optional()->text,
             'meta_data'        => fake()->optional()->text,
         ];
+    }
+
+    /**
+     * Configure the model factory to create a draft post.
+     */
+    public function draft(): self
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status'       => Post::STATUS_DRAFT,
+                'is_published' => false,
+            ];
+        });
+    }
+
+    /**
+     * Configure the model factory to create a published post.
+     */
+    public function published(): self
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'status'       => Post::STATUS_PUBLISHED,
+                'is_published' => true,
+            ];
+        });
     }
 }

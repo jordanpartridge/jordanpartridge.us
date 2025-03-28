@@ -23,13 +23,21 @@ class PostTest extends TestCase
     public function it_can_be_scoped_to_published_posts()
     {
         // Create test posts with different statuses
-        Post::factory()->create(['status' => Post::STATUS_PUBLISHED]);
-        Post::factory()->create(['status' => Post::STATUS_DRAFT]);
+        Post::factory()->create([
+            'status'       => Post::STATUS_PUBLISHED,
+            'is_published' => true // Add is_published flag
+        ]);
+
+        Post::factory()->create([
+            'status'       => Post::STATUS_DRAFT,
+            'is_published' => false // Add is_published flag
+        ]);
 
         $publishedPosts = Post::published()->get();
 
         $this->assertCount(1, $publishedPosts);
         $this->assertEquals(Post::STATUS_PUBLISHED, $publishedPosts->first()->status);
+        $this->assertTrue($publishedPosts->first()->is_published);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
@@ -99,27 +107,31 @@ class PostTest extends TestCase
     {
         // Create various posts
         Post::factory()->create([
-            'status'   => Post::STATUS_PUBLISHED,
-            'type'     => 'post',
-            'featured' => false
+            'status'       => Post::STATUS_PUBLISHED,
+            'type'         => 'post',
+            'featured'     => false,
+            'is_published' => true // Add is_published flag
         ]);
 
         Post::factory()->create([
-            'status'   => Post::STATUS_DRAFT,
-            'type'     => 'post',
-            'featured' => false
+            'status'       => Post::STATUS_DRAFT,
+            'type'         => 'post',
+            'featured'     => false,
+            'is_published' => false // Add is_published flag
         ]);
 
         Post::factory()->create([
-            'status'   => Post::STATUS_PUBLISHED,
-            'type'     => 'page',
-            'featured' => false
+            'status'       => Post::STATUS_PUBLISHED,
+            'type'         => 'page',
+            'featured'     => false,
+            'is_published' => true // Add is_published flag
         ]);
 
         Post::factory()->create([
-            'status'   => Post::STATUS_PUBLISHED,
-            'type'     => 'post',
-            'featured' => true
+            'status'       => Post::STATUS_PUBLISHED,
+            'type'         => 'post',
+            'featured'     => true,
+            'is_published' => true // Add is_published flag
         ]);
 
         $listedPosts = Post::list()->get();
@@ -128,6 +140,7 @@ class PostTest extends TestCase
         $this->assertEquals(Post::STATUS_PUBLISHED, $listedPosts->first()->status);
         $this->assertEquals('post', $listedPosts->first()->type);
         $this->assertFalse((bool) $listedPosts->first()->featured);
+        $this->assertTrue($listedPosts->first()->is_published);
     }
 
     #[\PHPUnit\Framework\Attributes\Test]
