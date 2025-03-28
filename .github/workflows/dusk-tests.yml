@@ -65,26 +65,43 @@ jobs:
         sed -i "s/DB_USERNAME=.*/DB_USERNAME=root/" .env
         sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=/" .env
         
+        # Set Dusk specific environment variables
+        echo "DUSK_DRIVER_URL=http://localhost:9515" >> .env
+        
         # Run migrations
         php artisan migrate:fresh --seed --force
     
-    - name: Upgrade Chrome Driver
-      run: php artisan dusk:chrome-driver --detect
+    # Install Chrome and Chromedriver
+    - name: Install Chrome and Chromedriver
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        php artisan dusk:chrome-driver --detect
     
+    # Start Chrome Driver
     - name: Start Chrome Driver
-      run: ./vendor/laravel/dusk/bin/chromedriver-linux &
+      run: |
+        chmod -R 0755 vendor/laravel/dusk/bin/
+        ./vendor/laravel/dusk/bin/chromedriver-linux &
+        sleep 5
     
+    # Start Laravel Server
     - name: Run Laravel Server
       run: php artisan serve --no-reload &
     
+    # Wait for server to start
     - name: Wait for Server to Start
-      run: sleep 5
+      run: |
+        sleep 5
+        curl http://127.0.0.1:8000
     
+    # Run Dusk Tests
     - name: Run Dusk Tests
       env:
         APP_URL: "http://127.0.0.1:8000"
-      run: php artisan dusk
+      run: php artisan dusk --verbose
     
+    # Upload Screenshots on Failure
     - name: Upload Screenshots
       if: failure()
       uses: actions/upload-artifact@v3
@@ -92,6 +109,7 @@ jobs:
         name: screenshots
         path: tests/Browser/screenshots
     
+    # Upload Console Logs on Failure
     - name: Upload Console Logs
       if: failure()
       uses: actions/upload-artifact@v3
