@@ -16,7 +16,10 @@ abstract class DuskTestCase extends BaseTestCase
     #[BeforeClass]
     public static function prepare(): void
     {
-        // Don't start ChromeDriver, we'll do it manually
+        if (!isset($_ENV['CI'])) {
+            // Only start ChromeDriver if we're not in a CI environment
+            static::startChromeDriver();
+        }
     }
 
     /**
@@ -24,20 +27,34 @@ abstract class DuskTestCase extends BaseTestCase
      */
     protected function driver(): RemoteWebDriver
     {
-        $options = (new ChromeOptions())->addArguments(collect([
+        $options = (new ChromeOptions())->addArguments([
             $this->shouldStartMaximized() ? '--start-maximized' : '--window-size=1920,1080',
-            // Add additional options to help with macOS security issues
+            '--disable-gpu',
+            '--headless=new',
             '--no-sandbox',
             '--disable-dev-shm-usage',
-        ])->all());
+            '--disable-extensions',
+            '--disable-software-rasterizer',
+            '--disable-setuid-sandbox',
+            '--enable-file-cookies',
+            '--ignore-certificate-errors',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
+        ]);
 
-        // Use default port
+        // Set page load timeout to prevent long-running operations from timing out
+        $capabilities = DesiredCapabilities::chrome()
+            ->setCapability(ChromeOptions::CAPABILITY, $options);
+
+        // Use the environment variable for driver URL or default to localhost:9515
+        $driverUrl = $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515';
+
+        // Create with extended timeout configurations
         return RemoteWebDriver::create(
-            $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515',
-            DesiredCapabilities::chrome()->setCapability(
-                ChromeOptions::CAPABILITY,
-                $options
-            )
+            $driverUrl,
+            $capabilities,
+            120000, // Connection timeout in milliseconds
+            120000  // Request timeout in milliseconds
         );
     }
 

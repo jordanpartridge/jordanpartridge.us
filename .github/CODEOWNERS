@@ -1,0 +1,10 @@
+# These owners will be the default owners for everything in the repo
+* @jordanpartridge
+
+# App code ownership
+/app/ @jordanpartridge
+/config/ @jordanpartridge
+/database/ @jordanpartridge
+/routes/ @jordanpartridge
+/resources/ @jordanpartridge
+/tests/ @jordanpartridge

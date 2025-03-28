@@ -29,6 +29,7 @@ class Post extends Model
         'excerpt',
         'type',
         'status',
+        'is_published', // Added is_published to fillable
         'image',
         'user_id',
         'active',
@@ -42,7 +43,11 @@ class Post extends Model
         'content'
     ];
 
-    protected $casts = [];
+    protected $casts = [
+        'is_published' => 'boolean', // Cast is_published as boolean
+        'active'       => 'boolean',
+        'featured'     => 'boolean',
+    ];
 
     public function user(): BelongsTo
     {
@@ -61,7 +66,9 @@ class Post extends Model
 
     public function scopePublished($query): void
     {
-        $query->where('status', Post::STATUS_PUBLISHED);
+        // Use both status and is_published for backward compatibility
+        $query->where('status', Post::STATUS_PUBLISHED)
+              ->where('is_published', true);
     }
 
     /**
@@ -138,5 +145,20 @@ class Post extends Model
     public function route(): string
     {
         return url("/blog/{$this->slug}");
+    }
+
+    /**
+     * Set the published status of the post.
+     * Updates both the status and is_published fields.
+     *
+     * @param bool $published
+     * @return $this
+     */
+    public function setPublished(bool $published = true): self
+    {
+        $this->status = $published ? self::STATUS_PUBLISHED : self::STATUS_DRAFT;
+        $this->is_published = $published;
+
+        return $this;
     }
 }
