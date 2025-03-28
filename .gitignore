@@ -19,3 +19,16 @@ yarn-error.log
 /.vscode
 /draft.yaml
 /.blueprint
+
+# Laravel Dusk
+/tests/Browser/screenshots/
+/tests/Browser/console/
+/tests/Browser/source/
+!/tests/Browser/screenshots/.gitkeep
+!/tests/Browser/console/.gitkeep
+!/tests/Browser/source/.gitkeep
+-e 
+# Backup and temporary files
+*.bak
+/temp
+

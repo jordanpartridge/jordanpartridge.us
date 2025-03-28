@@ -8,7 +8,6 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use JordanPartridge\StravaClient\Concerns\HasStravaTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use JordanPartridge\StravaClient\Contracts\HasStravaToken;
@@ -26,7 +25,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
     use HasFactory;
     use LogsActivity;
     use Notifiable;
-    use SendsPasswordResetEmails;
 
     /**
      * The attributes that are mass assignable.
@@ -39,6 +37,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
         'bio',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -77,6 +76,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
         return [
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
+            'is_admin'          => 'boolean',
         ];
     }
 }
