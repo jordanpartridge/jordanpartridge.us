@@ -2,9 +2,9 @@ name: Dusk Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
   # Allow manual trigger
   workflow_dispatch:
 
@@ -36,7 +36,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
+        php-version: '8.4'
         extensions: mbstring, dom, fileinfo, mysql, gd, redis
         coverage: none
     
@@ -68,8 +68,8 @@ jobs:
         # Run migrations
         php artisan migrate:fresh --seed --force
     
-    - name: Upgrade Chrome Driver
-      run: php artisan dusk:chrome-driver --detect
+    - name: Use Fixed Chrome Driver Version
+      run: php artisan dusk:chrome-driver 126
     
     - name: Start Chrome Driver
       run: ./vendor/laravel/dusk/bin/chromedriver-linux &
@@ -87,14 +87,14 @@ jobs:
     
     - name: Upload Screenshots
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: screenshots
         path: tests/Browser/screenshots
     
     - name: Upload Console Logs
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: console
         path: tests/Browser/console
