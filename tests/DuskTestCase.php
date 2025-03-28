@@ -33,17 +33,28 @@ abstract class DuskTestCase extends BaseTestCase
             '--headless=new',
             '--no-sandbox',
             '--disable-dev-shm-usage',
+            '--disable-extensions',
+            '--disable-software-rasterizer',
+            '--disable-setuid-sandbox',
+            '--enable-file-cookies',
+            '--ignore-certificate-errors',
+            '--proxy-server=\'direct://\'',
+            '--proxy-bypass-list=*',
         ]);
+
+        // Set page load timeout to prevent long-running operations from timing out
+        $capabilities = DesiredCapabilities::chrome()
+            ->setCapability(ChromeOptions::CAPABILITY, $options);
 
         // Use the environment variable for driver URL or default to localhost:9515
         $driverUrl = $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515';
 
+        // Create with extended timeout configurations
         return RemoteWebDriver::create(
             $driverUrl,
-            DesiredCapabilities::chrome()->setCapability(
-                ChromeOptions::CAPABILITY,
-                $options
-            )
+            $capabilities,
+            120000, // Connection timeout in milliseconds
+            120000  // Request timeout in milliseconds
         );
     }
 

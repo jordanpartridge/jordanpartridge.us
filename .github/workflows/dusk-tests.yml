@@ -54,7 +54,7 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --prefer-dist --no-interaction --no-progress
     
-    - name: Prepare Laravel
+    - name: Prepare Laravel Environment
       run: |
         php -r "file_exists('.env') || copy('.env.example', '.env');"
         php artisan key:generate
@@ -71,34 +71,52 @@ jobs:
         # Run migrations
         php artisan migrate:fresh --seed --force
     
-    # Install Chrome and Chromedriver
-    - name: Install Chrome and Chromedriver
+    # Install Chrome
+    - name: Install Chrome
       run: |
         sudo apt-get update
         sudo apt-get install -y google-chrome-stable
-        php artisan dusk:chrome-driver --detect
     
-    # Start Chrome Driver
+    # Install Dusk and upgrade ChromeDriver
+    - name: Install Dusk
+      run: php artisan dusk:install
+    
+    # Upgrade ChromeDriver to match Chrome
+    - name: Upgrade Chrome Driver
+      run: |
+        CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f 3 | cut -d '.' -f 1)
+        php artisan dusk:chrome-driver $CHROME_VERSION
+    
+    # Set permissions for ChromeDriver
+    - name: Set permissions for ChromeDriver
+      run: chmod -R 0755 vendor/laravel/dusk/bin/
+    
+    # Start Chrome Driver with increased timeout
     - name: Start Chrome Driver
       run: |
-        chmod -R 0755 vendor/laravel/dusk/bin/
-        ./vendor/laravel/dusk/bin/chromedriver-linux &
+        ./vendor/laravel/dusk/bin/chromedriver-linux > /dev/null 2>&1 &
         sleep 5
     
-    # Start Laravel Server
+    # Start Laravel Server with Octane (if available) or standard server
     - name: Run Laravel Server
-      run: php artisan serve --no-reload &
-    
-    # Wait for server to start
-    - name: Wait for Server to Start
       run: |
-        sleep 5
-        curl http://127.0.0.1:8000
+        if [ -f "vendor/bin/octane" ]; then
+          php artisan octane:start --host=127.0.0.1 --port=8000 &
+        else
+          php artisan serve --no-reload &
+        fi
+        sleep 10
     
-    # Run Dusk Tests
+    # Verify server is running
+    - name: Check if server is running
+      run: |
+        curl -I http://127.0.0.1:8000
+    
+    # Run Dusk Tests with verbose output
     - name: Run Dusk Tests
       env:
         APP_URL: "http://127.0.0.1:8000"
+        CI: true
       run: php artisan dusk --verbose
     
     # Upload Screenshots on Failure
