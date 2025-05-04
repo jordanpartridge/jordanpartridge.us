@@ -15,6 +15,7 @@ use JordanPartridge\StravaClient\Contracts\HasStravaToken;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @method static updateOrCreate(string[] $array, array $array1)
@@ -24,8 +25,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
     use HasApiTokens;
     use HasStravaTokens;
     use HasFactory;
-    use LogsActivity;
+    use HasRoles;
     use Notifiable;
+    use LogsActivity;
     use SendsPasswordResetEmails;
 
     /**

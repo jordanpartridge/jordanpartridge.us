@@ -2,10 +2,13 @@
 
 use App\Http\Middleware\LogRequests;
 use App\Http\Middleware\RedirectToDashboard;
+use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Sentry\Laravel\Integration;
+use Spatie\Permission\Middlewares\PermissionMiddleware;
+use Spatie\Permission\Middlewares\RoleOrPermissionMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'redirect-to-dashboard' => RedirectToDashboard::class,
             'log-requests'          => LogRequests::class,
+            'role'                  => RoleMiddleware::class,
+            'permission'            => PermissionMiddleware::class,
+            'role_or_permission'    => RoleOrPermissionMiddleware::class,
         ]);
         //
     })

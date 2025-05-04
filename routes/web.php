@@ -64,3 +64,6 @@ Route::middleware([LogRequests::class])->group(function () {
             ->name('logout');
     });
 });
+
+Route::post('contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
+require __DIR__ . '/customer.php';
