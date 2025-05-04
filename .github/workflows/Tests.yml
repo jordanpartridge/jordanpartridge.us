@@ -32,6 +32,9 @@ jobs:
         echo "DB_CONNECTION=mysql" >> .env
         echo "DB_DATABASE=jordanpartridge_testing" >> .env
         echo "DB_PORT=3306" >> .env
+        echo "CACHE_DRIVER=array" >> .env
+        echo "QUEUE_CONNECTION=sync" >> .env
+        echo "SESSION_DRIVER=array" >> .env
         echo "DB_HOST=127.0.0.1" >> .env
         echo "DB_USERNAME=root" >> .env
         echo "DB_PASSWORD=password" >> .env
