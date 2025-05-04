@@ -63,7 +63,12 @@ it('sends a notification when a contact is submitted', function () {
         ContactFormSubmitted::class,
         function ($notification) use ($contactData) {
             return $notification->formData['name'] === $contactData['name'] &&
-                $notification->formData['email'] === $contactData['email'];
+                $notification->formData['email'] === $contactData['email'] &&
+                $notification->formData['phone'] === $contactData['phone'] &&
+                $notification->formData['reason'] === $contactData['reason'] &&
+                $notification->formData['budget'] === $contactData['budget'] &&
+                $notification->formData['timeline'] === $contactData['timeline'] &&
+                $notification->formData['message'] === $contactData['message'];
         }
     );
 });
