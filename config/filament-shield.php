@@ -88,4 +88,7 @@ return [
         'enabled' => true,
     ],
 
+    'nav.group' => 'Access Control',
+
+
 ];
