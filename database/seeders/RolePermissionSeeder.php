@@ -41,19 +41,18 @@ class RolePermissionSeeder extends Seeder
             'user'   => ['view articles'],
         ];
 
-// Create roles
-$createdRoles = [];
-foreach ($roles as $roleName) {
-    $createdRoles[$roleName] = Role::firstOrCreate(['name' => $roleName]);
-}
+        // Create roles
+        $createdRoles = [];
+        foreach ($roles as $roleName) {
+            $createdRoles[$roleName] = Role::firstOrCreate(['name' => $roleName]);
+        }
 
-// Later in the code
-foreach ($rolePermissions as $roleName => $rolePerms) {
-    $role = $createdRoles[$roleName] ?? null;
-    if ($role) {
-        $role->syncPermissions($rolePerms);
-    }
-}
+        // Later in the code
+        foreach ($rolePermissions as $roleName => $rolePerms) {
+            $role = $createdRoles[$roleName] ?? null;
+            if ($role) {
+                $role->syncPermissions($rolePerms);
+            }
         }
     }
 }
