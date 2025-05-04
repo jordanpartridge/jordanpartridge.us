@@ -4,12 +4,13 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class UserPolicy
+class RolePolicy
 {
     public function viewAny(User $user)
     {
+
         return true;
-        // return $user->can('view_any_user');
+        return $user->can('view_any_role');
     }
 
 
