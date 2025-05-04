@@ -11,7 +11,7 @@ class ContactFormSubmitted extends Notification
 {
     use Queueable;
 
-    private array $formData;
+    public array $formData;
 
     /**
      * Create a new notification instance.

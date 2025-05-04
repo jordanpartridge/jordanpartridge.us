@@ -7,6 +7,7 @@ use App\Models\Ride;
 use App\Models\User;
 use App\Observers\PostObserver;
 use App\Observers\RideObserver;
+use App\Observers\UserObserver;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,8 +28,9 @@ class AppServiceProvider extends ServiceProvider
      */
     private function registerObservers(): self
     {
-        Ride::observe(RideObserver::class);
         Post::observe(PostObserver::class);
+        Ride::observe(RideObserver::class);
+        User::observe(UserObserver::class);
 
         return $this;
     }

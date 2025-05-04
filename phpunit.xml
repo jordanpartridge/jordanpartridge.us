@@ -30,5 +30,8 @@
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="CARD_API_BASE_URL" value="https://fake-api.com"/>
         <env name="CARD_API_KEY" value="fake-secret"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
     </php>
 </phpunit>

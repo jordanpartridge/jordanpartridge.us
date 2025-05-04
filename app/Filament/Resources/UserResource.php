@@ -8,6 +8,7 @@ use App\Models\User;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
@@ -41,6 +42,9 @@ class UserResource extends Resource
                                 ->required()
                                 ->maxLength(255),
 
+                            CheckboxList::make('roles')
+    ->relationship('roles', 'name')
+    ->searchable(),
                             TextInput::make('email')
                                 ->email()
                                 ->required()

@@ -3,10 +3,12 @@
 use App\Notifications\ContactFormSubmitted;
 use Livewire\Volt\Component;
 use App\Models\User;
+use App\Models\Contact;
 
 new class () extends Component {
     public $name;
     public $email;
+    public $phone;
     public $reason;
     public $budget;
     public $timeline;
@@ -16,6 +18,7 @@ new class () extends Component {
     protected $rules = [
         'name'     => 'required|string|max:255',
         'email'    => 'required|email|max:255',
+        'phone'    => 'nullable|string|max:20',
         'reason'   => 'required|string',
         'budget'   => 'nullable|string|max:255',
         'timeline' => 'nullable|string|max:255',
@@ -42,16 +45,22 @@ new class () extends Component {
 
     public function submit()
     {
+        $this->validate();
 
         $data = [
             'name'     => $this->name,
             'email'    => $this->email,
+            'phone'    => $this->phone,
             'reason'   => $this->reason,
             'budget'   => $this->budget,
             'timeline' => $this->timeline,
             'message'  => $this->message,
         ];
 
+        // Create a new contact record in the database
+        Contact::create($data);
+
+        // Send notification
         User::first()->notify(new ContactFormSubmitted($data));
 
         session()->flash('message', 'Form successfully submitted.');
@@ -60,7 +69,7 @@ new class () extends Component {
         $this->reset();
     }
 
-}
+};
 ?>
 @volt('contact-form')
 
@@ -92,6 +101,7 @@ new class () extends Component {
                    id="name" type="text" placeholder="Your Name">
             <span
                 class="absolute left-0 bottom-1 w-full h-0.5 bg-teal-500 dark:bg-pink-500 transform transition-transform duration-300 ease-in-out scale-x-0 origin-right hover:origin-left hover:scale-x-100"></span>
+            @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
         <div class="w-full relative">
             <input wire:model="email" name="email"
@@ -99,7 +109,17 @@ new class () extends Component {
                    id="email" type="email" placeholder="Your Email">
             <span
                 class="absolute left-0 bottom-1 w-full h-0.5 bg-teal-500 dark:bg-pink-500 transform transition-transform duration-300 ease-in-out scale-x-0 origin-right hover:origin-left hover:scale-x-100"></span>
+            @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
         </div>
+    </div>
+
+    <div class="w-full relative">
+        <input wire:model="phone" name="phone"
+               class="border-b-2 bg-transparent w-full py-2 px-3 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-2 transition duration-300 ease-in-out transform hover:scale-105 border-teal-500 dark:border-pink-500 focus:ring-teal-500 dark:focus:ring-pink-500"
+               id="phone" type="text" placeholder="Your Phone (optional)">
+        <span
+            class="absolute left-0 bottom-1 w-full h-0.5 bg-teal-500 dark:bg-pink-500 transform transition-transform duration-300 ease-in-out scale-x-0 origin-right hover:origin-left hover:scale-x-100"></span>
+        @error('phone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>
 
     <!-- Custom Dropdown -->
@@ -140,6 +160,7 @@ new class () extends Component {
         <input type="hidden" name="reason" wire:model="reason">
         <span
             class="absolute left-0 bottom-1 w-full h-0.5 bg-teal-500 dark:bg-pink-500 transform transition-transform duration-300 ease-in-out scale-x-0 origin-right hover:origin-left hover:scale-x-100"></span>
+        @error('reason') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -164,6 +185,7 @@ new class () extends Component {
                   id="message" placeholder="Your Message" rows="4"></textarea>
         <span
             class="absolute left-0 bottom-1 w-full h-0.5 bg-teal-500 dark:bg-pink-500 transform transition-transform duration-300 ease-in-out scale-x-0 origin-right hover:origin-left hover:scale-x-100"></span>
+        @error('message') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>
 
     <div class="flex items-center justify-center mt-8">
