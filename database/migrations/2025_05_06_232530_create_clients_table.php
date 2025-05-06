@@ -11,11 +11,11 @@ return new class () extends Migration {
             $table->id();
             $table->string('name');
             $table->string('company')->nullable();
-            $table->string('email');
+            $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
             $table->text('notes')->nullable();
-            $table->string('status')->default('lead'); // lead, active, former
+            $table->string('status')->default('lead');
             $table->timestamps();
         });
     }

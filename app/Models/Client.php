@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\ClientStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method static \Database\Factories\ClientFactory factory($count = null, $state = [])
+ */
 class Client extends Model
 {
-    /** @use HasFactory<\Database\Factories\ClientFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -20,4 +23,7 @@ class Client extends Model
         'status',
     ];
 
+    protected $casts = [
+        'status' => ClientStatus::class,
+    ];
 }

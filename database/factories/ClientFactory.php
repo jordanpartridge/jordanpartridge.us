@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\ClientStatus;
+use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,6 +11,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ClientFactory extends Factory
 {
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     */
+    protected $model = Client::class;
+
     /**
      * Define the model's default state.
      *
@@ -23,7 +32,7 @@ class ClientFactory extends Factory
             'phone'   => $this->faker->phoneNumber(),
             'website' => $this->faker->url(),
             'notes'   => $this->faker->text(),
-            'status'  => $this->faker->randomElement(['lead', 'active', 'former']),
+            'status'  => $this->faker->randomElement(ClientStatus::values()),
         ];
     }
 }
