@@ -39,3 +39,78 @@ it('creates_client_with_specific_attributes', function () {
     $this->assertEquals('john@example.com', $client->email);
     $this->assertEquals(ClientStatus::ACTIVE, $client->status);
 });
+
+it('retrieves_client_by_id', function () {
+    $client = Client::factory()->create([
+        'name' => 'Jane Smith',
+    ]);
+
+    $retrievedClient = Client::find($client->id);
+
+    $this->assertInstanceOf(Client::class, $retrievedClient);
+    $this->assertEquals('Jane Smith', $retrievedClient->name);
+    $this->assertEquals($client->email, $retrievedClient->email);
+});
+
+it('updates_client_information', function () {
+    $client = Client::factory()->create();
+
+    $client->update([
+        'name'   => 'Updated Name',
+        'email'  => 'updated@example.com',
+        'status' => ClientStatus::FORMER->value,
+    ]);
+
+    $this->assertDatabaseHas('clients', [
+        'id'     => $client->id,
+        'name'   => 'Updated Name',
+        'email'  => 'updated@example.com',
+        'status' => ClientStatus::FORMER->value,
+    ]);
+
+    $updatedClient = Client::find($client->id);
+    $this->assertEquals('Updated Name', $updatedClient->name);
+    $this->assertEquals(ClientStatus::FORMER, $updatedClient->status);
+});
+
+it('deletes_client', function () {
+    $client = Client::factory()->create();
+    $clientId = $client->id;
+
+    $this->assertDatabaseHas('clients', ['id' => $clientId]);
+
+    $client->delete();
+
+    $this->assertDatabaseMissing('clients', ['id' => $clientId]);
+    $this->assertNull(Client::find($clientId));
+});
+
+it('filters_clients_by_status', function () {
+    // Create clients with different statuses
+    Client::factory()->create(['status' => ClientStatus::LEAD->value]);
+    Client::factory()->create(['status' => ClientStatus::LEAD->value]);
+    Client::factory()->create(['status' => ClientStatus::ACTIVE->value]);
+    Client::factory()->create(['status' => ClientStatus::FORMER->value]);
+
+    // Count clients by status
+    $leadClients = Client::where('status', ClientStatus::LEAD->value)->get();
+    $activeClients = Client::where('status', ClientStatus::ACTIVE->value)->get();
+    $formerClients = Client::where('status', ClientStatus::FORMER->value)->get();
+
+    $this->assertCount(2, $leadClients);
+    $this->assertCount(1, $activeClients);
+    $this->assertCount(1, $formerClients);
+
+    // Verify that the clients have the correct status
+    foreach ($leadClients as $client) {
+        $this->assertEquals(ClientStatus::LEAD, $client->status);
+    }
+
+    foreach ($activeClients as $client) {
+        $this->assertEquals(ClientStatus::ACTIVE, $client->status);
+    }
+
+    foreach ($formerClients as $client) {
+        $this->assertEquals(ClientStatus::FORMER, $client->status);
+    }
+});

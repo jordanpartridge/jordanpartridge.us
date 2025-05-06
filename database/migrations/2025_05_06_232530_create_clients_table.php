@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ClientStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class () extends Migration {
             $table->string('phone')->nullable();
             $table->string('website')->nullable();
             $table->text('notes')->nullable();
-            $table->string('status')->default('lead');
+            $table->string('status')->default(ClientStatus::LEAD->value);
             $table->timestamps();
         });
     }
