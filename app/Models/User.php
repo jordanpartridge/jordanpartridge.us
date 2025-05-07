@@ -8,6 +8,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use JordanPartridge\StravaClient\Concerns\HasStravaTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -53,6 +54,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
         'remember_token',
     ];
 
+    /**
+     * Get the clients managed by the user.
+     */
+    public function clients(): HasMany
+    {
+        return $this->hasMany(Client::class);
+    }
 
     public function canAccessPanel(Panel $panel): bool
     {
