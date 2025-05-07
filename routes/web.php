@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\ClientExportController;
 use App\Http\Middleware\LogRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -67,5 +68,10 @@ Route::middleware([LogRequests::class])->group(function () {
 
 
     Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
+
+    // Client export
+    Route::get('clients/export', ClientExportController::class)
+        ->middleware(['auth'])
+        ->name('clients.export');
 
 });

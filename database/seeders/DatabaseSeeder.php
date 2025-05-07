@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             // User needs to be seeded after roles and permissions
             UserSeeder::class,
+            // Client seeder
+            ClientSeeder::class,
         ]);
-
     }
 }

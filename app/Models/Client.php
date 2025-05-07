@@ -26,10 +26,12 @@ class Client extends Model
         'notes',
         'status',
         'user_id',
+        'last_contact_at',
     ];
 
     protected $casts = [
-        'status' => ClientStatus::class,
+        'status'          => ClientStatus::class,
+        'last_contact_at' => 'date',
     ];
 
     /**
@@ -47,5 +49,21 @@ class Client extends Model
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs()
             ->useLogName('client');
+    }
+
+    /**
+     * Format the website URL before saving.
+     */
+    public function setWebsiteAttribute($value)
+    {
+        if ($value && is_string($value) && !empty(trim($value))) {
+            if (!str_starts_with($value, 'http://') && !str_starts_with($value, 'https://')) {
+                $this->attributes['website'] = 'https://' . $value;
+            } else {
+                $this->attributes['website'] = $value;
+            }
+        } else {
+            $this->attributes['website'] = $value;
+        }
     }
 }
