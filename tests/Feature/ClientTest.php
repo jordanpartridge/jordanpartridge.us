@@ -2,6 +2,7 @@
 
 use App\Enums\ClientStatus;
 use App\Models\Client;
+use App\Models\User;
 
 it('creates_client_using_factory', function () {
     $client = Client::factory()->create();
@@ -113,4 +114,30 @@ it('filters_clients_by_status', function () {
     foreach ($formerClients as $client) {
         $this->assertEquals(ClientStatus::FORMER, $client->status);
     }
+});
+
+it('associates_client_with_user', function () {
+    $user = User::factory()->create();
+    $client = Client::factory()->assignedToUser($user)->create();
+
+    $this->assertEquals($user->id, $client->user_id);
+    $this->assertInstanceOf(User::class, $client->user);
+    $this->assertTrue($client->user->is($user));
+
+    // Test the inverse relationship
+    $this->assertCount(1, $user->clients);
+    $this->assertTrue($user->clients->contains($client));
+});
+
+it('fetches_clients_for_user', function () {
+    $user = User::factory()->create();
+
+    // Create 3 clients for the user
+    Client::factory()->count(3)->assignedToUser($user)->create();
+
+    // Create 2 unassigned clients
+    Client::factory()->count(2)->create();
+
+    $this->assertCount(3, $user->clients);
+    $this->assertCount(5, Client::all());
 });

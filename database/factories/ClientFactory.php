@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\ClientStatus;
 use App\Models\Client;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -33,6 +34,19 @@ class ClientFactory extends Factory
             'website' => $this->faker->url(),
             'notes'   => $this->faker->text(),
             'status'  => $this->faker->randomElement(ClientStatus::values()),
+            'user_id' => null,
         ];
+    }
+
+    /**
+     * Assign the client to a user.
+     *
+     * @return $this
+     */
+    public function assignedToUser(?User $user = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_id' => $user?->id ?? User::factory(),
+        ]);
     }
 }
