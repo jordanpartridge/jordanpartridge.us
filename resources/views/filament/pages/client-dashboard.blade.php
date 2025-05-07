@@ -1,32 +1,59 @@
 <x-filament-panels::page>
     <div class="grid grid-cols-1 gap-4">
         <!-- Focus on key client -->
-        <x-filament::section>
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div>
-                    <h2 class="text-xl font-bold tracking-tight text-gray-950 dark:text-white flex items-center">
-                        <span class="mr-2">🌟</span> Client Focus: Sam Gray
-                    </h2>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                        Next follow-up needed {{ now()->addDays(5)->format('M d, Y') }}
+        @if ($focusedClient)
+            <x-filament::section>
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight text-gray-950 dark:text-white flex items-center">
+                            <span class="mr-2">🌟</span> Client Focus: {{ $focusedClient->name }}
+                        </h2>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                            @if ($focusedClient->last_contact_at)
+                                Last contacted {{ $focusedClient->last_contact_at->diffForHumans() }}
+                            @else
+                                No previous contact recorded
+                            @endif
+                        </p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="mailto:{{ $focusedClient->email }}" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-white shadow focus:ring-white border-transparent bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700">
+                            @svg('heroicon-s-envelope', 'w-5 h-5 -ml-1')
+                            Send Email
+                        </a>
+                        @if ($focusedClient->phone)
+                            <a href="tel:{{ $focusedClient->phone }}" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-gray-800 shadow focus:ring-gray-300 border-gray-300 bg-white hover:bg-gray-50 dark:text-white dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600">
+                                @svg('heroicon-s-phone', 'w-5 h-5 -ml-1')
+                                Call
+                            </a>
+                        @endif
+                        <a href="{{ route('filament.admin.resources.clients.view', $focusedClient) }}" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-blue-700 border-blue-600 bg-white hover:bg-blue-50 dark:text-blue-500 dark:border-blue-600 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-blue-600 shadow">
+                            @svg('heroicon-s-eye', 'w-5 h-5 -ml-1')
+                            View Details
+                        </a>
+                        <form action="{{ route('filament.admin.resources.clients.view', $focusedClient) }}" method="GET">
+                            <button type="button" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-green-700 border-green-600 bg-white hover:bg-green-50 dark:text-green-500 dark:border-green-600 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-green-600 shadow">
+                                @svg('heroicon-s-check', 'w-5 h-5 -ml-1')
+                                Log Contact
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </x-filament::section>
+        @else
+            <x-filament::section>
+                <div class="text-center py-6">
+                    <div class="text-lg font-medium mb-2">No focused client selected</div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                        Select a client to focus on by using the "Focus" action in the client list
                     </p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <a href="mailto:sam@example.com" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-white shadow focus:ring-white border-transparent bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700">
-                        @svg('heroicon-s-envelope', 'w-5 h-5 -ml-1')
-                        Send Email
+                    <a href="{{ route('filament.admin.resources.clients.index') }}" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-white shadow focus:ring-white border-transparent bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700">
+                        @svg('heroicon-s-users', 'w-5 h-5 -ml-1')
+                        Go to Clients
                     </a>
-                    <a href="tel:+15555555555" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-gray-800 shadow focus:ring-gray-300 border-gray-300 bg-white hover:bg-gray-50 dark:text-white dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600">
-                        @svg('heroicon-s-phone', 'w-5 h-5 -ml-1')
-                        Call
-                    </a>
-                    <button type="button" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-green-700 border-green-600 bg-white hover:bg-green-50 dark:text-green-500 dark:border-green-600 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-green-600 shadow">
-                        @svg('heroicon-s-check', 'w-5 h-5 -ml-1')
-                        Log Contact
-                    </button>
                 </div>
-            </div>
-        </x-filament::section>
+            </x-filament::section>
+        @endif
 
         <!-- Recent emails -->
         <x-filament::section>

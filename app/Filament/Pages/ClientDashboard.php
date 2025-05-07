@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Client;
 use Filament\Pages\Page;
 
 class ClientDashboard extends Page
@@ -19,4 +20,18 @@ class ClientDashboard extends Page
     protected static ?string $title = 'Client Management Dashboard';
 
     // Dashboard uses custom UI without widgets
+
+    public function getFocusedClient(): ?Client
+    {
+        return Client::where('is_focused', true)->first();
+    }
+
+    protected function getViewData(): array
+    {
+        $focusedClient = $this->getFocusedClient();
+
+        return [
+            'focusedClient' => $focusedClient,
+        ];
+    }
 }

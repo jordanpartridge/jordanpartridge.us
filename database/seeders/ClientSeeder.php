@@ -25,6 +25,7 @@ class ClientSeeder extends Seeder
             'phone'           => '+15555555555',
             'website'         => 'https://samgray.example.com',
             'status'          => ClientStatus::ACTIVE->value,
+            'is_focused'      => true,
             'user_id'         => $user?->id,
             'last_contact_at' => now()->subDays(3),
             'notes'           => '<p>Sam is working on a website redesign project and an SEO campaign.</p><p>Key points from our last call:</p><ul><li>Prefers communication via email</li><li>Weekly status meetings on Thursdays</li><li>Invoice at the end of each month</li></ul>',

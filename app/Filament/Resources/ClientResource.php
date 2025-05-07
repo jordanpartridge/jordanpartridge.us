@@ -13,6 +13,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
@@ -89,6 +90,13 @@ class ClientResource extends Resource
                         DatePicker::make('last_contact_at')
                             ->label('Last Contact Date')
                             ->maxDate(now()),
+                        Toggle::make('is_focused')
+                            ->label('Set as focused client')
+                            ->helperText('This client will be displayed on the dashboard')
+                            ->default(false)
+                            ->onIcon('heroicon-s-star')
+                            ->offIcon('heroicon-s-star')
+                            ->onColor('warning'),
                     ])->columns(3),
 
                 Section::make('Notes')
@@ -109,7 +117,9 @@ class ClientResource extends Resource
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold'),
+                    ->weight('bold')
+                    ->icon(fn ($record) => $record->is_focused ? 'heroicon-s-star' : null)
+                    ->iconColor('warning'),
                 TextColumn::make('company')
                     ->searchable()
                     ->sortable(),
@@ -133,6 +143,10 @@ class ClientResource extends Resource
                         ClientStatus::ACTIVE->value => 'Active',
                         ClientStatus::FORMER->value => 'Former',
                     ]),
+                Filter::make('is_focused')
+                    ->label('Dashboard Focus')
+                    ->toggle()
+                    ->query(fn (Builder $query): Builder => $query->where('is_focused', true)),
                 SelectFilter::make('user_id')
                     ->relationship('user', 'name')
                     ->label('Account Manager')
@@ -169,6 +183,20 @@ class ClientResource extends Resource
                         ->action(function (Client $record): void {
                             $record->update(['last_contact_at' => now()]);
                         }),
+                    Action::make('toggle_focus')
+                        ->icon(fn (Client $record) => $record->is_focused ? 'heroicon-o-star' : 'heroicon-o-star')
+                        ->color(fn (Client $record) => $record->is_focused ? 'warning' : 'gray')
+                        ->label(fn (Client $record) => $record->is_focused ? 'Unfocus' : 'Focus')
+                        ->action(function (Client $record): void {
+                            if ($record->is_focused) {
+                                $record->unfocus();
+                            } else {
+                                $record->focus();
+                            }
+                        })
+                        ->tooltip(fn (Client $record) => $record->is_focused
+                            ? 'Remove focus from this client'
+                            : 'Set as focused client on dashboard'),
                 ])
             ])
             ->bulkActions([

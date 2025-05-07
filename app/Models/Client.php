@@ -6,6 +6,7 @@ use App\Enums\ClientStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -25,12 +26,14 @@ class Client extends Model
         'website',
         'notes',
         'status',
+        'is_focused',
         'user_id',
         'last_contact_at',
     ];
 
     protected $casts = [
         'status'          => ClientStatus::class,
+        'is_focused'      => 'boolean',
         'last_contact_at' => 'date',
     ];
 
@@ -65,5 +68,34 @@ class Client extends Model
         } else {
             $this->attributes['website'] = $value;
         }
+    }
+
+    /**
+     * Set this client as the focused client and remove focus from others.
+     */
+    public function focus(): self
+    {
+        // Begin a transaction to ensure atomicity
+        DB::transaction(function () {
+            // Remove focus from all clients
+            static::query()->where('id', '!=', $this->id)->update(['is_focused' => false]);
+
+            // Set this client as focused
+            $this->is_focused = true;
+            $this->save();
+        });
+
+        return $this;
+    }
+
+    /**
+     * Remove focus from this client.
+     */
+    public function unfocus(): self
+    {
+        $this->is_focused = false;
+        $this->save();
+
+        return $this;
     }
 }
