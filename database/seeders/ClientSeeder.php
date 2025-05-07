@@ -9,43 +9,32 @@ use Illuminate\Database\Seeder;
 
 class ClientSeeder extends Seeder
 {
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
-        // Use existing admin if available, don't create a new one
-        // This avoids the bcrypt hashing error
-        $admin = User::where('email', 'admin@example.com')->first() ??
-                 User::first() ??
-                 User::factory()->create([
-                     'name'  => 'Admin User',
-                     'email' => 'admin@example.com'
-                 ]);
+        // Get the first admin user for assignment
+        $user = User::first();
 
-        // Get other users or create them if needed
-        $existingUsers = User::where('id', '!=', $admin->id)->take(3)->get();
-        $users = $existingUsers->count() >= 3 ? $existingUsers : User::factory()->count(3 - $existingUsers->count())->create();
-        $users->prepend($admin);
+        // Create Sam Gray as the primary client
+        Client::create([
+            'name'            => 'Sam Gray',
+            'company'         => 'Gray Enterprises',
+            'email'           => 'sam.gray@example.com',
+            'phone'           => '+15555555555',
+            'website'         => 'https://samgray.example.com',
+            'status'          => ClientStatus::ACTIVE->value,
+            'user_id'         => $user?->id,
+            'last_contact_at' => now()->subDays(3),
+            'notes'           => '<p>Sam is working on a website redesign project and an SEO campaign.</p><p>Key points from our last call:</p><ul><li>Prefers communication via email</li><li>Weekly status meetings on Thursdays</li><li>Invoice at the end of each month</li></ul>',
+        ]);
 
-        // Create lead clients using enum values
-        Client::factory()
-            ->count(10)
-            ->assignedToUser($users->random())
-            ->create(['status' => ClientStatus::LEAD]);
-
-        // Create active clients
-        Client::factory()
-            ->count(5)
-            ->assignedToUser($users->random())
-            ->create(['status' => ClientStatus::ACTIVE]);
-
-        // Create former clients
-        Client::factory()
-            ->count(3)
-            ->assignedToUser($users->random())
-            ->create(['status' => ClientStatus::FORMER]);
-
-        // Create unassigned clients
-        Client::factory()
-            ->count(4)
-            ->create();
+        // Create a few more example clients if needed in development
+        if (app()->environment(['local', 'development', 'testing'])) {
+            Client::factory()->count(5)->create([
+                'user_id' => $user?->id,
+            ]);
+        }
     }
 }

@@ -16,9 +16,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             FeaturedPodcastSeeder::class,
             RolePermissionSeeder::class,
-            // User needs to be seeded after roles and permissions
             UserSeeder::class,
-            // Client seeder
             ClientSeeder::class,
         ]);
     }
