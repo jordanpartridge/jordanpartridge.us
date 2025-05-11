@@ -17,7 +17,7 @@
             <link>{{ config('app.url') }}/blog/{{ $post->slug }}</link>
             <guid>{{ config('app.url') }}/blog/{{ $post->slug }}</guid>
             <pubDate>{{ $post->created_at->toRssString() }}</pubDate>
-            <description>{{ $post->excerpt ?? substr(strip_tags($post->body), 0, 160) . (strlen(strip_tags($post->body)) > 160 ? '...' : '') }}</description>
+            <description>{{ htmlspecialchars($post->excerpt ?? substr(strip_tags($post->body), 0, 160) . (strlen(strip_tags($post->body)) > 160 ? '...' : '')) }}</description>
             <content:encoded><![CDATA[{!! $post->body !!}]]></content:encoded>
             @if ($post->categories->count() > 0)
                 @foreach ($post->categories as $category)
