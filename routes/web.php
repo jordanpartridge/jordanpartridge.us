@@ -7,7 +7,6 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Middleware\LogRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -129,7 +128,7 @@ Route::middleware([LogRequests::class])->group(function () {
                     'success' => true,
                     'message' => 'Document deleted successfully',
                 ]);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 // Log error
                 Log::error('Document deletion failed', [
                     'document'  => $documentInfo,
