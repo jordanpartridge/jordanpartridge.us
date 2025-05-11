@@ -16,7 +16,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -24,6 +24,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -31,6 +32,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ClientResource\RelationManagers;
 
 class ClientResource extends Resource
 {
@@ -188,7 +190,7 @@ class ClientResource extends Resource
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
-                    Action::make('log_contact')
+                    TableAction::make('log_contact')
                         ->icon('heroicon-o-phone')
                         ->color('success')
                         ->requiresConfirmation()
@@ -197,7 +199,7 @@ class ClientResource extends Resource
                         ->action(function (Client $record): void {
                             $record->update(['last_contact_at' => now()]);
                         }),
-                    Action::make('toggle_focus')
+                    TableAction::make('toggle_focus')
                         ->icon(fn (Client $record) => $record->is_focused ? 'heroicon-o-star' : 'heroicon-o-star')
                         ->color(fn (Client $record) => $record->is_focused ? 'warning' : 'gray')
                         ->label(fn (Client $record) => $record->is_focused ? 'Unfocus' : 'Focus')
@@ -241,7 +243,8 @@ class ClientResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\DocumentsRelationManager::class,
+            RelationManagers\ActivityLogRelationManager::class,
         ];
     }
 
@@ -260,6 +263,31 @@ class ClientResource extends Resource
         return cache()->remember('client-count', 300, function () {
             return static::getModel()::count();
         });
+    }
+
+    public static function getGlobalSearchResultActions(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            Action::make('view')
+                ->url(static::getUrl('view', ['record' => $record])),
+            Action::make('edit')
+                ->url(static::getUrl('edit', ['record' => $record])),
+            Action::make('focus')
+                ->color('warning')
+                ->icon('heroicon-s-star')
+                ->action(fn () => $record->focus()),
+        ];
+    }
+
+    public static function getNavigationActions(): array
+    {
+        return [
+            Action::make('new')
+                ->label('Create Client')
+                ->url(static::getUrl('create'))
+                ->icon('heroicon-s-plus')
+                ->color('primary'),
+        ];
     }
 
     public static function getEloquentQuery(): Builder

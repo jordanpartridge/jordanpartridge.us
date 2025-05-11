@@ -7,7 +7,10 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Middleware\LogRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,8 +83,65 @@ Route::middleware([LogRequests::class])->group(function () {
             if (auth()->user()->cannot('view', $document->client)) {
                 abort(403);
             }
+
+            // Log the document download activity
+            activity()
+                ->causedBy(auth()->user())
+                ->performedOn($document->client)
+                ->withProperties([
+                    'document_id' => $document->id,
+                    'filename'    => $document->original_filename,
+                ])
+                ->log('downloaded_document');
+
             return redirect()->away($document->signed_url);
         })->name('client-documents.download');
+
+        // Client document delete
+        Route::delete('client-documents/{document}', function (App\Models\ClientDocument $document) {
+            // Allow only the uploader or administrators to delete
+            if (auth()->id() !== $document->uploaded_by && !auth()->user()->hasRole('admin')) {
+                abort(403);
+            }
+
+            // Store document info for activity log
+            $documentInfo = [
+                'document_id' => $document->id,
+                'filename'    => $document->original_filename,
+                'client_id'   => $document->client_id,
+            ];
+
+            try {
+                // Delete the file from storage
+                Storage::disk('s3')->delete($document->filename);
+
+                // Delete the database record
+                $document->delete();
+
+                // Log the deletion
+                activity()
+                    ->causedBy(auth()->user())
+                    ->performedOn($document->client)
+                    ->withProperties($documentInfo)
+                    ->log('deleted_document');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Document deleted successfully',
+                ]);
+            } catch (Exception $e) {
+                // Log error
+                Log::error('Document deletion failed', [
+                    'document'  => $documentInfo,
+                    'exception' => $e->getMessage(),
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete document',
+                ], 500);
+            }
+        })->name('client-documents.delete');
 
         // Log client contact
         Route::post('clients/{client}/log-contact', function (App\Models\Client $client) {

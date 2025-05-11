@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewClient extends ViewRecord
@@ -98,7 +99,11 @@ class ViewClient extends ViewRecord
                 ->modalDescription(fn () => "Record new contact with {$this->record->name}")
                 ->action(function (): void {
                     $this->record->update(['last_contact_at' => now()]);
-                    $this->notify('success', 'Contact logged successfully');
+                    Notification::make()
+                        ->title('Success')
+                        ->body('Contact logged successfully')
+                        ->success()
+                        ->send();
                 }),
         ];
     }
