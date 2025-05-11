@@ -165,7 +165,7 @@ Route::middleware([LogRequests::class])->group(function () {
                    ->get();
 
         return response()
-            ->view('pages.feed.xml', compact('posts'))
+            ->view('pages.feed.xml', ['posts' => $posts])
             ->header('Content-Type', 'application/xml');
     });
 });
