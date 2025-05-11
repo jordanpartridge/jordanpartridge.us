@@ -14,74 +14,84 @@ use Illuminate\Support\Facades\Route;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| Routes are organized into logical groups:
+| 1. Public Redirects
+| 2. Webhook Endpoints
+| 3. Authentication & Verification
+| 4. Client Management
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::middleware([LogRequests::class])->group(function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Public Redirects
+    |--------------------------------------------------------------------------
+    */
+    Route::redirect('login', '/admin/login')->name('login');
+    Route::redirect('home', '/')->name('home');
 
-Route::middleware('guest')->group(function () {
-    Route::view('register', 'auth.register')->name('register');
-    Route::view('login', 'auth.login')->name('login');
-    Route::view('forgot-password', 'auth.forgot-password')->name('password.request');
-    Route::view('reset-password/{token}', 'auth.reset-password')->name('password.reset');
-});
+    /*
+    |--------------------------------------------------------------------------
+    | Test Routes (for development only)
+    |--------------------------------------------------------------------------
+    */
+    if (app()->environment('local')) {
+        Route::get('test-linkedin-meta', function () {
+            return view('tests.linkedin-meta-test');
+        })->name('test.linkedin-meta');
+    }
 
-Route::middleware('auth')->group(function () {
-    Route::get('verify-email', [EmailVerificationController::class, 'create'])->name('verification.notice');
-    Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
-    Route::post('logout', [LogoutController::class, 'store'])->name('logout');
-});
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook Endpoints
+    |--------------------------------------------------------------------------
+    */
+    Route::post('slack', WebhookController::class)
+        ->name('web:hook')
+        ->withoutMiddleware(VerifyCsrfToken::class);
 
-Route::post('webhooks/stripe', fn () => response('ok'))->name('cashier.webhook');
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication & Verification Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('auth')->group(function () {
+        // Email verification
+        Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
+            ->middleware('signed')
+            ->name('verification:verify');
 
-Route::get('resume', fn () => view('resume'))->name('resume');
+        // Logout
+        Route::post('logout', LogoutController::class)
+            ->name('logout');
 
-Route::get('about', fn () => view('about'))->name('about');
+        /*
+        |--------------------------------------------------------------------------
+        | Client Management Routes
+        |--------------------------------------------------------------------------
+        */
+        // Client export
+        Route::get('clients/export', ClientExportController::class)
+            ->name('clients.export');
 
-Route::get('dashboard', fn () => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+        // Client document download
+        Route::get('client-documents/{document}/download', function (App\Models\ClientDocument $document) {
+            if (auth()->user()->cannot('view', $document->client)) {
+                abort(403);
+            }
+            return redirect()->away($document->signed_url);
+        })->name('client-documents.download');
 
-Route::post('stripe/webhook', fn () => response('Webhook received successfully.', 200))->name('stripe.webhook');
-
-Route::withoutMiddleware([LogRequests::class, VerifyCsrfToken::class])->group(function () {
-    Route::get('health', fn () => 'ok')->name('health');
-
-    Route::post('webhooks/github', [WebhookController::class, 'github'])
-        ->middleware([LogRequests::class, VerifyCsrfToken::class])
-        ->name('webhooks.github');
-
-    Route::post('webhooks/ably', [WebhookController::class, 'ably'])
-        ->middleware([LogRequests::class, VerifyCsrfToken::class])
-        ->name('webhooks.ably');
-
-    Route::view('subscribe', 'livewire.subscribe')->name('subscribe');
+        // Log client contact
+        Route::post('clients/{client}/log-contact', function (App\Models\Client $client) {
+            if (auth()->user()->cannot('update', $client)) {
+                abort(403);
+            }
+            $client->update(['last_contact_at' => now()]);
+            return redirect()->back()->with('status', 'Contact logged successfully.');
+        })->name('clients.log-contact');
+    });
 
     Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
-
-    // Client export
-    Route::get('clients/export', ClientExportController::class)
-        ->middleware(['auth'])
-        ->name('clients.export');
-
-    // Client document download
-    Route::get('client-documents/{document}/download', function (App\Models\ClientDocument $document) {
-        if (!auth()->check() || auth()->user()->cannot('view', $document->client)) {
-            abort(403);
-        }
-        return redirect()->away($document->signed_url);
-    })->middleware(['auth'])->name('client-documents.download');
-
-    // Log client contact
-    Route::post('clients/{client}/log-contact', function (App\Models\Client $client) {
-        if (!auth()->check() || auth()->user()->cannot('update', $client)) {
-            abort(403);
-        }
-        $client->update(['last_contact_at' => now()]);
-        return redirect()->back()->with('status', 'Contact logged successfully.');
-    })->middleware(['auth'])->name('clients.log-contact');
-
 });
