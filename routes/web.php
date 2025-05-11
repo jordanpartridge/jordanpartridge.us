@@ -75,4 +75,13 @@ Route::withoutMiddleware([LogRequests::class, VerifyCsrfToken::class])->group(fu
         return redirect()->away($document->signed_url);
     })->middleware(['auth'])->name('client-documents.download');
 
+    // Log client contact
+    Route::post('clients/{client}/log-contact', function (App\Models\Client $client) {
+        if (!auth()->check() || auth()->user()->cannot('update', $client)) {
+            abort(403);
+        }
+        $client->update(['last_contact_at' => now()]);
+        return redirect()->back()->with('status', 'Contact logged successfully.');
+    })->middleware(['auth'])->name('clients.log-contact');
+
 });

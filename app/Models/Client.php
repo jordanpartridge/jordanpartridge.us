@@ -6,6 +6,7 @@ use App\Enums\ClientStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -34,7 +35,7 @@ class Client extends Model
     protected $casts = [
         'status'          => ClientStatus::class,
         'is_focused'      => 'boolean',
-        'last_contact_at' => 'date',
+        'last_contact_at' => 'datetime',
     ];
 
     /**
@@ -106,5 +107,21 @@ class Client extends Model
         $this->save();
 
         return $this;
+    }
+
+    /**
+     * Scope a query to only include the focused client.
+     */
+    public function scopeFocused($query)
+    {
+        return $query->where('is_focused', true);
+    }
+
+    /**
+     * Get the documents for the client.
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ClientDocument::class);
     }
 }

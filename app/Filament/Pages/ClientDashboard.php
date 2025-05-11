@@ -102,7 +102,10 @@ class ClientDashboard extends Page
 
     public function getFocusedClient(): ?Client
     {
-        return Client::where('is_focused', true)->first();
+        return Client::focused()
+            ->with(['documents', 'documents.uploadedBy'])
+            ->orderBy('id')
+            ->first();
     }
 
     protected function getViewData(): array
@@ -111,7 +114,7 @@ class ClientDashboard extends Page
 
         return [
             'focusedClient' => $focusedClient,
-            'documents'     => $focusedClient?->documents()->latest()->get() ?? collect([]),
+            'documents'     => $focusedClient?->documents ?? collect([]),
         ];
     }
 }

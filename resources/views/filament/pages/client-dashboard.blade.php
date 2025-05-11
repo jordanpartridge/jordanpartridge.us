@@ -31,8 +31,9 @@
                             @svg('heroicon-s-eye', 'w-5 h-5 -ml-1')
                             View Details
                         </a>
-                        <form action="{{ route('filament.admin.resources.clients.view', $focusedClient) }}" method="GET">
-                            <button type="button" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-green-700 border-green-600 bg-white hover:bg-green-50 dark:text-green-500 dark:border-green-600 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-green-600 shadow">
+                        <form action="{{ route('clients.log-contact', $focusedClient) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset min-h-[2.25rem] px-4 text-sm text-green-700 border-green-600 bg-white hover:bg-green-50 dark:text-green-500 dark:border-green-600 dark:bg-gray-700 dark:hover:bg-gray-600 focus:ring-green-600 shadow">
                                 @svg('heroicon-s-check', 'w-5 h-5 -ml-1')
                                 Log Contact
                             </button>

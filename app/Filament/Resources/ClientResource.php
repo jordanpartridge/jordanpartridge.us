@@ -24,6 +24,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -114,12 +115,25 @@ class ClientResource extends Resource
         return $table
             ->defaultSort('status', 'asc')
             ->columns([
+                IconColumn::make('is_focused')
+                    ->label('Focused')
+                    ->boolean()
+                    ->trueIcon('heroicon-s-star')
+                    ->falseIcon('heroicon-o-star')
+                    ->trueColor('warning')
+                    ->falseColor('gray-400')
+                    ->action(function (Client $record): void {
+                        if ($record->is_focused) {
+                            $record->unfocus();
+                        } else {
+                            $record->focus();
+                        }
+                    })
+                    ->tooltip('Toggle dashboard focus'),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable()
-                    ->weight('bold')
-                    ->icon(fn ($record) => $record->is_focused ? 'heroicon-s-star' : null)
-                    ->iconColor('warning'),
+                    ->weight('bold'),
                 TextColumn::make('company')
                     ->searchable()
                     ->sortable(),
@@ -216,16 +230,8 @@ class ClientResource extends Resource
                                 ->required(),
                         ])
                         ->action(function ($records, array $data): void {
-                            // If it's a Collection, we can efficiently update all records at once
-                            if (method_exists($records, 'getQuery')) {
-                                // This is a query builder or eloquent collection
-                                $records->update(['status' => $data['status']]);
-                            } else {
-                                // If we have an array of IDs, use whereIn for a single update query
-                                $recordIds = collect($records)->pluck('id')->toArray();
-                                Client::whereIn('id', $recordIds)
-                                    ->update(['status' => $data['status']]);
-                            }
+                            Client::whereKey($records->modelKeys())
+                                ->update(['status' => $data['status']]);
                         })
                         ->deselectRecordsAfterCompletion(),
                 ]),
@@ -251,7 +257,6 @@ class ClientResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        // Cache the count for 5 minutes to avoid repeated database queries
         return cache()->remember('client-count', 300, function () {
             return static::getModel()::count();
         });
