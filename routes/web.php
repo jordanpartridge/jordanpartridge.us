@@ -10,6 +10,7 @@ use App\Models\Client;
 use App\Models\ClientDocument;
 use App\Models\Post;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -159,13 +160,16 @@ Route::middleware([LogRequests::class])->group(function () {
 
     // RSS Feed route
     Route::get('feed.xml', function () {
-        $posts = Post::where('status', 'published')
-                   ->orderBy('created_at', 'desc')
-                   ->limit(20)
-                   ->get();
+        $content = Cache::remember('rss-feed', 60 * 15, function () {
+            $posts = Post::where('status', 'published')
+                       ->orderBy('created_at', 'desc')
+                       ->limit(20)
+                       ->get();
 
-        return response()
-            ->view('pages.feed.xml', ['posts' => $posts])
+            return view('pages.feed.xml', ['posts' => $posts])->render();
+        });
+
+        return response($content)
             ->header('Content-Type', 'application/xml');
-    });
+    })->name('feed.xml');
 });
