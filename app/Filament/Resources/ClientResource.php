@@ -216,13 +216,15 @@ class ClientResource extends Resource
                                 ->required(),
                         ])
                         ->action(function ($records, array $data): void {
-                            // Convert Collection to array if it's not already an array
-                            if (!is_array($records)) {
-                                $records = $records->all();
-                            }
-
-                            foreach ($records as $record) {
-                                $record->update(['status' => $data['status']]);
+                            // If it's a Collection, we can efficiently update all records at once
+                            if (method_exists($records, 'getQuery')) {
+                                // This is a query builder or eloquent collection
+                                $records->update(['status' => $data['status']]);
+                            } else {
+                                // If we have an array of IDs, use whereIn for a single update query
+                                $recordIds = collect($records)->pluck('id')->toArray();
+                                Client::whereIn('id', $recordIds)
+                                    ->update(['status' => $data['status']]);
                             }
                         })
                         ->deselectRecordsAfterCompletion(),
@@ -249,7 +251,10 @@ class ClientResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        // Cache the count for 5 minutes to avoid repeated database queries
+        return cache()->remember('client-count', 300, function () {
+            return static::getModel()::count();
+        });
     }
 
     public static function getEloquentQuery(): Builder

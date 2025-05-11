@@ -56,16 +56,25 @@ class Client extends Model
 
     /**
      * Format the website URL before saving.
+     * Empty strings are converted to null, and URLs without a protocol get https:// prefixed.
      */
     public function setWebsiteAttribute($value)
     {
+        // Convert to null if empty string or only whitespace
+        if ($value === '' || (is_string($value) && trim($value) === '')) {
+            $this->attributes['website'] = null;
+            return;
+        }
+
+        // Handle non-empty strings that need formatting
         if ($value && is_string($value) && !empty(trim($value))) {
             if (!str_starts_with($value, 'http://') && !str_starts_with($value, 'https://')) {
-                $this->attributes['website'] = 'https://' . $value;
+                $this->attributes['website'] = 'https://' . trim($value);
             } else {
-                $this->attributes['website'] = $value;
+                $this->attributes['website'] = trim($value);
             }
         } else {
+            // For null or other values
             $this->attributes['website'] = $value;
         }
     }
