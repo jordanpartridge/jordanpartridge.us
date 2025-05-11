@@ -14,58 +14,54 @@ use Illuminate\Support\Facades\Route;
 | Web Routes
 |--------------------------------------------------------------------------
 |
-| Routes are organized into logical groups:
-| 1. Public Redirects
-| 2. Webhook Endpoints
-| 3. Card Management
-| 4. Authentication & Verification
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
-Route::middleware([LogRequests::class])->group(function () {
-    /*
-    |--------------------------------------------------------------------------
-    | Public Redirects
-    |--------------------------------------------------------------------------
-    */
-    Route::redirect('login', '/admin/login')->name('login');
-    Route::redirect('home', '/')->name('home');
+Route::middleware('web')->group(function () {
+    Route::view('/', 'index')->name('welcome');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Test Routes (for development only)
-    |--------------------------------------------------------------------------
-    */
-    if (app()->environment('local')) {
-        Route::get('test-linkedin-meta', function () {
-            return view('tests.linkedin-meta-test');
-        })->name('test.linkedin-meta');
-    }
+    Route::view('privacy-policy', 'privacy-policy')->name('privacy-policy');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Webhook Endpoints
-    |--------------------------------------------------------------------------
-    */
-    Route::post('slack', WebhookController::class)
-        ->name('web:hook')
-        ->withoutMiddleware(VerifyCsrfToken::class);
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication & Verification Routes
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('auth')->group(function () {
-        // Email verification
-        Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)
-            ->middleware('signed')
-            ->name('verification:verify');
+    Route::view('cookies', 'cookies')->name('cookies');
 
-        // Logout
-        Route::post('logout', LogoutController::class)
-            ->name('logout');
+    Route::view('about', 'about')->name('about');
+
+    Route::middleware('guest')->group(function () {
+        Route::view('login', 'auth.login')->name('login');
+
+        Route::post('login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
+
+        Route::view('email/verify', 'auth.verify-email')->name('verification.notice');
     });
 
+    Route::middleware('auth')->group(function () {
+        Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)->name('verification.verify');
+
+        Route::post('logout', LogoutController::class)->name('logout');
+
+        Route::view('training', 'training')->name('training');
+
+        Route::view('resources', 'resources')->name('resources');
+
+        Route::view('contact', 'contact')->name('contact');
+
+        Route::view('thanks', 'thanks')->name('thanks');
+    });
+
+    Route::get('health', fn () => 'ok')->name('health');
+
+    Route::post('webhooks/github', [WebhookController::class, 'github'])
+        ->middleware([LogRequests::class, VerifyCsrfToken::class])
+        ->name('webhooks.github');
+
+    Route::post('webhooks/ably', [WebhookController::class, 'ably'])
+        ->middleware([LogRequests::class, VerifyCsrfToken::class])
+        ->name('webhooks.ably');
+
+    Route::view('subscribe', 'livewire.subscribe')->name('subscribe');
 
     Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
 
