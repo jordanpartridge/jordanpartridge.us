@@ -6,6 +6,9 @@ use App\Http\Controllers\ClientExportController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Middleware\LogRequests;
+use App\Models\Client;
+use App\Models\ClientDocument;
+use App\Models\Post;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -78,7 +81,7 @@ Route::middleware([LogRequests::class])->group(function () {
             ->name('clients.export');
 
         // Client document download
-        Route::get('client-documents/{document}/download', function (App\Models\ClientDocument $document) {
+        Route::get('client-documents/{document}/download', function (ClientDocument $document) {
             if (auth()->user()->cannot('view', $document->client)) {
                 abort(403);
             }
@@ -97,7 +100,7 @@ Route::middleware([LogRequests::class])->group(function () {
         })->name('client-documents.download');
 
         // Client document delete
-        Route::delete('client-documents/{document}', function (App\Models\ClientDocument $document) {
+        Route::delete('client-documents/{document}', function (ClientDocument $document) {
             // Allow only the uploader or administrators to delete
             if (auth()->id() !== $document->uploaded_by && !auth()->user()->hasRole('admin')) {
                 abort(403);
@@ -143,7 +146,7 @@ Route::middleware([LogRequests::class])->group(function () {
         })->name('client-documents.delete');
 
         // Log client contact
-        Route::post('clients/{client}/log-contact', function (App\Models\Client $client) {
+        Route::post('clients/{client}/log-contact', function (Client $client) {
             if (auth()->user()->cannot('update', $client)) {
                 abort(403);
             }
@@ -153,4 +156,16 @@ Route::middleware([LogRequests::class])->group(function () {
     });
 
     Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
+
+    // RSS Feed route
+    Route::get('feed.xml', function () {
+        $posts = Post::where('status', 'published')
+                   ->orderBy('created_at', 'desc')
+                   ->limit(20)
+                   ->get();
+
+        return response()
+            ->view('pages.feed.xml', compact('posts'))
+            ->header('Content-Type', 'application/xml');
+    });
 });

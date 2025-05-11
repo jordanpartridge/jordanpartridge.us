@@ -7,6 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ config('app.name') }}</title>
 
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="{{ config('app.name') }} RSS Feed" href="{{ url('feed.xml') }}">
+
     <script src="https://kit.fontawesome.com/d1901f5db9.js" crossorigin="anonymous"></script>
 
 </head>
