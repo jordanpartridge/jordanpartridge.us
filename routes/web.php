@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\WebhookController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ClientExportController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\WebhookController;
 use App\Http\Middleware\LogRequests;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Route;
@@ -20,37 +20,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('web')->group(function () {
-    Route::view('/', 'index')->name('welcome');
+Route::get('/', function () {
+    return view('welcome');
+});
 
-    Route::view('privacy-policy', 'privacy-policy')->name('privacy-policy');
+Route::middleware('guest')->group(function () {
+    Route::view('register', 'auth.register')->name('register');
+    Route::view('login', 'auth.login')->name('login');
+    Route::view('forgot-password', 'auth.forgot-password')->name('password.request');
+    Route::view('reset-password/{token}', 'auth.reset-password')->name('password.reset');
+});
 
-    Route::view('cookies', 'cookies')->name('cookies');
+Route::middleware('auth')->group(function () {
+    Route::get('verify-email', [EmailVerificationController::class, 'create'])->name('verification.notice');
+    Route::get('verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware('signed')->name('verification.verify');
+    Route::post('logout', [LogoutController::class, 'store'])->name('logout');
+});
 
-    Route::view('about', 'about')->name('about');
+Route::post('webhooks/stripe', fn () => response('ok'))->name('cashier.webhook');
 
-    Route::middleware('guest')->group(function () {
-        Route::view('login', 'auth.login')->name('login');
+Route::get('resume', fn () => view('resume'))->name('resume');
 
-        Route::post('login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
+Route::get('about', fn () => view('about'))->name('about');
 
-        Route::view('email/verify', 'auth.verify-email')->name('verification.notice');
-    });
+Route::get('dashboard', fn () => view('dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 
-    Route::middleware('auth')->group(function () {
-        Route::get('email/verify/{id}/{hash}', EmailVerificationController::class)->name('verification.verify');
+Route::post('stripe/webhook', fn () => response('Webhook received successfully.', 200))->name('stripe.webhook');
 
-        Route::post('logout', LogoutController::class)->name('logout');
-
-        Route::view('training', 'training')->name('training');
-
-        Route::view('resources', 'resources')->name('resources');
-
-        Route::view('contact', 'contact')->name('contact');
-
-        Route::view('thanks', 'thanks')->name('thanks');
-    });
-
+Route::withoutMiddleware([LogRequests::class, VerifyCsrfToken::class])->group(function () {
     Route::get('health', fn () => 'ok')->name('health');
 
     Route::post('webhooks/github', [WebhookController::class, 'github'])
@@ -69,5 +66,13 @@ Route::middleware('web')->group(function () {
     Route::get('clients/export', ClientExportController::class)
         ->middleware(['auth'])
         ->name('clients.export');
+
+    // Client document download
+    Route::get('client-documents/{document}/download', function (App\Models\ClientDocument $document) {
+        if (!auth()->check() || auth()->user()->cannot('view', $document->client)) {
+            abort(403);
+        }
+        return redirect()->away($document->signed_url);
+    })->middleware(['auth'])->name('client-documents.download');
 
 });

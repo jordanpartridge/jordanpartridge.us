@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Models\Client;
-use App\Models\ClientDocument;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Form;
@@ -11,7 +10,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ClientDashboard extends Page
 {
@@ -43,7 +41,7 @@ class ClientDashboard extends Page
             ->schema([
                 FileUpload::make('document')
                     ->label('Select Document')
-                    ->disk('local')
+                    ->disk('s3')
                     ->directory('client-documents')
                     ->visibility('private')
                     ->acceptedFileTypes([
@@ -63,8 +61,7 @@ class ClientDashboard extends Page
                     ->maxLength(255)
                     ->nullable(),
             ])
-            ->statePath('documentData')
-            ->visible(fn () => $focusedClient !== null);
+            ->statePath('documentData');
     }
 
     public function saveDocument(): void
@@ -83,7 +80,7 @@ class ClientDashboard extends Page
         $this->form->getState();
 
         $file = $this->documentData['document'];
-        $path = Storage::disk('local')->putFile('client-documents', $file);
+        $path = Storage::disk('s3')->putFile('client-documents', $file);
 
         $focusedClient->documents()->create([
             'uploaded_by'       => Auth::id(),
@@ -101,18 +98,6 @@ class ClientDashboard extends Page
             ->send();
 
         $this->form->fill();
-    }
-
-    public function downloadDocument(int $documentId): BinaryFileResponse
-    {
-        $document = ClientDocument::findOrFail($documentId);
-
-        // Check if the user has access to this document
-        if ($document->client->id !== $this->getFocusedClient()?->id) {
-            abort(403, 'You do not have access to this document.');
-        }
-
-        return Storage::disk('local')->download($document->filename, $document->original_filename);
     }
 
     public function getFocusedClient(): ?Client

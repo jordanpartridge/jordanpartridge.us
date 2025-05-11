@@ -65,20 +65,7 @@
                         @foreach ($documents as $document)
                         <li class="py-3 flex items-center justify-between">
                             <div class="flex items-center">
-                                @switch($document->mime_type)
-                                    @case('application/pdf')
-                                        @svg('heroicon-s-document', 'w-5 h-5 text-red-500 mr-3')
-                                        @break
-                                    @case('application/vnd.openxmlformats-officedocument.wordprocessingml.document')
-                                        @svg('heroicon-s-document-text', 'w-5 h-5 text-blue-500 mr-3')
-                                        @break
-                                    @case('application/vnd.ms-excel')
-                                    @case('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-                                        @svg('heroicon-s-document-chart-bar', 'w-5 h-5 text-green-500 mr-3')
-                                        @break
-                                    @default
-                                        @svg('heroicon-s-document', 'w-5 h-5 text-gray-400 mr-3')
-                                @endswitch
+                                @svg($document->display_icon, 'w-5 h-5 mr-3')
                                 <div>
                                     <div class="font-medium">{{ $document->original_filename }}</div>
                                     @if ($document->description)

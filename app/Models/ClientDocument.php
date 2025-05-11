@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class ClientDocument extends Model
 {
@@ -68,5 +69,30 @@ class ClientDocument extends Model
             }
         }
         return $result ?? '0 B';
+    }
+
+    public function getSignedUrlAttribute(): string
+    {
+        return Storage::disk('s3')->temporaryUrl(
+            $this->filename,
+            now()->addHours(1)
+        );
+    }
+
+    public function getDownloadUrlAttribute(): string
+    {
+        return route('client-documents.download', $this);
+    }
+
+    public function getDisplayIconAttribute(): string
+    {
+        return match ($this->mime_type) {
+            'application/pdf' => 'heroicon-s-document text-red-500',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/msword' => 'heroicon-s-document-text text-blue-500',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'heroicon-s-document-chart-bar text-green-500',
+            default                                                             => 'heroicon-s-document text-gray-400',
+        };
     }
 }
