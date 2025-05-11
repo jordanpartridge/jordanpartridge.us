@@ -23,16 +23,16 @@ class RssFeedTest extends TestCase
         // Create some test posts
         $publishedPost = Post::factory()->create([
             'status' => 'published',
-            'title' => 'Test Published Post'
+            'title'  => 'Test Published Post'
         ]);
 
         $draftPost = Post::factory()->create([
             'status' => 'draft',
-            'title' => 'Test Draft Post'
+            'title'  => 'Test Draft Post'
         ]);
 
         $response = $this->get('/feed.xml');
-        
+
         $response->assertStatus(200)
             ->assertSee($publishedPost->title)
             ->assertDontSee($draftPost->title);
@@ -41,7 +41,7 @@ class RssFeedTest extends TestCase
     public function test_rss_feed_has_valid_structure()
     {
         $response = $this->get('/feed.xml');
-        
+
         $response->assertStatus(200)
             ->assertSee('<?xml version="1.0" encoding="UTF-8"?>', false)
             ->assertSee('<rss version="2.0"', false)
