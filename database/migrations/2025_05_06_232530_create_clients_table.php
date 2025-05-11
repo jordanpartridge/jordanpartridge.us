@@ -17,6 +17,8 @@ return new class () extends Migration {
             $table->string('website')->nullable();
             $table->text('notes')->nullable();
             $table->string('status')->default(ClientStatus::LEAD->value);
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->date('last_contact_at')->nullable();
             $table->timestamps();
         });
     }

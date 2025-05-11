@@ -17,8 +17,10 @@ abstract class DuskTestCase extends BaseTestCase
     #[BeforeClass]
     public static function prepare(): void
     {
-        // Skip starting ChromeDriver as it's being blocked by macOS security
-        // We'll use the browser directly instead
+        if (! static::runningInSail()) {
+            // Start ChromeDriver if not running in Sail/Docker
+            static::startChromeDriver();
+        }
     }
 
     /**

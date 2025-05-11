@@ -27,14 +27,15 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'    => $this->faker->name(),
-            'company' => $this->faker->company(),
-            'email'   => $this->faker->unique()->safeEmail(),
-            'phone'   => $this->faker->phoneNumber(),
-            'website' => $this->faker->url(),
-            'notes'   => $this->faker->text(),
-            'status'  => $this->faker->randomElement(ClientStatus::values()),
-            'user_id' => null,
+            'name'            => $this->faker->name(),
+            'company'         => $this->faker->company(),
+            'email'           => $this->faker->unique()->safeEmail(),
+            'phone'           => $this->faker->phoneNumber(),
+            'website'         => $this->faker->url(),
+            'notes'           => $this->faker->text(),
+            'status'          => $this->faker->randomElement(ClientStatus::values()),
+            'user_id'         => null,
+            'last_contact_at' => $this->faker->optional(0.7)->dateTimeBetween('-3 months', 'now'),
         ];
     }
 

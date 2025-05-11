@@ -11,7 +11,7 @@
             <!-- Navigation -->
             <div :class="{ 'absolute left-0' : open, 'relative' : !open }" class="flex flex-col justify-start w-full sm:relative sm:flex-row sm:justify-between" x-cloak>
                 @php
-                    $navLinks = ['Dashboard' => '/dashboard-x', 'Learn More' => '/learn'];
+                    $navLinks = ['Dashboard' => '/dashboard-x', 'Learn More' => '/learn', 'Architecture' => route('architecture')];
                 @endphp
                 <!-- Navigation Links -->
                 <nav :class="{'flex flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-md relative z-50 w-full h-auto px-4 py-5 left-0 mt-16 border-t border-gray-200/70 dark:border-gray-700/30': open, 'hidden': ! open}"

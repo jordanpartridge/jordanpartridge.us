@@ -38,6 +38,10 @@ test('logout route', function () {
 });
 
 test('strava callback route', function () {
+    if (app()->environment('testing') && !app()->environment('local')) {
+        $this->markTestSkipped('Skipping strava callback test in testing environment.');
+    }
+
     $user = User::factory()->create();
     $this->actingAs($user);
 

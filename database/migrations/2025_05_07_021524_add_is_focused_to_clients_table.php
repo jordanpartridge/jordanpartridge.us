@@ -8,15 +8,14 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->foreignId('user_id')->nullable()->after('status')->constrained()->nullOnDelete();
+            $table->boolean('is_focused')->default(false)->after('status');
         });
     }
 
     public function down(): void
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
-            $table->dropColumn('user_id');
+            $table->dropColumn('is_focused');
         });
     }
 };

@@ -4,6 +4,7 @@
 - Development: `npm run dev`
 - Production Build: `npm run build`
 - Database Migration: `php artisan migrate`
+- Site is on herd locally and can be seen in browser at jordanpartridge.test
 
 ## Test Commands
 - Run all tests: `php artisan test` or `./vendor/bin/pest`
