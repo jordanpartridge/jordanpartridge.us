@@ -12,6 +12,7 @@ This document outlines the database schema for the Gmail integration feature.
 ## Schema Design
 
 ### client_emails
+
 Stores essential metadata about emails associated with clients.
 
 | Column | Type | Description |
@@ -25,7 +26,7 @@ Stores essential metadata about emails associated with clients.
 | cc | json | Carbon copy recipients |
 | bcc | json | Blind carbon copy recipients |
 | snippet | text | Preview text |
-| body | longtext | Full email content (HTML) |
+| body | longtext | Full email content (HTML) - **Deprecated: Will be removed in future migration** |
 | label_ids | json | Gmail labels for organization |
 | raw_payload | json | Raw message data from Gmail API |
 | email_date | timestamp | When email was sent/received |
@@ -34,10 +35,12 @@ Stores essential metadata about emails associated with clients.
 | updated_at | timestamp | Record update timestamp |
 
 **Indexes:**
+
 - `gmail_message_id` - Prevents duplicate emails
 - `client_id` with `received_at` - For efficient client email timeline queries
 
 ### gmail_tokens
+
 Stores OAuth tokens for Gmail API authentication.
 
 | Column | Type | Description |
@@ -51,6 +54,7 @@ Stores OAuth tokens for Gmail API authentication.
 | updated_at | timestamp | Record update timestamp |
 
 ### client_email_bodies
+
 Stores email body content separately for performance optimization.
 
 | Column | Type | Description |
@@ -63,6 +67,7 @@ Stores email body content separately for performance optimization.
 | updated_at | timestamp | Record update timestamp |
 
 **Indexes:**
+
 - `client_email_id` - For efficient lookups
 
 ## Design Rationale
@@ -73,3 +78,9 @@ The design separates email content (bodies) and attachments into separate tables
 2. **Storage efficiency** - Allows appropriate column types for different content
 3. **Query optimization** - Allows selective loading of only needed components
 4. **Scalability** - Handles large volumes of emails with attachments efficiently
+
+## Migration Plan
+
+1. **Phase 1** (Current): Create separate tables for bodies and attachments
+2. **Phase 2** (Future): Migrate existing data from `client_emails.body` column to the new tables
+3. **Phase 3** (Future): Remove deprecated columns through a separate migration
