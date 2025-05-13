@@ -21,13 +21,9 @@ class GmailIntegrationPage extends Page
 
     protected static ?int $navigationSort = 90;
 
-
-    // Properties to store debug information
-
+    // Properties for token information
     public $accessToken = null;
-
     public $refreshToken = null;
-
     public $tokenExpires = null;
 
     public function getHeading(): string

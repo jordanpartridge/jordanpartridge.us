@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9c90a37abbad1f3f9a6a3ea390ea2239",
+    "content-hash": "e4b7ee1e23cc39b1aaa3bb673f34c0f1",
     "packages": [
         {
             "name": "amphp/amp",
@@ -7746,14 +7746,20 @@
         },
         {
             "name": "partridgerocks/gmail-client",
-            "version": "dev-feature/gmail-api-integration",
+            "version": "v1.0.1-alpha",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PartridgeRocks/gmail_client.git",
+                "reference": "43e8508fd6e1c0c34b978d0c73e0583827992816"
+            },
             "dist": {
-                "type": "path",
-                "url": "../gmail_client",
-                "reference": "e48d35d9a99ca6955cc90bb585605b09321d33b1"
+                "type": "zip",
+                "url": "https://api.github.com/repos/PartridgeRocks/gmail_client/zipball/43e8508fd6e1c0c34b978d0c73e0583827992816",
+                "reference": "43e8508fd6e1c0c34b978d0c73e0583827992816",
+                "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^10.0||^11.0",
+                "illuminate/contracts": "^10.0||^11.0||^12.0",
                 "php": "^8.2",
                 "saloonphp/saloon": "^3.0",
                 "spatie/laravel-data": "^4.15",
@@ -7763,7 +7769,7 @@
                 "larastan/larastan": "^2.9",
                 "laravel/pint": "^1.14",
                 "nunomaduro/collision": "^8.1.1||^7.10.0",
-                "orchestra/testbench": "^9.0.0||^8.22.0",
+                "orchestra/testbench": "^10.0||^9.0.0||^8.22.0",
                 "pestphp/pest": "^2.34",
                 "pestphp/pest-plugin-arch": "^2.7",
                 "pestphp/pest-plugin-laravel": "^2.3",
@@ -7774,12 +7780,12 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "PartridgeRocks\\GmailClient\\GmailClientServiceProvider"
-                    ],
                     "aliases": {
                         "GmailClient": "PartridgeRocks\\GmailClient\\Facades\\GmailClient"
-                    }
+                    },
+                    "providers": [
+                        "PartridgeRocks\\GmailClient\\GmailClientServiceProvider"
+                    ]
                 }
             },
             "autoload": {
@@ -7788,44 +7794,7 @@
                     "PartridgeRocks\\GmailClient\\Database\\Factories\\": "database/factories/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "PartridgeRocks\\GmailClient\\Tests\\": "tests/",
-                    "Workbench\\App\\": "workbench/app/"
-                }
-            },
-            "scripts": {
-                "post-autoload-dump": [
-                    "@composer run prepare"
-                ],
-                "clear": [
-                    "@php vendor/bin/testbench package:purge-gmail-client --ansi"
-                ],
-                "prepare": [
-                    "@php vendor/bin/testbench package:discover --ansi"
-                ],
-                "build": [
-                    "@composer run prepare",
-                    "@php vendor/bin/testbench workbench:build --ansi"
-                ],
-                "start": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "@composer run build",
-                    "@php vendor/bin/testbench serve"
-                ],
-                "analyse": [
-                    "vendor/bin/phpstan analyse"
-                ],
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "test-coverage": [
-                    "vendor/bin/pest --coverage"
-                ],
-                "format": [
-                    "vendor/bin/pint"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7843,9 +7812,17 @@
                 "gmail-client",
                 "laravel"
             ],
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/PartridgeRocks/gmail_client/issues",
+                "source": "https://github.com/PartridgeRocks/gmail_client/tree/v1.0.1-alpha"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/PartridgeRocks",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-05-13T15:30:35+00:00"
         },
         {
             "name": "phpdocumentor/reflection",
@@ -18039,7 +18016,7 @@
     "stability-flags": {
         "devdojo/genesis": 20,
         "jordanpartridge/github-client": 20,
-        "partridgerocks/gmail-client": 20
+        "partridgerocks/gmail-client": 15
     },
     "prefer-stable": true,
     "prefer-lowest": false,
