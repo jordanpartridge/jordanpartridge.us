@@ -1,6 +1,6 @@
-# Security Updates - May 2025
+# Security Updates and Laravel 12 Upgrade - May 2025
 
-This document outlines the security vulnerabilities addressed in this update along with the steps taken to remediate them.
+This document outlines the security vulnerabilities addressed in this update along with the steps taken to remediate them, plus the major upgrade to Laravel 12.
 
 ## Vulnerabilities Fixed
 
@@ -28,10 +28,17 @@ This document outlines the security vulnerabilities addressed in this update alo
    - Description: esbuild enables any website to send any requests to the development server and read the response.
    - Solution: Updated to the latest esbuild via Vite dependency upgrade.
 
-## Additional Updates
+## Major Framework Upgrade
 
 1. **Laravel Framework**
-   - Updated to the latest version (v11.46.x) containing all security patches.
+   - **Major upgrade from Laravel 11 to Laravel 12**
+   - This brings numerous improvements, bug fixes, and performance enhancements
+   - Enhanced security features and updated authentication systems
+   - Updated related Laravel packages to their latest versions:
+     - Horizon v5.26+
+     - Octane v2.4+
+     - Pulse v1.2+
+     - Slack Notification Channel v3.5+
 
 2. **Frontend Dependencies**
    - Updated Tailwind CSS and related packages to latest versions
@@ -40,10 +47,35 @@ This document outlines the security vulnerabilities addressed in this update alo
 
 ## Implementation Notes
 
-This update addresses all open security vulnerabilities identified by GitHub Dependabot. The updates are focused on security-critical components without introducing major breaking changes to the application.
+This update addresses all open security vulnerabilities identified by GitHub Dependabot while simultaneously upgrading to Laravel 12. This is a significant upgrade that might require application adjustments.
+
+## Upgrade Steps
+
+1. After merging this PR, follow these steps:
+   ```bash
+   # Install updated dependencies
+   composer update
+
+   # Run migrations with fresh schema if needed
+   php artisan migrate
+
+   # Clear all caches
+   php artisan optimize:clear
+
+   # Rebuild frontend assets
+   npm install
+   npm run build
+   ```
+
+2. Check for Laravel 12 breaking changes that might affect your application:
+   - Review Laravel 12 [upgrade guide](https://laravel.com/docs/12.x/upgrade)
+   - Test authentication flows
+   - Verify queue and job processing
+   - Check custom middleware and service providers
 
 ## Recommendations
 
 1. After applying this update, run a thorough test of all application features
 2. Review any custom Volt components for potential security implications
 3. Consider running a security scan after deployment to verify fixes
+4. Update your CI/CD pipeline if necessary to accommodate Laravel 12 requirements
