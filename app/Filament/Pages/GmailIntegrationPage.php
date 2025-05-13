@@ -21,8 +21,7 @@ class GmailIntegrationPage extends Page
 
     protected static ?int $navigationSort = 90;
 
-
-    // Properties to store debug information
+    /** Properties to store debug information */
 
     public $accessToken = null;
 
