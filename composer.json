@@ -30,7 +30,7 @@
         "laravel/slack-notification-channel": "^3.4",
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.28",
-        "partridgerocks/gmail-client": "dev-feature/gmail-api-integration",
+        "partridgerocks/gmail-client": "dev-master",
         "pxlrbt/filament-activity-log": "^1.1",
         "resend/resend-php": "^0.12.0",
         "saloonphp/laravel-plugin": "^3.0",
