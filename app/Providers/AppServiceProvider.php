@@ -52,10 +52,13 @@ class AppServiceProvider extends ServiceProvider
         $callbackUrl = URL::to('/gmail/auth/callback');
         Config::set('gmail-client.redirect_uri', $callbackUrl);
 
-        Log::info('Gmail client configured', [
-            'redirect_uri'     => $callbackUrl,
-            'client_id_exists' => !empty(config('gmail-client.client_id')),
-        ]);
+        // Only log this in development or when running tests
+        if (app()->environment(['local', 'testing'])) {
+            Log::debug('Gmail client configured', [
+                'redirect_uri'     => $callbackUrl,
+                'client_id_exists' => !empty(config('gmail-client.client_id')),
+            ]);
+        }
 
         return $this;
     }
