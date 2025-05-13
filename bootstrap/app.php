@@ -3,6 +3,7 @@
 use App\Http\Middleware\LogRequests;
 use App\Http\Middleware\RedirectToDashboard;
 use App\Http\Middleware\RoleMiddleware;
+use App\Http\Middleware\SecurityHeadersMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->web(append: [
+            SecurityHeadersMiddleware::class,
+            LogRequests::class,
+        ]);
+
         $middleware->alias([
             'redirect-to-dashboard' => RedirectToDashboard::class,
             'log-requests'          => LogRequests::class,
