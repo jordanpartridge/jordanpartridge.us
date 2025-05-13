@@ -62,6 +62,42 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
         return $this->hasMany(Client::class);
     }
 
+    /**
+     * Get the user's Gmail token.
+     */
+    public function gmailToken()
+    {
+        return $this->hasOne(GmailToken::class);
+    }
+
+    /**
+     * Check if the user has a valid Gmail token.
+     */
+    public function hasValidGmailToken(): bool
+    {
+        $token = $this->gmailToken;
+
+        return $token && !$token->isExpired();
+    }
+
+    /**
+     * Get the Gmail client for the user.
+     */
+    public function getGmailClient()
+    {
+        $token = $this->gmailToken;
+
+        if (!$token) {
+            return null;
+        }
+
+        return app(PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
+            $token->access_token,
+            $token->refresh_token,
+            $token->expires_at->toDateTime()
+        );
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return true;

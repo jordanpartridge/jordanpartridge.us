@@ -124,4 +124,12 @@ class Client extends Model
     {
         return $this->hasMany(ClientDocument::class);
     }
+
+    /**
+     * Get the emails for the client.
+     */
+    public function emails(): HasMany
+    {
+        return $this->hasMany(ClientEmail::class);
+    }
 }

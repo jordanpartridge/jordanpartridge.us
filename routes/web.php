@@ -28,6 +28,18 @@ use Illuminate\Support\Facades\Storage;
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Gmail Integration Routes - Placed outside middleware group for early registration
+|--------------------------------------------------------------------------
+*/
+// Gmail OAuth callback route - outside the LogRequests middleware to handle external callback
+Route::get('gmail/auth/callback', App\Http\Controllers\GmailCallbackController::class)
+    ->name('gmail.auth.callback')
+    ->withoutMiddleware([
+        Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+    ]);
+
 Route::middleware([LogRequests::class])->group(function () {
     /*
     |--------------------------------------------------------------------------
@@ -157,6 +169,13 @@ Route::middleware([LogRequests::class])->group(function () {
     });
 
     Route::post('contact', [ContactController::class, 'store'])->name('contact.store');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Gmail Integration Routes
+    |--------------------------------------------------------------------------
+    */
+    // Gmail OAuth redirect route is already defined at the top level outside middleware
 
     // RSS Feed route
     Route::get('feed.xml', function () {
