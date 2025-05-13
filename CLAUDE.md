@@ -18,6 +18,25 @@
 - Run Pint: `./vendor/bin/pint`
 - Generate IDE helper files: `php artisan ide-helper:generate`
 
+## Gmail Integration
+
+### Authentication Setup
+- Authentication uses Google OAuth 2.0 protocol
+- Access tokens expire after 1 hour, refresh tokens are used automatically
+- Ensure your Google Cloud project is set to "In production" for longer refresh token validity
+- Required OAuth scopes are defined in `config/gmail-client.php`
+
+### Token Management
+- Tokens are stored in the `gmail_tokens` table
+- Each user has one token record with: access_token, refresh_token, expires_at
+- The `CheckPendingGmailAuth` middleware handles post-authentication token storage
+- The User model provides `hasValidGmailToken()` and `getGmailClient()` helpers
+
+### Email Integration
+- Client emails are stored in the `client_emails` table
+- Related through the Client model via the `emails()` relationship
+- Front-end display handled by custom Filament pages in Email Management section
+
 ## Architecture Overview
 This Laravel application serves as a personal website, portfolio, blog, and client management system with several key components:
 
