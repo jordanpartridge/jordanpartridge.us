@@ -95,8 +95,8 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "../gmail_client"
+            "type": "vcs",
+            "url": "https://github.com/partridgerocks/gmail-client"
         }
     ],
     "config": {
