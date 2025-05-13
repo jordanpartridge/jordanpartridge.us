@@ -63,7 +63,8 @@ class GmailCallbackController extends Controller
             }
 
             // Store the token in the database for the authenticated user
-            $expiresAt = now()->addSeconds($tokens['expires_in']);
+            $expiresIn = $tokens['expires_in'] ?? 3600; // default 1 hour
+            $expiresAt = now()->addSeconds($expiresIn);
 
             // Check if there's an authenticated user
             if (!auth()->check()) {
@@ -84,7 +85,7 @@ class GmailCallbackController extends Controller
             try {
                 // Update or create the Gmail token for the user
                 $token = auth()->user()->gmailToken()->updateOrCreate(
-                    [], // Empty array means we'll update the token if it exists
+                    ['user_id' => auth()->id()], // Explicitly match by user_id
                     [
                         'access_token'  => $tokens['access_token'],
                         'refresh_token' => $tokens['refresh_token'] ?? null,
