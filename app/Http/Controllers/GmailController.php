@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use PartridgeRocks\GmailClient\Facades\GmailClient;
 
 class GmailController extends Controller
@@ -69,7 +68,7 @@ class GmailController extends Controller
             // List recent messages
             $messages = GmailClient::listMessages(['maxResults' => 10]);
 
-            return view('gmail.messages', compact('messages'));
+            return view('gmail.messages', ['messages' => $messages]);
         } catch (\Exception $e) {
             // Handle authentication or API errors
             return redirect()->route('gmail.index')->with('error', 'Error fetching Gmail messages: ' . $e->getMessage());
@@ -92,7 +91,7 @@ class GmailController extends Controller
             // List labels
             $labels = GmailClient::listLabels();
 
-            return view('gmail.labels', compact('labels'));
+            return view('gmail.labels', ['labels' => $labels]);
         } catch (\Exception $e) {
             // Handle authentication or API errors
             return redirect()->route('gmail.index')->with('error', 'Error fetching Gmail labels: ' . $e->getMessage());

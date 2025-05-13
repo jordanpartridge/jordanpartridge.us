@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Force HTTPS for URL generation when using Expose for callbacks
-        if (str_contains(env('APP_URL', ''), 'expose') || str_contains(env('APP_URL', ''), 'https://') || app()->environment('production')) {
+        if (str_contains(config('app.url', ''), 'expose') || str_contains(config('app.url', ''), 'https://') || app()->environment('production')) {
             URL::forceScheme('https');
         }
 
