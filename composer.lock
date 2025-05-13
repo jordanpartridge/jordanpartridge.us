@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "81cb5787590c4fbb75966620b2be808f",
+    "content-hash": "e4b7ee1e23cc39b1aaa3bb673f34c0f1",
     "packages": [
         {
             "name": "amphp/amp",
@@ -7746,20 +7746,20 @@
         },
         {
             "name": "partridgerocks/gmail-client",
-            "version": "dev-master",
+            "version": "v1.0.1-alpha",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PartridgeRocks/gmail_client.git",
-                "reference": "b8d437270e6bf73b841ea5a2f7c817154495ce76"
+                "reference": "43e8508fd6e1c0c34b978d0c73e0583827992816"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PartridgeRocks/gmail_client/zipball/b8d437270e6bf73b841ea5a2f7c817154495ce76",
-                "reference": "b8d437270e6bf73b841ea5a2f7c817154495ce76",
+                "url": "https://api.github.com/repos/PartridgeRocks/gmail_client/zipball/43e8508fd6e1c0c34b978d0c73e0583827992816",
+                "reference": "43e8508fd6e1c0c34b978d0c73e0583827992816",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^10.0||^11.0",
+                "illuminate/contracts": "^10.0||^11.0||^12.0",
                 "php": "^8.2",
                 "saloonphp/saloon": "^3.0",
                 "spatie/laravel-data": "^4.15",
@@ -7769,7 +7769,7 @@
                 "larastan/larastan": "^2.9",
                 "laravel/pint": "^1.14",
                 "nunomaduro/collision": "^8.1.1||^7.10.0",
-                "orchestra/testbench": "^9.0.0||^8.22.0",
+                "orchestra/testbench": "^10.0||^9.0.0||^8.22.0",
                 "pestphp/pest": "^2.34",
                 "pestphp/pest-plugin-arch": "^2.7",
                 "pestphp/pest-plugin-laravel": "^2.3",
@@ -7777,7 +7777,6 @@
                 "phpstan/phpstan-deprecation-rules": "^1.1",
                 "phpstan/phpstan-phpunit": "^1.3"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -7815,7 +7814,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PartridgeRocks/gmail_client/issues",
-                "source": "https://github.com/PartridgeRocks/gmail_client/tree/master"
+                "source": "https://github.com/PartridgeRocks/gmail_client/tree/v1.0.1-alpha"
             },
             "funding": [
                 {
@@ -7823,7 +7822,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-13T03:09:55+00:00"
+            "time": "2025-05-13T15:30:35+00:00"
         },
         {
             "name": "phpdocumentor/reflection",
@@ -18017,7 +18016,7 @@
     "stability-flags": {
         "devdojo/genesis": 20,
         "jordanpartridge/github-client": 20,
-        "partridgerocks/gmail-client": 20
+        "partridgerocks/gmail-client": 15
     },
     "prefer-stable": true,
     "prefer-lowest": false,
