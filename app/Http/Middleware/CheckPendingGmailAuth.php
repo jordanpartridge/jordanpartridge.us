@@ -26,7 +26,7 @@ class CheckPendingGmailAuth
             try {
                 // Save the tokens to the database
                 $user->gmailToken()->updateOrCreate(
-                    [], // Empty array means we'll update the token if it exists
+                    ['user_id' => $user->id], // Explicitly match by user_id for safety
                     [
                         'access_token'  => session('gmail_temp_access_token'),
                         'refresh_token' => session('gmail_temp_refresh_token'),

@@ -19,6 +19,8 @@ class GmailToken extends Model
 
     /**
      * Get the user that owns the Gmail token.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user()
     {
@@ -27,9 +29,15 @@ class GmailToken extends Model
 
     /**
      * Check if the token is expired.
+     *
+     * @return bool True if the token is expired, false otherwise
      */
-    public function isExpired()
+    public function isExpired(): bool
     {
+        if (!$this->expires_at) {
+            return true;
+        }
+
         return $this->expires_at->isPast();
     }
 }
