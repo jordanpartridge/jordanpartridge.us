@@ -94,10 +94,6 @@
         }
     },
     "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/PartridgeRocks/gmail_client"
-        }
     ],
     "config": {
         "optimize-autoloader": true,

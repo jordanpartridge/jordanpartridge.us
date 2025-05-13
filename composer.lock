@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "063666f4bc5094a7d997116bb5614b3b",
+    "content-hash": "81cb5787590c4fbb75966620b2be808f",
     "packages": [
         {
             "name": "amphp/amp",
@@ -7781,12 +7781,12 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "PartridgeRocks\\GmailClient\\GmailClientServiceProvider"
-                    ],
                     "aliases": {
                         "GmailClient": "PartridgeRocks\\GmailClient\\Facades\\GmailClient"
-                    }
+                    },
+                    "providers": [
+                        "PartridgeRocks\\GmailClient\\GmailClientServiceProvider"
+                    ]
                 }
             },
             "autoload": {
@@ -7795,44 +7795,7 @@
                     "PartridgeRocks\\GmailClient\\Database\\Factories\\": "database/factories/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "PartridgeRocks\\GmailClient\\Tests\\": "tests/",
-                    "Workbench\\App\\": "workbench/app/"
-                }
-            },
-            "scripts": {
-                "post-autoload-dump": [
-                    "@composer run prepare"
-                ],
-                "clear": [
-                    "@php vendor/bin/testbench package:purge-gmail-client --ansi"
-                ],
-                "prepare": [
-                    "@php vendor/bin/testbench package:discover --ansi"
-                ],
-                "build": [
-                    "@composer run prepare",
-                    "@php vendor/bin/testbench workbench:build --ansi"
-                ],
-                "start": [
-                    "Composer\\Config::disableProcessTimeout",
-                    "@composer run build",
-                    "@php vendor/bin/testbench serve"
-                ],
-                "analyse": [
-                    "vendor/bin/phpstan analyse"
-                ],
-                "test": [
-                    "vendor/bin/pest"
-                ],
-                "test-coverage": [
-                    "vendor/bin/pest --coverage"
-                ],
-                "format": [
-                    "vendor/bin/pint"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -7851,13 +7814,13 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/PartridgeRocks/gmail_client/tree/master",
-                "issues": "https://github.com/PartridgeRocks/gmail_client/issues"
+                "issues": "https://github.com/PartridgeRocks/gmail_client/issues",
+                "source": "https://github.com/PartridgeRocks/gmail_client/tree/master"
             },
             "funding": [
                 {
-                    "type": "github",
-                    "url": "https://github.com/PartridgeRocks"
+                    "url": "https://github.com/PartridgeRocks",
+                    "type": "github"
                 }
             ],
             "time": "2025-05-13T03:09:55+00:00"
