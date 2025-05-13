@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Tests\Helpers\AssetHelper;
 use Tests\TestCase;
 
 class CreateCommentTest extends TestCase
@@ -18,6 +19,7 @@ class CreateCommentTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function authenticated_users_can_view_create_comment_form()
     {
+        AssetHelper::handleMissingAssets();
         $user = User::factory()->create();
 
         $response = $this
@@ -65,6 +67,7 @@ class CreateCommentTest extends TestCase
     #[\PHPUnit\Framework\Attributes\Test]
     public function it_validates_required_fields()
     {
+        AssetHelper::handleMissingAssets();
         $user = User::factory()->create();
 
         // Count comments before to ensure none are created with invalid data
