@@ -21,6 +21,73 @@ Note: Some tests require frontend assets. Run `npm run build` before running tes
 - Run Pint: `./vendor/bin/pint`
 - Generate IDE helper files: `php artisan ide-helper:generate`
 
+## Production Server Management
+
+### SSH Access
+
+```bash
+# Connect to the production server
+ssh forge@jordanpartridge.us
+
+# Navigate to the site directory
+cd /home/forge/jordanpartridge.us
+```
+
+### Logs & Monitoring
+
+```bash
+# View Laravel logs
+tail -f storage/logs/laravel.log
+
+# Filter logs for errors
+grep -i error storage/logs/laravel.log
+
+# Filter logs for specific features
+grep -i 'gmail\|google' storage/logs/laravel.log
+
+# Check PHP-FPM status (requires sudo)
+# Note: Forge user cannot run sudo commands directly
+# This must be done through the Forge dashboard
+```
+
+### Deployment
+
+- Deployments are managed through Laravel Forge
+- Changes pushed to `master` branch trigger automatic deployment
+- Deployment scripts run:
+  1. Pull latest changes from git
+  2. Install composer dependencies
+  3. Run migrations
+  4. Cache configuration
+  5. Restart relevant services
+
+### Troubleshooting
+
+If you encounter issues after deployment:
+
+1. Check Laravel logs: `tail -f storage/logs/laravel.log`
+2. Verify environment variables in `.env`
+3. Check queue workers: `ps aux | grep artisan`
+4. Verify package installation: `composer show | grep package-name`
+5. Clear all caches:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+composer dump-autoload
+```
+
+6. For permission issues:
+   - Files should be owned by forge:forge
+   - Storage/cache directories need to be writable
+
+7. If a package is missing, run:
+   ```bash
+   php -d memory_limit=-1 composer update package/name --with-dependencies
+   ```
+
 ## Gmail Integration
 
 ### Authentication Setup
@@ -29,6 +96,73 @@ Note: Some tests require frontend assets. Run `npm run build` before running tes
 - Access tokens expire after 1 hour, refresh tokens are used automatically
 - Ensure your Google Cloud project is set to "In production" for longer refresh token validity
 - Required OAuth scopes are defined in `config/gmail-client.php`
+
+### Gmail Client Package Installation
+
+The Gmail client integration uses a custom package `partridgerocks/gmail-client` that must be properly installed:
+
+#### Local Development
+
+1. Clone the package repository:
+```bash
+# Clone into a sibling directory to your main project
+cd ~/Sites
+git clone git@github.com:partridgerocks/gmail-client.git
+cd gmail_client
+git checkout feature/gmail-api-integration
+```
+
+2. Configure your main project to use the local package:
+```json
+// In composer.json
+"repositories": [
+    {
+        "type": "path",
+        "url": "../gmail_client"
+    }
+],
+"require": {
+    "partridgerocks/gmail-client": "dev-feature/gmail-api-integration"
+}
+```
+
+3. Install the package:
+```bash
+composer update partridgerocks/gmail-client
+```
+
+#### Production Deployment
+
+For production, the package must be available on GitHub:
+
+1. Ensure the repository exists at github.com/partridgerocks/gmail-client
+2. The repository must have the branch `feature/gmail-api-integration`
+3. The repository must be public or accessible to the deployment server
+4. Configure composer.json with:
+
+```json
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/partridgerocks/gmail-client"
+    }
+],
+"require": {
+    "partridgerocks/gmail-client": "dev-feature/gmail-api-integration"
+}
+```
+
+5. Verify installation on production:
+```bash
+ssh forge@jordanpartridge.us
+cd /home/forge/jordanpartridge.us
+ls -la vendor/partridgerocks/gmail-client
+```
+
+If the package is missing on production, manually install it:
+```bash
+php -d memory_limit=-1 composer update partridgerocks/gmail-client --with-dependencies
+```
 
 ### Google Cloud Project Setup
 
