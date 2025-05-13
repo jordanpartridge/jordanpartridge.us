@@ -104,4 +104,17 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_cache_'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Disable Cache Headers in Testing
+    |--------------------------------------------------------------------------
+    |
+    | When running in testing environment, we need to disable Laravel's default
+    | session and cache headers to allow our middleware to set custom headers
+    | for testing routes with specific cache requirements.
+    |
+    */
+
+    'testing_disable_default_headers' => true,
+
 ];
