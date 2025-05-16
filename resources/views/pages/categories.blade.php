@@ -10,7 +10,10 @@ with(fn () => [
 
 ?>
 
-<x-layouts.marketing>
+<x-layouts.app
+    title="Categories | Jordan Partridge"
+    metaDescription="Browse content by category on Jordan Partridge's website. Laravel development, tutorials, and technical articles."
+>
     <div class="relative flex flex-col w-full px-6 py-10 mx-auto lg:max-w-6xl sm:max-w-xl md:max-w-full sm:pb-16">
         <x-ui.marketing.breadcrumbs :crumbs="[
             ['href' => '/blog', 'text' => 'Blog'],
@@ -65,4 +68,4 @@ with(fn () => [
             @endif
         @endvolt
     </div>
-</x-layouts.marketing>
+</x-layouts.app>
