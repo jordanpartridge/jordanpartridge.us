@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e4b7ee1e23cc39b1aaa3bb673f34c0f1",
+    "content-hash": "7af79cab6c3c7f80987d16d1aa1e8799",
     "packages": [
         {
             "name": "amphp/amp",
@@ -7746,16 +7746,16 @@
         },
         {
             "name": "partridgerocks/gmail-client",
-            "version": "v1.0.1-alpha",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PartridgeRocks/gmail_client.git",
-                "reference": "43e8508fd6e1c0c34b978d0c73e0583827992816"
+                "reference": "4b99dd46a08c296b1e586da717f87d10fec20d01"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PartridgeRocks/gmail_client/zipball/43e8508fd6e1c0c34b978d0c73e0583827992816",
-                "reference": "43e8508fd6e1c0c34b978d0c73e0583827992816",
+                "url": "https://api.github.com/repos/PartridgeRocks/gmail_client/zipball/4b99dd46a08c296b1e586da717f87d10fec20d01",
+                "reference": "4b99dd46a08c296b1e586da717f87d10fec20d01",
                 "shasum": ""
             },
             "require": {
@@ -7814,7 +7814,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PartridgeRocks/gmail_client/issues",
-                "source": "https://github.com/PartridgeRocks/gmail_client/tree/v1.0.1-alpha"
+                "source": "https://github.com/PartridgeRocks/gmail_client/tree/v1.0.2"
             },
             "funding": [
                 {
@@ -7822,7 +7822,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-13T15:30:35+00:00"
+            "time": "2025-05-16T04:43:34+00:00"
         },
         {
             "name": "phpdocumentor/reflection",
@@ -18015,8 +18015,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "devdojo/genesis": 20,
-        "jordanpartridge/github-client": 20,
-        "partridgerocks/gmail-client": 15
+        "jordanpartridge/github-client": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
