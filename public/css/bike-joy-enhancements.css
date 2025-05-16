@@ -1,303 +1,287 @@
-/* Enhanced Bike Joy Styles */
+/* Bike Joy Enhancement Styles */
 
-/* Progress indicators for stats */
-.stat-circle {
+/* Animated gradient background for sections */
+.gradient-bg-animate {
+    background-size: 200% 200%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Reveal animations for content */
+.reveal {
     position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: conic-gradient(#4A6741 var(--percent, 0%), #2C3539 var(--percent, 0%));
-}
-
-.stat-circle::before {
-    content: "";
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    background: #2C3539;
-    border-radius: 50%;
-}
-
-.stat-circle-content {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    z-index: 1;
-}
-
-/* Enhanced Cards */
-.enhanced-card {
-    background: linear-gradient(135deg, #2C3539, #3A4750);
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-}
-
-.enhanced-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
-}
-
-.enhanced-card::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 6px;
-    background: linear-gradient(90deg, #4A6741, #8A9A80);
-}
-
-/* Weather indicators */
-.weather-indicator {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(4px);
-}
-
-/* Interactive route display */
-.route-preview {
-    position: relative;
-    height: 180px;
-    background-color: #E6E8E6;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.route-path {
-    position: absolute;
-    height: 6px;
-    background: linear-gradient(90deg, #4A6741, #8A9A80);
-    border-radius: 3px;
-    transform-origin: left center;
-}
-
-.route-marker {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #4A6741;
-    border: 2px solid white;
-    transform: translate(-50%, -50%);
-}
-
-.route-marker.start {
-    background-color: #4CAF50;
-}
-
-.route-marker.end {
-    background-color: #F44336;
-}
-
-/* Enhanced section headers */
-.military-section-header {
-    position: relative;
-    text-align: center;
-    padding-bottom: 15px;
-    margin-bottom: 30px;
-}
-
-.military-section-header::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(90deg, #4A6741, #8A9A80);
-}
-
-/* Improved empty state */
-.empty-deployment-logs {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 20px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-    border: 2px dashed #4A6741;
-}
-
-.empty-deployment-logs svg {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 20px;
-    color: #4A6741;
-}
-
-/* Weather forecast section */
-.weather-forecast {
-    background-color: rgba(42, 50, 56, 0.8);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.weather-forecast-header {
-    background: linear-gradient(90deg, #4A6741, #8A9A80);
-    padding: 15px;
-    color: white;
-}
-
-.weather-day {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.weather-day:last-child {
-    border-bottom: none;
-}
-
-.weather-icon {
-    font-size: 24px;
-    margin-right: 10px;
-}
-
-/* Map viewport style */
-.map-viewport {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 4px solid transparent;
-    border-image: repeating-linear-gradient(
-        45deg,
-        #4A6741,
-        #4A6741 10px,
-        #8A9A80 10px,
-        #8A9A80 20px,
-        #52595D 20px,
-        #52595D 30px
-    ) 1;
-}
-
-.night-ops-toggle input {
+    transform: translateY(20px);
     opacity: 0;
-    width: 0;
-    height: 0;
+    transition: all 1s ease;
 }
 
-.night-ops-slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    transition: .4s;
-    border-radius: 34px;
+.reveal.active {
+    transform: translateY(0);
+    opacity: 1;
 }
 
-.night-ops-slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .night-ops-slider {
-    background-color: #4A6741;
-}
-
-input:checked + .night-ops-slider:before {
-    transform: translateX(26px);
-}
-
-.night-ops-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.night-ops-label span {
-    margin-left: 10px;
-    font-weight: 600;
-}
-
-/* Improved Creed Section */
-.creed-container {
-    position: relative;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 30px;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.creed-background {
-    position: absolute;
+/* Particles canvas styling */
+#particles-canvas {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('/img/topo-pattern.png');
-    background-size: cover;
-    opacity: 0.1;
-    z-index: 0;
+    z-index: -1;
+    pointer-events: none;
 }
 
-.creed-content {
+/* Enhanced project cards with perspective hover */
+.project-card {
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* Custom skill bar styling */
+.skill-bar {
+    height: 8px;
+    width: 100%;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    position: relative;
+}
+
+.skill-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1.5s ease;
+    background: linear-gradient(90deg, var(--primary-500) 0%, var(--secondary-500) 100%);
+}
+
+.dark .skill-bar {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Glowing border effect for cards in dark mode */
+.dark .glow-border {
+    box-shadow: 0 0 15px 1px rgba(14, 165, 233, 0.3);
+}
+
+/* Scribble underline effect for headings */
+.scribble-underline {
+    position: relative;
+    display: inline-block;
+}
+
+.scribble-underline:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 8px;
+    bottom: -5px;
+    left: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='8' viewBox='0 0 100 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4.5C11 1.5 19 7.5 29.5 6C40 4.5 46.5 1 56.5 1C66.5 1 73 6.5 84 6.5C95 6.5 98.5 3 98.5 3' stroke='%230EA5E9' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-size: 100px 8px;
+}
+
+.dark .scribble-underline:after {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='8' viewBox='0 0 100 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4.5C11 1.5 19 7.5 29.5 6C40 4.5 46.5 1 56.5 1C66.5 1 73 6.5 84 6.5C95 6.5 98.5 3 98.5 3' stroke='%2338BDF8' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Audio theme toggle effect */
+.audio-toggle {
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Typewriter text effect */
+.typewriter-text {
+    border-right: 2px solid;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: blink-caret 0.75s step-end infinite;
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: currentColor }
+}
+
+/* Highlight text */
+.highlight {
     position: relative;
     z-index: 1;
 }
 
-/* Animation for stat numbers */
-@keyframes countUp {
-    from {
-        transform: translateY(10px);
-        opacity: 0;
+.highlight:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 30%;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.3), rgba(20, 184, 166, 0.3));
+    z-index: -1;
+    transform: skewX(-15deg);
+}
+
+.dark .highlight:after {
+    background: linear-gradient(90deg, rgba(56, 189, 248, 0.3), rgba(45, 212, 191, 0.3));
+}
+
+/* Custom button hover effects */
+.btn-hover-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-hover-effect:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.btn-hover-effect:hover:after {
+    left: 100%;
+}
+
+/* Enhanced Timeline Component Styles */
+.timeline-component {
+    --pulse-color-light: rgba(14, 165, 233, 0.5);
+    --pulse-color-dark: rgba(56, 189, 248, 0.3);
+}
+
+/* Timeline gradient line with animation */
+.timeline-component .timeline-pulse {
+    animation: timeline-pulse 8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px var(--pulse-color-light);
+}
+
+.dark .timeline-component .timeline-pulse {
+    box-shadow: 0 0 12px var(--pulse-color-dark);
+}
+
+/* Timeline gradient texts */
+.timeline-component .gradient-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* Refined timeline card hover effects */
+.timeline-component .timeline-card {
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.timeline-component .timeline-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Timeline item appear animations */
+.timeline-component .animate-timeline-item {
+    animation: timeline-item-reveal 0.6s ease-out forwards;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apply animation delay based on data-delay attribute */
+.timeline-component .timeline-item {
+    --delay: 0s;
+}
+
+.timeline-component .timeline-item[data-delay="0.1"] { --delay: 0.1s; }
+.timeline-component .timeline-item[data-delay="0.2"] { --delay: 0.2s; }
+.timeline-component .timeline-item[data-delay="0.3"] { --delay: 0.3s; }
+.timeline-component .timeline-item[data-delay="0.4"] { --delay: 0.4s; }
+.timeline-component .timeline-item[data-delay="0.5"] { --delay: 0.5s; }
+.timeline-component .timeline-item[data-delay="0.6"] { --delay: 0.6s; }
+.timeline-component .timeline-item[data-delay="0.7"] { --delay: 0.7s; }
+.timeline-component .timeline-item[data-delay="0.8"] { --delay: 0.8s; }
+.timeline-component .timeline-item[data-delay="0.9"] { --delay: 0.9s; }
+.timeline-component .timeline-item[data-delay="1.0"] { --delay: 1.0s; }
+
+.timeline-component .animate-timeline-item {
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes timeline-item-reveal {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .timeline-component .animate-timeline-item {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
     }
-    to {
-        transform: translateY(0);
-        opacity: 1;
+    
+    .timeline-component .timeline-dot,
+    .timeline-component .timeline-tag,
+    .timeline-component .timeline-card {
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .btn-hover-effect:after,
+    .gradient-bg-animate,
+    .reveal {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .typewriter-text {
+        animation: none !important;
+        border-right: none !important;
     }
 }
 
-.animate-count {
-    animation: countUp 1s ease-out forwards;
+/* Dot indicators with pulse effect */
+.timeline-component .timeline-dot {
+    transition: all 0.3s ease;
+    position: relative;
 }
 
-/* Improved responsive design */
-@media (max-width: 768px) {
-    .stat-circle {
-        width: 80px;
-        height: 80px;
-    }
-    
-    .military-section-header {
-        font-size: 1.5rem;
-    }
-    
-    .route-preview {
-        height: 140px;
-    }
+.timeline-component .timeline-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: transparent;
+    z-index: -1;
+    transition: all 0.3s ease;
+}
+
+.timeline-component .timeline-dot:hover::after {
+    background: radial-gradient(circle, var(--pulse-color-light) 0%, transparent 70%);
+}
+
+.dark .timeline-component .timeline-dot:hover::after {
+    background: radial-gradient(circle, var(--pulse-color-dark) 0%, transparent 70%);
+}
+
+/* Add subtle animation to timeline tag badges */
+.timeline-component .timeline-tag {
+    transition: all 0.2s ease;
+}
+
+.timeline-component .timeline-tag:hover {
+    transform: scale(1.05);
 }

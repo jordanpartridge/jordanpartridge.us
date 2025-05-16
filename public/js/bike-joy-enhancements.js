@@ -1,109 +1,178 @@
-// Enhanced interactions for Bike Joy page
-
 document.addEventListener('DOMContentLoaded', function() {
-    // Animated stat counters
-    function animateStats() {
-        const statElements = document.querySelectorAll('.animate-stat');
-        statElements.forEach(el => {
-            const targetValue = parseFloat(el.getAttribute('data-value'));
-            const suffix = el.getAttribute('data-suffix') || '';
-            const duration = 2000; // Animation duration in milliseconds
-            const frameDuration = 1000 / 60; // 60fps
-            const totalFrames = Math.round(duration / frameDuration);
-            let frame = 0;
-            
-            const counter = setInterval(() => {
-                frame++;
-                const progress = frame / totalFrames;
-                const currentValue = Math.round(targetValue * progress * 10) / 10;
-                
-                el.textContent = currentValue.toFixed(1) + suffix;
-                
-                if (frame === totalFrames) {
-                    clearInterval(counter);
-                }
-            }, frameDuration);
-        });
-    }
-    
-    // Initialize circular progress indicators
-    function initProgressCircles() {
-        const circles = document.querySelectorAll('.stat-circle');
-        circles.forEach(circle => {
-            const value = parseFloat(circle.getAttribute('data-value'));
-            const max = parseFloat(circle.getAttribute('data-max')) || 100;
-            const percent = (value / max) * 100;
-            circle.style.setProperty('--percent', `${percent}%`);
-        });
-    }
-    
-    }
-    
-    // Simulate route paths on the route previews
-    function initRoutePreviews() {
-        document.querySelectorAll('.route-preview').forEach(preview => {
-            const path = preview.querySelector('.route-path');
-            const startMarker = preview.querySelector('.route-marker.start');
-            const endMarker = preview.querySelector('.route-marker.end');
-            
-            // Random path generation for visual purposes
-            const length = Math.random() * 40 + 60; // 60-100% width
-            const height = Math.random() * 60 - 30; // -30 to +30px vertical variation
-            const curvePoint = Math.random() * 0.6 + 0.2; // Curve point between 20-80% of path
-            
-            path.style.width = `${length}%`;
-            path.style.top = `50%`;
-            path.style.left = `10%`;
-            path.style.height = `${6 + Math.random() * 4}px`; // 6-10px height
-            path.style.transform = `translateY(-50%) perspective(400px) rotateX(${Math.random() * 30 - 15}deg)`;
-            
-            // Position markers
-            startMarker.style.left = '10%';
-            startMarker.style.top = '50%';
-            
-            endMarker.style.left = `${length + 10}%`;
-            endMarker.style.top = '50%';
-        });
-    }
-    
-    ];
+    // Initialize dark mode toggle sound effects
+    const setupSoundEffects = () => {
+        const darkModeToggle = document.querySelector('.dark-mode-toggle');
+        const darkModeSound = document.getElementById('dark-mode-sound');
+        const lightModeSound = document.getElementById('light-mode-sound');
         
-        const forecastContainer = document.querySelector('.weather-forecast-days');
-        if (forecastContainer) {
-            forecasts.forEach(forecast => {
-                const dayEl = document.createElement('div');
-                dayEl.className = 'weather-day';
-                dayEl.innerHTML = `
-                    <div class="flex items-center">
-                        <span class="weather-icon">${forecast.icon}</span>
-                        <span>${forecast.day}</span>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="mr-3">${forecast.temp}</span>
-                        <span class="text-sm text-gray-400">${forecast.condition}</span>
-                    </div>
-                `;
-                forecastContainer.appendChild(dayEl);
+        if (darkModeToggle && darkModeSound && lightModeSound) {
+            // Pre-load the sounds
+            darkModeSound.load();
+            lightModeSound.load();
+            
+            // Create a function to handle the toggle with sound
+            function handleToggleWithSound() {
+                const isDark = document.documentElement.classList.contains('dark');
+                if (isDark) {
+                    lightModeSound.play().catch(err => console.log('Sound play prevented by browser'));
+                } else {
+                    darkModeSound.play().catch(err => console.log('Sound play prevented by browser'));
+                }
+            }
+            
+            // Listen for dark mode changes
+            darkModeToggle.addEventListener('click', handleToggleWithSound);
+        }
+    };
+    
+    // Try to setup sound effects
+    try {
+        setupSoundEffects();
+    } catch (e) {
+        console.log('Sound effects setup failed:', e);
+    }
+    // Particle background animation for home page
+    const setupParticles = () => {
+        const canvas = document.getElementById('particles-canvas');
+        if (\!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        const isDarkMode = document.documentElement.classList.contains('dark');
+
+        // Set canvas dimensions
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Particle configuration
+        const particles = [];
+        const particleCount = 50;
+        const particleBaseSize = 2;
+        const particleVariation = 1;
+        const baseSpeed = 0.3;
+        const lineDistance = 150;
+        
+        // Color configuration based on theme
+        const getParticleColor = (opacity) => {
+            return isDarkMode 
+                ? `rgba(14, 165, 233, ${opacity})` // Primary blue in dark mode
+                : `rgba(20, 184, 166, ${opacity})`; // Secondary teal in light mode
+        };
+
+        // Create particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: particleBaseSize + Math.random() * particleVariation,
+                speedX: (Math.random() - 0.5) * baseSpeed,
+                speedY: (Math.random() - 0.5) * baseSpeed,
+                opacity: 0.1 + Math.random() * 0.4
             });
         }
-    }
-    
-    // Init all enhancements
-    function initEnhancements() {
-        animateStats();
-        initProgressCircles();
-        initRoutePreviews();
+
+        // Animation function
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Update and draw particles
+            particles.forEach((particle, index) => {
+                // Update position
+                particle.x += particle.speedX;
+                particle.y += particle.speedY;
+                
+                // Bounce off edges
+                if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
+                if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
+                
+                // Draw particle
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                ctx.fillStyle = getParticleColor(particle.opacity);
+                ctx.fill();
+                
+                // Draw connections
+                particles.forEach((otherParticle, otherIndex) => {
+                    if (index === otherIndex) return;
+                    
+                    const dx = particle.x - otherParticle.x;
+                    const dy = particle.y - otherParticle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < lineDistance) {
+                        const opacity = (1 - distance / lineDistance) * 0.2;
+                        ctx.beginPath();
+                        ctx.moveTo(particle.x, particle.y);
+                        ctx.lineTo(otherParticle.x, otherParticle.y);
+                        ctx.strokeStyle = getParticleColor(opacity);
+                        ctx.stroke();
+                    }
+                });
+            });
+            
+            requestAnimationFrame(animate);
+        }
         
-    }
-    
-    // Run initializations
-    initEnhancements();
-    
-    // Add to window for Alpine.js
-    window.bikeJoyEnhancements = {
-        animateStats,
-        initProgressCircles,
-        initRoutePreviews,
-        
+        animate();
     };
+
+    // Initialize features
+    setupParticles();
+
+    // Listen for dark mode changes
+    const darkModeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.attributeName === 'class') {
+                setupParticles(); // Reinitialize particles when theme changes
+            }
+        });
+    });
+    
+    darkModeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    });
+
+    // Fancy hover effects for project cards
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            
+            const angleX = (y - centerY) / 15;
+            const angleY = (centerX - x) / 15;
+            
+            card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) scale3d(1.02, 1.02, 1.02)`;
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)';
+        });
+    });
+    
+    // Typewriter effect for hero section text
+    const typewriterElements = document.querySelectorAll('.typewriter-text');
+    typewriterElements.forEach(element => {
+        const text = element.textContent;
+        element.textContent = '';
+        
+        let i = 0;
+        const typeWriter = () => {
+            if (i < text.length) {
+                element.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        };
+        
+        typeWriter();
+    });
 });

@@ -1,4 +1,7 @@
-<x-layouts.marketing>
+<x-layouts.app
+    title="Work With Me | Jordan Partridge"
+    metaDescription="Partner with Jordan Partridge for your Laravel development needs. Expert solutions tailored to your business requirements."
+>
     @volt('work-with-me')
     <div class="min-h-screen bg-gradient-to-br from-gray-100 to-white dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white transition-colors duration-300">
         <div class="container mx-auto px-4 py-16">
@@ -321,4 +324,4 @@
         </div>
     </div>
     @endvolt
-</x-layouts.marketing>
+</x-layouts.app>
