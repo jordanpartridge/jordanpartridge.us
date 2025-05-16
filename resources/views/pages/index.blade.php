@@ -10,7 +10,7 @@
                 <!-- Avatar -->
                 <div class="relative mb-8">
                     <div class="absolute inset-0 bg-primary-400/20 dark:bg-primary-400/30 rounded-full blur-lg"></div>
-                    <x-ui.avatar class="relative w-32 h-32 md:w-40 md:h-40 mx-auto border-4 border-white dark:border-gray-800 rounded-full shadow-xl"/>
+                    <x-ui.avatar class="p-0 w-32 h-32 md:w-40 md:h-40" alt="Photo of Jordan Partridge"/>
                     <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-primary-500 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg">
                         <span x-data="{ titles: ['Laravel Expert', 'Full-Stack Developer', 'TALL Stack Artisan'], currentIndex: 0 }"
                               x-init="setInterval(() => { currentIndex = (currentIndex + 1) % titles.length }, 3000)"
@@ -102,24 +102,7 @@
                         </a>
                     </div>
 
-                    <!-- Trust Badges -->
-                    <div class="mt-20">
-                        <p class="text-gray-500 dark:text-gray-400 mb-6 text-sm uppercase tracking-wider font-medium">Trusted By</p>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 items-center">
-                            <div class="flex justify-center">
-                                <img src="{{ asset('img/clients/goodwill.png') }}" alt="Goodwill" class="h-12 opacity-75 dark:opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" onerror="this.style.display='none'">
-                            </div>
-                            <div class="flex justify-center">
-                                <img src="{{ asset('img/clients/pstrax.png') }}" alt="PSTrax" class="h-12 opacity-75 dark:opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" onerror="this.style.display='none'">
-                            </div>
-                            <div class="flex justify-center">
-                                <img src="{{ asset('img/clients/atmosol.png') }}" alt="Atmosol" class="h-12 opacity-75 dark:opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" onerror="this.style.display='none'">
-                            </div>
-                            <div class="flex justify-center">
-                                <img src="{{ asset('img/clients/insight.png') }}" alt="Insight" class="h-12 opacity-75 dark:opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-300" onerror="this.style.display='none'">
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Trust Badges section removed as logos are not yet available -->
                 </div>
             </div>
         </div>
