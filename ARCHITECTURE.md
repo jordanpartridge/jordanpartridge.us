@@ -51,7 +51,7 @@ The site operates as a collection of integrated applications:
 
 The application uses a hierarchical component structure for views:
 
-```
+```text
 resources/views/
 ├── components/      # Reusable view components
 │   ├── bike-joy/    # Bike section components
@@ -75,10 +75,10 @@ resources/views/
 2. **Component Hierarchy**
    - Base UI components (ui/) provide foundational elements
    - Feature-specific components build on these base components
-   - Page templates compose multiple components together
+   - Page templates compose multiple components together.
 
 3. **Layout Components**
-   - The `layouts/` directory contains wrapper layouts
+   - The `layouts/` directory contains wrapper templates
    - Layouts handle document structure, meta information, and shared elements
    - Feature sections use appropriate layouts based on context
 
@@ -88,7 +88,7 @@ resources/views/
 
 The GitHub integration showcases repositories on the website and syncs repository data:
 
-1. **Service Layer**
+1. **The Service Layer**
    - `GitHubService` handles repository fetching and syncing
    - `GitHubSyncService` manages periodic updates
    - These services use Laravel's built-in HTTP client to interact with GitHub's API
@@ -118,7 +118,7 @@ Connects to Strava's API to fetch and display cycling activities:
 
 3. **Components**
    - Specialized bike activity components in `components/bike-joy/`
-   - Custom styling with biking theme
+   - Custom styling with a biking theme
 
 ### Gmail Integration
 
@@ -142,7 +142,7 @@ Integrates with Gmail API for email tracking and management:
 
 The site uses Laravel Folio for route-by-blade file structure, allowing direct routing from blade files:
 
-```
+```text
 resources/views/pages/
 ├── bike/                   # Bike section pages
 │   ├── index.blade.php     # Main bike dashboard
@@ -210,7 +210,7 @@ Volt is used for simplified Livewire components directly in Blade files:
 
 3. **GitHub Management**
    - Repository synchronization
-   - Repository featuring for homepage
+   - Repository featuring for the homepage
 
 ### Custom Pages
 
@@ -388,7 +388,7 @@ The project has been upgraded to Laravel 12, which includes several key changes:
    - New PHP 8.2+ features usage
 
 2. **Package Updates**
-   - Laravel Prompts has been updated to match Laravel 12 requirements
+   - Laravel Prompts have been updated to match Laravel 12 requirements
    - Various dependency updates for compatibility
 
 3. **Middleware Implementations**
@@ -425,7 +425,7 @@ The project has been upgraded to Laravel 12, which includes several key changes:
 
 2. **API Integration Problems**
    - Verify API credentials are correctly set
-   - Check for rate limiting issues
+   - Check for rate-limiting issues
    - Examine API response logs
 
 3. **Database Migration Failures**
@@ -435,7 +435,7 @@ The project has been upgraded to Laravel 12, which includes several key changes:
 
 ### Logging and Monitoring
 
-- Review Laravel logs at `storage/logs/laravel.log`
+- Review Laravel logs in `storage/logs/laravel.log`
 - Monitor queue workers with `ps aux | grep artisan`
 - Use database seeders for test data population
 

@@ -1,92 +1,50 @@
 <?php
 
+// Blog module middleware
 use App\Models\Post;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Analytics;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
-/**
- * Add social media meta tags to the response
- */
-function addSocialMetaTags($response, $post)
-{
-    // We need to modify the HTML content to add meta tags
-    $content = $response->getContent();
+return function (\Illuminate\Http\Request $request, \Closure $next) {
+    // Cache key for blog-related pages
+    $cacheKey = 'blog.page_' . md5($request->fullUrl());
 
-    // Only add meta tags if we have a <head> section
-    if (strpos($content, '</head>') !== false) {
-        // Create meta tags
-        $metaTags = <<<HTML
-        <meta property="og:type" content="blog" />
-        <meta property="og:title" content="{$post->title}" />
-        <meta property="og:url" content="{$post->route()}" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="{$post->title}" />
-HTML;
+    // Set cache headers for blog pages
+    $response = $next($request);
+    $response->header('Cache-Control', 'public, max-age=300');
 
-        // Add image tag if available
-        if ($post->image) {
-            $metaTags .= <<<HTML
-            <meta property="og:image" content="{$post->image}" />
-            <meta name="twitter:image" content="{$post->image}" />
-HTML;
+    // Add analytics tracking for blog pages
+    try {
+        Analytics::trackView('/blog' . ($request->path() !== 'blog' ? '/' . $request->path() : ''));
+    } catch (\Exception $e) {
+        report($e);
+    }
+
+    // Get route parameters for blog page
+    $routeParams = Route::current()->parameters();
+
+    // If we're on a specific post page, add appropriate Open Graph tags
+    if (isset($routeParams['Post'])) {
+        $post = $routeParams['Post'];
+
+        // Set Open Graph meta tags for the post
+        $response->header('x-og-title', $post->title);
+        $response->header('x-og-description', $post->excerpt ?? substr(strip_tags($post->body), 0, 160));
+
+        // Add validation for post image URL before setting the meta tag
+        if ($post->image && (str_starts_with($post->image, 'http') || file_exists(public_path('storage/' . $post->image)))) {
+            $response->header('x-og-image', str_starts_with($post->image, 'http') ? $post->image : asset('storage/' . $post->image));
+        } else {
+            // Fallback to a default image if post image is missing or invalid
+            $response->header('x-og-image', asset('img/hero.gif'));
         }
-
-        // Add description if available
-        if ($post->excerpt) {
-            $metaTags .= <<<HTML
-            <meta property="og:description" content="{$post->excerpt}" />
-            <meta name="twitter:description" content="{$post->excerpt}" />
-HTML;
-        }
-
-        // Insert meta tags before </head>
-        $content = str_replace('</head>', $metaTags . "\n</head>", $content);
-        $response->setContent($content);
+    } else {
+        // Default Open Graph tags for blog section
+        $response->header('x-og-title', "Jordan's Blog");
+        $response->header('x-og-description', 'Thoughts on software, cycling, and life in general');
+        $response->header('x-og-image', asset('img/hero.gif'));
     }
 
     return $response;
-}
-
-return [
-    '*' => function (Request $request, Closure $next) {
-        $startTime = microtime(true);
-
-        $response = $next($request);
-
-        // Add security headers
-        $response->header('X-Frame-Options', 'SAMEORIGIN');
-        $response->header('X-XSS-Protection', '1; mode=block');
-        $response->header('X-Content-Type-Options', 'nosniff');
-
-        // Calculate response time
-        $endTime = microtime(true);
-        $responseTime = round(($endTime - $startTime) * 1000, 2);
-        $response->header('X-Response-Time-Ms', $responseTime);
-
-        // Default cache time for blog index (1 hour)
-        $cacheTime = 3600;
-
-        // Get current route parameters
-        $routeParameters = Route::current()->parameters();
-
-        // If this is a single post page (has slug parameter)
-        if (isset($routeParameters['Post:slug'])) {
-            // Individual posts have 4 hour cache
-            $cacheTime = 14400;
-
-            // Get the post
-            $slug = $routeParameters['Post:slug'];
-            $post = Post::where('slug', $slug)->first();
-
-            // Add social meta tags for individual posts
-            if ($post) {
-                $response = addSocialMetaTags($response, $post);
-            }
-        }
-
-        // Set cache headers
-        $response->header('Cache-Control', "public, max-age={$cacheTime}");
-
-        return $response;
-    },
-];
+};
