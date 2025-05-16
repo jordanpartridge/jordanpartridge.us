@@ -13,12 +13,12 @@
             @endphp
 
             <div
-                class="relative {{ $animated ? 'opacity-0 translate-y-4' : '' }}"
+                class="relative {{ $animated ? 'opacity-0 translate-y-4' : '' }} timeline-item"
                 x-intersect.once="$el.classList.add('animate-timeline-item')"
                 x-data="{ isHovered: false }"
                 @mouseenter="isHovered = true"
                 @mouseleave="isHovered = false"
-                style="{{ $animated ? '--delay: ' . $delay . 's' : '' }}"
+                data-delay="{{ $delay }}"
             >
                 <!-- Dot indicator - simplified for better alignment -->
                 <div
@@ -57,7 +57,9 @@
                             <div class="absolute left-0 top-0 w-1 h-full bg-{{ $color }}-500 dark:bg-{{ $color }}-400"></div>
 
                             <div class="prose prose-sm dark:prose-invert max-w-none relative z-10 pl-3"> <!-- Added pl-3 for padding from the accent border -->
-                                {!! $item['content'] ?? '' !!}
+                                @if (isset($item['content']))
+                                    {!! e($item['content'], false) !!}
+                                @endif
                             </div>
 
                             @if (isset($item['tags']) && is_array($item['tags']) && count($item['tags']) > 0)
@@ -87,16 +89,5 @@
         @endforeach
     </div>
 
-    <style>
-        /* Timeline item reveal animation */
-        .animate-timeline-item {
-            animation: timeline-item-reveal 0.6s ease-out forwards;
-            animation-delay: var(--delay, 0s);
-        }
-
-        @keyframes timeline-item-reveal {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <!-- Animations moved to bike-joy-enhancements.css -->
 </div>

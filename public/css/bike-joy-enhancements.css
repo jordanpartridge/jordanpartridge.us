@@ -195,8 +195,62 @@
 
 /* Timeline item appear animations */
 .timeline-component .animate-timeline-item {
+    animation: timeline-item-reveal 0.6s ease-out forwards;
     animation-fill-mode: both;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Apply animation delay based on data-delay attribute */
+.timeline-component .timeline-item {
+    --delay: 0s;
+}
+
+.timeline-component .timeline-item[data-delay="0.1"] { --delay: 0.1s; }
+.timeline-component .timeline-item[data-delay="0.2"] { --delay: 0.2s; }
+.timeline-component .timeline-item[data-delay="0.3"] { --delay: 0.3s; }
+.timeline-component .timeline-item[data-delay="0.4"] { --delay: 0.4s; }
+.timeline-component .timeline-item[data-delay="0.5"] { --delay: 0.5s; }
+.timeline-component .timeline-item[data-delay="0.6"] { --delay: 0.6s; }
+.timeline-component .timeline-item[data-delay="0.7"] { --delay: 0.7s; }
+.timeline-component .timeline-item[data-delay="0.8"] { --delay: 0.8s; }
+.timeline-component .timeline-item[data-delay="0.9"] { --delay: 0.9s; }
+.timeline-component .timeline-item[data-delay="1.0"] { --delay: 1.0s; }
+
+.timeline-component .animate-timeline-item {
+    animation-delay: var(--delay, 0s);
+}
+
+@keyframes timeline-item-reveal {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .timeline-component .animate-timeline-item {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+    }
+    
+    .timeline-component .timeline-dot,
+    .timeline-component .timeline-tag,
+    .timeline-component .timeline-card {
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    .btn-hover-effect:after,
+    .gradient-bg-animate,
+    .reveal {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .typewriter-text {
+        animation: none !important;
+        border-right: none !important;
+    }
 }
 
 /* Dot indicators with pulse effect */

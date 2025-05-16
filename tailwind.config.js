@@ -2,6 +2,23 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
     darkMode: 'class',
+    // Add safelist configuration to protect dynamic classes from being purged
+    safelist: [
+        // Timeline component colors
+        {
+            pattern: /(bg|text|border)-(primary|secondary|blue|indigo|teal|green|purple|pink|gray)-(50|100|200|300|400|500|600|700|800|900|950)/,
+            variants: ['dark', 'hover', 'group-hover', 'focus', 'active']
+        },
+        // Opacity and translation classes for timeline
+        {
+            pattern: /(opacity|translate)-(0|50|100)/,
+            variants: ['dark', 'hover', 'group-hover', 'focus']
+        },
+        // Preserve dark mode variants of timeline classes
+        {
+            pattern: /dark:bg-(primary|secondary|blue|indigo|teal|green|purple|pink|gray)-(50|100|200|300|400|500|600|700|800|900|950)\/[0-9]+/,
+        }
+    ],
     theme: {
         extend: {
             fontFamily: {
