@@ -91,7 +91,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
             return null;
         }
 
-        return app(PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
+        return app(\PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
             $token->access_token,
             $token->refresh_token,
             $token->expires_at->toDateTime()
