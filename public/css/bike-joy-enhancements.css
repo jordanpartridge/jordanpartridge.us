@@ -159,3 +159,75 @@
 .btn-hover-effect:hover:after {
     left: 100%;
 }
+
+/* Enhanced Timeline Component Styles */
+.timeline-component {
+    --pulse-color-light: rgba(14, 165, 233, 0.5);
+    --pulse-color-dark: rgba(56, 189, 248, 0.3);
+}
+
+/* Timeline gradient line with animation */
+.timeline-component .timeline-pulse {
+    animation: timeline-pulse 8s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px var(--pulse-color-light);
+}
+
+.dark .timeline-component .timeline-pulse {
+    box-shadow: 0 0 12px var(--pulse-color-dark);
+}
+
+/* Timeline gradient texts */
+.timeline-component .gradient-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* Refined timeline card hover effects */
+.timeline-component .timeline-card {
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.timeline-component .timeline-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Timeline item appear animations */
+.timeline-component .animate-timeline-item {
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dot indicators with pulse effect */
+.timeline-component .timeline-dot {
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.timeline-component .timeline-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: transparent;
+    z-index: -1;
+    transition: all 0.3s ease;
+}
+
+.timeline-component .timeline-dot:hover::after {
+    background: radial-gradient(circle, var(--pulse-color-light) 0%, transparent 70%);
+}
+
+.dark .timeline-component .timeline-dot:hover::after {
+    background: radial-gradient(circle, var(--pulse-color-dark) 0%, transparent 70%);
+}
+
+/* Add subtle animation to timeline tag badges */
+.timeline-component .timeline-tag {
+    transition: all 0.2s ease;
+}
+
+.timeline-component .timeline-tag:hover {
+    transform: scale(1.05);
+}
