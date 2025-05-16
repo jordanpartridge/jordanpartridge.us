@@ -14,15 +14,7 @@ $journey = [
         'date' => 'Jan 2023 - Apr 2025',
         'title' => 'Manager, Software Engineering',
         'subtitle' => 'Goodwill of Central and Northern Arizona',
-        'content' => '
-            <p>Led a team in developing and maintaining a career services website using PHP and Laravel. Implemented key features:</p>
-            <ul class="list-disc pl-5 mt-2 space-y-1">
-                <li>Team Leadership: Directed development team building user-facing platforms</li>
-                <li>Bridging Design and Engineering: Facilitated communication between designers and engineers</li>
-                <li>Mentorship: Guided engineers on best practices for clean, reusable, and well-tested code</li>
-                <li>Agile Methodologies: Enhanced project delivery and team efficiency</li>
-            </ul>
-        ',
+        'content' => '<p>Led a team developing career services platforms used by multiple Goodwill regions. Focused on team leadership, design-engineering collaboration, mentorship, and Agile methodologies.</p>',
         'tags' => ['Team Leadership', 'PHP', 'Laravel', 'Agile', 'Mentorship'],
         'color' => 'secondary'
     ],
@@ -30,15 +22,7 @@ $journey = [
         'date' => 'May 2022 - Jan 2023',
         'title' => 'Sr Software Engineer',
         'subtitle' => 'Goodwill of Central and Northern Arizona',
-        'content' => '
-            <p>Played a key role in building career services platform utilized by various Goodwill regions nationwide:</p>
-            <ul class="list-disc pl-5 mt-2 space-y-1">
-                <li>Full Stack Development: Built robust solutions using PHP, Laravel, Vue, and modern front-end technologies</li>
-                <li>Code Quality: Conducted comprehensive code reviews ensuring high standards</li>
-                <li>Agile Process: Served as Scrum Master for remote team, optimizing workflows</li>
-                <li>Cross-Functional Collaboration: Worked with designers and product managers to enhance user experience</li>
-            </ul>
-        ',
+        'content' => '<p>Built robust full-stack solutions for career services platform. Served as Scrum Master, conducted code reviews, and worked cross-functionally with design and product teams.</p>',
         'tags' => ['PHP', 'Laravel', 'Vue.js', 'Scrum Master', 'Code Reviews'],
         'color' => 'teal'
     ],
@@ -46,15 +30,7 @@ $journey = [
         'date' => 'Aug 2021 - May 2022',
         'title' => 'Software Engineer',
         'subtitle' => 'Goodwill of Central and Northern Arizona',
-        'content' => '
-            <p>Contributed to the development of career services platform:</p>
-            <ul class="list-disc pl-5 mt-2 space-y-1">
-                <li>Full Stack Development: Maintained solutions using PHP, Laravel, and front-end technologies</li>
-                <li>Code Reviews: Participated in code reviews ensuring quality and best practices</li>
-                <li>Agile Team Member: Collaborated with team members to optimize workflows</li>
-                <li>Feature Implementation: Worked with cross-functional teams to implement enhancements</li>
-            </ul>
-        ',
+        'content' => '<p>Developed and maintained features for career services platform using PHP/Laravel. Participated in code reviews and collaborated with cross-functional teams on implementation.</p>',
         'tags' => ['Laravel', 'PHP', 'Agile', 'Feature Development'],
         'color' => 'blue'
     ],
@@ -70,15 +46,7 @@ $journey = [
         'date' => 'Aug 2017 - Dec 2018',
         'title' => 'Backend Developer',
         'subtitle' => 'atmosol',
-        'content' => '
-            <p>Focused on e-commerce platform development:</p>
-            <ul class="list-disc pl-5 mt-2 space-y-1">
-                <li>Platform Development: Built and maintained e-commerce platforms using BigCommerce and Magento</li>
-                <li>Collaboration: Worked with marketing teams and designers to create cohesive brand experiences</li>
-                <li>Resource Management: Managed resource allocation for billable hours</li>
-                <li>Client Relations: Fostered strong client relationships by providing tailored technical solutions</li>
-            </ul>
-        ',
+        'content' => '<p>Built and maintained e-commerce platforms using BigCommerce and Magento. Managed client relationships and collaborated with marketing and design teams to deliver cohesive brand experiences.</p>',
         'tags' => ['BigCommerce', 'Magento', 'E-Commerce', 'Client Relations'],
         'color' => 'purple'
     ],
