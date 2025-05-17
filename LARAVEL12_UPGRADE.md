@@ -4,6 +4,10 @@
 
 We are in the process of upgrading from Laravel 11.46 to Laravel 12. This branch contains the necessary changes to upgrade to Laravel 12.
 
+## Known Issues
+
+- **Strava Client Dependency**: The `jordanpartridge/strava-client` package needs to be updated to support Laravel 12. There is an open issue (#16) for this at https://github.com/jordanpartridge/strava-client/issues/16. Once that's resolved, the package will properly support Laravel 12.
+
 ## Changes Made
 
 ### 1. Dependency Updates
@@ -21,12 +25,16 @@ We are in the process of upgrading from Laravel 11.46 to Laravel 12. This branch
 
 ## Steps to Complete
 
-1. **Test Compatibility**
+1. **Resolve Package Dependencies**
+   - Update the `jordanpartridge/strava-client` package to support Laravel 12 (see issue #16)
+   - Once the Strava client is updated, the composer dependency conflicts should be resolved
+
+2. **Test Compatibility**
    - Run `composer update` to update all dependencies
    - Fix any remaining dependency conflicts
    - Test the application with Laravel 12
 
-2. **Update Additional Dependencies**
+3. **Update Additional Dependencies**
    - Check compatibility of remaining packages with Laravel 12
    - Update as needed
 
