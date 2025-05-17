@@ -16,6 +16,7 @@ We are in the process of upgrading from Laravel 11.46 to Laravel 12. This branch
 - Updated Laravel Prompts to `^0.3.0` (Required for Laravel 12)
 - Updated Laravel Octane to `^2.9.3` (Compatible with Laravel 12)
 - Updated hirethunk/verbs to `^0.6.4` (Fixed compatibility with Laravel 12)
+- Updated z3d0x/filament-logger to `^0.8.0` (Added Laravel 12 support)
 
 ### 2. Middleware Implementation
 
