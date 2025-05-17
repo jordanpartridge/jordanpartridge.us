@@ -82,6 +82,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
 
     /**
      * Get the Gmail client for the user.
+     *
+     * Retrieves an authenticated Gmail client instance using the user's stored tokens.
+     * Uses the global namespace resolution for the GmailClient class to prevent
+     * namespace resolution issues.
+     *
+     * @return \PartridgeRocks\GmailClient\GmailClient|null The authenticated Gmail client or null if no token exists
      */
     public function getGmailClient()
     {
@@ -91,23 +97,41 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
             return null;
         }
 
-        return app(PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
+        return app(\PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
             $token->access_token,
             $token->refresh_token,
             $token->expires_at->toDateTime()
         );
     }
 
+    /**
+     * Determine if the user can access the given Filament panel.
+     *
+     * @param Panel $panel The Filament panel to check access for
+     * @return bool Always returns true as all users can access panels
+     */
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
     }
 
+    /**
+     * Get the URL for the user's Filament avatar.
+     *
+     * @return string|null The URL to the user's avatar or null if no avatar exists
+     */
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar ? asset($this->avatar) : null;
     }
 
+    /**
+     * Get the activity log options for this model.
+     *
+     * Configures which attributes are logged and how the log entries are named.
+     *
+     * @return LogOptions The configured activity log options
+     */
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logFillable()->useLogName('system');
