@@ -9,6 +9,7 @@ use App\Http\Middleware\LogRequests;
 use App\Models\Client;
 use App\Models\ClientDocument;
 use App\Models\Post;
+//use App\Models\Ride;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -55,9 +56,7 @@ Route::middleware([LogRequests::class])->group(function () {
     |--------------------------------------------------------------------------
     */
     if (app()->environment('local')) {
-        Route::get('test-linkedin-meta', function () {
-            return view('tests.linkedin-meta-test');
-        })->name('test.linkedin-meta');
+        // Routes have been simplified, removing test routes that aren't useful to the site
     }
 
     /*
