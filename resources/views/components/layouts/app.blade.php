@@ -65,6 +65,11 @@
         <!-- Styles and Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+        <!-- Optional CSS for Alpine plugins -->
+        @if (request()->routeIs('alpine-plugins-demo') || request()->routeIs('test.alpine-collapse'))
+            <link href="{{ asset('css/alpine-plugins.css') }}" rel="stylesheet">
+        @endif
+
         <!-- Font Awesome -->
         <script src="https://kit.fontawesome.com/d1901f5db9.js" crossorigin="anonymous"></script>
 

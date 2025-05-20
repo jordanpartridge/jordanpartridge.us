@@ -1,0 +1,90 @@
+/* Alpine.js Plugins Specific Styling */
+
+/* Collapse Animation Styles */
+[x-cloak] {
+    display: none !important;
+}
+
+.collapse-anim-enter-active,
+.collapse-anim-leave-active {
+    transition: all 0.3s ease-out;
+    overflow: hidden;
+}
+
+.collapse-anim-enter-from,
+.collapse-anim-leave-to {
+    opacity: 0;
+    max-height: 0px;
+}
+
+.collapse-anim-enter-to,
+.collapse-anim-leave-from {
+    opacity: 1;
+    max-height: 1000px;
+}
+
+/* Accordion Styles */
+.accordion-content {
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.accordion-content.open {
+    max-height: 500px;
+    opacity: 1;
+}
+
+.accordion-toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.accordion-toggle-icon.open {
+    transform: rotate(180deg);
+}
+
+/* Intersection Animation Styles */
+.fade-in-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.slide-in-right {
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.slide-in-right.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.slide-in-left {
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.slide-in-left.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.scale-in {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scale-in.is-visible {
+    opacity: 1;
+    transform: scale(1);
+}
