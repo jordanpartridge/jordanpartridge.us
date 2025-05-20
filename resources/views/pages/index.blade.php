@@ -5,7 +5,7 @@
     <?php
     use App\Models\Ride;
 
-$latestRide = Ride::latest('date')->first();
+    $latestRide = Ride::latest('date')->first();
     ?>
     <div x-data="{ scrolled: false }"
          x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 50 })"
@@ -31,7 +31,7 @@ $latestRide = Ride::latest('date')->first();
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 relative">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <!-- Left Column: Avatar and Info -->
-                <div class="md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left mb-10 md:mb-0">
+                <div class="md:w-1/2 flex flex-col items-center text-center mb-10 md:mb-0">
                     <div class="relative mb-8 md:mb-10">
                         <div class="absolute inset-0 bg-primary-400/20 dark:bg-primary-400/30 rounded-full blur-lg"></div>
                         <x-ui.avatar class="p-0 w-32 h-32 md:w-40 md:h-40" alt="Photo of Jordan Partridge"/>
@@ -63,7 +63,7 @@ $latestRide = Ride::latest('date')->first();
                     </h2>
 
                     <!-- CTA Buttons -->
-                    <div class="flex flex-col sm:flex-row items-center md:items-start justify-center md:justify-start gap-4 mt-6">
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
                         <a href="#expertise" class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-md text-white bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all duration-300 hover:shadow-lg hover:scale-105">
                             <span>See My Services</span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
