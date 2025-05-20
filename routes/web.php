@@ -55,9 +55,7 @@ Route::middleware([LogRequests::class])->group(function () {
     |--------------------------------------------------------------------------
     */
     if (app()->environment('local')) {
-        Route::get('test-linkedin-meta', function () {
-            return view('tests.linkedin-meta-test');
-        })->name('test.linkedin-meta');
+        // Routes have been simplified, removing test routes that aren't useful to the site
     }
 
     /*

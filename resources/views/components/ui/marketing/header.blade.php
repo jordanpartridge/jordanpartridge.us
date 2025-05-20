@@ -126,15 +126,15 @@
                     @endif
 
                     <!-- Contact Link -->
-                    <x-ui.nav-link href="/contact" dusk="nav-contact" class="text-primary-600 dark:text-primary-400 font-medium">Contact</x-ui.nav-link>
+                    <a href="/contact" dusk="nav-contact" class="px-3 py-2 text-sm font-medium text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border-b-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">Contact</a>
                 </nav>
             </div>
 
             <div class="flex items-center space-x-4">
-                <a href="/work-with-me" dusk="nav-work-with-me" class="hidden lg:flex items-center px-5 py-2.5 font-medium text-white transition-all duration-200 rounded-full bg-primary-600 hover:bg-primary-700 shadow-md hover:shadow-lg transform hover:scale-105">
+                <a href="/work-with-me" dusk="nav-work-with-me" class="hidden xl:flex items-center px-3 py-2 font-medium text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border-b-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
                     Work With Me
                 </a>
-                <a href="/work-with-me" dusk="nav-work-with-me-tablet" class="hidden md:flex lg:hidden items-center px-4 py-2 text-sm font-medium text-white transition-all duration-200 rounded-full bg-primary-600 hover:bg-primary-700 shadow-md hover:shadow-lg transform hover:scale-105">
+                <a href="/work-with-me" dusk="nav-work-with-me-tablet" class="hidden lg:flex xl:hidden items-center px-3 py-2 text-sm font-medium text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border-b-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
                     Work With Me
                 </a>
                 <div class="w-10 h-10 overflow-hidden rounded-full shadow-sm">
@@ -237,11 +237,11 @@
             @endif
 
             <!-- Contact Link -->
-            <x-ui.nav-link href="/contact" dusk="nav-contact" class="py-2 border-b border-gray-200 dark:border-gray-800 text-primary-600 dark:text-primary-400 font-medium">Contact</x-ui.nav-link>
+            <a href="/contact" dusk="nav-contact" class="block py-2 border-b border-gray-200 dark:border-gray-800 text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-all duration-200">Contact</a>
 
-            <!-- Work With Me Button -->
+            <!-- Work With Me Link -->
             <div class="pt-4">
-                <a href="/work-with-me" dusk="nav-work-with-me" class="block w-full py-3 text-center font-medium text-white transition-all duration-200 rounded-lg bg-primary-600 hover:bg-primary-700 shadow-md hover:shadow-lg hover:translate-y-[-2px]">
+                <a href="/work-with-me" dusk="nav-work-with-me" class="block w-full py-3 text-center font-medium text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border-b border-primary-500/50 dark:border-primary-400/50 hover:border-primary-500 dark:hover:border-primary-400">
                     Work With Me
                 </a>
             </div>
