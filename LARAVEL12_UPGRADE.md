@@ -18,11 +18,11 @@ We are in the process of upgrading from Laravel 11.46 to Laravel 12. This branch
 - Updated hirethunk/verbs to `^0.6.4` (Fixed compatibility with Laravel 12)
 - Updated z3d0x/filament-logger to `^0.8.0` (Added Laravel 12 support)
 
-### 2. Middleware Implementation
+### 2. Strava Integration Fixes
 
-- Restored middleware files with Laravel 12 Folio compatibility
-- Updated middleware function signature to adhere to Laravel 12 conventions
-- Changed `$next($request)` to `next($request)` for Laravel 12 middleware
+- Added temporary local implementations for Strava token handling
+- Created `HasStravaTokens` trait and `StravaToken` model
+- These will be replaced once the Strava client package is updated
 
 ## Steps to Complete
 
