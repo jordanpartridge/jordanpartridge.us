@@ -14,6 +14,12 @@
                 <nav class="hidden md:flex space-x-1 md:space-x-6">
                     <x-ui.nav-link href="/" dusk="nav-home">Home</x-ui.nav-link>
 
+                    <!-- Fat Bike Corps Link - Now as a primary navigation item -->
+                    <a href="/bike" dusk="nav-bike" class="flex items-center px-3 py-2 text-sm font-medium text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border-b-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
+                        <i class="fas fa-biking mr-1"></i>
+                        <span>Fat Bike Corps</span>
+                    </a>
+
                     <!-- Software Development Dropdown -->
                     <div class="relative" @click.away="softwareOpen = false">
                         <button
@@ -67,10 +73,10 @@
                             x-cloak
                         >
                             <div class="py-1">
-                                <a href="/bike" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <a href="/strava-client" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <div class="flex items-center">
                                         <i class="fas fa-biking text-primary-500 mr-2"></i>
-                                        <span>Strava Integration</span>
+                                        <span>Strava Client</span>
                                     </div>
                                 </a>
                                 <a href="/software-development#github-api" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -170,6 +176,12 @@
         <nav class="flex flex-col px-6 py-8 space-y-4 text-lg">
             <x-ui.nav-link href="/" dusk="nav-home" class="py-2 border-b border-gray-200 dark:border-gray-800">Home</x-ui.nav-link>
 
+            <!-- Fat Bike Corps Link - Featured prominently -->
+            <a href="/bike" dusk="nav-bike-mobile" class="flex items-center py-2 border-b border-gray-200 dark:border-gray-800 text-primary-600 dark:text-primary-400 font-medium">
+                <i class="fas fa-biking mr-2 text-primary-500"></i>
+                <span>Fat Bike Corps</span>
+            </a>
+
             <!-- Software Development Section -->
             <div x-data="{ open: false }" class="border-b border-gray-200 dark:border-gray-800 py-2">
                 <button @click="open = !open" class="flex items-center justify-between w-full text-left">
@@ -194,10 +206,10 @@
                     </svg>
                 </button>
                 <div x-show="open" x-collapse class="mt-3 pl-4 space-y-2">
-                    <a href="/bike" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                    <a href="/strava-client" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
                         <div class="flex items-center">
                             <i class="fas fa-biking text-primary-500 mr-2"></i>
-                            <span>Strava Integration</span>
+                            <span>Strava Client</span>
                         </div>
                     </a>
                     <a href="/software-development#github-api" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
