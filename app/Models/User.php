@@ -9,7 +9,6 @@ use Filament\Panel;
 use JordanPartridge\StravaClient\Concerns\HasStravaTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use JordanPartridge\StravaClient\Contracts\HasStravaToken;
@@ -29,7 +28,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
     use HasRoles;
     use Notifiable;
     use LogsActivity;
-    use SendsPasswordResetEmails;
 
     /**
      * The attributes that are mass assignable.
