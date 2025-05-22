@@ -295,7 +295,7 @@ This implementation demonstrates how the Strava Client package can be used to cr
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please submit a Pull Request.
 
 ## License
 

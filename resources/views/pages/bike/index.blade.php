@@ -194,8 +194,8 @@ mount(function (RideMetricService $service) {
 
                 <div>
                     <x-bike-corps.date-range-selector
-                        :startDate="$startDate"
-                        :endDate="$endDate"
+                        :startDate="$this->startDate"
+                        :endDate="$this->endDate"
                     />
 
                     <x-bike-corps.stats-dashboard :metrics="$this->metrics" />
@@ -241,38 +241,23 @@ I will..."
                     TACTICAL ADVANTAGES
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- Snow Domination Card -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md camo-border">
-                        <div class="flex items-center mb-4">
-                            <span class="text-3xl mr-3">🌨️</span>
-                            <h3 class="text-xl font-bold text-gray-800 dark:text-white military-font">SNOW DOMINATION</h3>
-                        </div>
-                        <p class="text-gray-600 dark:text-gray-300">
-                            Where other bikes surrender, fat bikes conquer. Those 4.5"+ tires float over snow like a tank with tracks.
-                        </p>
-                    </div>
+                    <x-bike-corps.field-advantage
+                        icon="🌨️"
+                        title="SNOW DOMINATION"
+                        description="Where other bikes surrender, fat bikes conquer. Those 4.5&quot;+ tires float over snow like a tank with tracks."
+                    />
 
-                    <!-- All-Terrain Card -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md camo-border">
-                        <div class="flex items-center mb-4">
-                            <span class="text-3xl mr-3">🏜️</span>
-                            <h3 class="text-xl font-bold text-gray-800 dark:text-white military-font">ALL-TERRAIN</h3>
-                        </div>
-                        <p class="text-gray-600 dark:text-gray-300">
-                            Sand, mud, rocks, roots - the fat bike treats them all as minor obstacles. Ride anywhere, anytime, in any conditions.
-                        </p>
-                    </div>
+                    <x-bike-corps.field-advantage
+                        icon="🏜️"
+                        title="ALL-TERRAIN"
+                        description="Sand, mud, rocks, roots - the fat bike treats them all as minor obstacles. Ride anywhere, anytime, in any conditions."
+                    />
 
-                    <!-- Strength Builder Card -->
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md camo-border">
-                        <div class="flex items-center mb-4">
-                            <span class="text-3xl mr-3">💪</span>
-                            <h3 class="text-xl font-bold text-gray-800 dark:text-white military-font">STRENGTH BUILDER</h3>
-                        </div>
-                        <p class="text-gray-600 dark:text-gray-300">
-                            These aren't your carbon fiber race machines. The extra weight and resistance builds character and muscle. Embrace the pain.
-                        </p>
-                    </div>
+                    <x-bike-corps.field-advantage
+                        icon="💪"
+                        title="STRENGTH BUILDER"
+                        description="These aren't your carbon fiber race machines. The extra weight and resistance builds character and muscle. Embrace the pain."
+                    />
                 </div>
             </div>
         </div>
