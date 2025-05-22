@@ -15,9 +15,8 @@
                     <x-ui.nav-link href="/" dusk="nav-home">Home</x-ui.nav-link>
 
                     <!-- Fat Bike Corps Link - Now as a primary navigation item -->
-                    <a href="/bike" dusk="nav-bike" class="flex items-center px-3 py-2 text-sm font-medium text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border-b-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
-                        <i class="fas fa-biking mr-1"></i>
-                        <span>Fat Bike Corps</span>
+                    <a href="/bike" dusk="nav-bike" class="px-3 py-2 text-sm font-medium text-primary-500 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all duration-200 border-b-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
+                        Fat Bike Corps
                     </a>
 
                     <!-- Software Development Dropdown -->
@@ -73,24 +72,41 @@
                             x-cloak
                         >
                             <div class="py-1">
+                                <div class="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                    Laravel Packages
+                                </div>
                                 <a href="/strava-client" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <div class="flex items-center">
                                         <i class="fas fa-biking text-primary-500 mr-2"></i>
-                                        <span>Strava Client</span>
+                                        <div>
+                                            <span class="font-medium">Strava Client</span>
+                                            <div class="text-xs text-gray-500">Zero-config OAuth</div>
+                                        </div>
                                     </div>
                                 </a>
-                                <a href="/software-development#github-api" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <a href="/integrations/github-integration" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <div class="flex items-center">
                                         <i class="fab fa-github text-primary-500 mr-2"></i>
-                                        <span>GitHub API</span>
+                                        <div>
+                                            <span class="font-medium">GitHub Integration</span>
+                                            <div class="text-xs text-gray-500">Repository sync</div>
+                                        </div>
                                     </div>
                                 </a>
-                                <a href="/software-development#gmail-api" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <a href="/integrations/gmail-client" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <div class="flex items-center">
                                         <i class="fab fa-google text-primary-500 mr-2"></i>
-                                        <span>Gmail API</span>
+                                        <div>
+                                            <span class="font-medium">Gmail Client</span>
+                                            <div class="text-xs text-gray-500">Enterprise email</div>
+                                        </div>
                                     </div>
                                 </a>
+                                <div class="border-t border-gray-200 dark:border-gray-600 mt-2 pt-2">
+                                    <a href="/integrations" class="block px-4 py-2 text-sm text-primary-600 dark:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">
+                                        View All Integration Packages →
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -212,16 +228,16 @@
                             <span>Strava Client</span>
                         </div>
                     </a>
-                    <a href="/software-development#github-api" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                    <a href="/integrations/github-integration" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
                         <div class="flex items-center">
                             <i class="fab fa-github text-primary-500 mr-2"></i>
-                            <span>GitHub API</span>
+                            <span>GitHub Integration</span>
                         </div>
                     </a>
-                    <a href="/software-development#gmail-api" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                    <a href="/integrations/gmail-client" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
                         <div class="flex items-center">
                             <i class="fab fa-google text-primary-500 mr-2"></i>
-                            <span>Gmail API</span>
+                            <span>Gmail Client</span>
                         </div>
                     </a>
                 </div>

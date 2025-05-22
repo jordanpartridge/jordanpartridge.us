@@ -26,21 +26,40 @@ mount(function (RideMetricService $service) {
     $this->recalculateMetrics($service);
 });
 
-
 ?>
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <!-- Include custom fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Black+Ops+One&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-        }
 
-        .military-font {
-            font-family: 'Black Ops One', cursive;
+<x-layouts.marketing>
+    <!-- Add structured data for SEO -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Fat Bike Corps - Laravel Strava Integration",
+        "applicationCategory": "SportsApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "description": "Military-themed fat bike activity tracker powered by Laravel Strava Client package",
+        "author": {
+            "@type": "Person",
+            "name": "Jordan Partridge"
         }
+    }
+    </script>
+
+    @volt('bike')
+    <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden fade-in" x-cloak>
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+            }
+
+            .military-font {
+                font-family: 'Black Ops One', cursive;
+            }
 
         .fade-in {
             animation: fadeIn 1.5s ease-in-out;
@@ -123,9 +142,6 @@ mount(function (RideMetricService $service) {
         }
     </style>
     <link rel="stylesheet" href="{{ asset('css/bike-joy-enhancements.css') }}">
-</head>
-<body>
-<x-layouts.marketing>
     @volt('bike')
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden fade-in" x-cloak>
 
@@ -155,11 +171,26 @@ mount(function (RideMetricService $service) {
                     MISSION: FAT BIKE DIVISION
                 </h1>
 
-                <p class="text-lg mb-8 text-gray-700 dark:text-gray-300">
+                <p class="text-lg mb-4 text-gray-700 dark:text-gray-300">
                     Conquering trails and navigating obstacles with military precision. <br>
                     Fat tires - Because some terrain demands respect. <br>
                     <span class="italic">You don't have to be fat to ride a fat bike, but it sure doesn't hurt the brand.</span>
                 </p>
+
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <a href="https://github.com/jordanpartridge/strava-client" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V19c0 .27.16.59.67.5C17.14 18.16 20 14.42 20 10A10 10 0 0010 0z" clip-rule="evenodd" />
+                        </svg>
+                        Laravel Strava Client Package on GitHub
+                    </a>
+                    <a href="/strava-client" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <svg class="h-5 w-5 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Strava Client Package Documentation
+                    </a>
+                </div>
 
                 <div>
                     <x-bike-corps.date-range-selector
@@ -258,8 +289,9 @@ I will..."
                             <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4">Tactical Strava Integration</h3>
                             <p class="text-gray-600 dark:text-gray-300 mb-4">
                                 The FAT BIKE DIVISION utilizes advanced field intelligence systems through
-                                the Strava API. This tactical integration provides real-time mission data
-                                processing via our custom Laravel Strava Client package.
+                                the <a href="https://developers.strava.com/docs/reference/" class="text-primary-500 hover:text-primary-700 underline" target="_blank">Strava API</a>. This page syncs and displays real ride data using my custom-built
+                                <a href="/strava-client" class="text-primary-500 hover:text-primary-700 underline">Laravel Strava Client package</a>,
+                                which handles OAuth authentication, token management, and activity syncing with elegant Laravel-friendly syntax.
                             </p>
                             <div class="space-y-4">
                                 <div class="flex items-start">
@@ -296,20 +328,7 @@ I will..."
                                     </div>
                                 </div>
                             </div>
-                            <div class="mt-6">
-                                <a href="https://github.com/jordanpartridge/strava-client" target="_blank" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                    <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 0C4.477 0 0 4.477 0 10c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V19c0 .27.16.59.67.5C17.14 18.16 20 14.42 20 10A10 10 0 0010 0z" clip-rule="evenodd" />
-                                    </svg>
-                                    View Package on GitHub
-                                </a>
-                                <a href="/strava-client" class="ml-4 inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                    <svg class="h-5 w-5 mr-2 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Read Documentation
-                                </a>
-                            </div>
+                            <!-- Buttons moved to top of page -->
                         </div>
                         <div class="w-full md:w-1/2 mt-6 md:mt-0">
                             <div class="bg-gray-800 rounded-lg shadow-lg p-4 text-white">

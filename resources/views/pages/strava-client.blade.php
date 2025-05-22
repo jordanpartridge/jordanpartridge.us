@@ -13,8 +13,11 @@ state([]);
         <div class="max-w-7xl mx-auto pt-16 pb-12 px-4 sm:px-6 lg:px-8">
             <div class="text-center">
                 <h1 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">Laravel Strava Client</h1>
-                <p class="max-w-3xl mx-auto text-xl text-primary-100 mb-8">
+                <p class="max-w-3xl mx-auto text-xl text-primary-100 mb-4">
                     A developer-friendly package for seamless Strava API integration in Laravel applications
+                </p>
+                <p class="max-w-2xl mx-auto text-lg text-primary-200 mb-8">
+                    Built by <strong>Jordan Partridge</strong> - Laravel Integration Specialist & API Package Developer
                 </p>
 
                 <!-- Package Stats -->
@@ -207,21 +210,31 @@ $athlete = StravaClient::getAthlete();
                     <h2 class="text-2xl font-semibold">Overview</h2>
                     <p>
                         The Laravel Strava Client is a comprehensive package designed to seamlessly integrate Strava API
-                        functionality into Laravel applications. This package provides developers with tools to authenticate,
-                        retrieve, and manipulate Strava activity data through an elegant and Laravel-friendly interface.
+                        functionality into Laravel applications. Created by <strong>Jordan Partridge</strong>, a specialist in building
+                        Laravel integration packages, this package provides developers with tools to authenticate, retrieve, and
+                        manipulate Strava activity data through an elegant and Laravel-friendly interface.
                     </p>
+
+                    <div class="mt-6 p-4 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <h3 class="font-semibold text-blue-800 dark:text-blue-200 mb-2">Part of Jordan's Integration Package Suite</h3>
+                        <p class="text-blue-700 dark:text-blue-300 text-sm">
+                            This is one of several Laravel integration packages built by Jordan Partridge, including Gmail Client,
+                            GitHub integrations, and other API connectors. Each package follows the same philosophy:
+                            <strong>zero-configuration setup with bulletproof reliability</strong>.
+                        </p>
+                    </div>
 
                     <div class="my-4 pl-6">
                         <p class="font-bold">Key Features:</p>
                         <ul class="list-disc pl-4">
-                            <li><strong>Zero-Configuration OAuth:</strong> Routes and controllers auto-registered - no setup required!</li>
-                            <li><strong>Set & Forget Token Management:</strong> Automatic token refresh on every API call</li>
-                            <li><strong>Transparent Auto-Refresh:</strong> Up to 3 retry attempts with database updates</li>
-                            <li><strong>Clean API Interface:</strong> Simple method calls powered by Saloon HTTP client</li>
-                            <li><strong>Encrypted Token Storage:</strong> Secure database storage with Laravel encryption</li>
-                            <li><strong>Built-in Error Handling:</strong> Comprehensive exception handling for API errors</li>
-                            <li><strong>Laravel Integration:</strong> Model relationships via HasStravaTokens trait</li>
-                            <li><strong>Rate Limiting Protection:</strong> Built-in safeguards for API limits</li>
+                            <li><strong>Enterprise-Grade OAuth Integration:</strong> Zero-configuration setup with auto-registered routes and controllers</li>
+                            <li><strong>Bulletproof Token Management:</strong> Automatic refresh with failover protection (up to 3 retry attempts)</li>
+                            <li><strong>Production-Ready Reliability:</strong> Built by an integration specialist with real-world experience</li>
+                            <li><strong>Laravel-Native Architecture:</strong> Follows Laravel conventions with encrypted database storage</li>
+                            <li><strong>Saloon HTTP Foundation:</strong> Modern HTTP client with comprehensive error handling</li>
+                            <li><strong>Seamless Model Integration:</strong> HasStravaTokens trait for effortless user relationships</li>
+                            <li><strong>API Rate Limit Protection:</strong> Built-in safeguards and intelligent retry logic</li>
+                            <li><strong>Professional Integration Standards:</strong> Same patterns used in Jordan's other integration packages</li>
                         </ul>
                     </div>
                 </div>
@@ -592,6 +605,52 @@ public function handle()
                             <div class="font-semibold">Jordan P.</div>
                             <div class="text-sm text-gray-600 dark:text-gray-400">Developer of Fat Bike Corps</div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Integration Expertise Section -->
+                <div class="mb-12 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900 dark:to-blue-900 dark:bg-opacity-20 rounded-xl p-8 border border-primary-200 dark:border-primary-800">
+                    <h2 class="text-2xl font-bold text-center mb-6">Built by a Laravel Integration Specialist</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-primary-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                                </svg>
+                            </div>
+                            <h3 class="font-semibold mb-2">Strava Integration</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Zero-config OAuth with automatic token refresh</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <h3 class="font-semibold mb-2">Gmail Integration</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Enterprise-grade email API integration</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-semibold mb-2">GitHub Integration</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Repository sync and webhook handling</p>
+                        </div>
+                    </div>
+                    <div class="text-center mt-8">
+                        <p class="text-gray-700 dark:text-gray-300 mb-4">
+                            Jordan Partridge specializes in building <strong>production-ready Laravel integration packages</strong>
+                            that follow enterprise standards and eliminate the complexity of API integrations.
+                        </p>
+                        <a href="/integrations" class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                            </svg>
+                            View All Integration Packages
+                        </a>
                     </div>
                 </div>
 
