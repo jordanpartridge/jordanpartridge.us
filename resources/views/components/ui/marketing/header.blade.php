@@ -75,7 +75,7 @@
                                 <div class="px-4 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Laravel Packages
                                 </div>
-                                <a href="/strava-client" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <a href="/integrations/strava-client" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <div class="flex items-center">
                                         <i class="fas fa-biking text-primary-500 mr-2"></i>
                                         <div>
@@ -222,7 +222,7 @@
                     </svg>
                 </button>
                 <div x-show="open" x-collapse class="mt-3 pl-4 space-y-2">
-                    <a href="/strava-client" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                    <a href="/integrations/strava-client" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
                         <div class="flex items-center">
                             <i class="fas fa-biking text-primary-500 mr-2"></i>
                             <span>Strava Client</span>
