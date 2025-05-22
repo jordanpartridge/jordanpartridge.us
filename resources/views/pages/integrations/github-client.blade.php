@@ -36,6 +36,8 @@ name('integrations.github-client');
 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="https://github.com/jordanpartridge/github-client"
+                       target="_blank" rel="noopener noreferrer"
+                       aria-label="View Laravel GitHub Client package on GitHub"
                        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-gray-900 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200">
                         <i class="fab fa-github mr-2"></i>
                         View on GitHub

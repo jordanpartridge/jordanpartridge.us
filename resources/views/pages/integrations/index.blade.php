@@ -132,7 +132,7 @@ state([]);
                                 <a href="/integrations/strava-client" class="flex-1 bg-orange-600 text-white text-center py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors">
                                     View Documentation
                                 </a>
-                                <a href="https://github.com/jordanpartridge/strava-client" target="_blank" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <a href="https://github.com/jordanpartridge/strava-client" target="_blank" rel="noopener noreferrer" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     GitHub
                                 </a>
                             </div>
@@ -179,7 +179,7 @@ state([]);
                                 <a href="/integrations/github-client" class="flex-1 bg-gray-800 text-white text-center py-2 px-4 rounded-lg hover:bg-gray-900 transition-colors">
                                     View Documentation
                                 </a>
-                                <a href="https://github.com/jordanpartridge/github-client" target="_blank" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <a href="https://github.com/jordanpartridge/github-client" target="_blank" rel="noopener noreferrer" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     GitHub
                                 </a>
                             </div>
@@ -232,7 +232,7 @@ state([]);
                                 <a href="/integrations/gmail-client" class="flex-1 bg-gray-400 text-white text-center py-2 px-4 rounded-lg cursor-not-allowed">
                                     In Development
                                 </a>
-                                <a href="https://github.com/partridgerocks/gmail_client" target="_blank" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <a href="https://github.com/partridgerocks/gmail_client" target="_blank" rel="noopener noreferrer" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     GitHub
                                 </a>
                             </div>
@@ -279,7 +279,7 @@ state([]);
                                 <span class="flex-1 bg-gray-400 text-white text-center py-2 px-4 rounded-lg cursor-not-allowed">
                                     Early Alpha
                                 </span>
-                                <a href="https://github.com/jordanpartridge/packagist-client" target="_blank" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                <a href="https://github.com/jordanpartridge/packagist-client" target="_blank" rel="noopener noreferrer" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                     GitHub
                                 </a>
                             </div>
