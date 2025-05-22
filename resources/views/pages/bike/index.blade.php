@@ -142,7 +142,7 @@ mount(function (RideMetricService $service) {
         }
     </style>
     <link rel="stylesheet" href="{{ asset('css/bike-joy-enhancements.css') }}">
-    @volt('bike')
+
     <div class="relative flex flex-col items-center justify-center w-full h-auto overflow-hidden fade-in" x-cloak>
 
         <x-svg-header></x-svg-header>
