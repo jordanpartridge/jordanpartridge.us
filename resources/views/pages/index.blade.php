@@ -40,10 +40,10 @@
 
                     <!-- Marquee text below the avatar -->
                     <div class="mb-4 text-lg text-primary-600 dark:text-primary-400 font-medium">
-                        <span x-data="{ titles: ['Laravel Expert', 'Full-Stack Developer', 'TALL Stack Artisan'], currentIndex: 0 }"
+                        <span x-data="{ titles: ['Laravel Expert', 'API Integration Specialist', 'Code Auditor', 'Full-Stack Developer', 'TALL Stack Artisan', 'Fat Bike Enthusiast', 'Package Developer'], currentIndex: 0 }"
                               x-init="setInterval(() => { currentIndex = (currentIndex + 1) % titles.length }, 3000)"
                               x-text="titles[currentIndex]"
-                              class="inline-block min-w-[180px]">
+                              class="inline-block min-w-[200px]">
                         </span>
                     </div>
 
@@ -108,15 +108,15 @@
                         </div>
 
                         <div class="flex items-start">
-                            <div class="flex-shrink-0 bg-green-100 dark:bg-green-900/50 rounded-full p-3 mr-4">
-                                <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            <div class="flex-shrink-0 bg-teal-100 dark:bg-teal-900/50 rounded-full p-3 mr-4">
+                                <svg class="w-6 h-6 text-teal-600 dark:text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
                                 </svg>
                             </div>
                             <div>
-                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">Robust & Secure</h3>
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2">API Integration</h3>
                                 <p class="text-gray-600 dark:text-gray-300">
-                                    Following best practices for security and reliability.
+                                    Seamlessly connecting systems with Strava, GitHub, and custom APIs.
                                 </p>
                             </div>
                         </div>
@@ -155,6 +155,182 @@
                 </div>
             </div>
             @endif
+
+            <!-- API Integration Packages Section -->
+            <div class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gradient-to-br from-primary-50/50 to-teal-50/50 dark:from-gray-800/50 dark:to-gray-700/50 rounded-3xl mx-4 mb-24">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        Open Source API Integration Packages
+                    </h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                        Building Laravel packages that make API integrations simple and reliable. These production-ready packages power real applications and are trusted by developers worldwide.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                    <!-- Strava Client Package -->
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-orange-100 dark:bg-orange-900/50 p-3 rounded-full mr-4">
+                                <svg class="w-8 h-8 text-orange-600 dark:text-orange-400" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.599h4.172L10.463 0l-7 13.828h4.916"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Laravel Strava Client</h3>
+                                <p class="text-primary-600 dark:text-primary-400 font-medium">v0.2.0 • Production Ready</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            A comprehensive Laravel package for Strava API integration featuring OAuth authentication, activity tracking, and athlete data management. Built with Laravel best practices and extensive testing.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 rounded-full text-sm">OAuth 2.0</span>
+                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-full text-sm">Rate Limiting</span>
+                            <span class="px-3 py-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 rounded-full text-sm">Webhook Support</span>
+                        </div>
+                        <a href="/integrations/strava-client" class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+                            Learn More
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- GitHub Client Package -->
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-full mr-4">
+                                <svg class="w-8 h-8 text-gray-900 dark:text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Laravel GitHub Client</h3>
+                                <p class="text-primary-600 dark:text-primary-400 font-medium">v0.3.1 • Available Now</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            Built on Saloon HTTP client architecture for elegant GitHub API interactions. Features comprehensive repository management, issue tracking, and GitHub Apps integration with robust error handling.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 rounded-full text-sm">Saloon HTTP</span>
+                            <span class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 rounded-full text-sm">GitHub Apps</span>
+                            <span class="px-3 py-1 bg-cyan-100 dark:bg-cyan-900/50 text-cyan-700 dark:text-cyan-300 rounded-full text-sm">Type Safety</span>
+                        </div>
+                        <a href="/integrations/github-client" class="inline-flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium">
+                            Learn More
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12">
+                    <a href="/integrations" class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        View All Integration Packages
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Services Overview Section -->
+            <div class="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                        Laravel Development Services
+                    </h2>
+                    <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                        From code audits to performance optimization, I deliver strategic Laravel solutions that give your business a competitive edge.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Code Audit -->
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300 group">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-blue-100 dark:bg-blue-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Code Audit</h3>
+                                <p class="text-blue-600 dark:text-blue-400 font-medium">Security & Quality</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            Comprehensive assessment of your codebase to identify vulnerabilities, performance bottlenecks, and optimization opportunities with detailed recommendations.
+                        </p>
+                        <a href="/services/code-audit" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                            Learn More
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Performance Optimization -->
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300 group">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-green-100 dark:bg-green-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Performance Optimization</h3>
+                                <p class="text-green-600 dark:text-green-400 font-medium">Speed & Efficiency</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            Strategic enhancement of application speed and efficiency through database optimization, caching strategies, and streamlined codebase architecture.
+                        </p>
+                        <a href="/services/performance-optimization" class="inline-flex items-center text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-medium">
+                            Learn More
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <!-- Custom Development -->
+                    <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl shadow-lg p-8 border border-gray-200/50 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300 group">
+                        <div class="flex items-center mb-6">
+                            <div class="bg-purple-100 dark:bg-purple-900/50 p-3 rounded-full mr-4 group-hover:scale-110 transition-transform duration-300">
+                                <svg class="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Custom Development</h3>
+                                <p class="text-purple-600 dark:text-purple-400 font-medium">Bespoke Solutions</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            Tailored Laravel applications built to your exact specifications, from API integrations to complex business logic implementation.
+                        </p>
+                        <a href="/services/custom-development" class="inline-flex items-center text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium">
+                            Learn More
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="text-center mt-12">
+                    <a href="/services" class="inline-flex items-center px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        View All Services
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
 
             <!-- About Me Section -->
             <x-home.about-me />
@@ -202,7 +378,7 @@
                         </div>
 
                         <p class="text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-12">
-                            Whether you're looking for a custom Laravel application, API integration, or technical consultation, I'm here to turn your ideas into reality.
+                            Whether you need a custom Laravel application, seamless API integrations (Strava, GitHub, or any third-party service), or expert technical consultation, I'm here to turn your ideas into reality.
                         </p>
 
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-6">

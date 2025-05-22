@@ -84,7 +84,7 @@
                                         </div>
                                     </div>
                                 </a>
-                                <a href="/integrations/github-integration" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <a href="/integrations/github-client" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                     <div class="flex items-center">
                                         <i class="fab fa-github text-primary-500 mr-2"></i>
                                         <div>
@@ -228,7 +228,7 @@
                             <span>Strava Client</span>
                         </div>
                     </a>
-                    <a href="/integrations/github-integration" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                    <a href="/integrations/github-client" class="block py-2 text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
                         <div class="flex items-center">
                             <i class="fab fa-github text-primary-500 mr-2"></i>
                             <span>GitHub Integration</span>

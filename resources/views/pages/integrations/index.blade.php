@@ -129,7 +129,7 @@ state([]);
                                 </div>
                             </div>
                             <div class="flex space-x-3">
-                                <a href="/strava-client" class="flex-1 bg-orange-600 text-white text-center py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors">
+                                <a href="/integrations/strava-client" class="flex-1 bg-orange-600 text-white text-center py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors">
                                     View Documentation
                                 </a>
                                 <a href="https://github.com/jordanpartridge/strava-client" target="_blank" class="flex-1 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-center py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
