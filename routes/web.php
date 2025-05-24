@@ -44,3 +44,6 @@ Route::middleware([LogRequests::class])->group(function () {
         });
     });
 });
+
+// Include terminal routes
+require __DIR__.'/terminal.php';

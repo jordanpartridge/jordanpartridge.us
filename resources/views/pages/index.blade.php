@@ -80,7 +80,11 @@ state([
                         'php artisan show:skills',
                         'php artisan show:projects',
                         'php artisan make:contact',
-                        'composer require'
+                        'php artisan quote:website',
+                        'php artisan consult:schedule',
+                        'php artisan make:coffee',
+                        'composer require jordanpartridge/expertise',
+                        'composer require jordanpartridge/strava-client'
                     ],
                     get filteredSuggestions() {
                         return this.currentCommand.length > 0
@@ -94,57 +98,77 @@ state([
                         this.terminalOutput.push({ type: 'command', content: cmd });
                         this.showSuggestions = false;
 
-                        switch(cmd) {
-                            case 'clear':
-                            case 'cls':
-                                this.terminalOutput = [];
-                                this.currentSection = 'intro';
-                                break;
-                            case 'help':
-                                this.terminalOutput.push({
-                                    type: 'output',
-                                    content: `Available commands:\n${this.availableCommands.join('\n')}`
-                                });
-                                break;
-                            case 'php artisan about':
-                                this.currentSection = 'intro';
-                                this.terminalOutput.push({
-                                    type: 'output',
-                                    content: 'Loading developer profile...'
-                                });
-                                break;
-                            case 'php artisan show:skills':
-                                this.currentSection = 'skills';
-                                break;
-                            case 'php artisan show:projects':
-                                this.currentSection = 'projects';
-                                break;
-                            case 'php artisan make:contact':
-                                this.currentSection = 'contact';
-                                break;
-                            case 'ls':
-                                this.terminalOutput.push({
-                                    type: 'output',
-                                    content: `Available sections:\n${this.sections.join('\n')}`
-                                });
-                                break;
-                            case 'composer require':
-                                this.terminalOutput.push({
-                                    type: 'output',
-                                    content: 'Composer is installing dependencies...'
-                                });
-                                break;
-                            default:
-                                if(cmd.startsWith('cd ')) {
-                                    this.currentPath = '~/' + cmd.slice(3);
-                                } else {
-                                    this.terminalOutput.push({
-                                        type: 'error',
-                                        content: `Command not found: ${cmd}`
-                                    });
-                                }
+                        // Special handling for clear commands
+                        if (cmd === 'clear' || cmd === 'cls') {
+                            this.terminalOutput = [];
+                            this.currentSection = 'intro';
+                            this.currentCommand = '';
+                            return;
                         }
+
+                        // Show loading indicator
+                        const loadingIndex = this.terminalOutput.length;
+                        this.terminalOutput.push({
+                            type: 'loading',
+                            content: 'Executing command...'
+                        });
+
+                        try {
+                            // Make API call to execute real artisan command
+                            const response = await fetch('/api/terminal/execute', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                                },
+                                body: JSON.stringify({ command: cmd })
+                            });
+
+                            const result = await response.json();
+                            
+                            // Remove loading indicator
+                            this.terminalOutput.splice(loadingIndex, 1);
+
+                            // Add command result
+                            this.terminalOutput.push({
+                                type: result.type,
+                                content: result.content
+                            });
+
+                            // Update current section based on command
+                            this.updateCurrentSection(cmd);
+
+                        } catch (error) {
+                            // Remove loading indicator
+                            this.terminalOutput.splice(loadingIndex, 1);
+                            
+                            this.terminalOutput.push({
+                                type: 'error',
+                                content: 'Network error: Could not execute command'
+                            });
+                        }
+
                         this.currentCommand = '';
+                        
+                        // Scroll to bottom
+                        this.$nextTick(() => {
+                            const terminal = document.getElementById('terminal-content');
+                            if (terminal) {
+                                terminal.scrollTop = terminal.scrollHeight;
+                            }
+                        });
+                    },
+                    updateCurrentSection(cmd) {
+                        // Update current section for navigation commands
+                        if (cmd === 'php artisan about') {
+                            this.currentSection = 'intro';
+                        } else if (cmd === 'php artisan show:skills') {
+                            this.currentSection = 'skills';
+                        } else if (cmd === 'php artisan show:projects') {
+                            this.currentSection = 'projects';
+                        } else if (cmd === 'php artisan make:contact') {
+                            this.currentSection = 'contact';
+                        }
                     }
                 }"
                  @keydown.up.prevent="
@@ -198,7 +222,8 @@ state([
                             <div :class="{
                                 'text-red-400': output.type === 'error',
                                 'text-green-400': output.type === 'output',
-                                'text-blue-400': output.type === 'command'
+                                'text-blue-400': output.type === 'command',
+                                'text-yellow-400': output.type === 'loading'
                             }">
                                 <template x-if="output.type === 'command'">
                                     <div class="flex items-center space-x-2">
@@ -208,7 +233,14 @@ state([
                                     </div>
                                 </template>
                                 <template x-if="output.type !== 'command'">
-                                    <div x-text="output.content"></div>
+                                    <div>
+                                        <template x-if="output.type === 'loading'">
+                                            <span>⏳ <span x-text="output.content"></span></span>
+                                        </template>
+                                        <template x-if="output.type !== 'loading'">
+                                            <pre x-text="output.content" class="whitespace-pre-wrap font-mono text-sm"></pre>
+                                        </template>
+                                    </div>
                                 </template>
                             </div>
                         </template>
