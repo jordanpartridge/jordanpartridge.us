@@ -19,6 +19,13 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground()
             ->emailOutputOnFailure(config('mail.from.address'));
+
+        // Cleanup old performance metrics daily
+        $schedule->command('performance:cleanup --days=30')
+            ->daily()
+            ->at('03:00')
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**

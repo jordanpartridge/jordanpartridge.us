@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\LogRequests;
+use App\Http\Middleware\PerformanceMonitoring;
 use App\Http\Middleware\RedirectToDashboard;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\SecurityHeadersMiddleware;
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             SecurityHeadersMiddleware::class,
+            PerformanceMonitoring::class,
             LogRequests::class,
         ]);
 
