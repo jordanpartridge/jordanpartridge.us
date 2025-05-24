@@ -2,10 +2,15 @@
 <div class="relative min-h-[600px] w-full"
      x-data="{
         activeProjects: [],
+        allowedColors: ['red', 'blue', 'green', 'yellow', 'purple', 'gray', 'indigo', 'pink', 'teal'],
+        validateColor(color) {
+            return this.allowedColors.includes(color) ? color : 'gray';
+        },
         initializeProjects() {
             const projectsData = {{ Js::from($projects) }};
             this.activeProjects = projectsData.map((project, index) => ({
                 ...project,
+                id: project.id || index,
                 offsetX: index * 30,
                 offsetY: index * 30,
                 zIndex: 1000 + index,
@@ -17,15 +22,14 @@
      }"
      x-init="initializeProjects">
 
-    <template x-for="(project, index) in activeProjects" :key="index">
+    <template x-for="(project, index) in activeProjects" :key="project.id || index">
         <div class="absolute bg-white dark:bg-gray-800 rounded-lg shadow-2xl overflow-hidden transition-shadow"
              :class="project.isMinimized ? 'h-12' : 'w-[800px]'"
              :style="`transform: translate(${project.offsetX}px, ${project.offsetY}px); z-index: ${project.zIndex};`"
              @mousedown="project.zIndex = Math.max(...activeProjects.map(p => p.zIndex)) + 1;">
 
             <!-- Window Header -->
-            <div :class="project.headerClass || 'bg-gradient-to-r from-gray-700 to-gray-900'"
-                 class="p-3 cursor-move flex items-center justify-between"
+            <div :class="[project.headerClass || 'bg-gradient-to-r from-gray-700 to-gray-900', 'p-3 cursor-move flex items-center justify-between']"
                  @mousedown.prevent="
                     project.isDragging = true;
                     const startX = $event.pageX - project.offsetX;
@@ -81,7 +85,7 @@
                     <iframe :src="project.url"
                             class="w-full h-full"
                             @load="project.isLoading = false"
-                            sandbox="allow-same-origin allow-scripts"
+                            sandbox="allow-scripts"
                             referrerpolicy="no-referrer">
                     </iframe>
                 </div>
@@ -105,7 +109,7 @@
                 <div x-show="project.technologies" class="pt-4">
                     <div class="flex flex-wrap gap-2">
                         <template x-for="tech in project.technologies" :key="tech.name">
-                            <span :class="`px-2 py-1 bg-${tech.color}-100 text-${tech.color}-800 rounded-full text-sm`"
+                            <span :class="`px-2 py-1 bg-${validateColor(tech.color)}-100 text-${validateColor(tech.color)}-800 rounded-full text-sm`"
                                   x-text="tech.name"></span>
                         </template>
                     </div>

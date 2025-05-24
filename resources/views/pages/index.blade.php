@@ -96,6 +96,7 @@ state([
 
                         switch(cmd) {
                             case 'clear':
+                            case 'cls':
                                 this.terminalOutput = [];
                                 this.currentSection = 'intro';
                                 break;
@@ -120,6 +121,18 @@ state([
                                 break;
                             case 'php artisan make:contact':
                                 this.currentSection = 'contact';
+                                break;
+                            case 'ls':
+                                this.terminalOutput.push({
+                                    type: 'output',
+                                    content: `Available sections:\n${this.sections.join('\n')}`
+                                });
+                                break;
+                            case 'composer require':
+                                this.terminalOutput.push({
+                                    type: 'output',
+                                    content: 'Composer is installing dependencies...'
+                                });
                                 break;
                             default:
                                 if(cmd.startsWith('cd ')) {
@@ -164,7 +177,7 @@ state([
                         currentCommand = filteredSuggestions[selectedSuggestionIndex];
                         showSuggestions = false;
                     }
-                    "l
+                    "
                  @keydown.esc="showSuggestions = false">
 
                 <!-- Interactive Terminal -->
@@ -239,7 +252,7 @@ state([
 
                 <!-- Dynamic Content Sections remain the same -->
                 <div x-show="currentSection === 'intro'" x-transition>
-                    <h1>Comming soon</h1>
+                    <h1>Coming soon</h1>
                 </div>
 
                 <div x-show="currentSection === 'skills'" x-transition>
