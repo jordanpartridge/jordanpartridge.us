@@ -37,6 +37,7 @@
             background: rgba(255,255,255,0.05);
             border-radius: 12px;
             overflow: hidden;
+            overflow-x: auto;
         }
 
         .data-table th {
@@ -100,14 +101,26 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 16px;
-            padding: 2rem;
-            max-width: 80vw;
-            max-height: 80vh;
+            padding: 1rem;
+            margin: 1rem;
+            max-width: calc(100vw - 2rem);
+            max-height: calc(100vh - 2rem);
             overflow-y: auto;
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .modal-content {
+                padding: 2rem;
+                margin: 2rem;
+                max-width: 80vw;
+                max-height: 80vh;
+            }
         }
     </style>
     @endpush
 
+    <div class="w-full max-w-none overflow-hidden">
     <div class="space-y-6">
         @php
             $healthScore = $this->getHealthScore();
@@ -118,45 +131,49 @@
         @endphp
 
         <!-- Interactive Controls Bar -->
-        <div class="flex flex-wrap gap-4 p-4 rounded-lg" style="background: rgba(255,255,255,0.05);">
+        <div class="bg-white/5 p-4 rounded-lg space-y-4">
             <!-- Time Range Filters -->
-            <div class="flex gap-2">
-                <span class="text-sm text-gray-400 self-center">Time Range:</span>
-                @foreach (['1' => '1h', '6' => '6h', '24' => '24h', '168' => '7d', '720' => '30d'] as $hours => $label)
-                    <button wire:click="$set('dateRange', '{{ $hours }}')"
-                            class="filter-button {{ $dateRange == $hours ? 'active' : '' }}">
-                        {{ $label }}
-                    </button>
-                @endforeach
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-sm text-gray-400 whitespace-nowrap">Time Range:</span>
+                <div class="flex flex-wrap gap-2">
+                    @foreach (['1' => '1h', '6' => '6h', '24' => '24h', '168' => '7d', '720' => '30d'] as $hours => $label)
+                        <button wire:click="$set('dateRange', '{{ $hours }}')"
+                                class="filter-button {{ $dateRange == $hours ? 'active' : '' }}">
+                            {{ $label }}
+                        </button>
+                    @endforeach
+                </div>
             </div>
 
             <!-- Status Filters -->
-            <div class="flex gap-2">
-                <span class="text-sm text-gray-400 self-center">Status:</span>
-                @foreach (['all' => 'All', 'success' => '2xx', 'errors' => '4xx+', 'slow' => 'Slow'] as $filter => $label)
-                    <button wire:click="filterByStatus('{{ $filter }}')"
-                            class="filter-button {{ $statusFilter == $filter ? 'active' : '' }}">
-                        {{ $label }}
-                    </button>
-                @endforeach
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-sm text-gray-400 whitespace-nowrap">Status:</span>
+                <div class="flex flex-wrap gap-2">
+                    @foreach (['all' => 'All', 'success' => '2xx', 'errors' => '4xx+', 'slow' => 'Slow'] as $filter => $label)
+                        <button wire:click="filterByStatus('{{ $filter }}')"
+                                class="filter-button {{ $statusFilter == $filter ? 'active' : '' }}">
+                            {{ $label }}
+                        </button>
+                    @endforeach
+                </div>
             </div>
 
-            <!-- Search -->
-            <div class="flex-1 max-w-md">
-                <input type="text"
-                       wire:model.live.debounce.300ms="searchTerm"
-                       placeholder="Search URLs..."
-                       class="w-full px-3 py-2 bg-rgba(255,255,255,0.1) border border-rgba(255,255,255,0.2) rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <!-- Search and Clear -->
+            <div class="flex flex-col sm:flex-row gap-2">
+                <div class="flex-1">
+                    <input type="text"
+                           wire:model.live.debounce.300ms="searchTerm"
+                           placeholder="Search URLs..."
+                           class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button wire:click="clearFilters" class="filter-button whitespace-nowrap">
+                    🗑️ Clear
+                </button>
             </div>
-
-            <!-- Clear Filters -->
-            <button wire:click="clearFilters" class="filter-button">
-                🗑️ Clear
-            </button>
         </div>
 
         <!-- Compact Health Overview -->
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             <div class="interactive-card text-center" wire:click="$set('statusFilter', 'all')">
                 <div class="text-2xl font-bold text-white">{{ $healthScore['score'] }}</div>
                 <div class="text-sm text-gray-400">Health Score</div>
@@ -203,70 +220,72 @@
 
         <!-- URL Performance Table -->
         <div class="interactive-card">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
                 <h3 class="text-lg font-semibold text-white">🔍 URL Performance Analysis</h3>
-                <div class="flex gap-2">
+                <div class="flex flex-wrap gap-2">
                     <button wire:click="sortBy('requests')"
-                            class="filter-button {{ $sortBy == 'requests' ? 'active' : '' }}">
-                        Sort by Requests {{ $sortBy == 'requests' ? ($sortDirection == 'asc' ? '↑' : '↓') : '' }}
+                            class="filter-button text-sm {{ $sortBy == 'requests' ? 'active' : '' }}">
+                        Requests {{ $sortBy == 'requests' ? ($sortDirection == 'asc' ? '↑' : '↓') : '' }}
                     </button>
                     <button wire:click="sortBy('avg_time')"
-                            class="filter-button {{ $sortBy == 'avg_time' ? 'active' : '' }}">
-                        Sort by Time {{ $sortBy == 'avg_time' ? ($sortDirection == 'asc' ? '↑' : '↓') : '' }}
+                            class="filter-button text-sm {{ $sortBy == 'avg_time' ? 'active' : '' }}">
+                        Time {{ $sortBy == 'avg_time' ? ($sortDirection == 'asc' ? '↑' : '↓') : '' }}
                     </button>
                 </div>
             </div>
 
             <div class="data-table">
-                <table class="w-full">
-                    <thead>
-                        <tr>
-                            <th wire:click="sortBy('url')">URL</th>
-                            <th wire:click="sortBy('requests')" class="text-center">Requests</th>
-                            <th wire:click="sortBy('avg_time')" class="text-center">Avg Time</th>
-                            <th class="text-center">Min/Max</th>
-                            <th class="text-center">Error Rate</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($urlBreakdown as $url)
-                        <tr>
-                            <td class="font-mono text-sm">
-                                <div class="truncate max-w-xs" title="{{ $url['url'] }}">{{ $url['url'] }}</div>
-                            </td>
-                            <td class="text-center">{{ number_format($url['requests']) }}</td>
-                            <td class="text-center">
-                                <span class="{{ $url['avg_time'] > 1000 ? 'text-red-400' : ($url['avg_time'] > 500 ? 'text-yellow-400' : 'text-green-400') }}">
-                                    {{ $url['avg_time'] }}ms
-                                </span>
-                            </td>
-                            <td class="text-center text-sm text-gray-400">
-                                {{ $url['min_time'] }}ms / {{ $url['max_time'] }}ms
-                            </td>
-                            <td class="text-center">
-                                @if ($url['error_rate'] > 0)
-                                    <span class="status-badge status-500">{{ $url['error_rate'] }}%</span>
-                                @else
-                                    <span class="status-badge status-200">0%</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                <button wire:click="$set('selectedUrl', '{{ addslashes($url['url']) }}')"
-                                        class="text-blue-400 hover:text-blue-300 text-sm">
-                                    Filter
-                                </button>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-8 text-gray-400">
-                                No data found for current filters
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-full">
+                        <thead>
+                            <tr>
+                                <th wire:click="sortBy('url')" class="min-w-0 w-1/3">URL</th>
+                                <th wire:click="sortBy('requests')" class="text-center whitespace-nowrap">Requests</th>
+                                <th wire:click="sortBy('avg_time')" class="text-center whitespace-nowrap">Avg Time</th>
+                                <th class="text-center whitespace-nowrap hidden sm:table-cell">Min/Max</th>
+                                <th class="text-center whitespace-nowrap">Error Rate</th>
+                                <th class="text-center whitespace-nowrap">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($urlBreakdown as $url)
+                            <tr>
+                                <td class="font-mono text-sm min-w-0">
+                                    <div class="truncate max-w-[200px] sm:max-w-xs" title="{{ $url['url'] }}">{{ $url['url'] }}</div>
+                                </td>
+                                <td class="text-center whitespace-nowrap">{{ number_format($url['requests']) }}</td>
+                                <td class="text-center whitespace-nowrap">
+                                    <span class="{{ $url['avg_time'] > 1000 ? 'text-red-400' : ($url['avg_time'] > 500 ? 'text-yellow-400' : 'text-green-400') }}">
+                                        {{ $url['avg_time'] }}ms
+                                    </span>
+                                </td>
+                                <td class="text-center text-sm text-gray-400 whitespace-nowrap hidden sm:table-cell">
+                                    {{ $url['min_time'] }}ms / {{ $url['max_time'] }}ms
+                                </td>
+                                <td class="text-center whitespace-nowrap">
+                                    @if ($url['error_rate'] > 0)
+                                        <span class="status-badge status-500">{{ $url['error_rate'] }}%</span>
+                                    @else
+                                        <span class="status-badge status-200">0%</span>
+                                    @endif
+                                </td>
+                                <td class="text-center whitespace-nowrap">
+                                    <button wire:click="$set('selectedUrl', '{{ addslashes($url['url']) }}')"
+                                            class="text-blue-400 hover:text-blue-300 text-sm">
+                                        Filter
+                                    </button>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="6" class="text-center py-8 text-gray-400">
+                                    No data found for current filters
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -305,47 +324,51 @@
 
         <!-- Recent Requests (Real-time) -->
         <div class="interactive-card">
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
                 <h3 class="text-lg font-semibold text-white">⚡ Recent Requests</h3>
                 <div class="text-sm text-gray-400">Auto-refreshing • Last: {{ date('H:i:s') }}</div>
             </div>
 
             <div class="data-table">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>URL</th>
-                            <th>Status</th>
-                            <th>Response Time</th>
-                            <th>Memory</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($this->getFilteredMetrics()->limit(10)->get() as $metric)
-                        <tr>
-                            <td class="text-gray-400">{{ $metric->created_at->format('H:i:s') }}</td>
-                            <td class="font-mono truncate max-w-xs" title="{{ $metric->url }}">{{ $metric->url }}</td>
-                            <td>
-                                <span class="status-badge status-{{ $metric->response_status >= 400 ? '500' : '200' }}">
-                                    {{ $metric->response_status }}
-                                </span>
-                            </td>
-                            <td class="{{ $metric->response_time > 1000 ? 'text-red-400' : ($metric->response_time > 500 ? 'text-yellow-400' : 'text-green-400') }}">
-                                {{ $metric->response_time }}ms
-                            </td>
-                            <td class="text-gray-400">{{ round($metric->memory_usage / 1024 / 1024, 1) }}MB</td>
-                            <td>
-                                <button wire:click="viewRequest({{ $metric->id }})"
-                                        class="text-blue-400 hover:text-blue-300">
-                                    Details
-                                </button>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm min-w-full">
+                        <thead>
+                            <tr>
+                                <th class="whitespace-nowrap">Time</th>
+                                <th class="min-w-0 w-1/3">URL</th>
+                                <th class="whitespace-nowrap">Status</th>
+                                <th class="whitespace-nowrap">Response Time</th>
+                                <th class="whitespace-nowrap hidden sm:table-cell">Memory</th>
+                                <th class="whitespace-nowrap">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($this->getFilteredMetrics()->limit(10)->get() as $metric)
+                            <tr>
+                                <td class="text-gray-400 whitespace-nowrap">{{ $metric->created_at->format('H:i:s') }}</td>
+                                <td class="font-mono text-sm min-w-0">
+                                    <div class="truncate max-w-[200px] sm:max-w-xs" title="{{ $metric->url }}">{{ $metric->url }}</div>
+                                </td>
+                                <td class="whitespace-nowrap">
+                                    <span class="status-badge status-{{ $metric->response_status >= 400 ? '500' : '200' }}">
+                                        {{ $metric->response_status }}
+                                    </span>
+                                </td>
+                                <td class="whitespace-nowrap {{ $metric->response_time > 1000 ? 'text-red-400' : ($metric->response_time > 500 ? 'text-yellow-400' : 'text-green-400') }}">
+                                    {{ $metric->response_time }}ms
+                                </td>
+                                <td class="text-gray-400 whitespace-nowrap hidden sm:table-cell">{{ round($metric->memory_usage / 1024 / 1024, 1) }}MB</td>
+                                <td class="whitespace-nowrap">
+                                    <button wire:click="viewRequest({{ $metric->id }})"
+                                            class="text-blue-400 hover:text-blue-300 text-sm">
+                                        Details
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -421,4 +444,5 @@
         });
     </script>
     @endpush
+    </div>
 </x-filament-panels::page>
