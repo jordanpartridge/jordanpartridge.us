@@ -173,7 +173,7 @@
         </div>
 
         <!-- Compact Health Overview -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div class="interactive-card text-center" wire:click="$set('statusFilter', 'all')">
                 <div class="text-2xl font-bold text-white">{{ $healthScore['score'] }}</div>
                 <div class="text-sm text-gray-400">Health Score</div>
