@@ -156,7 +156,7 @@
         </div>
 
         <!-- Compact Health Overview -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div class="interactive-card text-center" wire:click="$set('statusFilter', 'all')">
                 <div class="text-2xl font-bold text-white">{{ $healthScore['score'] }}</div>
                 <div class="text-sm text-gray-400">Health Score</div>
@@ -183,6 +183,21 @@
                 <div class="text-2xl font-bold text-blue-400">{{ $realTimeMetrics['active_requests'] }}</div>
                 <div class="text-sm text-gray-400">Active (1m)</div>
                 <div class="text-xs mt-1">{{ $realTimeMetrics['error_count'] }} errors</div>
+            </div>
+
+            <div class="interactive-card text-center">
+                <div class="text-2xl font-bold text-purple-400">{{ number_format($stats['average_memory'], 1) }}MB</div>
+                <div class="text-sm text-gray-400">Avg Memory</div>
+                <div class="text-xs mt-1">{{ number_format($stats['total_db_queries']) }} queries</div>
+            </div>
+
+            @php $cacheEfficiency = $this->getCacheEfficiency(); @endphp
+            <div class="interactive-card text-center">
+                <div class="text-2xl font-bold {{ $cacheEfficiency['hit_rate'] > 80 ? 'text-green-400' : ($cacheEfficiency['hit_rate'] > 50 ? 'text-yellow-400' : 'text-red-400') }}">
+                    {{ $cacheEfficiency['hit_rate'] }}%
+                </div>
+                <div class="text-sm text-gray-400">Cache Hit Rate</div>
+                <div class="text-xs mt-1">{{ number_format($cacheEfficiency['total_hits']) }} hits</div>
             </div>
         </div>
 
