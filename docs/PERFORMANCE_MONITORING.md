@@ -77,8 +77,13 @@ $schedule->command('performance:cleanup --days=30')
 
 ### Accessing the Dashboard
 1. Navigate to Admin Panel: `/admin`
-2. Login with administrator credentials
+2. Use Developer Login (click "Developer Login" link on login page for passwordless access in development)
 3. Click "Performance Monitoring" in the navigation
+
+**Developer Login**: 
+- Available on login page for local development
+- Provides passwordless access to admin panel
+- Only enabled in development environment for security
 
 ### Manual Cleanup
 ```bash

@@ -58,7 +58,9 @@
         <!-- Response Time Chart -->
         <x-filament::card>
             <h3 class="text-lg font-medium mb-4">Response Time Trends</h3>
-            <canvas id="responseTimeChart" height="100"></canvas>
+            <div class="h-64">
+                <canvas id="responseTimeChart"></canvas>
+            </div>
         </x-filament::card>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -81,20 +83,26 @@
             <!-- Error Distribution -->
             <x-filament::card>
                 <h3 class="text-lg font-medium mb-4">Error Distribution</h3>
-                <canvas id="errorChart" height="200"></canvas>
+                <div class="h-48">
+                    <canvas id="errorChart"></canvas>
+                </div>
             </x-filament::card>
         </div>
 
         <!-- Database Metrics -->
         <x-filament::card>
             <h3 class="text-lg font-medium mb-4">Database Performance</h3>
-            <canvas id="databaseChart" height="100"></canvas>
+            <div class="h-64">
+                <canvas id="databaseChart"></canvas>
+            </div>
         </x-filament::card>
 
         <!-- Memory Usage -->
         <x-filament::card>
             <h3 class="text-lg font-medium mb-4">Memory Usage</h3>
-            <canvas id="memoryChart" height="100"></canvas>
+            <div class="h-64">
+                <canvas id="memoryChart"></canvas>
+            </div>
         </x-filament::card>
 
         <!-- Cache Efficiency -->
@@ -149,7 +157,10 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'right' }
+                    legend: {
+                        position: 'bottom',
+                        labels: { usePointStyle: true }
+                    }
                 }
             }
         });
