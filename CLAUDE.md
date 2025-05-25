@@ -21,6 +21,12 @@ Note: Some tests require frontend assets. Run `npm run build` before running tes
 - Run Pint: `./vendor/bin/pint`
 - Generate IDE helper files: `php artisan ide-helper:generate`
 
+## Performance Monitoring
+
+- Access dashboard: `/admin/performance-monitoring-dashboard`
+- Clean old metrics: `php artisan performance:cleanup --days=30`
+- View documentation: `docs/PERFORMANCE_MONITORING.md`
+
 ## Production Server Management
 
 ### SSH Access

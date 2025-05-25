@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
             'email' => 'jordan@partridge.rocks',
         ], [
             'name'     => 'Jordan Partridge',
-            'password' => bcrypt(random_bytes(10)),
+            'password' => bcrypt('password'),
         ]);
     }
 }
