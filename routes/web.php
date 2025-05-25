@@ -193,37 +193,54 @@ Route::middleware([LogRequests::class])->group(function () {
 
     // Sitemap route
     Route::get('sitemap.xml', function () {
-        $posts = Post::where('status', 'published')->orderBy('updated_at', 'desc')->get();
-        $categories = Category::orderBy('name')->get();
-        $baseUrl = config('app.url');
-        $now = now()->toIso8601String();
+        try {
+            $content = Cache::remember('sitemap-xml', 60 * 60, function () {
+                $posts = Post::where('status', 'published')
+                    ->orderBy('updated_at', 'desc')
+                    ->limit(1000)
+                    ->get();
+                $categories = Category::orderBy('name')
+                    ->limit(100)
+                    ->get();
+                $baseUrl = config('app.url');
+                $now = now()->toIso8601String();
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+                $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+                $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
-        // Core pages
-        $xml .= "<url><loc>{$baseUrl}</loc><lastmod>{$now}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>\n";
-        $xml .= "<url><loc>{$baseUrl}/services</loc><lastmod>{$now}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n";
-        $xml .= "<url><loc>{$baseUrl}/work-with-me</loc><lastmod>{$now}</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>\n";
-        $xml .= "<url><loc>{$baseUrl}/contact</loc><lastmod>{$now}</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>\n";
-        $xml .= "<url><loc>{$baseUrl}/blog</loc><lastmod>{$now}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>\n";
+                // Core pages
+                $xml .= '<url><loc>' . e($baseUrl) . '</loc><lastmod>' . $now . '</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>' . "\n";
+                $xml .= '<url><loc>' . e($baseUrl) . '/services</loc><lastmod>' . $now . '</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>' . "\n";
+                $xml .= '<url><loc>' . e($baseUrl) . '/work-with-me</loc><lastmod>' . $now . '</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>' . "\n";
+                $xml .= '<url><loc>' . e($baseUrl) . '/contact</loc><lastmod>' . $now . '</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>' . "\n";
+                $xml .= '<url><loc>' . e($baseUrl) . '/blog</loc><lastmod>' . $now . '</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>' . "\n";
 
-        // Categories
-        foreach ($categories as $category) {
-            $lastmod = $category->updated_at->toIso8601String();
-            $xml .= "<url><loc>{$baseUrl}/categories/{$category->slug}</loc><lastmod>{$lastmod}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>\n";
+                // Categories
+                foreach ($categories as $category) {
+                    $lastmod = $category->updated_at ? $category->updated_at->toIso8601String() : $now;
+                    $xml .= '<url><loc>' . e($baseUrl) . '/categories/' . e($category->slug) . '</loc><lastmod>' . $lastmod . '</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>' . "\n";
+                }
+
+                // Posts
+                foreach ($posts as $index => $post) {
+                    $lastmod = $post->updated_at ? $post->updated_at->toIso8601String() : $now;
+                    $priority = $index < 5 ? '0.7' : '0.6';
+                    $changefreq = ($post->updated_at && $post->updated_at->diffInDays() < 30) ? 'weekly' : 'monthly';
+                    $xml .= '<url><loc>' . e($baseUrl) . '/blog/' . e($post->slug) . '</loc><lastmod>' . $lastmod . '</lastmod><changefreq>' . $changefreq . '</changefreq><priority>' . $priority . '</priority></url>' . "\n";
+                }
+
+                $xml .= '</urlset>';
+                return $xml;
+            });
+
+            return response($content)
+                ->header('Content-Type', 'application/xml; charset=UTF-8');
+        } catch (\Exception $e) {
+            Log::error('Sitemap generation failed', ['error' => $e->getMessage()]);
+            return response(
+                '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>',
+                500
+            )->header('Content-Type', 'application/xml; charset=UTF-8');
         }
-
-        // Posts
-        foreach ($posts as $index => $post) {
-            $lastmod = $post->updated_at->toIso8601String();
-            $priority = $index < 5 ? '0.7' : '0.6';
-            $changefreq = $post->updated_at->diffInDays() < 30 ? 'weekly' : 'monthly';
-            $xml .= "<url><loc>{$baseUrl}/blog/{$post->slug}</loc><lastmod>{$lastmod}</lastmod><changefreq>{$changefreq}</changefreq><priority>{$priority}</priority></url>\n";
-        }
-
-        $xml .= '</urlset>';
-
-        return response($xml)->header('Content-Type', 'application/xml; charset=UTF-8');
     })->name('sitemap.xml');
 });
