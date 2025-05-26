@@ -39,11 +39,16 @@ class GmailMessagesPage extends Page implements HasForms
     public $filter = 'all';
     public $searchTerm = '';
     public $selectedCategory = 'all';
-    public $selectedLabel = 'INBOX';
+    public $selectedLabels = ['INBOX']; // Support multiple labels
     public $availableLabels = [];
+    public $systemLabels = [];
+    public $userLabels = [];
     public $clients = [];
     public $projects = [];
     public $recentActivity = [];
+
+    // UI State
+    public $showLabelsPanel = true;
 
     // Form data
     public ?array $data = [];
@@ -79,8 +84,7 @@ class GmailMessagesPage extends Page implements HasForms
 
         // Initialize form data
         $this->form->fill([
-            'selectedLabel' => $this->selectedLabel,
-            'searchTerm'    => $this->searchTerm,
+            'searchTerm' => $this->searchTerm,
         ]);
 
         $this->loadMessages();
@@ -90,22 +94,6 @@ class GmailMessagesPage extends Page implements HasForms
     {
         return $form
             ->schema([
-                Select::make('selectedLabel')
-                    ->label('Filter by Label')
-                    ->options(function () {
-                        $options = ['INBOX' => 'Inbox'];
-                        foreach ($this->availableLabels as $label) {
-                            $options[$label['id']] = $label['name'];
-                        }
-                        return $options;
-                    })
-                    ->default($this->selectedLabel)
-                    ->reactive()
-                    ->afterStateUpdated(function ($state) {
-                        $this->selectedLabel = $state;
-                        $this->loadMessages();
-                    }),
-
                 TextInput::make('searchTerm')
                     ->label('Search')
                     ->placeholder('Search emails...')
@@ -137,10 +125,10 @@ class GmailMessagesPage extends Page implements HasForms
             // Get the Gmail client
             $gmailClient = $user->getGmailClient();
 
-            // Get Gmail messages for selected label with search
+            // Get Gmail messages for selected labels with search
             $queryParams = [
                 'maxResults' => $maxResults,
-                'labelIds'   => [$this->selectedLabel]
+                'labelIds'   => $this->selectedLabels
             ];
 
             // Add search query if provided
@@ -206,23 +194,106 @@ class GmailMessagesPage extends Page implements HasForms
             $this->availableLabels = $gmailLabels->map(function ($label) {
                 if (is_array($label)) {
                     return [
-                        'id'   => $label['id'] ?? '',
-                        'name' => $label['name'] ?? '',
-                        'type' => $label['type'] ?? 'user',
+                        'id'             => $label['id'] ?? '',
+                        'name'           => $label['name'] ?? '',
+                        'type'           => $label['type'] ?? 'user',
+                        'messagesTotal'  => $label['messagesTotal'] ?? 0,
+                        'messagesUnread' => $label['messagesUnread'] ?? 0,
+                        'color'          => $this->getLabelColor($label['name'] ?? '', $label['type'] ?? 'user'),
                     ];
                 }
 
                 return [
-                    'id'   => $label->id,
-                    'name' => $label->name,
-                    'type' => $label->type ?? 'user',
+                    'id'             => $label->id,
+                    'name'           => $label->name,
+                    'type'           => $label->type ?? 'user',
+                    'messagesTotal'  => $label->messagesTotal ?? 0,
+                    'messagesUnread' => $label->messagesUnread ?? 0,
+                    'color'          => $this->getLabelColor($label->name, $label->type ?? 'user'),
                 ];
             })->toArray();
+
+            // Organize labels for sidebar display
+            $this->systemLabels = collect($this->availableLabels)->where('type', 'system')->values()->toArray();
+            $this->userLabels = collect($this->availableLabels)->where('type', 'user')->values()->toArray();
 
         } catch (\Exception $e) {
             // Fail silently for labels, don't break the page
             $this->availableLabels = [];
+            $this->systemLabels = [];
+            $this->userLabels = [];
         }
+    }
+
+    /**
+     * Toggle label selection for filtering
+     */
+    public function toggleLabel(string $labelId)
+    {
+        if (in_array($labelId, $this->selectedLabels)) {
+            // Remove label from selection
+            $this->selectedLabels = array_values(array_diff($this->selectedLabels, [$labelId]));
+        } else {
+            // Add label to selection
+            $this->selectedLabels[] = $labelId;
+        }
+
+        // Ensure we always have at least one label selected
+        if (empty($this->selectedLabels)) {
+            $this->selectedLabels = ['INBOX'];
+        }
+
+        // Reload messages with new label filter
+        $this->loadMessages();
+
+        $labelName = collect($this->availableLabels)->firstWhere('id', $labelId)['name'] ?? $labelId;
+        $action = in_array($labelId, $this->selectedLabels) ? 'added' : 'removed';
+
+        Notification::make()
+            ->title('Filter updated')
+            ->body("Label '{$labelName}' {$action}")
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Clear all label selections and reset to INBOX
+     */
+    public function clearLabelFilters()
+    {
+        $this->selectedLabels = ['INBOX'];
+        $this->loadMessages();
+
+        Notification::make()
+            ->title('Filters cleared')
+            ->body('Reset to Inbox view')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Select only one label (exclusive selection)
+     */
+    public function selectOnlyLabel(string $labelId)
+    {
+        $this->selectedLabels = [$labelId];
+        $this->loadMessages();
+
+        $labelName = collect($this->availableLabels)->firstWhere('id', $labelId)['name'] ?? $labelId;
+
+        Notification::make()
+            ->title('Filter changed')
+            ->body("Now showing only '{$labelName}'")
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Toggle labels panel visibility
+     */
+    public function toggleLabelsPanel()
+    {
+        $this->showLabelsPanel = !$this->showLabelsPanel;
     }
 
     /**
@@ -666,6 +737,28 @@ class GmailMessagesPage extends Page implements HasForms
                 ->color('success')
                 ->action(fn () => $this->syncClientsFromEmails()),
         ];
+    }
+
+    /**
+     * Get color for label based on type and name
+     */
+    private function getLabelColor(string $name, string $type): string
+    {
+        if ($type === 'system') {
+            return match (strtoupper($name)) {
+                'INBOX'     => 'blue',
+                'SENT'      => 'green',
+                'DRAFT'     => 'yellow',
+                'TRASH'     => 'gray',
+                'SPAM'      => 'red',
+                'STARRED'   => 'yellow',
+                'IMPORTANT' => 'orange',
+                default     => 'blue'
+            };
+        }
+
+        // User labels get purple color
+        return 'purple';
     }
 
     private function loadDemoMessages()

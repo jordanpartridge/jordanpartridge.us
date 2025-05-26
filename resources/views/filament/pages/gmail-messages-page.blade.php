@@ -115,6 +115,304 @@
             --shadow-lg: 0 10px 20px rgba(0,0,0,0.8), 0 6px 6px rgba(0,0,0,0.9);
         }
 
+        /* Gmail Layout with Sidebar */
+        .gmail-layout {
+            display: flex;
+            gap: 0;
+            min-height: calc(100vh - 48px);
+            background: var(--bg-secondary);
+        }
+
+        /* Labels Sidebar */
+        .labels-sidebar {
+            width: 280px;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .labels-sidebar.hidden {
+            width: 0;
+            padding: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .clear-filters-btn {
+            background: var(--system-red);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clear-filters-btn:hover {
+            background: #D70015;
+            transform: scale(1.05);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .quick-action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--system-blue);
+            color: var(--text-primary);
+        }
+
+        .quick-action-btn.starred:hover {
+            border-color: var(--system-yellow);
+            color: var(--system-yellow);
+        }
+
+        .quick-action-btn.important:hover {
+            border-color: var(--system-orange);
+            color: var(--system-orange);
+        }
+
+        /* Label Sections */
+        .label-section {
+            margin-bottom: 24px;
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin: 0 0 8px 0;
+        }
+
+        .label-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .label-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .label-item:hover {
+            background: var(--fill-secondary);
+            border-color: var(--system-blue);
+        }
+
+        .label-item.active {
+            background: var(--system-blue);
+            color: white;
+            border-color: var(--system-blue);
+        }
+
+        .label-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .label-indicator.blue { background: var(--system-blue); }
+        .label-indicator.green { background: var(--system-green); }
+        .label-indicator.yellow { background: var(--system-yellow); }
+        .label-indicator.red { background: var(--system-red); }
+        .label-indicator.gray { background: #8E8E93; }
+        .label-indicator.orange { background: var(--system-orange); }
+        .label-indicator.purple { background: var(--system-purple); }
+
+        .label-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .label-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .label-item.active .label-name {
+            color: white;
+        }
+
+        .unread-count {
+            background: var(--system-red);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .label-item.active .unread-count {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .total-count {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-left: 8px;
+        }
+
+        .label-item.active .total-count {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Selected Labels */
+        .selected-labels {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .selected-label-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .selected-tag {
+            display: flex;
+            align-items: center;
+            background: var(--system-blue);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .remove-tag {
+            background: none;
+            border: none;
+            color: white;
+            margin-left: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        /* Messages Area */
+        .messages-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-secondary);
+            overflow: hidden;
+        }
+
+        .messages-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .labels-toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .labels-toggle-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--system-blue);
+            color: var(--text-primary);
+        }
+
+        .current-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .active-filters-info {
+            font-size: 14px;
+            color: var(--text-secondary);
+            background: var(--fill-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .topbar-search {
+            max-width: 400px;
+            min-width: 300px;
+        }
+
         /* Core Layout */
         .apex-container {
             max-width: 1400px;
@@ -845,10 +1143,135 @@
     </style>
 
     <div class="apex-container">
-        <!-- Filtering Form -->
-        <div class="apex-card" style="margin-bottom: 24px; padding: 20px;">
-            {{ $this->form }}
-        </div>
+        <!-- Main Layout: Labels Sidebar + Messages -->
+        <div class="gmail-layout">
+            <!-- Labels Sidebar -->
+            <div class="labels-sidebar {{ $showLabelsPanel ? 'visible' : 'hidden' }}">
+                <!-- Sidebar Header -->
+                <div class="sidebar-header">
+                    <h3 class="sidebar-title">Labels</h3>
+                    <button wire:click="clearLabelFilters" class="clear-filters-btn">
+                        Clear All
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <button wire:click="selectOnlyLabel('STARRED')" class="quick-action-btn starred">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                        Starred
+                    </button>
+                    <button wire:click="selectOnlyLabel('IMPORTANT')" class="quick-action-btn important">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Important
+                    </button>
+                </div>
+
+                <!-- System Labels -->
+                @if (count($systemLabels) > 0)
+                    <div class="label-section">
+                        <h4 class="section-label">System</h4>
+                        <div class="label-list">
+                            @foreach ($systemLabels as $label)
+                                <div class="label-item {{ in_array($label['id'], $selectedLabels) ? 'active' : '' }}"
+                                     wire:click="toggleLabel('{{ $label['id'] }}')">
+                                    <div class="label-indicator {{ $label['color'] }}"></div>
+                                    <div class="label-content">
+                                        <div class="label-name">{{ $label['name'] }}</div>
+                                        @if ($label['messagesUnread'] > 0)
+                                            <div class="unread-count">{{ $label['messagesUnread'] }}</div>
+                                        @endif
+                                    </div>
+                                    @if ($label['messagesTotal'] > 0)
+                                        <div class="total-count">{{ number_format($label['messagesTotal']) }}</div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- User Labels -->
+                @if (count($userLabels) > 0)
+                    <div class="label-section">
+                        <h4 class="section-label">Custom</h4>
+                        <div class="label-list">
+                            @foreach ($userLabels as $label)
+                                <div class="label-item {{ in_array($label['id'], $selectedLabels) ? 'active' : '' }}"
+                                     wire:click="toggleLabel('{{ $label['id'] }}')">
+                                    <div class="label-indicator {{ $label['color'] }}"></div>
+                                    <div class="label-content">
+                                        <div class="label-name">{{ $label['name'] }}</div>
+                                        @if ($label['messagesUnread'] > 0)
+                                            <div class="unread-count">{{ $label['messagesUnread'] }}</div>
+                                        @endif
+                                    </div>
+                                    @if ($label['messagesTotal'] > 0)
+                                        <div class="total-count">{{ number_format($label['messagesTotal']) }}</div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Selected Labels Display -->
+                @if (count($selectedLabels) > 0)
+                    <div class="selected-labels">
+                        <h4 class="section-label">Active Filters</h4>
+                        <div class="selected-label-tags">
+                            @foreach ($selectedLabels as $labelId)
+                                @php
+                                    $labelData = collect($availableLabels)->firstWhere('id', $labelId);
+                                @endphp
+                                @if ($labelData)
+                                    <div class="selected-tag">
+                                        <span>{{ $labelData['name'] }}</span>
+                                        <button wire:click="toggleLabel('{{ $labelId }}')" class="remove-tag">×</button>
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Messages Area -->
+            <div class="messages-area">
+                <!-- Top Bar with Search and Toggle -->
+                <div class="messages-topbar">
+                    <div class="topbar-left">
+                        <button wire:click="toggleLabelsPanel" class="labels-toggle-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                            Labels
+                        </button>
+
+                        @if (count($selectedLabels) > 1)
+                            <div class="active-filters-info">
+                                Filtering by {{ count($selectedLabels) }} labels
+                            </div>
+                        @else
+                            @php
+                                $currentLabel = collect($availableLabels)->firstWhere('id', $selectedLabels[0] ?? 'INBOX');
+                            @endphp
+                            <div class="current-label">
+                                <div class="label-indicator {{ $currentLabel['color'] ?? 'blue' }}"></div>
+                                {{ $currentLabel['name'] ?? 'Inbox' }}
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Search Form -->
+                    <div class="topbar-search">
+                        {{ $this->form }}
+                    </div>
+                </div>
 
         @if (count($messages))
             <!-- Metrics Grid -->
@@ -1068,7 +1491,9 @@
                 </button>
             </div>
         @endif
-    </div>
+            </div> <!-- End messages-area -->
+        </div> <!-- End gmail-layout -->
+    </div> <!-- End apex-container -->
 
     <!-- Email Preview Modal - Full Screen -->
     @if ($showingEmailId && $emailPreview)
