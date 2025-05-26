@@ -72,59 +72,54 @@
             </div>
         </x-filament::section>
     @else
-        <!-- Not Authenticated State -->
+        <!-- Not Authenticated State - Clean & Modern -->
         <x-filament::section>
-            <div class="text-center py-12">
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-6">
-                    <svg class="h-8 w-8 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="text-center py-16">
+                <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-blue-900/50 dark:to-indigo-900/50 mb-8">
+                    <svg class="h-10 w-10 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
                 </div>
 
-                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-200 mb-2">Connect Your Gmail Account</h3>
-                <p class="text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">
-                    Connect your Gmail account to access emails, manage contacts, and streamline your client communications.
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Connect Your Gmail Account</h3>
+                <p class="text-lg text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto">
+                    Access your emails, manage client communications, and streamline your workflow with Gmail integration.
                 </p>
 
-                <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-danger-100 text-danger-700 dark:bg-danger-900 dark:text-danger-300 mb-6">
-                    {{ $this->getAuthStatusMessage() }}
+                <!-- Feature Highlights -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-12">
+                    <div class="text-center p-6 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900/40 text-green-600 dark:text-green-400 mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Smart Organization</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Automatically categorize emails by clients, prospects, and priority</p>
+                    </div>
+
+                    <div class="text-center p-6 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Client Integration</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Connect emails with your CRM and client database automatically</p>
+                    </div>
+
+                    <div class="text-center p-6 rounded-xl bg-gradient-to-br from-purple-50 to-violet-100 dark:from-purple-900/20 dark:to-violet-900/20">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-2">Lightning Fast</h4>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Quick preview, search, and actions to boost your productivity</p>
+                    </div>
                 </div>
             </div>
         </x-filament::section>
 
-        <!-- Setup Instructions - Only show when not authenticated -->
-        <x-filament::section>
-            <h2 class="text-xl font-semibold mb-4 dark:text-gray-200">Setup Instructions</h2>
-
-            <div class="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-                <div class="flex items-start">
-                    <svg class="h-5 w-5 text-blue-400 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                    </svg>
-                    <p class="text-sm text-blue-700 dark:text-blue-300">
-                        You'll need to set up a Google Cloud project and configure OAuth credentials before connecting Gmail.
-                    </p>
-                </div>
-            </div>
-
-            <ol class="list-decimal list-inside space-y-3 text-gray-700 dark:text-gray-300">
-                <li>Create a new project in the <a href="https://console.developers.google.com/" target="_blank" class="text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">Google Developer Console</a></li>
-                <li>Enable the Gmail API</li>
-                <li>Configure the OAuth consent screen</li>
-                <li>Create OAuth credentials (Web application type)</li>
-                <li>Add the redirect URI:
-                    <code class="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-sm dark:text-gray-300">{{ config('gmail-client.redirect_uri') }}</code>
-                </li>
-                <li>Add the Client ID and Client Secret to your <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded dark:text-gray-300">.env</code> file:
-    <pre class="bg-gray-100 dark:bg-gray-700 p-2 rounded text-sm mt-1 dark:text-gray-300">
-    GMAIL_CLIENT_ID=your-client-id
-    GMAIL_CLIENT_SECRET=your-client-secret
-    GMAIL_REDIRECT_URI={{ config('gmail-client.redirect_uri') }}
-    GMAIL_FROM_EMAIL=your-email@gmail.com
-    GMAIL_REGISTER_ROUTES=true
-    </pre>
-                </li>
-            </ol>
-        </x-filament::section>
     @endif
 </x-filament::page>
