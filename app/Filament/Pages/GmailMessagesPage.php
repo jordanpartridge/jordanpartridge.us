@@ -32,8 +32,8 @@ class GmailMessagesPage extends Page implements HasForms
 
     protected static ?int $navigationSort = 91;
 
-    // Remove from navigation menu, we'll navigate to it from the GmailIntegrationPage
-    protected static bool $shouldRegisterNavigation = false;
+    // Keep navigation enabled so the route gets registered, but we can hide it with navigation sort
+    protected static bool $shouldRegisterNavigation = true;
 
     public $messages = [];
     public $filter = 'all';
@@ -51,6 +51,13 @@ class GmailMessagesPage extends Page implements HasForms
     // Modal state
     public $showingEmailId = null;
     public $emailPreview = null;
+
+    // Hover preview state
+    public $hoveredEmailId = null;
+    public $hoverPreview = null;
+
+    // Expanded message state
+    public $expandedMessageIds = [];
 
     public function getHeading(): string
     {
@@ -349,19 +356,10 @@ class GmailMessagesPage extends Page implements HasForms
 
     /**
      * Toggle email star status
-     * TODO: Re-enable when Gmail client package adds addLabelsToMessage/removeLabelsFromMessage methods
-     * See: https://github.com/PartridgeRocks/laravel-gmail-client/issues/16
+     * Now available with Gmail client package v1.0.4+ which includes label management methods
      */
     public function toggleStar(string $messageId)
     {
-        Notification::make()
-            ->title('Feature Coming Soon')
-            ->body('Star toggle will be available when the Gmail client package adds label management methods.')
-            ->warning()
-            ->send();
-
-        // TODO: Implement when package methods are available
-        /*
         $user = auth()->user();
 
         if (!$user->hasValidGmailToken()) {
@@ -390,8 +388,19 @@ class GmailMessagesPage extends Page implements HasForms
                 $action = 'starred';
             }
 
-            // Refresh messages to show updated star status
-            $this->loadMessages();
+            // Update the message in our current list to reflect the change immediately
+            foreach ($this->messages as &$message) {
+                if ($message['id'] === $messageId) {
+                    if ($isStarred) {
+                        $message['labels'] = array_diff($message['labels'], ['STARRED']);
+                        $message['isStarred'] = false;
+                    } else {
+                        $message['labels'] = array_unique(array_merge($message['labels'], ['STARRED']));
+                        $message['isStarred'] = true;
+                    }
+                    break;
+                }
+            }
 
             Notification::make()
                 ->title('Success')
@@ -400,13 +409,14 @@ class GmailMessagesPage extends Page implements HasForms
                 ->send();
 
         } catch (\Exception $e) {
+            Log::error('Star toggle error: ' . $e->getMessage());
+
             Notification::make()
                 ->title('Error')
                 ->body('Failed to update star status: ' . $e->getMessage())
                 ->danger()
                 ->send();
         }
-        */
     }
 
     /**
@@ -429,12 +439,47 @@ class GmailMessagesPage extends Page implements HasForms
             $gmailClient = $user->getGmailClient();
             $email = $gmailClient->getMessage($messageId);
 
+            // Debug: Log the email structure to understand the body format
+            Log::info('Email structure for preview', [
+                'id'             => $email->id,
+                'subject'        => $email->subject,
+                'body_type'      => gettype($email->body ?? null),
+                'body_structure' => is_object($email->body ?? null) ? get_class($email->body) : null,
+                'body_content'   => $email->body ?? null,
+                'snippet'        => $email->snippet ?? null,
+            ]);
+
+            // Try different ways to get the body content
+            $bodyHtml = '';
+            $bodyText = '';
+            $fallbackContent = '';
+
+            if (isset($email->body)) {
+                if (is_object($email->body)) {
+                    $bodyHtml = $email->body->html ?? '';
+                    $bodyText = $email->body->text ?? '';
+                } elseif (is_string($email->body)) {
+                    $bodyText = $email->body;
+                } elseif (is_array($email->body)) {
+                    $bodyHtml = $email->body['html'] ?? '';
+                    $bodyText = $email->body['text'] ?? '';
+                }
+            }
+
+            // Fallback to snippet if no body content
+            if (empty($bodyHtml) && empty($bodyText)) {
+                $fallbackContent = $email->snippet ?? 'No content available';
+            }
+
             $this->emailPreview = [
                 'id'        => $email->id,
                 'subject'   => $email->subject ?? 'No Subject',
                 'from'      => $email->from ?? 'Unknown Sender',
                 'date'      => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
-                'body'      => $email->body ?? 'No content available',
+                'body_html' => $bodyHtml,
+                'body_text' => $bodyText,
+                'body'      => $bodyText ?: $fallbackContent,
+                'snippet'   => $email->snippet ?? '',
                 'labels'    => $email->labelIds ?? [],
                 'isStarred' => in_array('STARRED', $email->labelIds ?? []),
                 'isRead'    => !in_array('UNREAD', $email->labelIds ?? []),
@@ -458,6 +503,124 @@ class GmailMessagesPage extends Page implements HasForms
     {
         $this->showingEmailId = null;
         $this->emailPreview = null;
+    }
+
+    /**
+     * Handle keyboard shortcuts
+     */
+    public function getListeners(): array
+    {
+        return [
+            'keydown.escape' => 'handleEscapeKey',
+        ];
+    }
+
+    /**
+     * Handle escape key press
+     */
+    public function handleEscapeKey()
+    {
+        if ($this->showingEmailId) {
+            $this->closeEmailPreview();
+        }
+    }
+
+    /**
+     * Show hover preview for an email
+     */
+    public function showHoverPreview(string $messageId)
+    {
+        // Don't fetch if already hovering the same message
+        if ($this->hoveredEmailId === $messageId) {
+            return;
+        }
+
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+            $email = $gmailClient->getMessage($messageId);
+
+            $this->hoverPreview = [
+                'id'        => $email->id,
+                'subject'   => $email->subject ?? 'No Subject',
+                'from'      => $email->from ?? 'Unknown Sender',
+                'date'      => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
+                'body_text' => $email->body->text ?? 'No content available',
+                'body_html' => $email->body->html ?? '',
+                'snippet'   => $email->snippet ?? '',
+                'labels'    => $email->labelIds ?? [],
+                'isStarred' => in_array('STARRED', $email->labelIds ?? []),
+                'isRead'    => !in_array('UNREAD', $email->labelIds ?? []),
+            ];
+
+            $this->hoveredEmailId = $messageId;
+
+        } catch (\Exception $e) {
+            // Fail silently for hover preview
+            Log::error('Hover preview error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Hide hover preview
+     */
+    public function hideHoverPreview()
+    {
+        $this->hoveredEmailId = null;
+        $this->hoverPreview = null;
+    }
+
+    /**
+     * Toggle expanded view for a message
+     */
+    public function toggleExpanded(string $messageId)
+    {
+        if (in_array($messageId, $this->expandedMessageIds)) {
+            // Remove from expanded list
+            $this->expandedMessageIds = array_diff($this->expandedMessageIds, [$messageId]);
+        } else {
+            // Add to expanded list
+            $this->expandedMessageIds[] = $messageId;
+        }
+    }
+
+    /**
+     * Check if a message is expanded
+     */
+    public function isExpanded(string $messageId): bool
+    {
+        return in_array($messageId, $this->expandedMessageIds);
+    }
+
+    /**
+     * Expand all messages
+     */
+    public function expandAll()
+    {
+        $this->expandedMessageIds = collect($this->messages)->pluck('id')->toArray();
+
+        Notification::make()
+            ->title('All messages expanded')
+            ->success()
+            ->send();
+    }
+
+    /**
+     * Collapse all messages
+     */
+    public function collapseAll()
+    {
+        $this->expandedMessageIds = [];
+
+        Notification::make()
+            ->title('All messages collapsed')
+            ->success()
+            ->send();
     }
 
     /**
@@ -485,6 +648,18 @@ class GmailMessagesPage extends Page implements HasForms
                 ->label('Refresh Messages')
                 ->color('warning')
                 ->action(fn () => $this->loadMessages()),
+
+            Action::make('expand_all')
+                ->label('Expand All')
+                ->icon('heroicon-o-arrows-pointing-out')
+                ->color('info')
+                ->action(fn () => $this->expandAll()),
+
+            Action::make('collapse_all')
+                ->label('Collapse All')
+                ->icon('heroicon-o-arrows-pointing-in')
+                ->color('gray')
+                ->action(fn () => $this->collapseAll()),
 
             Action::make('sync_clients')
                 ->label('Sync with CRM')

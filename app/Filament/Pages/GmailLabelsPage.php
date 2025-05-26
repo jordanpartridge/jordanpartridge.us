@@ -20,8 +20,8 @@ class GmailLabelsPage extends Page
 
     protected static ?int $navigationSort = 92;
 
-    // Remove from navigation menu, we'll navigate to it from the GmailIntegrationPage
-    protected static bool $shouldRegisterNavigation = false;
+    // Keep navigation enabled so the route gets registered, but we can hide it with navigation sort
+    protected static bool $shouldRegisterNavigation = true;
 
     public $labels = [];
 

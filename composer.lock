@@ -7829,16 +7829,16 @@
         },
         {
             "name": "partridgerocks/gmail-client",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PartridgeRocks/laravel-gmail-client.git",
-                "reference": "b1c689161e851ca9f44bd21d02eed95afb503869"
+                "reference": "30b283382eee4a3921d6f4ec2439b75dd351142e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PartridgeRocks/laravel-gmail-client/zipball/b1c689161e851ca9f44bd21d02eed95afb503869",
-                "reference": "b1c689161e851ca9f44bd21d02eed95afb503869",
+                "url": "https://api.github.com/repos/PartridgeRocks/laravel-gmail-client/zipball/30b283382eee4a3921d6f4ec2439b75dd351142e",
+                "reference": "30b283382eee4a3921d6f4ec2439b75dd351142e",
                 "shasum": ""
             },
             "require": {
@@ -7897,7 +7897,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PartridgeRocks/laravel-gmail-client/issues",
-                "source": "https://github.com/PartridgeRocks/laravel-gmail-client/tree/v1.0.3"
+                "source": "https://github.com/PartridgeRocks/laravel-gmail-client/tree/v1.0.4"
             },
             "funding": [
                 {
@@ -7905,7 +7905,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-26T00:55:20+00:00"
+            "time": "2025-05-26T04:13:51+00:00"
         },
         {
             "name": "phpdocumentor/reflection",

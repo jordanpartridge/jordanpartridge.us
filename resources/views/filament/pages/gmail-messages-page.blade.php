@@ -271,6 +271,15 @@
             gap: 16px;
             align-items: start;
             position: relative;
+            cursor: pointer;
+        }
+
+        .email-card.expanded {
+            grid-template-rows: auto auto;
+        }
+
+        .email-card.expanded .email-content {
+            grid-column: 1 / -1;
         }
 
         .email-card.client::before {
@@ -603,6 +612,210 @@
             margin: 0 0 32px 0;
         }
 
+        /* Hover Preview - Dark Mode */
+        .hover-preview {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: var(--shadow-lg);
+            z-index: 10;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 8px;
+            transform: translateY(-10px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+        }
+
+        .email-card:hover .hover-preview {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .hover-preview-content {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .hover-preview-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--separator);
+        }
+
+        .hover-preview-date {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        /* Expanded Content */
+        .expanded-content {
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--fill-primary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .email-card.expanded .expanded-content {
+            display: block;
+        }
+
+        .expanded-body {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Email Content Styling - Support for HTML emails */
+        .expanded-body.prose,
+        .hover-preview-content.prose,
+        .prose {
+            --tw-prose-body: var(--text-primary);
+            --tw-prose-headings: var(--text-primary);
+            --tw-prose-lead: var(--text-secondary);
+            --tw-prose-links: var(--system-blue);
+            --tw-prose-bold: var(--text-primary);
+            --tw-prose-counters: var(--text-secondary);
+            --tw-prose-bullets: var(--text-tertiary);
+            --tw-prose-hr: var(--border-color);
+            --tw-prose-quotes: var(--text-primary);
+            --tw-prose-quote-borders: var(--border-color);
+            --tw-prose-captions: var(--text-secondary);
+            --tw-prose-code: var(--system-purple);
+            --tw-prose-pre-code: var(--text-primary);
+            --tw-prose-pre-bg: var(--bg-tertiary);
+            --tw-prose-th-borders: var(--border-color);
+            --tw-prose-td-borders: var(--border-color);
+        }
+
+        .prose img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .prose blockquote {
+            border-left: 4px solid var(--system-blue);
+            padding-left: 16px;
+            margin: 16px 0;
+            font-style: italic;
+        }
+
+        .prose pre {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            overflow-x: auto;
+        }
+
+        .prose table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+
+        .prose table th,
+        .prose table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .prose table th {
+            background: var(--fill-primary);
+            font-weight: 600;
+        }
+
+        /* Full Screen Email Modal Enhancements */
+        .email-modal-content {
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: none;
+        }
+
+        .email-modal-content h1,
+        .email-modal-content h2,
+        .email-modal-content h3 {
+            margin-top: 1.5em;
+            margin-bottom: 0.75em;
+        }
+
+        .email-modal-content p {
+            margin-bottom: 1em;
+        }
+
+        .email-modal-content a {
+            color: var(--system-blue);
+            text-decoration: underline;
+        }
+
+        .email-modal-content a:hover {
+            color: var(--system-purple);
+        }
+
+        /* Scrollbar styling for email content */
+        .email-content-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .email-content-scroll::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .email-content-scroll::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .email-content-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+
+        .expand-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            color: var(--system-blue);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: color 0.2s;
+        }
+
+        .expand-toggle:hover {
+            color: var(--system-purple);
+        }
+
+        .expand-toggle svg {
+            width: 12px;
+            height: 12px;
+            transition: transform 0.2s;
+        }
+
+        .email-card.expanded .expand-toggle svg {
+            transform: rotate(180deg);
+        }
+
         /* Responsive */
         @media (max-width: 767px) {
             .apex-container {
@@ -616,6 +829,17 @@
             .keypad-button {
                 font-size: 0.75rem;
                 padding: 6px 12px;
+            }
+
+            .hover-preview {
+                position: relative;
+                top: auto;
+                left: auto;
+                right: auto;
+                margin-top: 16px;
+                transform: none;
+                opacity: 1;
+                pointer-events: auto;
             }
         }
     </style>
@@ -684,7 +908,10 @@
                 @foreach ($messages as $message)
                     <div class="apex-card email-card
                         {{ ($message['isClient'] ?? false) ? 'client' : (($message['category'] ?? '') != 'personal' ? 'prospect' : '') }}
-                        {{ !$message['isRead'] ? 'unread' : '' }}">
+                        {{ !$message['isRead'] ? 'unread' : '' }}
+                        {{ $this->isExpanded($message['id']) ? 'expanded' : '' }}"
+                        wire:mouseenter="showHoverPreview('{{ $message['id'] }}')"
+                        wire:mouseleave="hideHoverPreview">
 
                         <!-- Avatar System -->
                         <div class="avatar-container">
@@ -731,6 +958,29 @@
 
                             <h4 class="email-subject">{{ $message['subject'] }}</h4>
                             <p class="email-snippet">{{ Str::limit($message['snippet'], 120) }}</p>
+
+                            <!-- Expand Toggle -->
+                            <div class="expand-toggle" wire:click="toggleExpanded('{{ $message['id'] }}')">
+                                {{ $this->isExpanded($message['id']) ? 'Show Less' : 'Show More' }}
+                                <svg viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+
+                            <!-- Expanded Content -->
+                            @if ($this->isExpanded($message['id']))
+                                <div class="expanded-content">
+                                    <div class="expanded-body prose dark:prose-invert max-w-none">
+                                        @if (!empty($message['body_html'] ?? ''))
+                                            {!! $message['body_html'] !!}
+                                        @elseif (!empty($message['body_text'] ?? ''))
+                                            {!! nl2br(e($message['body_text'])) !!}
+                                        @else
+                                            {!! nl2br(e($message['snippet'])) !!}
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
 
                             <!-- Client/Prospect Panel -->
                             @if ($message['isClient'] ?? false)
@@ -780,6 +1030,25 @@
                                     Delete
                                 </button>
                             </div>
+
+                            <!-- Hover Preview -->
+                            @if ($hoveredEmailId === $message['id'] && $hoverPreview)
+                                <div class="hover-preview">
+                                    <div class="hover-preview-meta">
+                                        <strong>{{ $hoverPreview['subject'] }}</strong>
+                                        <span class="hover-preview-date">{{ $hoverPreview['date'] }}</span>
+                                    </div>
+                                    <div class="hover-preview-content prose dark:prose-invert max-w-none">
+                                        @if (!empty($hoverPreview['body_html'] ?? ''))
+                                            {!! Str::limit(strip_tags($hoverPreview['body_html']), 200) !!}
+                                        @elseif (!empty($hoverPreview['body_text'] ?? ''))
+                                            {!! nl2br(e(Str::limit($hoverPreview['body_text'], 200))) !!}
+                                        @else
+                                            {!! nl2br(e(Str::limit($hoverPreview['snippet'], 200))) !!}
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 @endforeach
@@ -801,54 +1070,116 @@
         @endif
     </div>
 
-    <!-- Email Preview Modal -->
+    <!-- Email Preview Modal - Full Screen -->
     @if ($showingEmailId && $emailPreview)
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" wire:click="closeEmailPreview">
-            <div class="bg-white dark:bg-gray-800 rounded-lg max-w-4xl max-h-[90vh] overflow-hidden shadow-xl" wire:click.stop>
-                <!-- Modal Header -->
-                <div class="border-b border-gray-200 dark:border-gray-700 p-6">
+        <div class="fixed inset-0 bg-black bg-opacity-75 z-50 flex"
+             wire:click="closeEmailPreview"
+             x-data="{
+                 init() {
+                     this.$nextTick(() => this.$refs.modal.focus())
+                 }
+             }"
+             @keydown.escape.window="$wire.closeEmailPreview()">
+            <div class="w-full h-full bg-white dark:bg-gray-900 flex flex-col"
+                 wire:click.stop
+                 x-ref="modal"
+                 tabindex="-1"
+                 style="outline: none;">
+                <!-- Modal Header - Fixed -->
+                <div class="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 p-6 bg-white dark:bg-gray-900">
                     <div class="flex justify-between items-start">
-                        <div>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white truncate">
                                 {{ $emailPreview['subject'] }}
                             </h3>
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                From: {{ $emailPreview['from'] }} • {{ $emailPreview['date'] }}
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                <span class="font-medium">From:</span> {{ $emailPreview['from'] }}
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                {{ $emailPreview['date'] }}
                             </p>
                         </div>
-                        <button wire:click="closeEmailPreview" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
+                        <div class="flex items-center gap-3 ml-4">
+                            <!-- Star Toggle -->
+                            <button wire:click="toggleStar('{{ $emailPreview['id'] }}')"
+                                    class="p-2 rounded-lg transition-colors {{ $emailPreview['isStarred'] ? 'text-yellow-500 bg-yellow-50 dark:bg-yellow-900/20' : 'text-gray-400 hover:text-yellow-500 hover:bg-gray-50 dark:hover:bg-gray-800' }}">
+                                <svg class="w-5 h-5" fill="{{ $emailPreview['isStarred'] ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                                </svg>
+                            </button>
+                            <!-- Close Button -->
+                            <button wire:click="closeEmailPreview"
+                                    class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Labels -->
+                    @if (!empty($emailPreview['labels']))
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            @foreach ($emailPreview['labels'] as $label)
+                                @if (!in_array($label, ['INBOX', 'UNREAD', 'IMPORTANT']))
+                                    <span class="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-full">
+                                        {{ $label }}
+                                    </span>
+                                @endif
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Modal Body - Scrollable Email Content -->
+                <div class="flex-1 overflow-hidden">
+                    <div class="h-full overflow-y-auto px-6 py-6 email-content-scroll">
+                        <div class="prose dark:prose-invert max-w-none prose-lg email-modal-content">
+                            @if (!empty($emailPreview['body_html'] ?? ''))
+                                {!! $emailPreview['body_html'] !!}
+                            @elseif (!empty($emailPreview['body_text'] ?? ''))
+                                {!! nl2br(e($emailPreview['body_text'])) !!}
+                            @elseif (!empty($emailPreview['snippet'] ?? ''))
+                                <div class="text-gray-600 dark:text-gray-300">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Preview from snippet:</p>
+                                    {!! nl2br(e($emailPreview['snippet'])) !!}
+                                </div>
+                            @else
+                                <div class="text-gray-500 dark:text-gray-400 italic text-center py-8">
+                                    <p>No content available</p>
+                                    @if (app()->environment('local'))
+                                        <div class="text-xs mt-4 text-left">
+                                            Debug info:<br>
+                                            Body HTML: {{ !empty($emailPreview['body_html']) ? 'Present (' . strlen($emailPreview['body_html']) . ' chars)' : 'Empty' }}<br>
+                                            Body Text: {{ !empty($emailPreview['body_text']) ? 'Present (' . strlen($emailPreview['body_text']) . ' chars)' : 'Empty' }}<br>
+                                            Snippet: {{ !empty($emailPreview['snippet']) ? 'Present (' . strlen($emailPreview['snippet']) . ' chars)' : 'Empty' }}
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
-                <!-- Modal Body -->
-                <div class="p-6 overflow-y-auto max-h-[60vh]">
-                    <div class="prose dark:prose-invert max-w-none">
-                        {!! nl2br(e($emailPreview['body'])) !!}
-                    </div>
-                </div>
-
-                <!-- Modal Footer -->
-                <div class="border-t border-gray-200 dark:border-gray-700 p-6 flex justify-between">
-                    <div class="flex gap-2">
-                        @foreach ($emailPreview['labels'] as $label)
-                            <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
-                                {{ $label }}
+                <!-- Modal Footer - Fixed -->
+                <div class="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ count($emailPreview['labels']) }} labels
                             </span>
-                        @endforeach
-                    </div>
-                    <div class="flex gap-2">
-                        <button wire:click="toggleStar('{{ $emailPreview['id'] }}')"
-                                class="px-4 py-2 text-sm {{ $emailPreview['isStarred'] ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-700' }} rounded-lg hover:opacity-80">
-                            {{ $emailPreview['isStarred'] ? 'Unstar' : 'Star' }}
-                        </button>
-                        <button wire:click="closeEmailPreview"
-                                class="px-4 py-2 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600">
-                            Close
-                        </button>
+                            @if ($emailPreview['isRead'])
+                                <span class="text-xs text-green-600 dark:text-green-400">• Read</span>
+                            @else
+                                <span class="text-xs text-blue-600 dark:text-blue-400">• Unread</span>
+                            @endif
+                        </div>
+                        <div class="flex gap-2">
+                            <button wire:click="closeEmailPreview"
+                                    class="px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
