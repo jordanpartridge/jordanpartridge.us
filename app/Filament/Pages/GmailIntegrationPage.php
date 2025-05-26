@@ -139,7 +139,7 @@ class GmailIntegrationPage extends Page
             ->label('List Recent Messages')
             ->color('success')
             ->action(function () {
-                return $this->redirectRoute('filament.admin.pages.gmail-messages');
+                return $this->redirectRoute('filament.admin.pages.gmail-messages-page');
             })
             ->disabled(fn (): bool => !$this->isAuthenticated());
     }
@@ -153,7 +153,7 @@ class GmailIntegrationPage extends Page
             ->label('List Labels')
             ->color('warning')
             ->action(function () {
-                return $this->redirectRoute('filament.admin.pages.gmail-labels');
+                return $this->redirectRoute('filament.admin.pages.gmail-labels-page');
             })
             ->disabled(fn (): bool => !$this->isAuthenticated());
     }
