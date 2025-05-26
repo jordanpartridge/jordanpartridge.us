@@ -154,17 +154,17 @@ class GmailMessagesPage extends Page implements HasForms
             $this->messages = $rawMessages->map(function ($email) {
                 return [
                     'id'          => $email->id,
-                    'from'        => $email->from ?? 'Unknown',
-                    'from_name'   => $email->from ? (strpos($email->from, '<') !== false ? substr($email->from, 0, strpos($email->from, '<')) : '') : '',
-                    'subject'     => $email->subject ?? 'No Subject',
-                    'snippet'     => $email->snippet ?? '',
+                    'from'        => html_entity_decode($email->from ?? 'Unknown', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                    'from_name'   => $email->from ? (strpos($email->from, '<') !== false ? html_entity_decode(substr($email->from, 0, strpos($email->from, '<')), ENT_QUOTES | ENT_HTML5, 'UTF-8') : '') : '',
+                    'subject'     => html_entity_decode($email->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                    'snippet'     => html_entity_decode($email->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'date'        => $email->internalDate ? $email->internalDate->toISOString() : now()->toISOString(),
                     'isRead'      => !in_array('UNREAD', $email->labelIds ?? []),
                     'isImportant' => in_array('IMPORTANT', $email->labelIds ?? []),
                     'isStarred'   => in_array('STARRED', $email->labelIds ?? []),
                     'labels'      => $email->labelIds ?? [],
-                    'body_text'   => $email->body->text ?? '',
-                    'body_html'   => $email->body->html ?? '',
+                    'body_text'   => html_entity_decode($email->body->text ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                    'body_html'   => $email->body->html ?? '', // HTML body should already be properly encoded
                     // AI analysis will be added here
                     'isClient'         => false, // Will be determined by AI
                     'category'         => 'unknown', // Will be categorized by AI
@@ -473,13 +473,13 @@ class GmailMessagesPage extends Page implements HasForms
 
             $this->emailPreview = [
                 'id'        => $email->id,
-                'subject'   => $email->subject ?? 'No Subject',
-                'from'      => $email->from ?? 'Unknown Sender',
+                'subject'   => html_entity_decode($email->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                'from'      => html_entity_decode($email->from ?? 'Unknown Sender', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'date'      => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
-                'body_html' => $bodyHtml,
-                'body_text' => $bodyText,
-                'body'      => $bodyText ?: $fallbackContent,
-                'snippet'   => $email->snippet ?? '',
+                'body_html' => $bodyHtml, // HTML should already be properly encoded
+                'body_text' => html_entity_decode($bodyText, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                'body'      => html_entity_decode($bodyText ?: $fallbackContent, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                'snippet'   => html_entity_decode($email->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'labels'    => $email->labelIds ?? [],
                 'isStarred' => in_array('STARRED', $email->labelIds ?? []),
                 'isRead'    => !in_array('UNREAD', $email->labelIds ?? []),
@@ -547,12 +547,12 @@ class GmailMessagesPage extends Page implements HasForms
 
             $this->hoverPreview = [
                 'id'        => $email->id,
-                'subject'   => $email->subject ?? 'No Subject',
-                'from'      => $email->from ?? 'Unknown Sender',
+                'subject'   => html_entity_decode($email->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                'from'      => html_entity_decode($email->from ?? 'Unknown Sender', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'date'      => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
-                'body_text' => $email->body->text ?? 'No content available',
-                'body_html' => $email->body->html ?? '',
-                'snippet'   => $email->snippet ?? '',
+                'body_text' => html_entity_decode($email->body->text ?? 'No content available', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                'body_html' => $email->body->html ?? '', // HTML should already be properly encoded
+                'snippet'   => html_entity_decode($email->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'labels'    => $email->labelIds ?? [],
                 'isStarred' => in_array('STARRED', $email->labelIds ?? []),
                 'isRead'    => !in_array('UNREAD', $email->labelIds ?? []),

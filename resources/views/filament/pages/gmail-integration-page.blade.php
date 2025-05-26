@@ -35,9 +35,9 @@
                         <ul class="space-y-3">
                             @foreach ($messages->take(3) as $message)
                                 <li class="p-4 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow">
-                                    <div class="font-medium dark:text-gray-200 mb-1 truncate">{{ $message->subject ?? 'No Subject' }}</div>
-                                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-2">{{ $message->from ?? 'Unknown' }}</div>
-                                    <div class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{{ $message->snippet ?? '' }}</div>
+                                    <div class="font-medium dark:text-gray-200 mb-1 truncate">{{ html_entity_decode($message->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</div>
+                                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-2">{{ html_entity_decode($message->from ?? 'Unknown', ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{{ html_entity_decode($message->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8') }}</div>
                                 </li>
                             @endforeach
                         </ul>
