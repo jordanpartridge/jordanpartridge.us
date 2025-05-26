@@ -60,8 +60,11 @@ class PerformanceMonitoring
         // Store metrics (async to avoid blocking response)
         if ($this->shouldTrack($request)) {
             // Use a job class instead of closure to avoid serialization issues
+            $url = $request->fullUrl();
+            $truncatedUrl = strlen($url) > 200 ? substr($url, 0, 200) . '...' : $url;
+
             $data = [
-                'url'             => $request->fullUrl(),
+                'url'             => $truncatedUrl,
                 'method'          => $request->method(),
                 'response_time'   => round($responseTime),
                 'response_status' => $response->getStatusCode(),

@@ -621,6 +621,11 @@
     </style>
 
     <div class="apex-container">
+        <!-- Filtering Form -->
+        <div class="apex-card" style="margin-bottom: 24px; padding: 20px;">
+            {{ $this->form }}
+        </div>
+
         @if (count($messages))
             <!-- Metrics Grid -->
             <div class="apex-grid metrics-grid">
@@ -760,14 +765,20 @@
 
                             <!-- Action Keypad - 2 per row max -->
                             <div class="action-keypad">
-                                <button class="keypad-button primary">Reply</button>
+                                <button class="keypad-button primary" wire:click="showEmailPreview('{{ $message['id'] }}')">
+                                    View Email
+                                </button>
                                 @if ($message['isClient'] ?? false)
                                     <button class="keypad-button success">Call Client</button>
                                 @else
                                     <button class="keypad-button success">Add Contact</button>
                                 @endif
-                                <button class="keypad-button warning">Star</button>
-                                <button class="keypad-button danger">Delete</button>
+                                <button class="keypad-button warning" wire:click="toggleStar('{{ $message['id'] }}')">
+                                    {{ $message['isStarred'] ? 'Unstar' : 'Star' }}
+                                </button>
+                                <button class="keypad-button danger" wire:click="deleteEmail('{{ $message['id'] }}')">
+                                    Delete
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -789,4 +800,58 @@
             </div>
         @endif
     </div>
+
+    <!-- Email Preview Modal -->
+    @if ($showingEmailId && $emailPreview)
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" wire:click="closeEmailPreview">
+            <div class="bg-white dark:bg-gray-800 rounded-lg max-w-4xl max-h-[90vh] overflow-hidden shadow-xl" wire:click.stop>
+                <!-- Modal Header -->
+                <div class="border-b border-gray-200 dark:border-gray-700 p-6">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                {{ $emailPreview['subject'] }}
+                            </h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                From: {{ $emailPreview['from'] }} • {{ $emailPreview['date'] }}
+                            </p>
+                        </div>
+                        <button wire:click="closeEmailPreview" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="p-6 overflow-y-auto max-h-[60vh]">
+                    <div class="prose dark:prose-invert max-w-none">
+                        {!! nl2br(e($emailPreview['body'])) !!}
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="border-t border-gray-200 dark:border-gray-700 p-6 flex justify-between">
+                    <div class="flex gap-2">
+                        @foreach ($emailPreview['labels'] as $label)
+                            <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
+                                {{ $label }}
+                            </span>
+                        @endforeach
+                    </div>
+                    <div class="flex gap-2">
+                        <button wire:click="toggleStar('{{ $emailPreview['id'] }}')"
+                                class="px-4 py-2 text-sm {{ $emailPreview['isStarred'] ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-700' }} rounded-lg hover:opacity-80">
+                            {{ $emailPreview['isStarred'] ? 'Unstar' : 'Star' }}
+                        </button>
+                        <button wire:click="closeEmailPreview"
+                                class="px-4 py-2 text-sm bg-gray-500 text-white rounded-lg hover:bg-gray-600">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </x-filament::page>

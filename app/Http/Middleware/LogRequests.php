@@ -17,8 +17,17 @@ class LogRequests
     {
         $response = $next($request);
 
+        // Skip logging for Gmail OAuth callback to prevent database overflow from long OAuth URLs
+        if ($request->is('gmail/auth/callback')) {
+            return $response;
+        }
+
+        // Truncate long URLs to prevent database column overflow
+        $url = $request->fullUrl();
+        $eventUrl = strlen($url) > 200 ? substr($url, 0, 200) . '...' : $url;
+
         activity('request')
-            ->event($request->fullUrl())
+            ->event($eventUrl)
             ->withProperties([
                 'method'          => $request->method(),
                 'ip'              => $request->ip(),

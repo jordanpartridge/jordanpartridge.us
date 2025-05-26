@@ -48,6 +48,7 @@ class GmailIntegrationPage extends Page
     {
         $user = auth()->user();
         $token = $user->gmailToken;
+        $hasValidToken = $user->hasValidGmailToken();
 
         Log::info('Gmail authentication check', [
             'user_id'       => $user->id,
@@ -60,7 +61,7 @@ class GmailIntegrationPage extends Page
         $this->refreshToken = $token ? 'Present' : null;
         $this->tokenExpires = $token ? $token->expires_at : null;
 
-        return $user->hasValidGmailToken();
+        return $hasValidToken;
     }
 
     /**

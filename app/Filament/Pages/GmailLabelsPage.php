@@ -60,8 +60,34 @@ class GmailLabelsPage extends Page
             // Get the Gmail client
             $gmailClient = $user->getGmailClient();
 
-            // List labels
-            $this->labels = $gmailClient->listLabels();
+            // List labels and convert to simple arrays for Livewire
+            $gmailLabels = $gmailClient->listLabels();
+
+            $this->labels = $gmailLabels->map(function ($label) {
+                // Handle both Label objects and arrays
+                if (is_array($label)) {
+                    return [
+                        'id'             => $label['id'] ?? '',
+                        'name'           => $label['name'] ?? '',
+                        'type'           => $label['type'] ?? 'user',
+                        'messagesTotal'  => $label['messagesTotal'] ?? 0,
+                        'messagesUnread' => $label['messagesUnread'] ?? 0,
+                        'threadsTotal'   => $label['threadsTotal'] ?? 0,
+                        'threadsUnread'  => $label['threadsUnread'] ?? 0,
+                    ];
+                }
+
+                // Handle Label objects
+                return [
+                    'id'             => $label->id,
+                    'name'           => $label->name,
+                    'type'           => $label->type ?? 'user',
+                    'messagesTotal'  => $label->messagesTotal ?? 0,
+                    'messagesUnread' => $label->messagesUnread ?? 0,
+                    'threadsTotal'   => $label->threadsTotal ?? 0,
+                    'threadsUnread'  => $label->threadsUnread ?? 0,
+                ];
+            })->toArray();
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Error fetching labels')

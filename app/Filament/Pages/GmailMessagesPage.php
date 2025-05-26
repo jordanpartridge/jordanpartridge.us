@@ -8,14 +8,20 @@ use App\Models\Post;
 use App\Models\GithubRepository;
 use App\Models\Ride;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
-class GmailMessagesPage extends Page
+class GmailMessagesPage extends Page implements HasForms
 {
+    use InteractsWithForms;
     protected static ?string $navigationIcon = 'heroicon-o-inbox';
 
     protected static string $view = 'filament.pages.gmail-messages-page';
@@ -33,9 +39,18 @@ class GmailMessagesPage extends Page
     public $filter = 'all';
     public $searchTerm = '';
     public $selectedCategory = 'all';
+    public $selectedLabel = 'INBOX';
+    public $availableLabels = [];
     public $clients = [];
     public $projects = [];
     public $recentActivity = [];
+
+    // Form data
+    public ?array $data = [];
+
+    // Modal state
+    public $showingEmailId = null;
+    public $emailPreview = null;
 
     public function getHeading(): string
     {
@@ -50,10 +65,50 @@ class GmailMessagesPage extends Page
     public function mount(): void
     {
         // No specific authorization required
+        $this->loadLabels();
         $this->loadClients();
         $this->loadProjects();
         $this->loadRecentActivity();
+
+        // Initialize form data
+        $this->form->fill([
+            'selectedLabel' => $this->selectedLabel,
+            'searchTerm'    => $this->searchTerm,
+        ]);
+
         $this->loadMessages();
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('selectedLabel')
+                    ->label('Filter by Label')
+                    ->options(function () {
+                        $options = ['INBOX' => 'Inbox'];
+                        foreach ($this->availableLabels as $label) {
+                            $options[$label['id']] = $label['name'];
+                        }
+                        return $options;
+                    })
+                    ->default($this->selectedLabel)
+                    ->reactive()
+                    ->afterStateUpdated(function ($state) {
+                        $this->selectedLabel = $state;
+                        $this->loadMessages();
+                    }),
+
+                TextInput::make('searchTerm')
+                    ->label('Search')
+                    ->placeholder('Search emails...')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state) {
+                        $this->searchTerm = $state;
+                        $this->loadMessages();
+                    }),
+            ])
+            ->statePath('data');
     }
 
     public function loadMessages($maxResults = 10)
@@ -75,18 +130,28 @@ class GmailMessagesPage extends Page
             // Get the Gmail client
             $gmailClient = $user->getGmailClient();
 
-            // Get Gmail messages - real data now!
-            $rawMessages = $gmailClient->listMessages(['maxResults' => $maxResults]);
+            // Get Gmail messages for selected label with search
+            $queryParams = [
+                'maxResults' => $maxResults,
+                'labelIds'   => [$this->selectedLabel]
+            ];
+
+            // Add search query if provided
+            if (!empty($this->searchTerm)) {
+                $queryParams['q'] = $this->searchTerm;
+            }
+
+            $rawMessages = $gmailClient->listMessages($queryParams);
 
             // Convert Gmail Email objects to simple arrays for Livewire
             $this->messages = $rawMessages->map(function ($email) {
                 return [
                     'id'          => $email->id,
-                    'from'        => $email->from->email ?? 'Unknown',
-                    'from_name'   => $email->from->name ?? '',
+                    'from'        => $email->from ?? 'Unknown',
+                    'from_name'   => $email->from ? (strpos($email->from, '<') !== false ? substr($email->from, 0, strpos($email->from, '<')) : '') : '',
                     'subject'     => $email->subject ?? 'No Subject',
                     'snippet'     => $email->snippet ?? '',
-                    'date'        => $email->date ? $email->date->toISOString() : now()->toISOString(),
+                    'date'        => $email->internalDate ? $email->internalDate->toISOString() : now()->toISOString(),
                     'isRead'      => !in_array('UNREAD', $email->labelIds ?? []),
                     'isImportant' => in_array('IMPORTANT', $email->labelIds ?? []),
                     'isStarred'   => in_array('STARRED', $email->labelIds ?? []),
@@ -113,6 +178,43 @@ class GmailMessagesPage extends Page
 
             // Fallback to demo data for development
             $this->loadDemoMessages();
+        }
+    }
+
+    /**
+     * Load available Gmail labels for filtering
+     */
+    public function loadLabels()
+    {
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+            $gmailLabels = $gmailClient->listLabels();
+
+            $this->availableLabels = $gmailLabels->map(function ($label) {
+                if (is_array($label)) {
+                    return [
+                        'id'   => $label['id'] ?? '',
+                        'name' => $label['name'] ?? '',
+                        'type' => $label['type'] ?? 'user',
+                    ];
+                }
+
+                return [
+                    'id'   => $label->id,
+                    'name' => $label->name,
+                    'type' => $label->type ?? 'user',
+                ];
+            })->toArray();
+
+        } catch (\Exception $e) {
+            // Fail silently for labels, don't break the page
+            $this->availableLabels = [];
         }
     }
 
@@ -231,16 +333,131 @@ class GmailMessagesPage extends Page
     }
 
     /**
+     * Change selected Gmail label and reload messages
+     */
+    public function selectLabel(string $labelId)
+    {
+        $this->selectedLabel = $labelId;
+        $this->loadMessages();
+
+        Notification::make()
+            ->title('Label Changed')
+            ->body("Now showing emails from: " . ($labelId === 'INBOX' ? 'Inbox' : $labelId))
+            ->success()
+            ->send();
+    }
+
+    /**
      * Toggle email star status
+     * TODO: Re-enable when Gmail client package adds addLabelsToMessage/removeLabelsFromMessage methods
+     * See: https://github.com/PartridgeRocks/laravel-gmail-client/issues/16
      */
     public function toggleStar(string $messageId)
     {
-        // TODO: Implement with Gmail API
         Notification::make()
             ->title('Feature Coming Soon')
-            ->body('Star toggle will be implemented with Gmail API integration')
-            ->info()
+            ->body('Star toggle will be available when the Gmail client package adds label management methods.')
+            ->warning()
             ->send();
+
+        // TODO: Implement when package methods are available
+        /*
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            Notification::make()
+                ->title('Not authenticated')
+                ->body('Please authenticate with Gmail first.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+
+            // Find the message in our current list to check if it's starred
+            $currentMessage = collect($this->messages)->firstWhere('id', $messageId);
+            $isStarred = $currentMessage ? in_array('STARRED', $currentMessage['labels'] ?? []) : false;
+
+            if ($isStarred) {
+                // Remove star
+                $gmailClient->removeLabelsFromMessage($messageId, ['STARRED']);
+                $action = 'removed star from';
+            } else {
+                // Add star
+                $gmailClient->addLabelsToMessage($messageId, ['STARRED']);
+                $action = 'starred';
+            }
+
+            // Refresh messages to show updated star status
+            $this->loadMessages();
+
+            Notification::make()
+                ->title('Success')
+                ->body("Successfully {$action} email")
+                ->success()
+                ->send();
+
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Error')
+                ->body('Failed to update star status: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+        */
+    }
+
+    /**
+     * Show email preview modal
+     */
+    public function showEmailPreview(string $messageId)
+    {
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            Notification::make()
+                ->title('Not authenticated')
+                ->body('Please authenticate with Gmail first.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+            $email = $gmailClient->getMessage($messageId);
+
+            $this->emailPreview = [
+                'id'        => $email->id,
+                'subject'   => $email->subject ?? 'No Subject',
+                'from'      => $email->from ?? 'Unknown Sender',
+                'date'      => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
+                'body'      => $email->body ?? 'No content available',
+                'labels'    => $email->labelIds ?? [],
+                'isStarred' => in_array('STARRED', $email->labelIds ?? []),
+                'isRead'    => !in_array('UNREAD', $email->labelIds ?? []),
+            ];
+
+            $this->showingEmailId = $messageId;
+
+        } catch (\Exception $e) {
+            Notification::make()
+                ->title('Error')
+                ->body('Failed to load email: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    /**
+     * Close email preview modal
+     */
+    public function closeEmailPreview()
+    {
+        $this->showingEmailId = null;
+        $this->emailPreview = null;
     }
 
     /**

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use PartridgeRocks\GmailClient\Facades\GmailClient;
 
 class GmailCallbackController extends Controller
 {
@@ -14,13 +15,10 @@ class GmailCallbackController extends Controller
      */
     public function __invoke(Request $request)
     {
-        Log::info('Gmail callback reached with improved logging', [
+        Log::info('Gmail callback reached', [
             'has_code'           => $request->has('code'),
             'user_id'            => auth()->id(),
             'user_authenticated' => auth()->check(),
-            'callback_uri'       => config('gmail-client.redirect_uri'),
-            'request_uri'        => $request->getRequestUri(),
-            'request_query'      => $request->getQueryString(),
         ]);
 
         $code = $request->get('code');
@@ -42,11 +40,20 @@ class GmailCallbackController extends Controller
             ]);
 
             try {
-                // Exchange code for tokens
-                $tokens = GmailClient::exchangeCode(
-                    $code,
-                    config('gmail-client.redirect_uri')
-                );
+                // Manual token exchange using Laravel's HTTP client instead of package
+                $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+                    'grant_type'    => 'authorization_code',
+                    'client_id'     => config('gmail-client.client_id'),
+                    'client_secret' => config('gmail-client.client_secret'),
+                    'redirect_uri'  => config('gmail-client.redirect_uri'),
+                    'code'          => $code,
+                ]);
+
+                if ($response->failed()) {
+                    throw new Exception('Token exchange failed: ' . $response->body());
+                }
+
+                $tokens = $response->json();
 
                 Log::info('Successfully exchanged code for tokens', [
                     'has_access_token'  => isset($tokens['access_token']),

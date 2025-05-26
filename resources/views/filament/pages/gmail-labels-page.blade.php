@@ -7,16 +7,16 @@
                         <div class="flex items-center">
                             <span @class([
                                 'h-4 w-4 rounded-full mr-2',
-                                'bg-primary-500' => $label->type === 'system',
-                                'bg-success-500' => $label->type === 'user',
+                                'bg-primary-500' => $label['type'] === 'system',
+                                'bg-success-500' => $label['type'] === 'user',
                             ])></span>
-                            <h3 class="text-lg font-medium">{{ $label->name ?? 'Unnamed Label' }}</h3>
+                            <h3 class="text-lg font-medium">{{ $label['name'] ?? 'Unnamed Label' }}</h3>
                         </div>
                         <div class="mt-2 text-sm text-gray-500">
-                            <div>ID: <span class="font-mono">{{ $label->id ?? 'Unknown' }}</span></div>
-                            <div>Type: {{ ucfirst($label->type ?? 'Unknown') }}</div>
-                            <div>Messages: {{ $label->messagesTotal ?? 0 }}</div>
-                            <div>Unread: {{ $label->messagesUnread ?? 0 }}</div>
+                            <div>ID: <span class="font-mono">{{ $label['id'] ?? 'Unknown' }}</span></div>
+                            <div>Type: {{ ucfirst($label['type'] ?? 'Unknown') }}</div>
+                            <div>Messages: {{ $label['messagesTotal'] ?? 0 }}</div>
+                            <div>Unread: {{ $label['messagesUnread'] ?? 0 }}</div>
                         </div>
                     </div>
                 @endforeach
