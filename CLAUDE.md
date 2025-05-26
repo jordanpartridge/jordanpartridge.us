@@ -15,6 +15,59 @@
 
 Note: Some tests require frontend assets. Run `npm run build` before running tests if you encounter asset-related failures.
 
+## Admin Panel Access & Login
+
+### Local Development Login
+
+**Quick Access (Recommended)**:
+1. Navigate to: `http://jordanpartridge.test/admin`
+2. Click "Developer Login" link at the bottom of the login form
+3. You'll be automatically logged in as the admin user
+
+**Direct Login Link**:
+```bash
+# Generate a secure login link
+php artisan login-link:generate --user=1
+
+# This will output a URL like:
+# http://jordanpartridge.test/login-link/{token}
+```
+
+### Test Domain Login (for OAuth Testing)
+
+**Quick Access**:
+1. Navigate to: `https://test.jordanpartridge.us/admin`
+2. Click "Developer Login" link at the bottom of the login form
+3. You'll be automatically logged in as the admin user
+
+**Direct Login Link for Test Domain**:
+```bash
+# Generate a secure login link for the test domain
+php artisan login-link:generate --user=1 --host=test.jordanpartridge.us
+
+# This will output a URL like:
+# https://test.jordanpartridge.us/login-link/{token}
+```
+
+### Admin Panel Sections
+
+Once logged in, key admin sections include:
+- **Dashboard**: `/admin` - Overview of site activity
+- **Clients**: `/admin/clients` - Client management
+- **Gmail Integration**: `/admin/gmail-integration-page` - Email OAuth setup
+- **Gmail Messages**: `/admin/gmail-messages-page` - View recent emails
+- **Gmail Labels**: `/admin/gmail-labels-page` - Manage email labels
+- **Performance Monitoring**: `/admin/performance-monitoring-dashboard` - Site metrics
+- **GitHub Settings**: `/admin/git-hub-settings-page` - Repository sync settings
+
+### Troubleshooting Login Issues
+
+If login links aren't working:
+1. Ensure the correct domain is in `config/login-link.php` allowed hosts
+2. Check that Laravel Login Link package is properly installed
+3. Verify the user exists: `php artisan tinker` then `User::find(1)`
+4. Clear application cache: `php artisan config:clear`
+
 ## Linting & Code Quality
 
 - Fix code style: `./vendor/bin/duster fix`
@@ -94,7 +147,51 @@ composer dump-autoload
    php -d memory_limit=-1 composer update package/name --with-dependencies
    ```
 
+## Development Testing Infrastructure
+
+### Cloudflare Tunnel for OAuth Testing
+
+For testing OAuth integrations (Gmail, GitHub, etc.) that require public callbacks, we use a Cloudflare tunnel:
+
+- **Domain**: `test.jordanpartridge.us`
+- **Purpose**: Provides public HTTPS access to local development for OAuth callbacks
+- **Setup**: Tunnel configured via `cloudflared` with DNS routing through Cloudflare
+- **Herd Integration**: Site linked to tunnel domain using `herd link test.jordanpartridge.us`
+
+#### Tunnel Management
+
+```bash
+# Start the tunnel (if not running)
+cloudflared tunnel run gmail-dev
+
+# Check tunnel status
+cloudflared tunnel list
+
+# View tunnel logs
+cloudflared tunnel --log-level debug run gmail-dev
+```
+
+#### OAuth Configuration
+
+When testing OAuth integrations:
+1. Update redirect URIs in provider settings (Google Cloud Console, GitHub Apps, etc.)
+2. Set environment variables to use tunnel domain:
+   ```
+   GMAIL_REDIRECT_URI=https://test.jordanpartridge.us/gmail/auth/callback
+   ```
+
+### Laravel Login Link Integration
+
+The tunnel domain is configured for Laravel Login Link:
+- Added `test.jordanpartridge.us` to `config/login-link.php` allowed hosts
+- Enables secure login link generation for the test domain
+
 ## Gmail Integration
+
+### Current Status
+- **Gmail Client Package**: v1.0.2 (with known bug in OAuth flow)
+- **Bug Status**: Issue #11 created, PR in progress to fix missing `fromOAuthError()` method
+- **Test Environment**: OAuth configured for test.jordanpartridge.us domain
 
 ### Authentication Setup
 

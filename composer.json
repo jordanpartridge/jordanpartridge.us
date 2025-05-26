@@ -7,11 +7,18 @@
         "framework"
     ],
     "license": "MIT",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "./gmail_client"
+        }
+    ],
     "require": {
         "php": "^8.4",
         "bezhansalleh/filament-shield": "^3.3",
         "devdojo/genesis": "dev-main",
         "dutchcodingcompany/filament-socialite": "^2.2",
+        "echolabsdev/prism": "^0.68.0",
         "emcconville/google-map-polyline-encoding-tool": "^1.3",
         "filament/filament": "^3.2",
         "filament/notifications": "^3.2",
@@ -31,7 +38,7 @@
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.28",
         "livewire/volt": "^1.7.0",
-        "partridgerocks/gmail-client": "^1.0.2",
+        "partridgerocks/gmail-client": "@dev",
         "pxlrbt/filament-activity-log": "^1.1",
         "resend/resend-php": "^0.12.0",
         "saloonphp/laravel-plugin": "^3.0",

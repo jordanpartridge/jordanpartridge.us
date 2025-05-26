@@ -157,12 +157,66 @@ class GmailIntegrationPage extends Page
             ->disabled(fn (): bool => !$this->isAuthenticated());
     }
 
+    /**
+     * Revoke Gmail authentication
+     */
+    protected function revokeAction(): Action
+    {
+        return Action::make('revoke')
+            ->label('Disconnect Gmail')
+            ->color('danger')
+            ->icon('heroicon-o-x-circle')
+            ->requiresConfirmation()
+            ->modalHeading('Disconnect Gmail')
+            ->modalDescription('Are you sure you want to disconnect your Gmail account? You will need to re-authenticate to access emails.')
+            ->modalSubmitActionLabel('Yes, disconnect')
+            ->action(function () {
+                $user = auth()->user();
+                if ($user->gmailToken) {
+                    $user->gmailToken->delete();
+                }
+
+                Notification::make()
+                    ->title('Gmail Disconnected')
+                    ->body('Your Gmail account has been successfully disconnected.')
+                    ->success()
+                    ->send();
+
+                // Refresh the page state
+                $this->accessToken = null;
+                $this->refreshToken = null;
+                $this->tokenExpires = null;
+            })
+            ->visible(fn (): bool => $this->isAuthenticated());
+    }
+
+    /**
+     * Quick action to view messages
+     */
+    protected function viewMessagesAction(): Action
+    {
+        return Action::make('viewMessages')
+            ->label('View Messages')
+            ->color('primary')
+            ->icon('heroicon-o-envelope-open')
+            ->action(function () {
+                return $this->redirectRoute('filament.admin.pages.gmail-messages-page');
+            })
+            ->visible(fn (): bool => $this->isAuthenticated());
+    }
+
     protected function getHeaderActions(): array
     {
+        if ($this->isAuthenticated()) {
+            return [
+                $this->viewMessagesAction(),
+                $this->listLabelsAction(),
+                $this->revokeAction(),
+            ];
+        }
+
         return [
             $this->authenticateAction(),
-            $this->listMessagesAction(),
-            $this->listLabelsAction(),
         ];
     }
 }
