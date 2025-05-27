@@ -1,0 +1,391 @@
+/* Email Content Styling for Gmail Integration */
+
+/* Base line clamp utilities */
+.line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.group:hover .lg\:group-hover\:opacity-100 {
+    opacity: 1;
+}
+
+/* Email Content Container */
+.email-content-container {
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Email Content Base Styles */
+.email-rich-content,
+.email-basic-html {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #374151 !important;
+    background: transparent !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* Dark mode base colors */
+@media (prefers-color-scheme: dark) {
+    .email-rich-content,
+    .email-basic-html {
+        color: #d1d5db;
+    }
+}
+
+/* Reset layout elements while preserving content styling */
+.email-rich-content div,
+.email-rich-content table,
+.email-rich-content tr,
+.email-rich-content td,
+.email-rich-content span,
+.email-basic-html div,
+.email-basic-html table,
+.email-basic-html tr,
+.email-basic-html td,
+.email-basic-html span {
+    font-family: inherit !important;
+    background: transparent !important;
+    border: none !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+}
+
+/* Typography */
+.email-rich-content h1,
+.email-rich-content h2,
+.email-rich-content h3,
+.email-rich-content h4,
+.email-rich-content h5,
+.email-rich-content h6,
+.email-basic-html h1,
+.email-basic-html h2,
+.email-basic-html h3,
+.email-basic-html h4,
+.email-basic-html h5,
+.email-basic-html h6 {
+    margin: 1.5em 0 0.5em 0 !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    font-family: inherit !important;
+    color: inherit !important;
+}
+
+.email-rich-content h1,
+.email-basic-html h1 { font-size: 1.25rem !important; }
+.email-rich-content h2,
+.email-basic-html h2 { font-size: 1.125rem !important; }
+.email-rich-content h3,
+.email-basic-html h3 { font-size: 1rem !important; }
+.email-rich-content h4,
+.email-rich-content h5,
+.email-rich-content h6,
+.email-basic-html h4,
+.email-basic-html h5,
+.email-basic-html h6 { font-size: 0.875rem !important; }
+
+.email-rich-content p,
+.email-basic-html p {
+    margin: 0.75em 0 !important;
+    line-height: 1.6 !important;
+    font-size: inherit !important;
+}
+
+/* Text formatting */
+.email-rich-content strong,
+.email-rich-content b,
+.email-basic-html strong,
+.email-basic-html b {
+    font-weight: 700 !important;
+    color: inherit !important;
+}
+
+.email-rich-content em,
+.email-rich-content i,
+.email-basic-html em,
+.email-basic-html i {
+    font-style: italic !important;
+    color: inherit !important;
+}
+
+.email-rich-content u,
+.email-basic-html u {
+    text-decoration: underline !important;
+    color: inherit !important;
+}
+
+/* Lists */
+.email-rich-content ul,
+.email-rich-content ol,
+.email-basic-html ul,
+.email-basic-html ol {
+    margin: 1em 0 !important;
+    padding-left: 1.5em !important;
+    padding-right: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.email-rich-content li,
+.email-basic-html li {
+    margin: 0.25em 0 !important;
+    padding: 0 !important;
+}
+
+/* Links */
+.email-rich-content a,
+.email-basic-html a {
+    color: #2563eb !important;
+    text-decoration: underline !important;
+    word-break: break-all !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    .email-rich-content a,
+    .email-basic-html a {
+        color: #60a5fa !important;
+    }
+}
+
+.email-rich-content a:hover,
+.email-basic-html a:hover {
+    text-decoration: none !important;
+}
+
+/* Images */
+.email-rich-content img,
+.email-basic-html img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 8px !important;
+    margin: 1em 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    width: auto !important;
+}
+
+/* Tables */
+.email-rich-content table,
+.email-basic-html table {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 1em 0 !important;
+    font-size: inherit !important;
+    background: transparent !important;
+    border: none !important;
+}
+
+.email-rich-content th,
+.email-rich-content td,
+.email-basic-html th,
+.email-basic-html td {
+    padding: 6px 8px !important;
+    border: 1px solid #e5e7eb !important;
+    text-align: left !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    color: inherit !important;
+    background: transparent !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    .email-rich-content th,
+    .email-rich-content td,
+    .email-basic-html th,
+    .email-basic-html td {
+        border-color: #4b5563 !important;
+    }
+}
+
+.email-rich-content th,
+.email-basic-html th {
+    background-color: #f9fafb !important;
+    font-weight: 600 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    .email-rich-content th,
+    .email-basic-html th {
+        background-color: #374151 !important;
+    }
+}
+
+/* Code */
+.email-rich-content code,
+.email-basic-html code {
+    background-color: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.875em;
+}
+
+@media (prefers-color-scheme: dark) {
+    .email-rich-content code,
+    .email-basic-html code {
+        background-color: #374151;
+    }
+}
+
+.email-rich-content pre,
+.email-basic-html pre {
+    background-color: #f3f4f6;
+    padding: 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+@media (prefers-color-scheme: dark) {
+    .email-rich-content pre,
+    .email-basic-html pre {
+        background-color: #374151;
+    }
+}
+
+/* Blockquotes */
+.email-rich-content blockquote,
+.email-basic-html blockquote {
+    border-left: 4px solid #e5e7eb;
+    margin: 1em 0;
+    padding: 0.5em 0 0.5em 1em;
+    font-style: italic;
+    background-color: #f9fafb;
+}
+
+@media (prefers-color-scheme: dark) {
+    .email-rich-content blockquote,
+    .email-basic-html blockquote {
+        border-left-color: #4b5563;
+        background-color: #374151;
+    }
+}
+
+/* Text content specific styling */
+.email-text-content pre {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+}
+
+.email-snippet-content {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+    .email-rich-content,
+    .email-basic-html {
+        font-size: 13px;
+    }
+
+    .email-rich-content table,
+    .email-basic-html table {
+        font-size: 12px;
+    }
+
+    .email-rich-content th,
+    .email-rich-content td,
+    .email-basic-html th,
+    .email-basic-html td {
+        padding: 6px 8px;
+    }
+}
+
+/* Override problematic email styles */
+.email-rich-content [style*="width"],
+.email-rich-content [style*="background"],
+.email-basic-html [style*="width"],
+.email-basic-html [style*="background"] {
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    background: transparent !important;
+}
+
+.email-rich-content [style*="font-family"],
+.email-basic-html [style*="font-family"] {
+    font-family: inherit !important;
+}
+
+/* Override marketing email patterns */
+.email-rich-content .container,
+.email-rich-content .wrapper,
+.email-rich-content .content,
+.email-basic-html .container,
+.email-basic-html .wrapper,
+.email-basic-html .content {
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.email-rich-content center,
+.email-basic-html center {
+    text-align: left !important;
+    width: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.email-rich-content font,
+.email-basic-html font {
+    font-family: inherit !important;
+    font-size: inherit !important;
+    color: inherit !important;
+}
+
+.email-rich-content span,
+.email-basic-html span {
+    font-family: inherit !important;
+    color: inherit !important;
+    background: transparent !important;
+    font-size: inherit !important;
+}
+
+/* Override fixed widths */
+.email-rich-content [width="600"],
+.email-rich-content [width="650"],
+.email-rich-content [width="700"],
+.email-basic-html [width="600"],
+.email-basic-html [width="650"],
+.email-basic-html [width="700"] {
+    width: 100% !important;
+    max-width: 100% !important;
+}
