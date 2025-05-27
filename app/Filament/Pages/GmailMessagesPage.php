@@ -49,6 +49,10 @@ class GmailMessagesPage extends Page implements HasForms
     public $projects = [];
     public $recentActivity = [];
 
+    // Multi-account support
+    public $selectedGmailAccount = null;
+    public $availableGmailAccounts = [];
+
     // UI State
     public $showLabelsPanel = true;
 
@@ -79,6 +83,7 @@ class GmailMessagesPage extends Page implements HasForms
     public function mount(): void
     {
         // No specific authorization required
+        $this->loadGmailAccounts();
         $this->loadLabels();
         $this->loadClients();
         $this->loadProjects();
@@ -109,6 +114,53 @@ class GmailMessagesPage extends Page implements HasForms
             ->statePath('data');
     }
 
+    /**
+     * Load available Gmail accounts for account switching
+     */
+    public function loadGmailAccounts()
+    {
+        $user = auth()->user();
+
+        $this->availableGmailAccounts = $user->gmailAccounts()
+            ->active()
+            ->get()
+            ->map(function ($account) {
+                return [
+                    'id'           => $account->id,
+                    'gmail_email'  => $account->gmail_email,
+                    'display_name' => $account->display_name,
+                    'is_primary'   => $account->is_primary,
+                ];
+            })
+            ->toArray();
+
+        // Set selected account to primary if none selected
+        if (!$this->selectedGmailAccount && !empty($this->availableGmailAccounts)) {
+            $primary = collect($this->availableGmailAccounts)->firstWhere('is_primary', true);
+            $this->selectedGmailAccount = $primary ? $primary['gmail_email'] : $this->availableGmailAccounts[0]['gmail_email'];
+        }
+    }
+
+    /**
+     * Switch to a different Gmail account
+     */
+    public function switchGmailAccount(string $gmailEmail)
+    {
+        $this->selectedGmailAccount = $gmailEmail;
+
+        // Reload everything for the new account
+        $this->loadLabels();
+        $this->loadMessages();
+
+        $accountName = collect($this->availableGmailAccounts)->firstWhere('gmail_email', $gmailEmail)['display_name'] ?? $gmailEmail;
+
+        Notification::make()
+            ->title('Account switched')
+            ->body("Now viewing emails from: {$accountName}")
+            ->success()
+            ->send();
+    }
+
     public function loadMessages($maxResults = 10)
     {
         $user = auth()->user();
@@ -125,8 +177,8 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            // Get the Gmail client
-            $gmailClient = $user->getGmailClient();
+            // Get the Gmail client for the selected account
+            $gmailClient = $this->getCurrentGmailClient();
 
             // If only one label is selected, use it directly
             // If multiple labels are selected, we need to query each one and merge results
@@ -242,7 +294,8 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            $gmailClient = $user->getGmailClient();
+            // Get the Gmail client for the selected account
+            $gmailClient = $this->getCurrentGmailClient();
             $gmailLabels = $gmailClient->listLabels();
 
             $this->availableLabels = $gmailLabels->map(function ($label) {
@@ -593,10 +646,10 @@ class GmailMessagesPage extends Page implements HasForms
             Log::info('Toggling star for message', [
                 'messageId'        => $messageId,
                 'currentlyStarred' => $isStarred,
-                'labels'           => $labels
+                'labels'           => $currentMessage['labels'] ?? []
             ]);
 
-            $gmailClient = $user->getGmailClient();
+            $gmailClient = $this->getCurrentGmailClient();
 
             // Verify Gmail client is available
             if (!$gmailClient) {
@@ -715,7 +768,7 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            $gmailClient = $user->getGmailClient();
+            $gmailClient = $this->getCurrentGmailClient();
             $email = $gmailClient->getMessage($messageId);
 
             // Debug: Log the email structure to understand the body format
@@ -821,7 +874,7 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            $gmailClient = $user->getGmailClient();
+            $gmailClient = $this->getCurrentGmailClient();
             $email = $gmailClient->getMessage($messageId);
 
             $this->hoverPreview = [
@@ -929,7 +982,7 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            $gmailClient = $user->getGmailClient();
+            $gmailClient = $this->getCurrentGmailClient();
 
             // Use modifyMessageLabels which is more reliable for label operations
             $gmailClient->modifyMessageLabels($messageId, [], ['UNREAD']);
@@ -979,7 +1032,7 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            $gmailClient = $user->getGmailClient();
+            $gmailClient = $this->getCurrentGmailClient();
 
             // Use modifyMessageLabels which is more reliable for label operations
             $gmailClient->modifyMessageLabels($messageId, ['UNREAD'], []);
@@ -1029,7 +1082,7 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            $gmailClient = $user->getGmailClient();
+            $gmailClient = $this->getCurrentGmailClient();
 
             // Use modifyMessageLabels to remove INBOX label (archive)
             $gmailClient->modifyMessageLabels($messageId, [], ['INBOX']);
@@ -1081,7 +1134,7 @@ class GmailMessagesPage extends Page implements HasForms
         }
 
         try {
-            $gmailClient = $user->getGmailClient();
+            $gmailClient = $this->getCurrentGmailClient();
 
             // Use modifyMessageLabels to add TRASH label (soft delete)
             $gmailClient->modifyMessageLabels($messageId, ['TRASH'], []);
@@ -1247,6 +1300,22 @@ class GmailMessagesPage extends Page implements HasForms
                 ->color('success')
                 ->action(fn () => $this->syncClientsFromEmails()),
         ];
+    }
+
+    /**
+     * Get the current Gmail client for the selected account
+     */
+    private function getCurrentGmailClient()
+    {
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            return null;
+        }
+
+        return $this->selectedGmailAccount
+            ? $user->getGmailClientForAccount($this->selectedGmailAccount)
+            : $user->getGmailClient();
     }
 
     /**
