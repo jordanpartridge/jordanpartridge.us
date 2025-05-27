@@ -28,11 +28,12 @@ return [
     */
     'scopes' => [
         'https://www.googleapis.com/auth/gmail.readonly',
-        // Reduced scopes for initial testing
+        'https://www.googleapis.com/auth/gmail.modify', // Required for star toggle functionality
+        'https://www.googleapis.com/auth/gmail.labels', // Required for label management
+        'https://www.googleapis.com/auth/userinfo.email', // Required to get user's email address
+        'https://www.googleapis.com/auth/userinfo.profile', // Required to get user's profile info (name, picture)
         // 'https://www.googleapis.com/auth/gmail.send',
         // 'https://www.googleapis.com/auth/gmail.compose',
-        // 'https://www.googleapis.com/auth/gmail.modify',
-        // 'https://www.googleapis.com/auth/gmail.labels',
     ],
 
     /*
@@ -95,7 +96,7 @@ return [
     | If true, this will register routes for OAuth redirect and callback.
     |
     */
-    'register_routes' => env('GMAIL_REGISTER_ROUTES', false),
+    'register_routes' => false, // Disabled - using custom controller for database storage
 
     /*
     |--------------------------------------------------------------------------

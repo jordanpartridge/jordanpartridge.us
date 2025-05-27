@@ -31,15 +31,33 @@ use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
-| Gmail Integration Routes - Placed outside middleware group for early registration
+| Gmail Integration Routes - Custom controller for database storage
 |--------------------------------------------------------------------------
 */
-// Gmail OAuth callback route - outside the LogRequests middleware to handle external callback
-Route::get('gmail/auth/callback', App\Http\Controllers\GmailCallbackController::class)
-    ->name('gmail.auth.callback')
-    ->withoutMiddleware([
-        Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
-    ]);
+// Gmail OAuth routes using custom controller that stores tokens in database
+Route::group(['middleware' => ['web']], function () {
+    // OAuth redirect to Google (uses package client)
+    Route::get('gmail/auth/redirect', function () {
+        $client = app(\PartridgeRocks\GmailClient\GmailClient::class);
+        $authUrl = $client->getAuthorizationUrl(
+            config('gmail-client.redirect_uri'),
+            config('gmail-client.scopes')
+        );
+
+        return redirect($authUrl);
+    })->name('gmail.auth.redirect');
+
+    // OAuth callback that stores tokens in database
+    Route::get('gmail/auth/callback', App\Http\Controllers\GmailCallbackController::class)
+        ->name('gmail.auth.callback');
+
+    // Error route for OAuth failures
+    Route::get('gmail/error', function () {
+        return redirect()->route('filament.admin.pages.gmail-integration-page')
+            ->with('error', 'Gmail authentication failed. Please try again.');
+    })->name('gmail.error');
+
+});
 
 Route::middleware([LogRequests::class])->group(function () {
     /*
@@ -174,7 +192,7 @@ Route::middleware([LogRequests::class])->group(function () {
     | Gmail Integration Routes
     |--------------------------------------------------------------------------
     */
-    // Gmail OAuth redirect route is already defined at the top level outside middleware
+    // Gmail OAuth routes are automatically registered by the gmail-client package
 
     // RSS Feed route
     Route::get('feed.xml', function () {

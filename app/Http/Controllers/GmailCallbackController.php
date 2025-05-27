@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use PartridgeRocks\GmailClient\Facades\GmailClient;
 
 class GmailCallbackController extends Controller
 {
@@ -14,13 +15,10 @@ class GmailCallbackController extends Controller
      */
     public function __invoke(Request $request)
     {
-        Log::info('Gmail callback reached with improved logging', [
+        Log::info('Gmail callback reached', [
             'has_code'           => $request->has('code'),
             'user_id'            => auth()->id(),
             'user_authenticated' => auth()->check(),
-            'callback_uri'       => config('gmail-client.redirect_uri'),
-            'request_uri'        => $request->getRequestUri(),
-            'request_query'      => $request->getQueryString(),
         ]);
 
         $code = $request->get('code');
@@ -42,11 +40,20 @@ class GmailCallbackController extends Controller
             ]);
 
             try {
-                // Exchange code for tokens
-                $tokens = GmailClient::exchangeCode(
-                    $code,
-                    config('gmail-client.redirect_uri')
-                );
+                // Manual token exchange using Laravel's HTTP client instead of package
+                $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+                    'grant_type'    => 'authorization_code',
+                    'client_id'     => config('gmail-client.client_id'),
+                    'client_secret' => config('gmail-client.client_secret'),
+                    'redirect_uri'  => config('gmail-client.redirect_uri'),
+                    'code'          => $code,
+                ]);
+
+                if ($response->failed()) {
+                    throw new Exception('Token exchange failed: ' . $response->body());
+                }
+
+                $tokens = $response->json();
 
                 Log::info('Successfully exchanged code for tokens', [
                     'has_access_token'  => isset($tokens['access_token']),
@@ -83,32 +90,67 @@ class GmailCallbackController extends Controller
             }
 
             try {
-                // Update or create the Gmail token for the user
-                $token = auth()->user()->gmailToken()->updateOrCreate(
-                    ['user_id' => auth()->id()], // Explicitly match by user_id
-                    [
+                // First, get the user's Gmail profile to extract email address
+                $profileResponse = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $tokens['access_token'],
+                ])->get('https://www.googleapis.com/oauth2/v2/userinfo');
+
+                $profile = $profileResponse->json();
+                $gmailEmail = $profile['email'] ?? null;
+                $profileName = $profile['name'] ?? null;
+
+                Log::info('Retrieved Gmail profile', [
+                    'email' => $gmailEmail,
+                    'name'  => $profileName,
+                ]);
+
+                // Check if this Gmail account is already connected
+                $existingAccount = auth()->user()->gmailAccounts()
+                    ->where('gmail_email', $gmailEmail)
+                    ->first();
+
+                if ($existingAccount) {
+                    // Update existing account
+                    $existingAccount->update([
+                        'access_token'  => $tokens['access_token'],
+                        'refresh_token' => $tokens['refresh_token'] ?? $existingAccount->refresh_token,
+                        'expires_at'    => $expiresAt,
+                        'last_sync_at'  => now(),
+                        'account_info'  => $profile,
+                    ]);
+
+                    $token = $existingAccount;
+                    $message = "Gmail account '{$gmailEmail}' has been reconnected successfully!";
+                } else {
+                    // Create new Gmail account
+                    $isPrimary = auth()->user()->gmailAccounts()->count() === 0; // First account becomes primary
+
+                    $token = auth()->user()->gmailAccounts()->create([
+                        'gmail_email'   => $gmailEmail,
+                        'account_name'  => $profileName ?: $gmailEmail,
+                        'is_primary'    => $isPrimary,
                         'access_token'  => $tokens['access_token'],
                         'refresh_token' => $tokens['refresh_token'] ?? null,
                         'expires_at'    => $expiresAt,
-                    ]
-                );
+                        'last_sync_at'  => now(),
+                        'account_info'  => $profile,
+                    ]);
+
+                    $message = "Gmail account '{$gmailEmail}' has been connected successfully!" .
+                              ($isPrimary ? ' This is now your primary account.' : '');
+                }
 
                 // Debug log
                 Log::info('Gmail OAuth tokens stored in database', [
                     'token_id'          => $token->id,
                     'user_id'           => auth()->id(),
+                    'gmail_email'       => $gmailEmail,
+                    'is_primary'        => $token->is_primary,
                     'token_expires_at'  => $expiresAt->toDateTimeString(),
                     'has_refresh_token' => isset($tokens['refresh_token']),
-                    'token_saved'       => $token->exists,
+                    'is_new_account'    => !$existingAccount,
                 ]);
 
-                // Double-check if token was actually saved
-                $savedToken = auth()->user()->gmailToken()->first();
-                Log::info('Saved token verification', [
-                    'token_exists'        => $savedToken ? 'Yes' : 'No',
-                    'token_id'            => $savedToken ? $savedToken->id : null,
-                    'access_token_length' => $savedToken ? mb_strlen($savedToken->access_token) : 0,
-                ]);
             } catch (\Exception $e) {
                 Log::error('Failed to store Gmail token in database', [
                     'error' => $e->getMessage(),
