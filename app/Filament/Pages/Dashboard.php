@@ -2,37 +2,80 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Resources\RideResource\Widgets\RecentRidesWidget;
-use App\Filament\Resources\RideResource\Widgets\RidingStreakWidget;
-use App\Filament\Widgets\RideGoalsWidget;
-use Filament\Pages\Dashboard as BasePage;
-use Filament\Widgets\AccountWidget;
+use App\Filament\Widgets\EmailPrioritiesWidget;
+use App\Filament\Widgets\FitnessTrackerWidget;
+use App\Filament\Widgets\TodaysFocusWidget;
+use App\Filament\Widgets\QuickStatsWidget;
+use App\Filament\Widgets\MorningBriefingWidget;
+use App\Filament\Widgets\CalendarPreviewWidget;
+use Filament\Pages\Dashboard as BaseDashboard;
 
-class Dashboard extends BasePage
+class Dashboard extends BaseDashboard
 {
-    public function getWidgets(): array
-    {
-        return [
-            RecentRidesWidget::class,
-            RidingStreakWidget::class,
-        ];
-    }
+    protected static ?string $title = 'Morning Command Center';
 
-    public function getHeaderWidgetsColumns(): int|array
+    protected static ?string $navigationIcon = 'heroicon-o-sun';
+
+    protected ?string $heading = 'Good Morning, Jordan';
+
+    protected ?string $subheading = 'Here\'s your day at a glance';
+
+    public function getColumns(): int | string | array
     {
         return [
             'default' => 1,
             'sm'      => 2,
-            'class'   => 'items-start', // or items-stretch
+            'md'      => 2,
+            'lg'      => 3,
+            'xl'      => 4,
         ];
-
     }
+
+    public function mount(): void
+    {
+        parent::mount();
+
+        // Update greeting based on time of day
+        $hour = now()->hour;
+        $this->heading = match(true) {
+            $hour < 12 => 'Good Morning, Jordan',
+            $hour < 17 => 'Good Afternoon, Jordan',
+            default    => 'Good Evening, Jordan',
+        };
+
+        $this->subheading = now()->format('l, F j, Y');
+    }
+
     protected function getHeaderWidgets(): array
     {
         return [
-            RideGoalsWidget::class,
+            MorningBriefingWidget::class,
+        ];
+    }
 
-            AccountWidget::class,
+    protected function getWidgets(): array
+    {
+        return [
+            EmailPrioritiesWidget::class,
+            TodaysFocusWidget::class,
+            CalendarPreviewWidget::class,
+            FitnessTrackerWidget::class,
+            QuickStatsWidget::class,
+        ];
+    }
+
+    protected function getHeaderWidgetsColumns(): int | array
+    {
+        return 1;
+    }
+
+    protected function getWidgetsColumns(): int | array
+    {
+        return [
+            'default' => 1,
+            'sm'      => 2,
+            'md'      => 2,
+            'lg'      => 3,
         ];
     }
 }
