@@ -118,7 +118,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
             return null;
         }
 
-        return app(\PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
+        return (new \PartridgeRocks\GmailClient\GmailClient())->authenticate(
             $token->access_token,
             $token->refresh_token,
             $token->expires_at->toDateTime()
@@ -139,7 +139,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
             return null;
         }
 
-        return app(\PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
+        return (new \PartridgeRocks\GmailClient\GmailClient())->authenticate(
             $token->access_token,
             $token->refresh_token,
             $token->expires_at->toDateTime()

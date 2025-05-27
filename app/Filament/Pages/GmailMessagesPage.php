@@ -194,8 +194,9 @@ class GmailMessagesPage extends Page implements HasForms
                 }
 
                 Log::info('Gmail API Query (single label)', [
-                    'selectedLabels' => $this->selectedLabels,
-                    'queryParams'    => $queryParams
+                    'selectedAccount' => $this->selectedGmailAccount,
+                    'selectedLabels'  => $this->selectedLabels,
+                    'queryParams'     => $queryParams
                 ]);
 
                 $rawMessages = $gmailClient->listMessages($queryParams);
@@ -227,9 +228,10 @@ class GmailMessagesPage extends Page implements HasForms
                 $rawMessages = $allMessages->unique('id')->sortByDesc('internalDate')->take($maxResults * 2);
 
                 Log::info('Gmail API Query (multiple labels)', [
-                    'selectedLabels' => $this->selectedLabels,
-                    'totalMessages'  => $allMessages->count(),
-                    'uniqueMessages' => $rawMessages->count()
+                    'selectedAccount' => $this->selectedGmailAccount,
+                    'selectedLabels'  => $this->selectedLabels,
+                    'totalMessages'   => $allMessages->count(),
+                    'uniqueMessages'  => $rawMessages->count()
                 ]);
             }
 
@@ -264,8 +266,11 @@ class GmailMessagesPage extends Page implements HasForms
             })->take($maxResults)->toArray();
 
             Log::info('Final message count', [
-                'selectedLabels' => $this->selectedLabels,
-                'messageCount'   => count($this->messages)
+                'selectedAccount' => $this->selectedGmailAccount,
+                'selectedLabels'  => $this->selectedLabels,
+                'messageCount'    => count($this->messages),
+                'messageIds'      => collect($this->messages)->pluck('id')->take(5)->toArray(),
+                'messageFroms'    => collect($this->messages)->pluck('from')->take(5)->toArray()
             ]);
 
         } catch (\Exception $e) {
@@ -1312,6 +1317,16 @@ class GmailMessagesPage extends Page implements HasForms
         if (!$user->hasValidGmailToken()) {
             return null;
         }
+
+        // Ensure we have a selected account
+        if (!$this->selectedGmailAccount) {
+            $this->loadGmailAccounts();
+        }
+
+        Log::info('Getting Gmail client for account', [
+            'selectedAccount'   => $this->selectedGmailAccount,
+            'availableAccounts' => collect($this->availableGmailAccounts)->pluck('gmail_email')->toArray()
+        ]);
 
         return $this->selectedGmailAccount
             ? $user->getGmailClientForAccount($this->selectedGmailAccount)
