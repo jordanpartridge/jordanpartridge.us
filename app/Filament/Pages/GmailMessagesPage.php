@@ -776,57 +776,70 @@ class GmailMessagesPage extends Page implements HasForms
             $gmailClient = $this->getCurrentGmailClient();
             $email = $gmailClient->getMessage($messageId);
 
-            // Debug: Log the email structure to understand the body format
-            Log::info('Email structure for preview', [
-                'id'             => $email->id,
-                'subject'        => $email->subject,
-                'body_type'      => gettype($email->body ?? null),
-                'body_structure' => is_object($email->body ?? null) ? get_class($email->body) : null,
-                'body_content'   => $email->body ?? null,
-                'snippet'        => $email->snippet ?? null,
-            ]);
-
-            // Try different ways to get the body content
+            // Extract email body content - Enhanced HTML extraction
             $bodyHtml = '';
-            $bodyText = '';
-            $fallbackContent = '';
+            $bodyText = $email->body ?? '';
 
-            if (isset($email->body)) {
-                if (is_object($email->body)) {
-                    $bodyHtml = $email->body->html ?? '';
-                    $bodyText = $email->body->text ?? '';
-                } elseif (is_string($email->body)) {
-                    $bodyText = $email->body;
-                } elseif (is_array($email->body)) {
-                    $bodyHtml = $email->body['html'] ?? '';
-                    $bodyText = $email->body['text'] ?? '';
-                }
+            // Parse Gmail API payload for HTML content
+            $payload = $email->payload ?? [];
+            $this->extractEmailBodies($payload, $bodyHtml, $bodyText);
+
+            // Prepare raw email data for processing
+            $rawEmailData = [
+                'subject'         => $email->subject ?? 'No Subject',
+                'from'            => $email->from ?? 'Unknown Sender',
+                'date'            => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
+                'body_html'       => $bodyHtml,
+                'body_text'       => $bodyText,
+                'snippet'         => $email->snippet ?? '',
+                'has_attachments' => !empty($email->attachments ?? []),
+                'attachments'     => $email->attachments ?? [],
+            ];
+
+            // Use EmailContentService to process and sanitize content
+            $contentService = app(\App\Services\Gmail\EmailContentService::class);
+
+            try {
+                $processedContent = $contentService->processEmailContent($rawEmailData);
+            } catch (\Exception $sanitizationError) {
+                Log::warning('Email sanitization failed, using fallback', [
+                    'message_id' => $messageId,
+                    'error'      => $sanitizationError->getMessage()
+                ]);
+
+                // Fallback: use basic sanitization
+                $processedContent = [
+                    'subject'         => $rawEmailData['subject'],
+                    'from'            => $rawEmailData['from'],
+                    'date'            => $rawEmailData['date'],
+                    'snippet'         => $rawEmailData['snippet'],
+                    'body_html'       => !empty($bodyHtml) ? strip_tags($bodyHtml, '<p><br><strong><em><u><ol><ul><li><a><h1><h2><h3><h4><h5><h6><table><tr><td><th><div><span>') : '',
+                    'body_text'       => $bodyText,
+                    'has_attachments' => $rawEmailData['has_attachments'],
+                    'attachments'     => $rawEmailData['attachments'],
+                ];
             }
 
-            // Fallback to snippet if no body content
-            if (empty($bodyHtml) && empty($bodyText)) {
-                $fallbackContent = $email->snippet ?? 'No content available';
-            }
-
-            $this->emailPreview = [
+            $this->emailPreview = array_merge($processedContent, [
                 'id'        => $email->id,
-                'subject'   => html_entity_decode($email->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                'from'      => html_entity_decode($email->from ?? 'Unknown Sender', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                'date'      => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
-                'body_html' => $bodyHtml, // HTML should already be properly encoded
-                'body_text' => html_entity_decode($bodyText, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                'body'      => html_entity_decode($bodyText ?: $fallbackContent, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                'snippet'   => html_entity_decode($email->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'labels'    => $email->labelIds ?? [],
                 'isStarred' => in_array('STARRED', $email->labelIds ?? []),
                 'isRead'    => !in_array('UNREAD', $email->labelIds ?? []),
-            ];
+            ]);
 
             $this->showingEmailId = $messageId;
 
         } catch (\Exception $e) {
+            Log::error('Email preview failed', [
+                'message_id' => $messageId,
+                'error'      => $e->getMessage(),
+                'trace'      => $e->getTraceAsString(),
+                'file'       => $e->getFile(),
+                'line'       => $e->getLine()
+            ]);
+
             Notification::make()
-                ->title('Error')
+                ->title('Email Preview Failed')
                 ->body('Failed to load email: ' . $e->getMessage())
                 ->danger()
                 ->send();
@@ -1275,6 +1288,40 @@ class GmailMessagesPage extends Page implements HasForms
         }
     }
 
+    /**
+     * Get appropriate label for GitHub link based on URL and message content
+     */
+    public function getGitHubLinkLabel(string $url, array $message): string
+    {
+        $subject = strtolower($message['subject'] ?? '');
+
+        if (str_contains($url, '/pull/')) {
+            return 'View PR';
+        }
+
+        if (str_contains($url, '/issues/')) {
+            return 'View Issue';
+        }
+
+        if (str_contains($url, '/actions') || str_contains($url, '/runs/')) {
+            return 'View Action';
+        }
+
+        if (str_contains($subject, 'pull request') || str_contains($subject, 'pr ')) {
+            return 'View PR';
+        }
+
+        if (str_contains($subject, 'issue')) {
+            return 'View Issue';
+        }
+
+        if (str_contains($subject, 'action') || str_contains($subject, 'workflow') || str_contains($subject, 'build')) {
+            return 'View Action';
+        }
+
+        return 'View on GitHub';
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -1305,6 +1352,82 @@ class GmailMessagesPage extends Page implements HasForms
                 ->color('success')
                 ->action(fn () => $this->syncClientsFromEmails()),
         ];
+    }
+
+    /**
+     * Extract both HTML and plain text content from Gmail API payload
+     */
+    private function extractEmailBodies(array $payload, &$bodyHtml, &$bodyText): void
+    {
+        Log::info('Email body extraction started', [
+            'has_body_data' => isset($payload['body']['data']),
+            'has_parts'     => isset($payload['parts']),
+            'mime_type'     => $payload['mimeType'] ?? 'unknown',
+            'parts_count'   => isset($payload['parts']) ? count($payload['parts']) : 0
+        ]);
+
+        // Handle single part messages
+        if (isset($payload['body']['data'])) {
+            $mimeType = $payload['mimeType'] ?? '';
+            $content = base64_decode(strtr($payload['body']['data'], '-_', '+/'));
+
+            Log::info('Single part message', [
+                'mime_type'       => $mimeType,
+                'content_length'  => strlen($content),
+                'content_preview' => substr($content, 0, 100)
+            ]);
+
+            if ($mimeType === 'text/html') {
+                $bodyHtml = $content;
+            } elseif ($mimeType === 'text/plain') {
+                $bodyText = $content;
+            }
+        }
+
+        // Handle multi-part messages
+        if (isset($payload['parts']) && is_array($payload['parts'])) {
+            Log::info('Multi-part message processing', ['parts_count' => count($payload['parts'])]);
+
+            foreach ($payload['parts'] as $index => $part) {
+                $mimeType = $part['mimeType'] ?? '';
+
+                Log::info("Processing part {$index}", [
+                    'mime_type'          => $mimeType,
+                    'has_body_data'      => isset($part['body']['data']),
+                    'has_nested_parts'   => isset($part['parts']),
+                    'nested_parts_count' => isset($part['parts']) ? count($part['parts']) : 0
+                ]);
+
+                if ($mimeType === 'text/html' && isset($part['body']['data'])) {
+                    $content = base64_decode(strtr($part['body']['data'], '-_', '+/'));
+                    $bodyHtml = $content;
+                    Log::info('HTML content extracted', [
+                        'content_length' => strlen($content),
+                        'preview'        => substr($content, 0, 200)
+                    ]);
+                } elseif ($mimeType === 'text/plain' && isset($part['body']['data'])) {
+                    $content = base64_decode(strtr($part['body']['data'], '-_', '+/'));
+                    $bodyText = $content;
+                    Log::info('Plain text content extracted', [
+                        'content_length' => strlen($content),
+                        'preview'        => substr($content, 0, 200)
+                    ]);
+                }
+
+                // Handle nested multipart (like multipart/alternative)
+                if (str_starts_with($mimeType, 'multipart/') && isset($part['parts'])) {
+                    Log::info('Processing nested multipart', ['nested_mime_type' => $mimeType]);
+                    $this->extractEmailBodies($part, $bodyHtml, $bodyText);
+                }
+            }
+        }
+
+        Log::info('Email body extraction completed', [
+            'html_extracted' => !empty($bodyHtml),
+            'text_extracted' => !empty($bodyText),
+            'html_length'    => strlen($bodyHtml),
+            'text_length'    => strlen($bodyText)
+        ]);
     }
 
     /**
