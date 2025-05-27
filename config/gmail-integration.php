@@ -100,8 +100,8 @@ return [
         ],
         'max_email_size'           => env('GMAIL_MAX_EMAIL_SIZE', 1048576), // 1MB
         'enable_rich_content'      => env('GMAIL_ENABLE_RICH_CONTENT', true),
-        'block_external_images'    => env('GMAIL_BLOCK_EXTERNAL_IMAGES', false),
-        'bypass_purifier_on_error' => env('GMAIL_BYPASS_PURIFIER_ON_ERROR', true),
+        'block_external_images'    => env('GMAIL_BLOCK_EXTERNAL_IMAGES', true),
+        'bypass_purifier_on_error' => env('GMAIL_BYPASS_PURIFIER_ON_ERROR', false),
         'marketing_email_mode'     => env('GMAIL_MARKETING_EMAIL_MODE', true),
         'strip_dangerous_tags'     => env('GMAIL_STRIP_DANGEROUS_TAGS', true),
     ],

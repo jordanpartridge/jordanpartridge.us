@@ -283,10 +283,6 @@ class EmailContentService
      */
     private function simplifiedHtmlSanitization(string $html): string
     {
-        // Remove dangerous scripts and styles
-        $html = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $html);
-        $html = preg_replace('/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/mi', '', $html);
-
         // Remove dangerous event handlers
         $html = preg_replace('/on\w+\s*=\s*["\'][^"\']*["\']/', '', $html);
 

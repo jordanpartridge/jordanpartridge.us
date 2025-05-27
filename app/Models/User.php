@@ -13,6 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use JordanPartridge\StravaClient\Contracts\HasStravaToken;
 use Laravel\Sanctum\HasApiTokens;
+use PartridgeRocks\GmailClient\GmailClient;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
@@ -118,7 +119,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
             return null;
         }
 
-        return (new \PartridgeRocks\GmailClient\GmailClient())->authenticate(
+        return (new GmailClient())->authenticate(
             $token->access_token,
             $token->refresh_token,
             $token->expires_at->toDateTime()
@@ -139,7 +140,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
             return null;
         }
 
-        return (new \PartridgeRocks\GmailClient\GmailClient())->authenticate(
+        return (new GmailClient())->authenticate(
             $token->access_token,
             $token->refresh_token,
             $token->expires_at->toDateTime()
