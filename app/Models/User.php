@@ -61,27 +61,50 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
     }
 
     /**
-     * Get the user's Gmail token.
+     * Get all Gmail accounts for the user.
      */
-    public function gmailToken()
+    public function gmailAccounts()
     {
-        return $this->hasOne(GmailToken::class);
+        return $this->hasMany(GmailToken::class);
     }
 
     /**
-     * Check if the user has a valid Gmail token.
+     * Get the primary Gmail account for the user.
+     */
+    public function primaryGmailAccount()
+    {
+        return $this->hasOne(GmailToken::class)->where('is_primary', true);
+    }
+
+    /**
+     * Get the user's Gmail token (backwards compatibility - returns primary account).
+     */
+    public function gmailToken()
+    {
+        return $this->primaryGmailAccount();
+    }
+
+    /**
+     * Check if the user has any valid Gmail tokens.
      */
     public function hasValidGmailToken(): bool
     {
-        $token = $this->gmailToken;
+        return $this->gmailAccounts()->active()->exists();
+    }
 
+    /**
+     * Check if the user has a valid primary Gmail token.
+     */
+    public function hasValidPrimaryGmailToken(): bool
+    {
+        $token = $this->primaryGmailAccount;
         return $token && !$token->isExpired();
     }
 
     /**
-     * Get the Gmail client for the user.
+     * Get the Gmail client for the user's primary account.
      *
-     * Retrieves an authenticated Gmail client instance using the user's stored tokens.
+     * Retrieves an authenticated Gmail client instance using the user's primary account tokens.
      * Uses the global namespace resolution for the GmailClient class to prevent
      * namespace resolution issues.
      *
@@ -89,9 +112,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
      */
     public function getGmailClient()
     {
-        $token = $this->gmailToken;
+        $token = $this->primaryGmailAccount;
 
-        if (!$token) {
+        if (!$token || $token->isExpired()) {
             return null;
         }
 
@@ -100,6 +123,43 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
             $token->refresh_token,
             $token->expires_at->toDateTime()
         );
+    }
+
+    /**
+     * Get Gmail client for a specific account.
+     *
+     * @param string $gmailEmail The Gmail email address
+     * @return \PartridgeRocks\GmailClient\GmailClient|null
+     */
+    public function getGmailClientForAccount(string $gmailEmail)
+    {
+        $token = $this->gmailAccounts()->where('gmail_email', $gmailEmail)->first();
+
+        if (!$token || $token->isExpired()) {
+            return null;
+        }
+
+        return app(\PartridgeRocks\GmailClient\GmailClient::class)->authenticate(
+            $token->access_token,
+            $token->refresh_token,
+            $token->expires_at->toDateTime()
+        );
+    }
+
+    /**
+     * Get count of connected Gmail accounts.
+     */
+    public function getGmailAccountsCountAttribute(): int
+    {
+        return $this->gmailAccounts()->active()->count();
+    }
+
+    /**
+     * Get list of connected Gmail emails.
+     */
+    public function getConnectedGmailEmailsAttribute(): array
+    {
+        return $this->gmailAccounts()->active()->pluck('gmail_email')->filter()->toArray();
     }
 
     /**

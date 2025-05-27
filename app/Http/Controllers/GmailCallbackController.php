@@ -90,32 +90,67 @@ class GmailCallbackController extends Controller
             }
 
             try {
-                // Update or create the Gmail token for the user
-                $token = auth()->user()->gmailToken()->updateOrCreate(
-                    ['user_id' => auth()->id()], // Explicitly match by user_id
-                    [
+                // First, get the user's Gmail profile to extract email address
+                $profileResponse = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $tokens['access_token'],
+                ])->get('https://www.googleapis.com/oauth2/v2/userinfo');
+
+                $profile = $profileResponse->json();
+                $gmailEmail = $profile['email'] ?? null;
+                $profileName = $profile['name'] ?? null;
+
+                Log::info('Retrieved Gmail profile', [
+                    'email' => $gmailEmail,
+                    'name'  => $profileName,
+                ]);
+
+                // Check if this Gmail account is already connected
+                $existingAccount = auth()->user()->gmailAccounts()
+                    ->where('gmail_email', $gmailEmail)
+                    ->first();
+
+                if ($existingAccount) {
+                    // Update existing account
+                    $existingAccount->update([
+                        'access_token'  => $tokens['access_token'],
+                        'refresh_token' => $tokens['refresh_token'] ?? $existingAccount->refresh_token,
+                        'expires_at'    => $expiresAt,
+                        'last_sync_at'  => now(),
+                        'account_info'  => $profile,
+                    ]);
+
+                    $token = $existingAccount;
+                    $message = "Gmail account '{$gmailEmail}' has been reconnected successfully!";
+                } else {
+                    // Create new Gmail account
+                    $isPrimary = auth()->user()->gmailAccounts()->count() === 0; // First account becomes primary
+
+                    $token = auth()->user()->gmailAccounts()->create([
+                        'gmail_email'   => $gmailEmail,
+                        'account_name'  => $profileName ?: $gmailEmail,
+                        'is_primary'    => $isPrimary,
                         'access_token'  => $tokens['access_token'],
                         'refresh_token' => $tokens['refresh_token'] ?? null,
                         'expires_at'    => $expiresAt,
-                    ]
-                );
+                        'last_sync_at'  => now(),
+                        'account_info'  => $profile,
+                    ]);
+
+                    $message = "Gmail account '{$gmailEmail}' has been connected successfully!" .
+                              ($isPrimary ? ' This is now your primary account.' : '');
+                }
 
                 // Debug log
                 Log::info('Gmail OAuth tokens stored in database', [
                     'token_id'          => $token->id,
                     'user_id'           => auth()->id(),
+                    'gmail_email'       => $gmailEmail,
+                    'is_primary'        => $token->is_primary,
                     'token_expires_at'  => $expiresAt->toDateTimeString(),
                     'has_refresh_token' => isset($tokens['refresh_token']),
-                    'token_saved'       => $token->exists,
+                    'is_new_account'    => !$existingAccount,
                 ]);
 
-                // Double-check if token was actually saved
-                $savedToken = auth()->user()->gmailToken()->first();
-                Log::info('Saved token verification', [
-                    'token_exists'        => $savedToken ? 'Yes' : 'No',
-                    'token_id'            => $savedToken ? $savedToken->id : null,
-                    'access_token_length' => $savedToken ? mb_strlen($savedToken->access_token) : 0,
-                ]);
             } catch (\Exception $e) {
                 Log::error('Failed to store Gmail token in database', [
                     'error' => $e->getMessage(),

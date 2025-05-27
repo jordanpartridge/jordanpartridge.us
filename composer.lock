@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "670dae330d3a3406b844d78f0bd5ec0e",
+    "content-hash": "9705712b5f8a32fe1912b7e90155dbc3",
     "packages": [
         {
             "name": "amphp/amp",
@@ -7829,16 +7829,16 @@
         },
         {
             "name": "partridgerocks/gmail-client",
-            "version": "v1.0.4",
+            "version": "dev-feature/performance-enhancements",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PartridgeRocks/laravel-gmail-client.git",
-                "reference": "30b283382eee4a3921d6f4ec2439b75dd351142e"
+                "reference": "8ab11b4f545c214885ad42f8cf619f9771b55f3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PartridgeRocks/laravel-gmail-client/zipball/30b283382eee4a3921d6f4ec2439b75dd351142e",
-                "reference": "30b283382eee4a3921d6f4ec2439b75dd351142e",
+                "url": "https://api.github.com/repos/PartridgeRocks/laravel-gmail-client/zipball/8ab11b4f545c214885ad42f8cf619f9771b55f3a",
+                "reference": "8ab11b4f545c214885ad42f8cf619f9771b55f3a",
                 "shasum": ""
             },
             "require": {
@@ -7897,7 +7897,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PartridgeRocks/laravel-gmail-client/issues",
-                "source": "https://github.com/PartridgeRocks/laravel-gmail-client/tree/v1.0.4"
+                "source": "https://github.com/PartridgeRocks/laravel-gmail-client/tree/feature/performance-enhancements"
             },
             "funding": [
                 {
@@ -7905,7 +7905,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-05-26T04:13:51+00:00"
+            "time": "2025-05-26T22:30:35+00:00"
         },
         {
             "name": "phpdocumentor/reflection",

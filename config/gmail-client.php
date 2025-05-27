@@ -30,6 +30,8 @@ return [
         'https://www.googleapis.com/auth/gmail.readonly',
         'https://www.googleapis.com/auth/gmail.modify', // Required for star toggle functionality
         'https://www.googleapis.com/auth/gmail.labels', // Required for label management
+        'https://www.googleapis.com/auth/userinfo.email', // Required to get user's email address
+        'https://www.googleapis.com/auth/userinfo.profile', // Required to get user's profile info (name, picture)
         // 'https://www.googleapis.com/auth/gmail.send',
         // 'https://www.googleapis.com/auth/gmail.compose',
     ],

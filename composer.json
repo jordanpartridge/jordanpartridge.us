@@ -9,8 +9,8 @@
     "license": "MIT",
     "repositories": [
         {
-            "type": "path",
-            "url": "./gmail_client"
+            "type": "vcs",
+            "url": "https://github.com/PartridgeRocks/laravel-gmail-client.git"
         }
     ],
     "require": {
@@ -38,7 +38,7 @@
         "laravel/tinker": "^2.9",
         "league/flysystem-aws-s3-v3": "^3.28",
         "livewire/volt": "^1.7.0",
-        "partridgerocks/gmail-client": "@dev",
+        "partridgerocks/gmail-client": "dev-feature/performance-enhancements",
         "pxlrbt/filament-activity-log": "^1.1",
         "resend/resend-php": "^0.12.0",
         "saloonphp/laravel-plugin": "^3.0",

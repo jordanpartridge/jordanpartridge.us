@@ -7,17 +7,19 @@ use App\Models\ClientEmail;
 use App\Models\Post;
 use App\Models\GithubRepository;
 use App\Models\Ride;
+use Carbon\Carbon;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class GmailMessagesPage extends Page implements HasForms
 {
@@ -96,12 +98,13 @@ class GmailMessagesPage extends Page implements HasForms
             ->schema([
                 TextInput::make('searchTerm')
                     ->label('Search')
-                    ->placeholder('Search emails...')
+                    ->placeholder('Search emails... (try: from:sender@domain.com, subject:meeting, has:attachment)')
                     ->reactive()
                     ->afterStateUpdated(function ($state) {
                         $this->searchTerm = $state;
                         $this->loadMessages();
-                    }),
+                    })
+                    ->helperText('Advanced search: from:email, to:email, subject:text, has:attachment, is:unread, before:2023/12/01'),
             ])
             ->statePath('data');
     }
@@ -125,32 +128,75 @@ class GmailMessagesPage extends Page implements HasForms
             // Get the Gmail client
             $gmailClient = $user->getGmailClient();
 
-            // Get Gmail messages for selected labels with search
-            $queryParams = [
-                'maxResults' => $maxResults,
-                'labelIds'   => $this->selectedLabels
-            ];
+            // If only one label is selected, use it directly
+            // If multiple labels are selected, we need to query each one and merge results
+            if (count($this->selectedLabels) === 1) {
+                $queryParams = [
+                    'maxResults' => $maxResults,
+                    'labelIds'   => $this->selectedLabels
+                ];
 
-            // Add search query if provided
-            if (!empty($this->searchTerm)) {
-                $queryParams['q'] = $this->searchTerm;
+                // Add search query if provided
+                if (!empty($this->searchTerm)) {
+                    $queryParams['q'] = $this->searchTerm;
+                }
+
+                Log::info('Gmail API Query (single label)', [
+                    'selectedLabels' => $this->selectedLabels,
+                    'queryParams'    => $queryParams
+                ]);
+
+                $rawMessages = $gmailClient->listMessages($queryParams);
+            } else {
+                // For multiple labels, we need to fetch from each label and merge
+                // Since Gmail API's labelIds parameter uses AND logic (must have ALL labels)
+                // we'll query each label separately and combine results
+                $allMessages = collect();
+
+                foreach ($this->selectedLabels as $labelId) {
+                    $queryParams = [
+                        'maxResults' => $maxResults * 2, // Get more from each to have options
+                        'labelIds'   => [$labelId]
+                    ];
+
+                    if (!empty($this->searchTerm)) {
+                        $queryParams['q'] = $this->searchTerm;
+                    }
+
+                    try {
+                        $labelMessages = $gmailClient->listMessages($queryParams);
+                        $allMessages = $allMessages->merge($labelMessages);
+                    } catch (\Exception $e) {
+                        Log::warning("Failed to fetch messages for label {$labelId}: " . $e->getMessage());
+                    }
+                }
+
+                // Remove duplicates by message ID and take the most recent messages
+                $rawMessages = $allMessages->unique('id')->sortByDesc('internalDate')->take($maxResults * 2);
+
+                Log::info('Gmail API Query (multiple labels)', [
+                    'selectedLabels' => $this->selectedLabels,
+                    'totalMessages'  => $allMessages->count(),
+                    'uniqueMessages' => $rawMessages->count()
+                ]);
             }
-
-            $rawMessages = $gmailClient->listMessages($queryParams);
 
             // Convert Gmail Email objects to simple arrays for Livewire
             $this->messages = $rawMessages->map(function ($email) {
+                // Ensure we have valid labelIds array
+                $labelIds = is_array($email->labelIds ?? null) ? $email->labelIds : [];
+
                 return [
-                    'id'          => $email->id,
+                    'id'          => $email->id ?? '',
                     'from'        => html_entity_decode($email->from ?? 'Unknown', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'from_name'   => $email->from ? (strpos($email->from, '<') !== false ? html_entity_decode(substr($email->from, 0, strpos($email->from, '<')), ENT_QUOTES | ENT_HTML5, 'UTF-8') : '') : '',
                     'subject'     => html_entity_decode($email->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'snippet'     => html_entity_decode($email->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'date'        => $email->internalDate ? $email->internalDate->toISOString() : now()->toISOString(),
-                    'isRead'      => !in_array('UNREAD', $email->labelIds ?? []),
-                    'isImportant' => in_array('IMPORTANT', $email->labelIds ?? []),
-                    'isStarred'   => in_array('STARRED', $email->labelIds ?? []),
-                    'labels'      => $email->labelIds ?? [],
+                    'isRead'      => !in_array('UNREAD', $labelIds),
+                    'isImportant' => in_array('IMPORTANT', $labelIds),
+                    'isStarred'   => in_array('STARRED', $labelIds), // Ensure this matches labels array
+                    'labels'      => $labelIds, // Ensure this is always an array
                     'body_text'   => html_entity_decode($email->body->text ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'body_html'   => $email->body->html ?? '', // HTML body should already be properly encoded
                     // AI analysis will be added here
@@ -160,7 +206,15 @@ class GmailMessagesPage extends Page implements HasForms
                     'contains_invoice' => false, // Will be detected by AI
                     'contains_payment' => false, // Will be detected by AI
                 ];
-            })->toArray();
+            })->filter(function ($message) {
+                // Only include messages with valid IDs
+                return !empty($message['id']);
+            })->take($maxResults)->toArray();
+
+            Log::info('Final message count', [
+                'selectedLabels' => $this->selectedLabels,
+                'messageCount'   => count($this->messages)
+            ]);
 
         } catch (\Exception $e) {
             Log::error('Gmail fetch error: ' . $e->getMessage());
@@ -230,7 +284,9 @@ class GmailMessagesPage extends Page implements HasForms
      */
     public function toggleLabel(string $labelId)
     {
-        if (in_array($labelId, $this->selectedLabels)) {
+        $wasSelected = in_array($labelId, $this->selectedLabels);
+
+        if ($wasSelected) {
             // Remove label from selection
             $this->selectedLabels = array_values(array_diff($this->selectedLabels, [$labelId]));
         } else {
@@ -243,6 +299,12 @@ class GmailMessagesPage extends Page implements HasForms
             $this->selectedLabels = ['INBOX'];
         }
 
+        Log::info('Label toggled', [
+            'labelId'        => $labelId,
+            'wasSelected'    => $wasSelected,
+            'selectedLabels' => $this->selectedLabels
+        ]);
+
         // Reload messages with new label filter
         $this->loadMessages();
 
@@ -251,7 +313,7 @@ class GmailMessagesPage extends Page implements HasForms
 
         Notification::make()
             ->title('Filter updated')
-            ->body("Label '{$labelName}' {$action}")
+            ->body("Label '{$labelName}' {$action}. Showing " . count($this->messages) . " messages.")
             ->success()
             ->send();
     }
@@ -277,15 +339,47 @@ class GmailMessagesPage extends Page implements HasForms
     public function selectOnlyLabel(string $labelId)
     {
         $this->selectedLabels = [$labelId];
+
+        Log::info('Single label selected', [
+            'labelId'        => $labelId,
+            'selectedLabels' => $this->selectedLabels
+        ]);
+
         $this->loadMessages();
 
         $labelName = collect($this->availableLabels)->firstWhere('id', $labelId)['name'] ?? $labelId;
 
+        $messageCount = is_array($this->messages) ? count($this->messages) : 0;
+
         Notification::make()
             ->title('Filter changed')
-            ->body("Now showing only '{$labelName}'")
+            ->body("Now showing only '{$labelName}' - {$messageCount} messages found")
             ->success()
             ->send();
+    }
+
+    /**
+     * Quick filter to starred emails only
+     */
+    public function showStarredOnly()
+    {
+        $this->selectOnlyLabel('STARRED');
+    }
+
+    /**
+     * Quick filter to important emails only
+     */
+    public function showImportantOnly()
+    {
+        $this->selectOnlyLabel('IMPORTANT');
+    }
+
+    /**
+     * Quick filter to unread emails only
+     */
+    public function showUnreadOnly()
+    {
+        $this->selectOnlyLabel('UNREAD');
     }
 
     /**
@@ -431,9 +525,20 @@ class GmailMessagesPage extends Page implements HasForms
      */
     public function toggleStar(string $messageId)
     {
+        // Validate input
+        if (empty($messageId) || !is_string($messageId)) {
+            Log::warning('Invalid messageId provided to toggleStar', ['messageId' => $messageId]);
+            Notification::make()
+                ->title('Error')
+                ->body('Invalid message ID provided')
+                ->danger()
+                ->send();
+            return;
+        }
+
         $user = auth()->user();
 
-        if (!$user->hasValidGmailToken()) {
+        if (!$user || !$user->hasValidGmailToken()) {
             Notification::make()
                 ->title('Not authenticated')
                 ->body('Please authenticate with Gmail first.')
@@ -442,35 +547,97 @@ class GmailMessagesPage extends Page implements HasForms
             return;
         }
 
+        // Initialize variables for rollback
+        $originalMessage = null;
+        $messageIndex = null;
+
         try {
-            $gmailClient = $user->getGmailClient();
-
-            // Find the message in our current list to check if it's starred
-            $currentMessage = collect($this->messages)->firstWhere('id', $messageId);
-            $isStarred = $currentMessage ? in_array('STARRED', $currentMessage['labels'] ?? []) : false;
-
-            if ($isStarred) {
-                // Remove star
-                $gmailClient->removeLabelsFromMessage($messageId, ['STARRED']);
-                $action = 'removed star from';
-            } else {
-                // Add star
-                $gmailClient->addLabelsToMessage($messageId, ['STARRED']);
-                $action = 'starred';
-            }
-
-            // Update the message in our current list to reflect the change immediately
-            foreach ($this->messages as &$message) {
+            // Find the message in our current list
+            $currentMessage = null;
+            foreach ($this->messages as $index => $message) {
                 if ($message['id'] === $messageId) {
-                    if ($isStarred) {
-                        $message['labels'] = array_diff($message['labels'], ['STARRED']);
-                        $message['isStarred'] = false;
-                    } else {
-                        $message['labels'] = array_unique(array_merge($message['labels'], ['STARRED']));
-                        $message['isStarred'] = true;
-                    }
+                    $currentMessage = $message;
+                    $messageIndex = $index;
+                    $originalMessage = $message; // Store original for rollback
                     break;
                 }
+            }
+
+            if (!$currentMessage) {
+                Log::warning('Message not found in current list', ['messageId' => $messageId]);
+                Notification::make()
+                    ->title('Error')
+                    ->body('Message not found in current view')
+                    ->warning()
+                    ->send();
+                return;
+            }
+
+            // Validate message structure
+            if (!$this->isValidMessage($currentMessage)) {
+                Log::error('Invalid message structure for star toggle', [
+                    'messageId' => $messageId,
+                    'message'   => $currentMessage
+                ]);
+                Notification::make()
+                    ->title('Error')
+                    ->body('Invalid message data. Please refresh and try again.')
+                    ->danger()
+                    ->send();
+                return;
+            }
+
+            // Use helper method to safely determine star status
+            $isStarred = $this->getMessageStarStatus($currentMessage);
+
+            Log::info('Toggling star for message', [
+                'messageId'        => $messageId,
+                'currentlyStarred' => $isStarred,
+                'labels'           => $labels
+            ]);
+
+            $gmailClient = $user->getGmailClient();
+
+            // Verify Gmail client is available
+            if (!$gmailClient) {
+                throw new Exception('Gmail client not available');
+            }
+
+            // Perform the API operation using modifyMessageLabels
+            if ($isStarred) {
+                // Remove star
+                $response = $gmailClient->modifyMessageLabels($messageId, [], ['STARRED']);
+                $action = 'removed star from';
+                $newStarStatus = false;
+            } else {
+                // Add star
+                $response = $gmailClient->modifyMessageLabels($messageId, ['STARRED'], []);
+                $action = 'starred';
+                $newStarStatus = true;
+            }
+
+            // Update the message in our current list immediately (optimistic update)
+            if ($messageIndex !== null && isset($this->messages[$messageIndex])) {
+                // Ensure labels is an array
+                if (!is_array($this->messages[$messageIndex]['labels'])) {
+                    $this->messages[$messageIndex]['labels'] = [];
+                }
+
+                if ($newStarStatus) {
+                    // Add STARRED label if not present
+                    if (!in_array('STARRED', $this->messages[$messageIndex]['labels'])) {
+                        $this->messages[$messageIndex]['labels'][] = 'STARRED';
+                    }
+                } else {
+                    // Remove STARRED label
+                    $this->messages[$messageIndex]['labels'] = array_values(
+                        array_filter($this->messages[$messageIndex]['labels'], function ($label) {
+                            return $label !== 'STARRED';
+                        })
+                    );
+                }
+
+                $this->messages[$messageIndex]['isStarred'] = $newStarStatus;
             }
 
             Notification::make()
@@ -479,14 +646,55 @@ class GmailMessagesPage extends Page implements HasForms
                 ->success()
                 ->send();
 
+            Log::info('Star toggle successful', [
+                'messageId'     => $messageId,
+                'action'        => $action,
+                'newStarStatus' => $newStarStatus
+            ]);
+
         } catch (\Exception $e) {
-            Log::error('Star toggle error: ' . $e->getMessage());
+            // Rollback optimistic update if we had one
+            if ($originalMessage && $messageIndex !== null && isset($this->messages[$messageIndex])) {
+                $this->messages[$messageIndex] = $originalMessage;
+            }
+
+            Log::error('Star toggle error', [
+                'messageId' => $messageId,
+                'error'     => $e->getMessage(),
+                'trace'     => $e->getTraceAsString()
+            ]);
+
+            // Provide more specific error messages
+            $errorMessage = 'Failed to update star status';
+            if (str_contains($e->getMessage(), 'authentication') || str_contains($e->getMessage(), 'token')) {
+                $errorMessage = 'Gmail authentication expired. Please re-authenticate.';
+            } elseif (str_contains($e->getMessage(), 'not found')) {
+                $errorMessage = 'Email not found. It may have been deleted or moved.';
+            } elseif (str_contains($e->getMessage(), 'rate limit') || str_contains($e->getMessage(), 'quota')) {
+                $errorMessage = 'Gmail API rate limit exceeded. Please try again later.';
+            } elseif (str_contains($e->getMessage(), 'network') || str_contains($e->getMessage(), 'connection')) {
+                $errorMessage = 'Network error. Please check your connection and try again.';
+            }
 
             Notification::make()
                 ->title('Error')
-                ->body('Failed to update star status: ' . $e->getMessage())
+                ->body($errorMessage)
                 ->danger()
                 ->send();
+
+            // If it's an auth error, suggest re-authentication
+            if (str_contains($e->getMessage(), 'authentication') || str_contains($e->getMessage(), 'token')) {
+                Notification::make()
+                    ->title('Re-authentication needed')
+                    ->body('Click here to re-authenticate with Gmail')
+                    ->warning()
+                    ->actions([
+                        NotificationAction::make('authenticate')
+                            ->button()
+                            ->url(GmailIntegrationPage::getUrl())
+                    ])
+                    ->send();
+            }
         }
     }
 
@@ -695,16 +903,318 @@ class GmailMessagesPage extends Page implements HasForms
     }
 
     /**
-     * Delete email
+     * Mark email as read
+     */
+    public function markAsRead(string $messageId)
+    {
+        if (empty($messageId) || !is_string($messageId)) {
+            Log::warning('Invalid messageId provided to markAsRead', ['messageId' => $messageId]);
+            Notification::make()
+                ->title('Error')
+                ->body('Invalid message ID provided')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            Notification::make()
+                ->title('Not authenticated')
+                ->body('Please authenticate with Gmail first.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+
+            // Use modifyMessageLabels which is more reliable for label operations
+            $gmailClient->modifyMessageLabels($messageId, [], ['UNREAD']);
+
+            // Update the local message state
+            $this->updateMessageInList($messageId, ['isUnread' => false]);
+
+            Notification::make()
+                ->title('Message marked as read')
+                ->success()
+                ->send();
+
+            Log::info('Email marked as read', [
+                'message_id' => $messageId,
+                'user_id'    => $user->id
+            ]);
+
+        } catch (\Exception $e) {
+            $this->handleEmailActionError($e, 'marking email as read');
+        }
+    }
+
+    /**
+     * Mark email as unread
+     */
+    public function markAsUnread(string $messageId)
+    {
+        if (empty($messageId) || !is_string($messageId)) {
+            Log::warning('Invalid messageId provided to markAsUnread', ['messageId' => $messageId]);
+            Notification::make()
+                ->title('Error')
+                ->body('Invalid message ID provided')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            Notification::make()
+                ->title('Not authenticated')
+                ->body('Please authenticate with Gmail first.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+
+            // Use modifyMessageLabels which is more reliable for label operations
+            $gmailClient->modifyMessageLabels($messageId, ['UNREAD'], []);
+
+            // Update the local message state
+            $this->updateMessageInList($messageId, ['isUnread' => true]);
+
+            Notification::make()
+                ->title('Message marked as unread')
+                ->success()
+                ->send();
+
+            Log::info('Email marked as unread', [
+                'message_id' => $messageId,
+                'user_id'    => $user->id
+            ]);
+
+        } catch (\Exception $e) {
+            $this->handleEmailActionError($e, 'marking email as unread');
+        }
+    }
+
+    /**
+     * Archive email (remove from INBOX)
+     */
+    public function archiveEmail(string $messageId)
+    {
+        if (empty($messageId) || !is_string($messageId)) {
+            Log::warning('Invalid messageId provided to archiveEmail', ['messageId' => $messageId]);
+            Notification::make()
+                ->title('Error')
+                ->body('Invalid message ID provided')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            Notification::make()
+                ->title('Not authenticated')
+                ->body('Please authenticate with Gmail first.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+
+            // Use modifyMessageLabels to remove INBOX label (archive)
+            $gmailClient->modifyMessageLabels($messageId, [], ['INBOX']);
+
+            // Remove from local message list if we're viewing INBOX
+            if (in_array('INBOX', $this->selectedLabels)) {
+                $this->removeMessageFromList($messageId);
+            }
+
+            Notification::make()
+                ->title('Message archived')
+                ->success()
+                ->send();
+
+            Log::info('Email archived', [
+                'message_id' => $messageId,
+                'user_id'    => $user->id
+            ]);
+
+        } catch (\Exception $e) {
+            $this->handleEmailActionError($e, 'archiving email');
+        }
+    }
+
+    /**
+     * Delete email (move to trash)
      */
     public function deleteEmail(string $messageId)
     {
-        // TODO: Implement with Gmail API
+        if (empty($messageId) || !is_string($messageId)) {
+            Log::warning('Invalid messageId provided to deleteEmail', ['messageId' => $messageId]);
+            Notification::make()
+                ->title('Error')
+                ->body('Invalid message ID provided')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        $user = auth()->user();
+
+        if (!$user->hasValidGmailToken()) {
+            Notification::make()
+                ->title('Not authenticated')
+                ->body('Please authenticate with Gmail first.')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $gmailClient = $user->getGmailClient();
+
+            // Use modifyMessageLabels to add TRASH label (soft delete)
+            $gmailClient->modifyMessageLabels($messageId, ['TRASH'], []);
+
+            // Remove from local message list
+            $this->removeMessageFromList($messageId);
+
+            Notification::make()
+                ->title('Message moved to trash')
+                ->success()
+                ->send();
+
+            Log::info('Email deleted (moved to trash)', [
+                'message_id' => $messageId,
+                'user_id'    => $user->id
+            ]);
+
+        } catch (\Exception $e) {
+            $this->handleEmailActionError($e, 'deleting email');
+        }
+    }
+
+    /**
+     * Quick search presets for common queries
+     */
+    public function quickSearch(string $preset): void
+    {
+        $searches = [
+            'unread'      => 'is:unread',
+            'today'       => 'newer_than:1d',
+            'attachments' => 'has:attachment',
+            'important'   => 'is:important',
+            'starred'     => 'is:starred',
+            'clients'     => 'from:client OR to:client', // Basic client detection
+        ];
+
+        if (isset($searches[$preset])) {
+            $this->searchTerm = $searches[$preset];
+            $this->data['searchTerm'] = $this->searchTerm;
+            $this->loadMessages();
+
+            Notification::make()
+                ->title('Quick search applied')
+                ->body("Searching for: {$searches[$preset]}")
+                ->success()
+                ->send();
+        }
+    }
+
+    /**
+     * Clear search and show all messages
+     */
+    public function clearSearch(): void
+    {
+        $this->searchTerm = '';
+        $this->data['searchTerm'] = '';
+        $this->loadMessages();
+
         Notification::make()
-            ->title('Feature Coming Soon')
-            ->body('Email deletion will be implemented with Gmail API integration')
-            ->warning()
+            ->title('Search cleared')
+            ->success()
             ->send();
+    }
+
+    /**
+     * Create a contact from an email message
+     */
+    public function createContactFromEmail(string $messageId)
+    {
+        $message = collect($this->messages)->firstWhere('id', $messageId);
+
+        if (!$message) {
+            Notification::make()
+                ->title('Error')
+                ->body('Message not found')
+                ->danger()
+                ->send();
+            return;
+        }
+
+        try {
+            $email = $message['from'];
+            $name = $message['from_name'] ?: explode('@', $email)[0];
+
+            // Check if contact already exists
+            $existingClient = Client::where('email', $email)->first();
+            if ($existingClient) {
+                Notification::make()
+                    ->title('Contact Exists')
+                    ->body("Contact '{$name}' already exists in your CRM")
+                    ->warning()
+                    ->send();
+                return;
+            }
+
+            // Create new client from email
+            Client::create([
+                'name'            => $name,
+                'email'           => $email,
+                'status'          => 'lead',
+                'notes'           => 'Auto-created from Gmail: ' . $message['subject'],
+                'user_id'         => auth()->id(),
+                'last_contact_at' => Carbon::parse($message['date']),
+            ]);
+
+            // Update the message to mark as client
+            foreach ($this->messages as &$msg) {
+                if ($msg['id'] === $messageId) {
+                    $msg['isClient'] = true;
+                    break;
+                }
+            }
+
+            Notification::make()
+                ->title('Contact Created')
+                ->body("Successfully created contact '{$name}' in your CRM")
+                ->success()
+                ->send();
+
+            $this->loadClients();
+
+        } catch (\Exception $e) {
+            Log::error('Failed to create contact from email', [
+                'messageId' => $messageId,
+                'error'     => $e->getMessage()
+            ]);
+
+            Notification::make()
+                ->title('Error')
+                ->body('Failed to create contact: ' . $e->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 
     protected function getHeaderActions(): array
@@ -737,6 +1247,58 @@ class GmailMessagesPage extends Page implements HasForms
                 ->color('success')
                 ->action(fn () => $this->syncClientsFromEmails()),
         ];
+    }
+
+    /**
+     * Helper method to update a message in the local list
+     */
+    private function updateMessageInList(string $messageId, array $updates): void
+    {
+        $this->messages = collect($this->messages)->map(function ($message) use ($messageId, $updates) {
+            if ($message['id'] === $messageId) {
+                return array_merge($message, $updates);
+            }
+            return $message;
+        })->toArray();
+    }
+
+    /**
+     * Helper method to remove a message from the local list
+     */
+    private function removeMessageFromList(string $messageId): void
+    {
+        $this->messages = collect($this->messages)->filter(function ($message) use ($messageId) {
+            return $message['id'] !== $messageId;
+        })->values()->toArray();
+    }
+
+    /**
+     * Centralized error handling for email actions
+     */
+    private function handleEmailActionError(\Exception $e, string $action): void
+    {
+        Log::error("Failed {$action}", [
+            'error'   => $e->getMessage(),
+            'user_id' => auth()->id(),
+        ]);
+
+        $errorMessage = 'Failed to perform action. Please try again.';
+
+        if (str_contains($e->getMessage(), 'authentication') || str_contains($e->getMessage(), 'invalid_grant')) {
+            $errorMessage = 'Gmail authentication expired. Please re-authenticate.';
+        } elseif (str_contains($e->getMessage(), 'not found')) {
+            $errorMessage = 'Email not found. It may have been deleted or moved.';
+        } elseif (str_contains($e->getMessage(), 'rate limit') || str_contains($e->getMessage(), 'quota')) {
+            $errorMessage = 'Gmail API rate limit exceeded. Please try again later.';
+        } elseif (str_contains($e->getMessage(), 'network') || str_contains($e->getMessage(), 'connection')) {
+            $errorMessage = 'Network error. Please check your connection and try again.';
+        }
+
+        Notification::make()
+            ->title('Error')
+            ->body($errorMessage)
+            ->danger()
+            ->send();
     }
 
     /**
@@ -1027,5 +1589,55 @@ class GmailMessagesPage extends Page implements HasForms
             ->first();
 
         return $lastEmail ? $lastEmail->email_date->diffForHumans() : null;
+    }
+
+    /**
+     * Safely validate a message structure to prevent star toggle errors
+     */
+    private function isValidMessage(array $message): bool
+    {
+        // Check required fields
+        if (!isset($message['id']) || empty($message['id'])) {
+            return false;
+        }
+
+        // Ensure labels is an array
+        if (!isset($message['labels']) || !is_array($message['labels'])) {
+            return false;
+        }
+
+        // Ensure isStarred is a boolean
+        if (!isset($message['isStarred']) || !is_bool($message['isStarred'])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Safely get star status for a message
+     */
+    private function getMessageStarStatus(array $message): bool
+    {
+        if (!$this->isValidMessage($message)) {
+            return false;
+        }
+
+        // Check both the labels array and isStarred field for consistency
+        $hasStarredLabel = in_array('STARRED', $message['labels']);
+        $isStarredField = $message['isStarred'] ?? false;
+
+        // Log inconsistency for debugging
+        if ($hasStarredLabel !== $isStarredField) {
+            Log::warning('Star status inconsistency detected', [
+                'messageId'       => $message['id'],
+                'hasStarredLabel' => $hasStarredLabel,
+                'isStarredField'  => $isStarredField,
+                'labels'          => $message['labels']
+            ]);
+        }
+
+        // Trust the labels array as source of truth
+        return $hasStarredLabel;
     }
 }
