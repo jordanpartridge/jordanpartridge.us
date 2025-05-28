@@ -27,8 +27,8 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground();
 
-        // Automated log monitoring - check every 15 minutes
-        $schedule->command('logs:monitor --interval=15 --threshold=3 --validate')
+        // Automated log monitoring with AI analysis - check every 15 minutes
+        $schedule->command('logs:monitor --interval=15 --threshold=3 --validate --use-ai')
             ->everyFifteenMinutes()
             ->withoutOverlapping()
             ->runInBackground()

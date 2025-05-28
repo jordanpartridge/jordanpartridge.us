@@ -4,15 +4,19 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Process;
 use Carbon\Carbon;
 
 class AutomatedLogMonitoring extends Command
 {
-    protected $signature = 'logs:monitor 
+    protected $signature = 'logs:monitor
                             {--interval=15 : Check interval in minutes}
                             {--threshold=3 : Minimum occurrences to trigger issue}
                             {--validate : Validate errors still occur before creating issues}
-                            {--dry-run : Show what would be done without creating issues}';
+                            {--dry-run : Show what would be done without creating issues}
+                            {--use-ai : Use Claude AI for error analysis (recommended)}';
 
     protected $description = 'Automated log monitoring with intelligent issue creation';
 
@@ -27,6 +31,7 @@ class AutomatedLogMonitoring extends Command
         $threshold = $this->option('threshold');
         $validate = $this->option('validate');
         $dryRun = $this->option('dry-run');
+        $useAI = $this->option('use-ai');
 
         // Get recent errors
         $errors = $this->getRecentErrors($interval);
@@ -48,7 +53,7 @@ class AutomatedLogMonitoring extends Command
 
         // Process each pattern
         foreach ($patterns as $patternKey => $pattern) {
-            $this->processErrorPattern($patternKey, $pattern, $validate, $dryRun);
+            $this->processErrorPattern($patternKey, $pattern, $validate, $dryRun, $useAI);
         }
 
         // Store monitoring state
@@ -150,13 +155,13 @@ class AutomatedLogMonitoring extends Command
 
         // Normalize the message to create a pattern
         $patterns = [
-            '/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/' => 'TIMESTAMP',
-            '/\d+\.\d+\.\d+\.\d+/'                  => 'IP_ADDRESS',
-            '/\b\d+\b/'                             => 'NUMBER',
-            '/[a-f0-9]{32,}/'                       => 'HASH',
+            '/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/'                           => 'TIMESTAMP',
+            '/\d+\.\d+\.\d+\.\d+/'                                            => 'IP_ADDRESS',
+            '/\b\d+\b/'                                                       => 'NUMBER',
+            '/[a-f0-9]{32,}/'                                                 => 'HASH',
             '/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i' => 'UUID',
-            '/user_id[=:\s]*\d+/'                   => 'user_id=ID',
-            '/\/tmp\/[a-zA-Z0-9]+/'                 => '/tmp/TMPFILE'
+            '/user_id[=:\s]*\d+/'                                             => 'user_id=ID',
+            '/\/tmp\/[a-zA-Z0-9]+/'                                           => '/tmp/TMPFILE'
         ];
 
         foreach ($patterns as $pattern => $replacement) {
@@ -171,7 +176,7 @@ class AutomatedLogMonitoring extends Command
         return 'ERROR:' . substr(md5($message), 0, 12);
     }
 
-    protected function processErrorPattern(string $key, array $pattern, bool $validate, bool $dryRun): void
+    protected function processErrorPattern(string $key, array $pattern, bool $validate, bool $dryRun, bool $useAI = false): void
     {
         $this->line("\n" . str_repeat('─', 60));
         $this->info("Processing: {$key}");
@@ -192,7 +197,17 @@ class AutomatedLogMonitoring extends Command
             }
         }
 
-        // Check severity threshold
+        // Use Claude AI analysis if enabled
+        if ($useAI) {
+            $aiAnalysis = $this->analyzeWithClaude($pattern);
+            if ($aiAnalysis) {
+                $this->processAIAnalysis($key, $pattern, $aiAnalysis, $dryRun);
+                return;
+            }
+            $this->comment("⚠️  AI analysis failed, falling back to rule-based analysis");
+        }
+
+        // Check severity threshold (rule-based fallback)
         if (!$this->meetsIssueSeverity($pattern)) {
             $this->comment("ℹ️  Skipping - Below severity threshold for automatic issue creation");
             return;
@@ -244,9 +259,9 @@ class AutomatedLogMonitoring extends Command
         if (preg_match('/Table \'[^.]+\.([^\']+)\' doesn\'t exist/', $error['message'], $matches)) {
             $tableName = $matches[1];
             try {
-                return !\Illuminate\Support\Facades\Schema::hasTable($tableName);
+                return !Schema::hasTable($tableName);
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::warning(
+                Log::warning(
                     "Unable to validate table existence: " . $e->getMessage()
                 );
                 return false; // Skip issue creation if we can't validate
@@ -348,7 +363,7 @@ class AutomatedLogMonitoring extends Command
 
         $this->info("📝 Creating GitHub issue...");
 
-        $result = \Illuminate\Support\Facades\Process::run([
+        $result = Process::run([
             'php', 'artisan', 'issues:create-as-bot',
             $title,
             $body
@@ -413,7 +428,7 @@ This error pattern was automatically detected by the log monitoring system and h
 
 ## Recommended Actions
 1. Investigate the root cause of this error pattern
-2. Check if this is a new issue or recurring problem  
+2. Check if this is a new issue or recurring problem
 3. Implement appropriate fixes based on error category
 4. Monitor for resolution
 
@@ -458,5 +473,282 @@ This error pattern was automatically detected by the log monitoring system and h
             'patterns_found' => count($patterns),
             'total_errors'   => array_sum(array_column($patterns, 'count'))
         ], now()->addHours(24));
+    }
+
+    protected function analyzeWithClaude(array $pattern): ?array
+    {
+        $this->comment("🧠 Analyzing with Claude AI...");
+
+        try {
+            // Create context file for Claude
+            $contextFile = $this->createClaudeContextFile($pattern);
+
+            // Build Claude analysis prompt
+            $prompt = $this->buildClaudeAnalysisPrompt();
+
+            // Execute Claude CLI command
+            $result = Process::timeout(120)->run(
+                "cat {$contextFile} | claude -p " . escapeshellarg($prompt)
+            );
+
+            // Clean up temp file
+            unlink($contextFile);
+
+            if ($result->successful()) {
+                $response = trim($result->output());
+
+                // Claude sometimes wraps JSON in markdown code blocks
+                if (str_contains($response, '```json')) {
+                    // Extract JSON from markdown code block
+                    preg_match('/```json\s*(.*?)\s*```/s', $response, $matches);
+                    if (!empty($matches[1])) {
+                        $response = trim($matches[1]);
+                    }
+                } elseif (str_contains($response, '```')) {
+                    // Extract from generic code block
+                    preg_match('/```\s*(.*?)\s*```/s', $response, $matches);
+                    if (!empty($matches[1])) {
+                        $response = trim($matches[1]);
+                    }
+                }
+
+                // Try to parse JSON response
+                $analysis = json_decode($response, true);
+
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $this->info("✅ Claude analysis completed");
+                    return $analysis;
+                } else {
+                    $this->comment("⚠️  Claude response was not valid JSON");
+                    $this->line("Response: " . substr($response, 0, 200) . '...');
+                }
+            } else {
+                $this->comment("⚠️  Claude command failed: " . $result->errorOutput());
+            }
+        } catch (\Exception $e) {
+            $this->comment("⚠️  Claude analysis error: " . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    protected function createClaudeContextFile(array $pattern): string
+    {
+        $sample = $pattern['sample_error'];
+
+        $context = "# Laravel Error Analysis Request\n\n";
+
+        // Error pattern summary
+        $context .= "## Error Pattern Summary\n";
+        $context .= "- **Occurrences**: {$pattern['count']} times\n";
+        $context .= "- **Time Range**: {$pattern['first_seen']} → {$pattern['last_seen']}\n";
+        $context .= "- **Level**: {$sample['level']}\n\n";
+
+        // Complete error message
+        $context .= "## Error Message\n";
+        $context .= "```\n{$sample['message']}\n```\n\n";
+
+        // Stacktrace if available
+        if (!empty($sample['stacktrace'])) {
+            $context .= "## Stacktrace (Top 10 lines)\n";
+            $context .= "```\n" . implode("\n", array_slice($sample['stacktrace'], 0, 10)) . "\n```\n\n";
+        }
+
+        // System context
+        $context .= "## System Information\n";
+        $context .= "- **Application**: " . config('app.name') . "\n";
+        $context .= "- **Environment**: " . app()->environment() . "\n";
+        $context .= "- **Laravel Version**: " . app()->version() . "\n";
+        $context .= "- **PHP Version**: " . PHP_VERSION . "\n";
+        $context .= "- **Database**: " . config('database.default') . "\n\n";
+
+        // Recent occurrences
+        $context .= "## Recent Occurrences\n";
+        foreach (array_slice($pattern['instances'], -5) as $timestamp) {
+            $context .= "- {$timestamp}\n";
+        }
+        $context .= "\n";
+
+        // Analysis context
+        $context .= "## Analysis Context\n";
+        $context .= "This error pattern was detected by the automated log monitoring system. ";
+        $context .= "It has occurred {$pattern['count']} times in the monitoring period. ";
+        $context .= "Please analyze whether this requires immediate attention and a GitHub issue.\n";
+
+        $tempFile = tempnam(sys_get_temp_dir(), 'claude_error_analysis_');
+        file_put_contents($tempFile, $context);
+
+        return $tempFile;
+    }
+
+    protected function buildClaudeAnalysisPrompt(): string
+    {
+        return "Analyze this Laravel error and respond in JSON format:
+
+{
+  \"severity\": \"critical|high|medium|low\",
+  \"confidence\": \"high|medium|low\",
+  \"root_cause\": \"Brief explanation of what's causing this error\",
+  \"impact\": \"What functionality is affected\",
+  \"should_create_issue\": true|false,
+  \"issue_title\": \"GitHub issue title if should_create_issue is true\",
+  \"fix_commands\": [\"php artisan migrate\", \"composer install\"],
+  \"investigation_steps\": [\"Check database connection\", \"Verify permissions\"],
+  \"category\": \"database|queue|mail|auth|api|application|console\",
+  \"is_transient\": true|false,
+  \"reasoning\": \"Explain your analysis and decision\"
+}
+
+Guidelines:
+- Consider the frequency and timing of occurrences
+- Assess if this is likely a temporary vs persistent issue
+- Only recommend creating GitHub issues for problems that need developer attention
+- Provide specific, actionable fix commands when possible
+- Be conservative - avoid creating issues for minor or resolved problems
+- Consider the application context and error patterns
+
+Respond ONLY with valid JSON, no additional text.";
+    }
+
+    protected function processAIAnalysis(string $key, array $pattern, array $analysis, bool $dryRun): void
+    {
+        $this->info("🧠 Claude AI Analysis Results:");
+        $this->line("  Severity: " . strtoupper($analysis['severity'] ?? 'unknown'));
+        $this->line("  Confidence: " . strtoupper($analysis['confidence'] ?? 'unknown'));
+        $this->line("  Category: " . ucfirst($analysis['category'] ?? 'unknown'));
+        $this->line("  Is Transient: " . ($analysis['is_transient'] ? 'Yes' : 'No'));
+        $this->line("  Should Create Issue: " . ($analysis['should_create_issue'] ? 'Yes' : 'No'));
+
+        if (!empty($analysis['reasoning'])) {
+            $this->comment("  Reasoning: " . $analysis['reasoning']);
+        }
+
+        // Show fix commands if provided
+        if (!empty($analysis['fix_commands'])) {
+            $this->info("  Suggested Fixes:");
+            foreach ($analysis['fix_commands'] as $command) {
+                $this->line("    • {$command}");
+            }
+        }
+
+        // Show investigation steps if provided
+        if (!empty($analysis['investigation_steps'])) {
+            $this->info("  Investigation Steps:");
+            foreach ($analysis['investigation_steps'] as $step) {
+                $this->line("    • {$step}");
+            }
+        }
+
+        // Create issue if Claude recommends it
+        if ($analysis['should_create_issue']) {
+            if ($dryRun) {
+                $this->warn("\n🧪 DRY RUN - Would create GitHub issue:");
+                $this->line("Title: " . ($analysis['issue_title'] ?? 'AI-Analyzed Error'));
+            } else {
+                $this->createAIGitHubIssue($key, $pattern, $analysis);
+            }
+        } else {
+            $this->comment("✅ Claude determined no GitHub issue needed");
+            if ($analysis['is_transient']) {
+                $this->markPatternAsResolved($key);
+            }
+        }
+    }
+
+    protected function createAIGitHubIssue(string $key, array $pattern, array $analysis): void
+    {
+        $title = $analysis['issue_title'] ?? $this->generateIssueTitle($pattern);
+        $body = $this->generateAIIssueBody($pattern, $analysis);
+
+        $this->info("📝 Creating AI-analyzed GitHub issue...");
+
+        $result = Process::run([
+            'php', 'artisan', 'issues:create-as-bot',
+            $title,
+            $body
+        ]);
+
+        if ($result->successful()) {
+            $issueUrl = trim($result->output());
+            $this->info("✅ AI-analyzed issue created: {$issueUrl}");
+
+            // Track that we created an issue for this pattern
+            $this->markIssueCreated($key, $issueUrl);
+        } else {
+            $this->error("❌ Failed to create issue: " . $result->errorOutput());
+        }
+    }
+
+    protected function generateAIIssueBody(array $pattern, array $analysis): string
+    {
+        $sample = $pattern['sample_error'];
+
+        $body = "## 🧠 AI-Analyzed Error Report\n\n";
+
+        // Claude's analysis summary
+        $body .= "**Claude AI Analysis**:\n";
+        $body .= "- **Severity**: " . strtoupper($analysis['severity']) . "\n";
+        $body .= "- **Confidence**: " . strtoupper($analysis['confidence']) . "\n";
+        $body .= "- **Category**: " . ucfirst($analysis['category']) . "\n";
+        $body .= "- **Is Transient**: " . ($analysis['is_transient'] ? 'Yes' : 'No') . "\n\n";
+
+        // Root cause and impact
+        if (!empty($analysis['root_cause'])) {
+            $body .= "**Root Cause**: {$analysis['root_cause']}\n\n";
+        }
+
+        if (!empty($analysis['impact'])) {
+            $body .= "**Impact**: {$analysis['impact']}\n\n";
+        }
+
+        // Claude's reasoning
+        if (!empty($analysis['reasoning'])) {
+            $body .= "**AI Reasoning**: {$analysis['reasoning']}\n\n";
+        }
+
+        // Error pattern details
+        $body .= "## Error Pattern Details\n";
+        $body .= "- **Occurrences**: {$pattern['count']} times\n";
+        $body .= "- **Time Range**: {$pattern['first_seen']} → {$pattern['last_seen']}\n";
+        $body .= "- **Level**: {$sample['level']}\n\n";
+
+        // Error message
+        $body .= "## Error Message\n";
+        $body .= "```\n{$sample['message']}\n```\n\n";
+
+        // Recommended fixes
+        if (!empty($analysis['fix_commands'])) {
+            $body .= "## 🔧 AI-Recommended Fixes\n";
+            foreach ($analysis['fix_commands'] as $command) {
+                $body .= "```bash\n{$command}\n```\n";
+            }
+            $body .= "\n";
+        }
+
+        // Investigation steps
+        if (!empty($analysis['investigation_steps'])) {
+            $body .= "## 🔍 Investigation Steps\n";
+            foreach ($analysis['investigation_steps'] as $step) {
+                $body .= "- {$step}\n";
+            }
+            $body .= "\n";
+        }
+
+        // Recent occurrences
+        $body .= "## Recent Occurrences\n";
+        foreach (array_slice($pattern['instances'], -10) as $timestamp) {
+            $body .= "- {$timestamp}\n";
+        }
+
+        $body .= "\n## Environment\n";
+        $body .= "- **Application**: " . config('app.name') . "\n";
+        $body .= "- **Environment**: " . app()->environment() . "\n";
+        $body .= "- **Laravel Version**: " . app()->version() . "\n";
+        $body .= "- **Analysis Time**: " . now()->toDateTimeString() . "\n\n";
+
+        $body .= "---\n";
+        $body .= "*This issue was analyzed by Claude AI and automatically generated by the Laravel Log Monitoring System*";
+
+        return $body;
     }
 }
