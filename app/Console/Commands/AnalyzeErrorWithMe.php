@@ -86,7 +86,7 @@ class AnalyzeErrorWithMe extends Command
                 if (str_starts_with($line, '#') || str_contains($line, ' at ')) {
                     $currentEntry['stacktrace'][] = $line;
                 } else {
-                    $currentEntry['message'] = $line . "\n" . $currentEntry['message'];
+                    $currentEntry['message'] .= "\n" . $line;
                 }
             }
         }
@@ -184,7 +184,7 @@ class AnalyzeErrorWithMe extends Command
 
         // Extract from stacktrace
         foreach ($error['stacktrace'] as $line) {
-            if (preg_match('/([\/\w]+\.php)\((\d+)\)/', $line, $matches)) {
+            if (preg_match('/([\/\\\\\w\-\.]+\.php)[:\(](\d+)\)?/', $line, $matches)) {
                 $file = $matches[1];
                 if (str_contains($file, $appPath)) {
                     $files[] = str_replace($basePath . '/', '', $file) . ':' . $matches[2];

@@ -100,7 +100,7 @@ class AutomatedLogMonitoring extends Command
                 if (str_starts_with($line, '#') || str_contains($line, ' at ')) {
                     $currentEntry['stacktrace'][] = $line;
                 } else {
-                    $currentEntry['message'] = $line . "\n" . $currentEntry['message'];
+                    $currentEntry['message'] .= "\n" . $line;
                 }
             }
         }
@@ -154,6 +154,7 @@ class AutomatedLogMonitoring extends Command
             '/\d+\.\d+\.\d+\.\d+/'                  => 'IP_ADDRESS',
             '/\b\d+\b/'                             => 'NUMBER',
             '/[a-f0-9]{32,}/'                       => 'HASH',
+            '/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i' => 'UUID',
             '/user_id[=:\s]*\d+/'                   => 'user_id=ID',
             '/\/tmp\/[a-zA-Z0-9]+/'                 => '/tmp/TMPFILE'
         ];
@@ -243,9 +244,12 @@ class AutomatedLogMonitoring extends Command
         if (preg_match('/Table \'[^.]+\.([^\']+)\' doesn\'t exist/', $error['message'], $matches)) {
             $tableName = $matches[1];
             try {
-                return \Illuminate\Support\Facades\Schema::hasTable($tableName);
+                return !\Illuminate\Support\Facades\Schema::hasTable($tableName);
             } catch (\Exception $e) {
-                return true; // If we can't check, assume it's still an issue
+                \Illuminate\Support\Facades\Log::warning(
+                    "Unable to validate table existence: " . $e->getMessage()
+                );
+                return false; // Skip issue creation if we can't validate
             }
         }
         return true;
