@@ -26,6 +26,13 @@ class Kernel extends ConsoleKernel
             ->at('03:00')
             ->withoutOverlapping()
             ->runInBackground();
+
+        // Automated log monitoring - check every 15 minutes
+        $schedule->command('logs:monitor --interval=15 --threshold=3 --validate')
+            ->everyFifteenMinutes()
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->emailOutputOnFailure(config('mail.from.address'));
     }
 
     /**
