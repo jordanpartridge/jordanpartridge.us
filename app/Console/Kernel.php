@@ -26,6 +26,13 @@ class Kernel extends ConsoleKernel
             ->at('03:00')
             ->withoutOverlapping()
             ->runInBackground();
+
+        // Automated log monitoring with AI analysis - check every 15 minutes
+        $schedule->command('logs:monitor --interval=15 --threshold=3 --validate --use-ai')
+            ->everyFifteenMinutes()
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->emailOutputOnFailure(config('mail.from.address'));
     }
 
     /**

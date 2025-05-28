@@ -47,7 +47,10 @@ return [
         'key' => env('GOOGLE_MAP_API_KEY'),
     ],
     'github' => [
-        'token'    => env('GITHUB_API_TOKEN'),
-        'username' => env('GITHUB_USERNAME', 'jordanpartridge'),
+        'token'      => env('GITHUB_API_TOKEN'),
+        'username'   => env('GITHUB_USERNAME', 'jordanpartridge'),
+        'repository' => env('GITHUB_REPOSITORY', 'jordanpartridge/jordanpartridge.us'),
+        'bot_token'  => env('GITHUB_BOT_TOKEN'), // Personal Access Token for bot account
+        'app_token'  => env('GITHUB_APP_TOKEN'), // GitHub App Installation Token
     ],
 ];
