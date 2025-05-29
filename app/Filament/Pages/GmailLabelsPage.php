@@ -98,22 +98,22 @@ class GmailLabelsPage extends Page implements HasForms
 
                 // Handle both array and object formats
                 if (is_array($label)) {
-                    $labelData['id'] = (string) ($label['id'] ?? '');
-                    $labelData['name'] = (string) ($label['name'] ?? '');
-                    $labelData['type'] = (string) ($label['type'] ?? 'user');
-                    $labelData['messagesTotal'] = (int) ($label['messagesTotal'] ?? 0);
+                    $labelData['id']             = (string) ($label['id'] ?? '');
+                    $labelData['name']           = (string) ($label['name'] ?? '');
+                    $labelData['type']           = (string) ($label['type'] ?? 'user');
+                    $labelData['messagesTotal']  = (int) ($label['messagesTotal'] ?? 0);
                     $labelData['messagesUnread'] = (int) ($label['messagesUnread'] ?? 0);
-                    $labelData['threadsTotal'] = (int) ($label['threadsTotal'] ?? 0);
-                    $labelData['threadsUnread'] = (int) ($label['threadsUnread'] ?? 0);
+                    $labelData['threadsTotal']   = (int) ($label['threadsTotal'] ?? 0);
+                    $labelData['threadsUnread']  = (int) ($label['threadsUnread'] ?? 0);
                 } else {
                     // Handle object format - explicitly cast to safe types
-                    $labelData['id'] = (string) ($label->id ?? '');
-                    $labelData['name'] = (string) ($label->name ?? '');
-                    $labelData['type'] = (string) ($label->type ?? 'user');
-                    $labelData['messagesTotal'] = (int) ($label->messagesTotal ?? 0);
+                    $labelData['id']             = (string) ($label->id ?? '');
+                    $labelData['name']           = (string) ($label->name ?? '');
+                    $labelData['type']           = (string) ($label->type ?? 'user');
+                    $labelData['messagesTotal']  = (int) ($label->messagesTotal ?? 0);
                     $labelData['messagesUnread'] = (int) ($label->messagesUnread ?? 0);
-                    $labelData['threadsTotal'] = (int) ($label->threadsTotal ?? 0);
-                    $labelData['threadsUnread'] = (int) ($label->threadsUnread ?? 0);
+                    $labelData['threadsTotal']   = (int) ($label->threadsTotal ?? 0);
+                    $labelData['threadsUnread']  = (int) ($label->threadsUnread ?? 0);
                 }
 
                 return $labelData;
