@@ -14,13 +14,14 @@ class GmailStatsCard extends Component
     public string $size;
 
     public function __construct(
+        ?Authenticatable $authenticatedUser = null,
         bool $showDetails = false,
         string $size = 'default',
         ?User $user = null
     ) {
         $this->showDetails = $showDetails;
         $this->size = $size;
-        $this->stats = $this->loadGmailStats($user);
+        $this->stats = $this->loadGmailStats($user ?: $authenticatedUser);
     }
 
     public function render()
@@ -28,12 +29,10 @@ class GmailStatsCard extends Component
         return view('components.gmail-stats-card');
     }
 
-    private function loadGmailStats(?User $user = null): ?array
+    private function loadGmailStats($user = null): ?array
     {
         try {
-            // Use provided user or resolve authenticated user from container
-            $user = $user ?: $this->resolveAuthenticatedUser();
-
+            // User is already resolved through dependency injection
             if (!$user || !$user->hasValidGmailToken()) {
                 return null;
             }
@@ -68,12 +67,4 @@ class GmailStatsCard extends Component
         }
     }
 
-    /**
-     * Resolve the authenticated user using Laravel's service container.
-     * This is more testable and follows Laravel's dependency injection patterns.
-     */
-    private function resolveAuthenticatedUser(): ?Authenticatable
-    {
-        return app('auth')->user();
-    }
 }
