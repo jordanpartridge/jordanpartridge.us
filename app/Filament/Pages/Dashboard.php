@@ -62,14 +62,14 @@ class Dashboard extends BaseDashboard
         return 1;
     }
 
-    protected function getHeaderWidgets(): array
+    public function getHeaderWidgets(): array
     {
         return [
             MorningBriefingWidget::class,
         ];
     }
 
-    protected function getWidgetsColumns(): int | array
+    public function getWidgetsColumns(): int | array
     {
         return [
             'default' => 1,
