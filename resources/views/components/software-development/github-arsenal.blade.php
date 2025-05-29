@@ -1,6 +1,10 @@
 @php
-$settings = app(\App\Settings\GitHubSettings::class);
-$username = $settings->username ?? 'jordanpartridge';
+try {
+    $settings = app(\App\Settings\GitHubSettings::class);
+    $username = $settings->username ?? 'jordanpartridge';
+} catch (\Exception $e) {
+    $username = 'jordanpartridge'; // Fallback if settings not available
+}
 @endphp
 
 <div class="mb-20 relative overflow-hidden">
