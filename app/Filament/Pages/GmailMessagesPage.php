@@ -243,7 +243,7 @@ class GmailMessagesPage extends Page implements HasForms
                 // CRITICAL FIX: Ensure consistent date handling
                 $emailDate = null;
                 if (isset($email->internalDate)) {
-                    $emailDate = $email->internalDate instanceof \DateTime 
+                    $emailDate = $email->internalDate instanceof \DateTime
                         ? $email->internalDate->format('c')  // ISO 8601 format
                         : (is_string($email->internalDate) ? $email->internalDate : now()->toISOString());
                 } else {

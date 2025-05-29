@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 class LogMonitoringStatus extends Command
 {
-    protected $signature = 'logs:monitor-status 
+    protected $signature = 'logs:monitor-status
                             {--clear-cache : Clear monitoring cache}';
 
     protected $description = 'Show current log monitoring status and statistics';
