@@ -4,148 +4,230 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Process;
 
 class CreateBotIssue extends Command
 {
-    protected $signature = 'issues:create-as-bot 
+    /**
+     * The name and signature of the console command.
+     */
+    protected $signature = 'issues:create-as-bot
                             {title : Issue title}
                             {body : Issue body}
                             {--labels= : Comma-separated labels}';
 
-    protected $description = 'Create GitHub issue using a bot account or GitHub App';
+    /**
+     * The console command description.
+     */
+    protected $description = 'Create a GitHub issue with bot attribution';
 
-    public function handle()
+    /**
+     * Execute the console command.
+     */
+    public function handle(): int
     {
-        $title = $this->argument('title');
-        $body = $this->argument('body');
-        $labels = $this->option('labels') ? explode(',', $this->option('labels')) : [];
+        $title = (string) $this->argument('title');
+        $body = (string) $this->argument('body');
+        $labels = $this->option('labels') ? explode(',', (string) $this->option('labels')) : [];
 
-        // Validate required configuration
-        if (!config('services.github.repository')) {
-            $this->error('GitHub repository not configured. Set GITHUB_REPOSITORY environment variable.');
+        // Validate inputs
+        if (empty($title) || empty($body)) {
+            $this->error('Title and body are required');
             return Command::FAILURE;
         }
 
-        // Validate that at least one authentication method is available
+        // Check for authentication methods
         if (
             !config('services.github.app_token')
             && !config('services.github.bot_token')
-            && !\Illuminate\Support\Facades\Process::run(['which', 'gh'])->successful()
+            && !Process::run(['which', 'gh'])->successful()
         ) {
             $this->error('No GitHub authentication method available. Configure tokens or install GitHub CLI.');
             return Command::FAILURE;
         }
 
-        // Option 1: Use GitHub App (if configured)
-        if (config('services.github.app_token')) {
-            return $this->createIssueWithApp($title, $body, $labels);
+        // Try different authentication methods
+        if (config('services.github.app_token') || config('services.github.bot_token')) {
+            return $this->createIssueWithToken($title, $body, $labels);
         }
 
-        // Option 2: Use Personal Access Token for bot account
-        if (config('services.github.bot_token')) {
-            return $this->createIssueWithBotToken($title, $body, $labels);
-        }
-
-        // Option 3: Create with attribution to indicate automation
         return $this->createIssueWithAttribution($title, $body, $labels);
     }
 
-    protected function createIssueWithApp(string $title, string $body, array $labels): int
+    /**
+     * Create issue using API tokens
+     * 
+     * @param array<string> $labels
+     */
+    private function createIssueWithToken(string $title, string $body, array $labels): int
     {
-        $this->info('Creating issue with GitHub App...');
+        $this->info('Creating issue with API token...');
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.github.app_token'),
-            'Accept'        => 'application/vnd.github.v3+json',
-            'User-Agent'    => 'Laravel-Log-Analyzer-Bot',
-        ])->timeout(30)
-          ->retry(2, 1000)
-          ->post('https://api.github.com/repos/' . config('services.github.repository') . '/issues', [
-            'title'  => $title,
-            'body'   => $body . "\n\n---\n*Created automatically by Laravel Log Analyzer Bot*",
-            'labels' => $labels,
-        ]);
+        $token = config('services.github.app_token') ?: config('services.github.bot_token');
+        $repository = config('services.github.repository');
 
-        if ($response->successful()) {
-            $issue = $response->json();
-            $this->info("✅ Issue created: " . $issue['html_url']);
-            return Command::SUCCESS;
+        if (!$repository) {
+            $this->error('GitHub repository not configured');
+            return Command::FAILURE;
         }
 
-        $this->error("❌ Failed to create issue: " . $response->body());
-        return Command::FAILURE;
-    }
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $token,
+                'Accept' => 'application/vnd.github.v3+json',
+                'User-Agent' => 'Laravel-Bot/1.0'
+            ])->post("https://api.github.com/repos/{$repository}/issues", [
+                'title' => '🤖 [AUTO] ' . $title,
+                'body' => $this->formatBodyWithAttribution($body),
+                'labels' => array_merge($labels, ['automated', 'bot-created'])
+            ]);
 
-    protected function createIssueWithBotToken(string $title, string $body, array $labels): int
-    {
-        $this->info('Creating issue with bot account...');
+            if ($response->successful()) {
+                $issueData = $response->json();
+                $this->info("✅ Issue created: {$issueData['html_url']}");
+                return Command::SUCCESS;
+            }
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . config('services.github.bot_token'),
-            'Accept'        => 'application/vnd.github.v3+json',
-            'User-Agent'    => 'Laravel-Log-Analyzer-Bot',
-        ])->timeout(30)
-          ->retry(2, 1000)
-          ->post('https://api.github.com/repos/' . config('services.github.repository') . '/issues', [
-            'title'  => $title,
-            'body'   => $body . "\n\n---\n*Created by @laravel-log-bot*",
-            'labels' => $labels,
-        ]);
+            $this->error('API request failed: ' . $response->body());
+            return Command::FAILURE;
 
-        if ($response->successful()) {
-            $issue = $response->json();
-            $this->info("✅ Issue created: " . $issue['html_url']);
-            return Command::SUCCESS;
+        } catch (\Exception $e) {
+            $this->error('Failed to create issue: ' . $e->getMessage());
+            return Command::FAILURE;
         }
-
-        $this->error("❌ Failed to create issue: " . $response->body());
-        return Command::FAILURE;
     }
 
-    protected function createIssueWithAttribution(string $title, string $body, array $labels): int
+    /**
+     * Create issue using GitHub CLI with attribution
+     * 
+     * @param array<string> $labels
+     */
+    private function createIssueWithAttribution(string $title, string $body, array $labels): int
     {
         $this->info('Creating issue with automation attribution...');
 
         // Validate that gh CLI is available
-        if (!\Illuminate\Support\Facades\Process::run(['which', 'gh'])->successful()) {
+        if (!Process::run(['which', 'gh'])->successful()) {
             $this->error("GitHub CLI (gh) is not installed or not in PATH");
             return Command::FAILURE;
         }
 
-        // Modify the body to clearly indicate it's automated
-        $automatedBody = "🤖 **Automated Issue Report**\n\n" . $body;
-        $automatedBody .= "\n\n---\n";
-        $automatedBody .= "*This issue was automatically generated by Claude Code log analysis*\n";
-        $automatedBody .= "*Timestamp: " . now()->toDateTimeString() . "*\n";
-        $automatedBody .= "*Generated by: Laravel Log Analyzer*";
+        // Add automation attribution to body
+        $automatedBody = $this->formatBodyWithAttribution($body);
 
         $command = ['gh', 'issue', 'create'];
-        
+
         // Add repository context for safety
         if (config('services.github.repository')) {
             $command[] = '--repo';
             $command[] = config('services.github.repository');
         }
-        
+
         $command = array_merge($command, [
             '--title', '🤖 [AUTO] ' . $title,
             '--body', $automatedBody
         ]);
 
-        // Only add labels if they were provided
+        // Add labels if provided
         if (!empty($labels)) {
             $command[] = '--label';
-            $command[] = implode(',', $labels);
+            $command[] = implode(',', array_merge($labels, ['automated', 'bot-created']));
         }
 
-        $result = \Illuminate\Support\Facades\Process::run($command);
+        try {
+            $result = Process::run($command);
 
-        if ($result->successful()) {
-            $this->info("✅ Issue created: " . trim($result->output()));
-            return Command::SUCCESS;
+            if ($result->successful()) {
+                $this->info("✅ Issue created: " . trim($result->output()));
+                return Command::SUCCESS;
+            }
+
+            $this->error("Failed to create issue: " . $result->errorOutput());
+            return Command::FAILURE;
+
+        } catch (\Exception $e) {
+            $this->error('Command execution failed: ' . $e->getMessage());
+            return Command::FAILURE;
+        }
+    }
+
+    /**
+     * Format issue body with automation attribution
+     */
+    private function formatBodyWithAttribution(string $body): string
+    {
+        $automatedBody = "## 🤖 Automated Issue\n\n";
+        $automatedBody .= "> This issue was automatically created by the application's monitoring system.\n\n";
+        $automatedBody .= "### Issue Details\n\n";
+        $automatedBody .= $body;
+        $automatedBody .= "\n\n---\n\n";
+        $automatedBody .= "*Generated at: " . now()->toDateTimeString() . "*\n";
+        $automatedBody .= "*Generated by: Laravel Log Analyzer*";
+
+        return $automatedBody;
+    }
+
+    /**
+     * Validate GitHub CLI installation and authentication
+     */
+    private function validateGitHubCli(): bool
+    {
+        // Check if gh CLI is installed
+        if (!Process::run(['which', 'gh'])->successful()) {
+            $this->error('GitHub CLI (gh) is not installed');
+            $this->line('Install it from: https://cli.github.com/');
+            return false;
         }
 
-        $this->error("❌ Failed to create issue: " . $result->errorOutput());
-        return Command::FAILURE;
+        // Check if authenticated
+        $authCheck = Process::run(['gh', 'auth', 'status']);
+        if (!$authCheck->successful()) {
+            $this->error('GitHub CLI is not authenticated');
+            $this->line('Run: gh auth login');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Get current repository name from git config
+     */
+    private function getCurrentRepository(): ?string
+    {
+        $result = Process::run(['git', 'config', '--get', 'remote.origin.url']);
+        
+        if (!$result->successful()) {
+            return null;
+        }
+
+        $url = trim($result->output());
+        
+        // Parse GitHub URL to get owner/repo
+        if (preg_match('/github\.com[\/:]([^\/]+)\/([^\/\.]+)/', $url, $matches)) {
+            return $matches[1] . '/' . $matches[2];
+        }
+
+        return null;
+    }
+
+    /**
+     * Display help information for the command
+     */
+    private function displayHelp(): void
+    {
+        $this->newLine();
+        $this->line('<info>GitHub Issue Creation Help</info>');
+        $this->line('');
+        $this->line('<comment>Authentication Methods:</comment>');
+        $this->line('1. GitHub App Token: Set GITHUB_APP_TOKEN in .env');
+        $this->line('2. GitHub Bot Token: Set GITHUB_BOT_TOKEN in .env');
+        $this->line('3. GitHub CLI: Install and authenticate with `gh auth login`');
+        $this->line('');
+        $this->line('<comment>Configuration:</comment>');
+        $this->line('Set GITHUB_REPOSITORY in .env (format: owner/repo)');
+        $this->line('');
+        $this->line('<comment>Example Usage:</comment>');
+        $this->line('php artisan issues:create-as-bot "Bug Report" "Description of the bug" --labels=bug,high-priority');
     }
 }
