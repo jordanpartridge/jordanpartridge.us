@@ -1,26 +1,55 @@
 <?php
 
-use Illuminate\Http\Request;
+// Bike module middleware
+use App\Services\RideMetricService;
+use Illuminate\Support\Facades\Analytics;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Route;
 
-return [
-    '*' => function (Request $request, Closure $next) {
-        $startTime = microtime(true);
+return function (\Illuminate\Http\Request $request, \Closure $next) {
+    // Cache key for ride-related pages
+    $cacheKey = 'bike.page_' . md5($request->fullUrl());
 
-        $response = $next($request);
+    // Set cache headers for bike pages
+    $response = $next($request);
+    $response->header('Cache-Control', 'public, max-age=300');
 
-        // Add security headers
-        $response->header('X-Frame-Options', 'SAMEORIGIN');
-        $response->header('X-XSS-Protection', '1; mode=block');
-        $response->header('X-Content-Type-Options', 'nosniff');
+    // Add analytics tracking for bike pages
+    try {
+        Analytics::trackView('/bike' . ($request->path() !== 'bike' ? '/' . $request->path() : ''));
+    } catch (\Exception $e) {
+        report($e);
+    }
 
-        // Calculate response time
-        $endTime = microtime(true);
-        $responseTime = round(($endTime - $startTime) * 1000, 2);
-        $response->header('X-Response-Time-Ms', $responseTime);
+    // Get route parameters for bike page
+    $routeParams = Route::current()->parameters();
 
-        // Add cache headers for bike pages (1 hour)
-        $response->header('Cache-Control', 'public, max-age=3600');
+    // If we're on a specific ride page, add appropriate Open Graph tags
+    if (isset($routeParams['Ride'])) {
+        $ride = $routeParams['Ride'];
 
-        return $response;
-    },
-];
+        // Set Open Graph meta tags for the page
+        $response->header('x-og-title', 'Bike Ride: ' . $ride->name);
+        $response->header('x-og-description', 'Distance: ' . $ride->distance_imperial . ' miles, Duration: ' . $ride->moving_time_formatted);
+
+        // Add validation for map_image URL before setting the meta tag
+        if ($ride->map_image && filter_var($ride->map_image, FILTER_VALIDATE_URL)) {
+            $response->header('x-og-image', $ride->map_image);
+        } else {
+            // Fallback to a default image if map_image is missing or invalid
+            $response->header('x-og-image', asset('img/bike-joy.jpg'));
+        }
+    } else {
+        // Default Open Graph tags for bike section
+        $response->header('x-og-title', 'Bike Joy - Fat Bike Division');
+        $response->header('x-og-description', 'Exploring trails and conquering terrain with fat tires');
+        $response->header('x-og-image', asset('img/bike-joy.jpg'));
+    }
+
+    // Preload metrics for bike dashboard
+    if ($request->path() === 'bike') {
+        app(RideMetricService::class)->preloadMetrics();
+    }
+
+    return $response;
+};
