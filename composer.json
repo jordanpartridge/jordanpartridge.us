@@ -7,12 +7,6 @@
         "framework"
     ],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/PartridgeRocks/laravel-gmail-client.git"
-        }
-    ],
     "require": {
         "php": "^8.4",
         "bezhansalleh/filament-shield": "^3.3",
@@ -67,6 +61,12 @@
         "spatie/laravel-ignition": "^2.4",
         "tightenco/duster": "^3.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/PartridgeRocks/laravel-gmail-client.git"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",
@@ -102,8 +102,6 @@
             "dont-discover": []
         }
     },
-    "repositories": [
-    ],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
