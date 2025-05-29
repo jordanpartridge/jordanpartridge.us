@@ -2,11 +2,12 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\User;
 use Filament\Widgets\Widget;
-use App\Services\GmailService;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class EmailPrioritiesWidget extends Widget
 {
@@ -34,8 +35,17 @@ class EmailPrioritiesWidget extends Widget
     public function markAsRead(string $messageId): void
     {
         try {
-            $gmailService = app(GmailService::class);
-            $gmailService->modifyMessage($messageId, [], ['UNREAD']);
+            $user = auth()->user();
+            if (!$user || !$user->hasValidGmailToken()) {
+                return;
+            }
+
+            $gmailClient = $user->getGmailClient();
+            if (!$gmailClient) {
+                return;
+            }
+
+            $gmailClient->modifyMessageLabels($messageId, [], ['UNREAD']);
             $this->loadEmailData();
         } catch (\Exception $e) {
             // Handle error
@@ -45,58 +55,95 @@ class EmailPrioritiesWidget extends Widget
     protected function loadEmailData(): void
     {
         try {
-            $gmailService = app(GmailService::class);
+            // For now, use the first user since this is a personal dashboard
+            $user = User::first();
+            if (!$user || !$user->hasValidGmailToken()) {
+                // No user or no valid token - set to demo data
+                $this->priorityEmails = collect();
+                $this->unreadCounts = collect(['inbox' => 0, 'important' => 0, 'action_required' => 0]);
+                return;
+            }
+
+            $gmailClient = $user->getGmailClient();
+            if (!$gmailClient) {
+                $this->priorityEmails = collect();
+                $this->unreadCounts = collect(['inbox' => 0, 'important' => 0, 'action_required' => 0]);
+                return;
+            }
 
             // Get priority emails (unread from important senders or with important labels)
             $priorityQuery = 'is:unread (is:important OR from:(*@important-client.com) OR label:urgent OR label:action-required)';
-            $messages = $gmailService->listMessages([
+            $messages = $gmailClient->listMessages([
                 'q'          => $priorityQuery,
                 'maxResults' => 10,
             ]);
 
-            $this->priorityEmails = collect($messages['messages'] ?? [])
+            $this->priorityEmails = collect($messages ?? [])
                 ->take(5)
-                ->map(function ($message) use ($gmailService) {
-                    $details = $gmailService->getMessage($message['id']);
-                    $headers = collect($details['payload']['headers'] ?? []);
+                ->map(function ($message) use ($gmailClient) {
+                    // Handle both Email objects and array responses
+                    $messageId = is_object($message) ? $message->id : $message['id'];
+                    $details = $gmailClient->getMessage($messageId);
 
-                    return [
-                        'id'      => $message['id'],
-                        'subject' => Str::limit(
-                            $headers->firstWhere('name', 'Subject')['value'] ?? 'No Subject',
-                            50
-                        ),
-                        'from' => $this->extractSenderName(
-                            $headers->firstWhere('name', 'From')['value'] ?? 'Unknown'
-                        ),
-                        'time'    => $this->formatEmailTime($details['internalDate'] ?? null),
-                        'snippet' => Str::limit($details['snippet'] ?? '', 100),
-                        'labels'  => $this->extractImportantLabels($details['labelIds'] ?? []),
-                    ];
+                    // Handle both object and array responses for details
+                    if (is_object($details)) {
+                        return [
+                            'id'      => $details->id,
+                            'subject' => Str::limit($details->subject ?? 'No Subject', 50),
+                            'from'    => $this->extractSenderName($details->from ?? 'Unknown'),
+                            'time'    => $this->formatEmailTime($details->internalDate ?? null),
+                            'snippet' => Str::limit($details->snippet ?? '', 100),
+                            'labels'  => $this->extractImportantLabels($details->labelIds ?? []),
+                        ];
+                    } else {
+                        $headers = collect($details['payload']['headers'] ?? []);
+                        return [
+                            'id'      => $messageId,
+                            'subject' => Str::limit(
+                                $headers->firstWhere('name', 'Subject')['value'] ?? 'No Subject',
+                                50
+                            ),
+                            'from' => $this->extractSenderName(
+                                $headers->firstWhere('name', 'From')['value'] ?? 'Unknown'
+                            ),
+                            'time'    => $this->formatEmailTime($details['internalDate'] ?? null),
+                            'snippet' => Str::limit($details['snippet'] ?? '', 100),
+                            'labels'  => $this->extractImportantLabels($details['labelIds'] ?? []),
+                        ];
+                    }
                 });
 
-            // Get unread counts by category
+            // Get unread counts by category - simplified approach
             $this->unreadCounts = collect([
-                'inbox'           => $this->getUnreadCount('is:unread in:inbox'),
-                'important'       => $this->getUnreadCount('is:unread is:important'),
-                'action_required' => $this->getUnreadCount('is:unread label:action-required'),
+                'inbox'           => $this->getUnreadCount('is:unread in:inbox', $gmailClient),
+                'important'       => $this->getUnreadCount('is:unread is:important', $gmailClient),
+                'action_required' => $this->getUnreadCount('is:unread label:action-required', $gmailClient),
             ]);
 
             $this->totalUnread = $this->unreadCounts->sum();
 
         } catch (\Exception $e) {
+            // Log the actual error so we can see what's failing
+            Log::error('EmailPrioritiesWidget failed to load data', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
             $this->priorityEmails = collect();
             $this->unreadCounts = collect(['inbox' => 0, 'important' => 0, 'action_required' => 0]);
         }
     }
 
-    protected function getUnreadCount(string $query): int
+    protected function getUnreadCount(string $query, $gmailClient = null): int
     {
         try {
-            $gmailService = app(GmailService::class);
-            $result = $gmailService->listMessages(['q' => $query, 'maxResults' => 1]);
-            return $result['resultSizeEstimate'] ?? 0;
+            if (!$gmailClient) {
+                return 0;
+            }
+            $result = $gmailClient->listMessages(['q' => $query, 'maxResults' => 1]);
+            return $result['resultSizeEstimate'] ?? count($result ?? []);
         } catch (\Exception $e) {
+            Log::debug('Gmail unread count query failed', ['query' => $query, 'error' => $e->getMessage()]);
             return 0;
         }
     }

@@ -11,14 +11,17 @@ class QuickStatsWidget extends StatsOverviewWidget
 {
     protected static ?int $sort = 5;
 
-    protected int | string | array $columnSpan = 1;
+    protected int | string | array $columnSpan = [
+        'default' => 1,
+        'lg'      => 2,
+    ];
 
     protected function getStats(): array
     {
         $totalPosts = Post::count();
         $publishedPosts = Post::where('status', 'published')->count();
         $githubRepos = GithubRepository::count();
-        $lastPostDate = Post::latest('published_at')->first()?->published_at;
+        $lastPostDate = Post::latest('created_at')->first()?->created_at;
 
         return [
             Stat::make('Published Posts', $publishedPosts . '/' . $totalPosts)
@@ -42,7 +45,7 @@ class QuickStatsWidget extends StatsOverviewWidget
     {
         // Count various activities from the past week
         $posts = Post::where('updated_at', '>', now()->subWeek())->count();
-        $repos = GithubRepository::where('pushed_at', '>', now()->subWeek())->count();
+        $repos = GithubRepository::where('updated_at', '>', now()->subWeek())->count();
 
         return $posts + $repos;
     }

@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Client;
 use App\Models\ClientDocument;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -74,7 +75,40 @@ Route::middleware([LogRequests::class])->group(function () {
     |--------------------------------------------------------------------------
     */
     if (app()->environment('local')) {
-        // Routes have been simplified, removing test routes that aren't useful to the site
+        // Gmail debug route
+        Route::get('debug/gmail', function () {
+            try {
+                $user = User::first();
+                if (!$user) {
+                    return response()->json(['error' => 'No users found']);
+                }
+
+                $result = [
+                    'user_email'      => $user->email,
+                    'has_valid_token' => $user->hasValidGmailToken(),
+                ];
+
+                if ($user->hasValidGmailToken()) {
+                    $client = $user->getGmailClient();
+                    if ($client) {
+                        $result['client_obtained'] = true;
+                        // Try a simple API call
+                        $messages = $client->listMessages(['maxResults' => 3]);
+                        $result['api_test'] = [
+                            'messages_count'     => is_countable($messages) ? count($messages) : 'not countable',
+                            'messages_type'      => gettype($messages),
+                            'first_message_type' => isset($messages[0]) ? gettype($messages[0]) : 'none'
+                        ];
+                    } else {
+                        $result['client_obtained'] = false;
+                    }
+                }
+
+                return response()->json($result);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            }
+        });
     }
 
     /*
