@@ -50,22 +50,15 @@ class Dashboard extends BaseDashboard
         return [
             EmailPrioritiesWidget::class,
             TodaysFocusWidget::class,
-            QuickStatsWidget::class,
-            FitnessTrackerWidget::class,
             CalendarPreviewWidget::class,
+            FitnessTrackerWidget::class,
+            QuickStatsWidget::class,
         ];
     }
 
     public function getHeaderWidgetsColumns(): int | array
     {
         return 1;
-    }
-
-    public function getHeaderWidgets(): array
-    {
-        return [
-            MorningBriefingWidget::class,
-        ];
     }
 
     public function getWidgetsColumns(): int | array
@@ -75,6 +68,13 @@ class Dashboard extends BaseDashboard
             'sm'      => 2,
             'lg'      => 3,
             'xl'      => 4,
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            MorningBriefingWidget::class,
         ];
     }
 }
