@@ -173,14 +173,14 @@ class GmailLabelsPage extends Page implements HasForms
                 ->toArray();
 
             Log::info('Labels filtered successfully', [
-                'search_term'    => $this->searchTerm,
-                'system_labels'  => count($this->systemLabels),
-                'user_labels'    => count($this->userLabels)
+                'search_term'   => $this->searchTerm,
+                'system_labels' => count($this->systemLabels),
+                'user_labels'   => count($this->userLabels)
             ]);
 
         } catch (\Exception $e) {
             Log::error('Label filtering failed', [
-                'error' => $e->getMessage(),
+                'error'       => $e->getMessage(),
                 'search_term' => $this->searchTerm
             ]);
 
@@ -202,7 +202,7 @@ class GmailLabelsPage extends Page implements HasForms
         $cleanLabelName = filter_var($labelName, FILTER_SANITIZE_STRING);
 
         Log::info('Redirecting to messages page', [
-            'label_id' => $cleanLabelId,
+            'label_id'   => $cleanLabelId,
             'label_name' => $cleanLabelName
         ]);
 
@@ -210,6 +210,59 @@ class GmailLabelsPage extends Page implements HasForms
         return redirect()->route('filament.admin.pages.gmail-messages-page', [
             'selectedLabel' => $cleanLabelId
         ]);
+    }
+
+    /**
+     * CRITICAL FIX: Handle potential serialization issues during Livewire updates
+     */
+    public function dehydrate()
+    {
+        // Ensure all properties are properly serializable before Livewire dehydration
+        try {
+            $this->labels = array_map([$this, 'sanitizeLabelForLivewire'], $this->labels);
+            $this->systemLabels = array_map([$this, 'sanitizeLabelForLivewire'], $this->systemLabels);
+            $this->userLabels = array_map([$this, 'sanitizeLabelForLivewire'], $this->userLabels);
+        } catch (\Exception $e) {
+            Log::error('Dehydration error in GmailLabelsPage', [
+                'error' => $e->getMessage()
+            ]);
+
+            // Reset to safe state
+            $this->labels = [];
+            $this->systemLabels = [];
+            $this->userLabels = [];
+        }
+    }
+
+    /**
+     * CRITICAL FIX: Handle potential serialization issues during Livewire hydration
+     */
+    public function hydrate()
+    {
+        // Ensure all properties are properly formatted after Livewire hydration
+        try {
+            if (!is_array($this->labels)) {
+                $this->labels = [];
+            }
+            if (!is_array($this->systemLabels)) {
+                $this->systemLabels = [];
+            }
+            if (!is_array($this->userLabels)) {
+                $this->userLabels = [];
+            }
+
+            // Validate data integrity
+            $this->validateLabelsData();
+        } catch (\Exception $e) {
+            Log::error('Hydration error in GmailLabelsPage', [
+                'error' => $e->getMessage()
+            ]);
+
+            // Reset to safe state
+            $this->labels = [];
+            $this->systemLabels = [];
+            $this->userLabels = [];
+        }
     }
 
     protected function getHeaderActions(): array
@@ -276,58 +329,5 @@ class GmailLabelsPage extends Page implements HasForms
         Log::info('Labels data validation completed', [
             'total_labels' => count($this->labels)
         ]);
-    }
-
-    /**
-     * CRITICAL FIX: Handle potential serialization issues during Livewire updates
-     */
-    public function dehydrate()
-    {
-        // Ensure all properties are properly serializable before Livewire dehydration
-        try {
-            $this->labels = array_map([$this, 'sanitizeLabelForLivewire'], $this->labels);
-            $this->systemLabels = array_map([$this, 'sanitizeLabelForLivewire'], $this->systemLabels);
-            $this->userLabels = array_map([$this, 'sanitizeLabelForLivewire'], $this->userLabels);
-        } catch (\Exception $e) {
-            Log::error('Dehydration error in GmailLabelsPage', [
-                'error' => $e->getMessage()
-            ]);
-
-            // Reset to safe state
-            $this->labels = [];
-            $this->systemLabels = [];
-            $this->userLabels = [];
-        }
-    }
-
-    /**
-     * CRITICAL FIX: Handle potential serialization issues during Livewire hydration
-     */
-    public function hydrate()
-    {
-        // Ensure all properties are properly formatted after Livewire hydration
-        try {
-            if (!is_array($this->labels)) {
-                $this->labels = [];
-            }
-            if (!is_array($this->systemLabels)) {
-                $this->systemLabels = [];
-            }
-            if (!is_array($this->userLabels)) {
-                $this->userLabels = [];
-            }
-
-            // Validate data integrity
-            $this->validateLabelsData();
-        } catch (\Exception $e) {
-            Log::error('Hydration error in GmailLabelsPage', [
-                'error' => $e->getMessage()
-            ]);
-
-            // Reset to safe state
-            $this->labels = [];
-            $this->systemLabels = [];
-            $this->userLabels = [];
-        }
     }
 }
