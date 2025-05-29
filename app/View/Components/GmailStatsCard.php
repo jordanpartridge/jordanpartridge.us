@@ -5,6 +5,7 @@ namespace App\View\Components;
 use App\Models\User;
 use Illuminate\View\Component;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class GmailStatsCard extends Component
 {
@@ -30,8 +31,8 @@ class GmailStatsCard extends Component
     private function loadGmailStats(?User $user = null): ?array
     {
         try {
-            // Use provided user or authenticated user (never fallback to arbitrary user)
-            $user = $user ?: auth()->user();
+            // Use provided user or resolve authenticated user from container
+            $user = $user ?: $this->resolveAuthenticatedUser();
 
             if (!$user || !$user->hasValidGmailToken()) {
                 return null;
@@ -65,5 +66,14 @@ class GmailStatsCard extends Component
         } catch (\Exception $e) {
             return 0;
         }
+    }
+
+    /**
+     * Resolve the authenticated user using Laravel's service container.
+     * This is more testable and follows Laravel's dependency injection patterns.
+     */
+    private function resolveAuthenticatedUser(): ?Authenticatable
+    {
+        return app('auth')->user();
     }
 }
