@@ -8,9 +8,9 @@ use App\Filament\Widgets\TodaysFocusWidget;
 use App\Filament\Widgets\QuickStatsWidget;
 use App\Filament\Widgets\MorningBriefingWidget;
 use App\Filament\Widgets\CalendarPreviewWidget;
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
 
-class Dashboard extends Page
+class Dashboard extends BaseDashboard
 {
     protected static ?string $title = 'Morning Command Center';
 
@@ -32,6 +32,8 @@ class Dashboard extends Page
 
     public function mount(): void
     {
+        parent::mount();
+
         // Update greeting based on time of day
         $hour = now()->hour;
         $this->heading = match(true) {

@@ -30,8 +30,8 @@ class GmailStatsCard extends Component
     private function loadGmailStats(?User $user = null): ?array
     {
         try {
-            // Use provided user or first user for personal dashboard
-            $user = $user ?: User::first();
+            // Use provided user or authenticated user (never fallback to arbitrary user)
+            $user = $user ?: auth()->user();
 
             if (!$user || !$user->hasValidGmailToken()) {
                 return null;
@@ -48,7 +48,7 @@ class GmailStatsCard extends Component
                 'important'       => $this->getUnreadCount('is:unread is:important', $gmailClient),
                 'action_required' => $this->getUnreadCount('is:unread label:action-required', $gmailClient),
                 'total_unread'    => $this->getUnreadCount('is:unread', $gmailClient),
-                'today'           => $this->getUnreadCount('after:' . now()->format('Y/m/d'), $gmailClient),
+                'today'           => $this->getUnreadCount('after:' . now()->setTimezone($user->timezone ?? config('app.timezone'))->format('Y/m/d'), $gmailClient),
             ];
 
         } catch (\Exception $e) {
