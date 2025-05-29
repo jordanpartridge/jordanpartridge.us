@@ -235,10 +235,20 @@ class GmailMessagesPage extends Page implements HasForms
                 ]);
             }
 
-            // Convert Gmail Email objects to simple arrays for Livewire
+            // Convert Gmail Email objects to simple arrays for Livewire - FIXED DATE ISSUE
             $this->messages = $rawMessages->map(function ($email) {
                 // Ensure we have valid labelIds array
                 $labelIds = is_array($email->labelIds ?? null) ? $email->labelIds : [];
+
+                // CRITICAL FIX: Ensure consistent date handling
+                $emailDate = null;
+                if (isset($email->internalDate)) {
+                    $emailDate = $email->internalDate instanceof \DateTime 
+                        ? $email->internalDate->format('c')  // ISO 8601 format
+                        : (is_string($email->internalDate) ? $email->internalDate : now()->toISOString());
+                } else {
+                    $emailDate = now()->toISOString();
+                }
 
                 return [
                     'id'          => $email->id ?? '',
@@ -246,7 +256,7 @@ class GmailMessagesPage extends Page implements HasForms
                     'from_name'   => $email->from ? (strpos($email->from, '<') !== false ? html_entity_decode(substr($email->from, 0, strpos($email->from, '<')), ENT_QUOTES | ENT_HTML5, 'UTF-8') : '') : '',
                     'subject'     => html_entity_decode($email->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                     'snippet'     => html_entity_decode($email->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                    'date'        => $email->internalDate ? $email->internalDate->toISOString() : now()->toISOString(),
+                    'date'        => $emailDate, // FIXED: Now consistently using processed date
                     'isRead'      => !in_array('UNREAD', $labelIds),
                     'isImportant' => in_array('IMPORTANT', $labelIds),
                     'isStarred'   => in_array('STARRED', $labelIds), // Ensure this matches labels array
@@ -535,7 +545,7 @@ class GmailMessagesPage extends Page implements HasForms
                         'status'          => 'lead',
                         'notes'           => 'Auto-created from Gmail: ' . $message['subject'],
                         'user_id'         => auth()->id(),
-                        'last_contact_at' => Carbon::parse($message['date']),
+                        'last_contact_at' => Carbon::parse($message['date']),  // FIXED: Using processed date
                     ]);
                     $newProspects++;
                 }
@@ -784,11 +794,25 @@ class GmailMessagesPage extends Page implements HasForms
             $payload = $email->payload ?? [];
             $this->extractEmailBodies($payload, $bodyHtml, $bodyText);
 
+            // FIXED: Ensure consistent date handling in preview
+            $emailDate = 'Unknown Date';
+            if (isset($email->internalDate)) {
+                if ($email->internalDate instanceof \DateTime) {
+                    $emailDate = $email->internalDate->format('M j, Y g:i A');
+                } elseif (is_string($email->internalDate)) {
+                    try {
+                        $emailDate = Carbon::parse($email->internalDate)->format('M j, Y g:i A');
+                    } catch (\Exception $e) {
+                        $emailDate = 'Unknown Date';
+                    }
+                }
+            }
+
             // Prepare raw email data for processing
             $rawEmailData = [
                 'subject'         => $email->subject ?? 'No Subject',
                 'from'            => $email->from ?? 'Unknown Sender',
-                'date'            => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
+                'date'            => $emailDate,  // FIXED: Using processed date
                 'body_html'       => $bodyHtml,
                 'body_text'       => $bodyText,
                 'snippet'         => $email->snippet ?? '',
@@ -895,11 +919,25 @@ class GmailMessagesPage extends Page implements HasForms
             $gmailClient = $this->getCurrentGmailClient();
             $email = $gmailClient->getMessage($messageId);
 
+            // FIXED: Ensure consistent date handling in hover preview
+            $emailDate = 'Unknown Date';
+            if (isset($email->internalDate)) {
+                if ($email->internalDate instanceof \DateTime) {
+                    $emailDate = $email->internalDate->format('M j, Y g:i A');
+                } elseif (is_string($email->internalDate)) {
+                    try {
+                        $emailDate = Carbon::parse($email->internalDate)->format('M j, Y g:i A');
+                    } catch (\Exception $e) {
+                        $emailDate = 'Unknown Date';
+                    }
+                }
+            }
+
             $this->hoverPreview = [
                 'id'        => $email->id,
                 'subject'   => html_entity_decode($email->subject ?? 'No Subject', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'from'      => html_entity_decode($email->from ?? 'Unknown Sender', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-                'date'      => $email->internalDate ? $email->internalDate->format('M j, Y g:i A') : 'Unknown Date',
+                'date'      => $emailDate,  // FIXED: Using processed date
                 'body_text' => html_entity_decode($email->body->text ?? 'No content available', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
                 'body_html' => $email->body->html ?? '', // HTML should already be properly encoded
                 'snippet'   => html_entity_decode($email->snippet ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
@@ -1255,7 +1293,7 @@ class GmailMessagesPage extends Page implements HasForms
                 'status'          => 'lead',
                 'notes'           => 'Auto-created from Gmail: ' . $message['subject'],
                 'user_id'         => auth()->id(),
-                'last_contact_at' => Carbon::parse($message['date']),
+                'last_contact_at' => Carbon::parse($message['date']),  // FIXED: Using processed date
             ]);
 
             // Update the message to mark as client
