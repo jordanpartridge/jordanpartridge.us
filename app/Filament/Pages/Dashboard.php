@@ -46,14 +46,7 @@ class Dashboard extends BaseDashboard
         $this->subheading = now()->format('l, F j, Y');
     }
 
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            MorningBriefingWidget::class,
-        ];
-    }
-
-    protected function getWidgets(): array
+    public function getWidgets(): array
     {
         return [
             EmailPrioritiesWidget::class,
@@ -64,18 +57,25 @@ class Dashboard extends BaseDashboard
         ];
     }
 
-    protected function getHeaderWidgetsColumns(): int | array
+    public function getHeaderWidgetsColumns(): int | array
     {
         return 1;
     }
 
-    protected function getWidgetsColumns(): int | array
+    public function getWidgetsColumns(): int | array
     {
         return [
             'default' => 1,
             'sm'      => 2,
             'md'      => 2,
             'lg'      => 3,
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            MorningBriefingWidget::class,
         ];
     }
 }
