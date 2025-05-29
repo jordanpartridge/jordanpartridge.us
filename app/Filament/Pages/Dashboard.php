@@ -25,7 +25,6 @@ class Dashboard extends BaseDashboard
         return [
             'default' => 1,
             'sm'      => 2,
-            'md'      => 2,
             'lg'      => 3,
             'xl'      => 4,
         ];
@@ -46,27 +45,27 @@ class Dashboard extends BaseDashboard
         $this->subheading = now()->format('l, F j, Y');
     }
 
-    public function getHeaderWidgets(): array
-    {
-        return [
-            MorningBriefingWidget::class,
-        ];
-    }
-
     public function getWidgets(): array
     {
         return [
             EmailPrioritiesWidget::class,
             TodaysFocusWidget::class,
-            CalendarPreviewWidget::class,
-            FitnessTrackerWidget::class,
             QuickStatsWidget::class,
+            FitnessTrackerWidget::class,
+            CalendarPreviewWidget::class,
         ];
     }
 
     public function getHeaderWidgetsColumns(): int | array
     {
         return 1;
+    }
+
+    public function getHeaderWidgets(): array
+    {
+        return [
+            MorningBriefingWidget::class,
+        ];
     }
 
     public function getWidgetsColumns(): int | array

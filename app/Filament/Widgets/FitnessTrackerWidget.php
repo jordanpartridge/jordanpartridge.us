@@ -19,7 +19,10 @@ class FitnessTrackerWidget extends Widget
     public ?int $currentStreak = null;
     public ?float $weeklyGoalProgress = null;
 
-    protected int | string | array $columnSpan = 1;
+    protected int | string | array $columnSpan = [
+        'default' => 1,
+        'lg'      => 2,
+    ];
 
     public function mount(): void
     {
@@ -65,8 +68,7 @@ class FitnessTrackerWidget extends Widget
     protected function loadFitnessData(): void
     {
         // Get last ride
-        $this->lastRide = Ride::where('user_id', auth()->id())
-            ->orderBy('start_date', 'desc')
+        $this->lastRide = Ride::orderBy('date', 'desc')
             ->first();
 
         if ($this->lastRide) {
@@ -111,8 +113,8 @@ class FitnessTrackerWidget extends Widget
         $weekStart = now()->startOfWeek();
         $weekEnd = now()->endOfWeek();
 
-        $weeklyRides = Ride::where('user_id', auth()->id())
-            ->whereBetween('start_date', [$weekStart, $weekEnd])
+        $weeklyRides = Ride::query()
+            ->whereBetween('date', [$weekStart, $weekEnd])
             ->get();
 
         $this->weeklyStats = [
@@ -129,9 +131,9 @@ class FitnessTrackerWidget extends Widget
 
     protected function calculateStreak(): void
     {
-        $dates = Ride::where('user_id', auth()->id())
-            ->orderBy('start_date', 'desc')
-            ->pluck('start_date')
+        $dates = Ride::query()
+            ->orderBy('date', 'desc')
+            ->pluck('date')
             ->map(fn ($date) => Carbon::parse($date)->format('Y-m-d'))
             ->unique()
             ->values();
@@ -156,8 +158,8 @@ class FitnessTrackerWidget extends Widget
         $monthStart = now()->startOfMonth();
         $monthEnd = now()->endOfMonth();
 
-        $monthlyRides = Ride::where('user_id', auth()->id())
-            ->whereBetween('start_date', [$monthStart, $monthEnd])
+        $monthlyRides = Ride::query()
+            ->whereBetween('date', [$monthStart, $monthEnd])
             ->get();
 
         $totalDays = now()->daysInMonth;
