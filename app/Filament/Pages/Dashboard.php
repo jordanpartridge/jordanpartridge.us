@@ -8,9 +8,9 @@ use App\Filament\Widgets\TodaysFocusWidget;
 use App\Filament\Widgets\QuickStatsWidget;
 use App\Filament\Widgets\MorningBriefingWidget;
 use App\Filament\Widgets\CalendarPreviewWidget;
-use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Page;
 
-class Dashboard extends BaseDashboard
+class Dashboard extends Page
 {
     protected static ?string $title = 'Morning Command Center';
 
@@ -25,7 +25,6 @@ class Dashboard extends BaseDashboard
         return [
             'default' => 1,
             'sm'      => 2,
-            'md'      => 2,
             'lg'      => 3,
             'xl'      => 4,
         ];
@@ -33,8 +32,6 @@ class Dashboard extends BaseDashboard
 
     public function mount(): void
     {
-        parent::mount();
-
         // Update greeting based on time of day
         $hour = now()->hour;
         $this->heading = match(true) {
@@ -46,36 +43,36 @@ class Dashboard extends BaseDashboard
         $this->subheading = now()->format('l, F j, Y');
     }
 
-    protected function getHeaderWidgets(): array
+    public function getWidgets(): array
+    {
+        return [
+            EmailPrioritiesWidget::class,
+            TodaysFocusWidget::class,
+            QuickStatsWidget::class,
+            FitnessTrackerWidget::class,
+            CalendarPreviewWidget::class,
+        ];
+    }
+
+    public function getHeaderWidgetsColumns(): int | array
+    {
+        return 1;
+    }
+
+    public function getHeaderWidgets(): array
     {
         return [
             MorningBriefingWidget::class,
         ];
     }
 
-    protected function getWidgets(): array
-    {
-        return [
-            EmailPrioritiesWidget::class,
-            TodaysFocusWidget::class,
-            CalendarPreviewWidget::class,
-            FitnessTrackerWidget::class,
-            QuickStatsWidget::class,
-        ];
-    }
-
-    protected function getHeaderWidgetsColumns(): int | array
-    {
-        return 1;
-    }
-
-    protected function getWidgetsColumns(): int | array
+    public function getWidgetsColumns(): int | array
     {
         return [
             'default' => 1,
             'sm'      => 2,
-            'md'      => 2,
             'lg'      => 3,
+            'xl'      => 4,
         ];
     }
 }

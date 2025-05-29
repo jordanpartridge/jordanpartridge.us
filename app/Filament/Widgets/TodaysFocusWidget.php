@@ -19,7 +19,10 @@ class TodaysFocusWidget extends Widget
     public Collection $priorities;
     public array $suggestions = [];
 
-    protected int | string | array $columnSpan = 1;
+    protected int | string | array $columnSpan = [
+        'default' => 1,
+        'lg'      => 2,
+    ];
 
     public function mount(): void
     {
@@ -61,9 +64,8 @@ class TodaysFocusWidget extends Widget
         $priorities = $priorities->concat($draftPosts);
 
         // Check GitHub repos with recent activity
-        $activeRepos = GithubRepository::where('user_id', auth()->id())
-            ->where('pushed_at', '>', now()->subDays(7))
-            ->orderBy('pushed_at', 'desc')
+        $activeRepos = GithubRepository::where('updated_at', '>', now()->subDays(7))
+            ->orderBy('updated_at', 'desc')
             ->take(2)
             ->get()
             ->map(fn ($repo) => [
@@ -197,8 +199,7 @@ class TodaysFocusWidget extends Widget
 
     protected function hasRideToday(): bool
     {
-        return Ride::where('user_id', auth()->id())
-            ->whereDate('start_date', today())
+        return Ride::whereDate('date', today())
             ->exists();
     }
 }

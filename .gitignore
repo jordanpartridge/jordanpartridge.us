@@ -21,3 +21,6 @@ yarn-error.log
 /.blueprint
 
 **/.claude/settings.local.json
+
+# Package development directories
+/github-client/

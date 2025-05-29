@@ -372,6 +372,11 @@
         }
     </style>
 
+    <!-- Gmail Stats Overview (Reusable Component) -->
+    <div style="margin-bottom: 24px;">
+        <x-gmail-stats-card :show-details="true" size="default" />
+    </div>
+
     <!-- Dashboard Header -->
     <div class="dashboard-header">
         <h2 style="font-size: 24px; font-weight: 600; color: #ffffff; margin-bottom: 8px;">
@@ -453,7 +458,7 @@
                                         <span class="animate-spin">⟳</span>
                                     </div>
                                 @elseif (is_numeric($account['unread_count']))
-                                    {{ number_format($account['unread_count']) }}
+                                    {{ number_format((int) $account['unread_count']) }}
                                 @else
                                     {{ $account['unread_count'] }}
                                 @endif
@@ -467,7 +472,7 @@
                                         <span class="animate-spin">⟳</span>
                                     </div>
                                 @elseif (is_numeric($account['today_count']))
-                                    {{ number_format($account['today_count']) }}
+                                    {{ number_format((int) $account['today_count']) }}
                                 @else
                                     {{ $account['today_count'] }}
                                 @endif
@@ -481,7 +486,7 @@
                                         <span class="animate-spin">⟳</span>
                                     </div>
                                 @elseif (is_numeric($account['labels_count']))
-                                    {{ number_format($account['labels_count']) }}
+                                    {{ number_format((int) $account['labels_count']) }}
                                 @else
                                     {{ $account['labels_count'] }}
                                 @endif
