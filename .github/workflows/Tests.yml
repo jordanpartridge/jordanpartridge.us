@@ -59,18 +59,39 @@ jobs:
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       run: php artisan test --parallel
     
-    - name: Install Google Chrome
+    - name: Install Google Chrome and dependencies
       run: |
         wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
         sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
         sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+        sudo apt-get install -y google-chrome-stable jq
     
-    - name: Start ChromeDriver
+    - name: Setup ChromeDriver
       run: |
-        CHROME_VERSION=$(google-chrome --version | cut -d " " -f3 | cut -d "." -f1-3)
-        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-        wget -N "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -P /tmp/
+        CHROME_VERSION=$(google-chrome --version | cut -d " " -f3)
+        echo "Chrome version: $CHROME_VERSION"
+        
+        # For Chrome 115+, use Chrome for Testing API
+        if [[ $(echo "$CHROME_VERSION" | cut -d. -f1) -ge 115 ]]; then
+          echo "Using Chrome for Testing API for Chrome 115+"
+          CHROMEDRIVER_URL=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json" | \
+            jq -r ".versions[] | select(.version==\"$CHROME_VERSION\") | .downloads.chromedriver[] | select(.platform==\"linux64\") | .url" | head -1)
+          
+          if [ -z "$CHROMEDRIVER_URL" ]; then
+            echo "Exact version not found, using latest stable"
+            CHROMEDRIVER_URL=$(curl -s "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json" | \
+              jq -r '.channels.Stable.downloads.chromedriver[] | select(.platform=="linux64") | .url')
+          fi
+          
+          echo "Downloading ChromeDriver from: $CHROMEDRIVER_URL"
+          wget -O /tmp/chromedriver_linux64.zip "$CHROMEDRIVER_URL"
+        else
+          echo "Using legacy ChromeDriver API for Chrome < 115"
+          CHROME_VERSION_SHORT=$(echo "$CHROME_VERSION" | cut -d "." -f1-3)
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION_SHORT")
+          wget -N "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -P /tmp/
+        fi
+        
         unzip /tmp/chromedriver_linux64.zip -d /tmp/
         sudo mv /tmp/chromedriver /usr/local/bin/chromedriver
         sudo chmod +x /usr/local/bin/chromedriver
