@@ -18,9 +18,29 @@ abstract class DuskTestCase extends BaseTestCase
     public static function prepare(): void
     {
         if (! static::runningInSail()) {
-            // Start ChromeDriver if not running in Sail/Docker
-            static::startChromeDriver();
+            // Check if ChromeDriver is already running before attempting to start
+            if (! static::isChromeDriverRunning()) {
+                static::startChromeDriver();
+            }
         }
+    }
+
+    /**
+     * Check if ChromeDriver is already running on the expected port.
+     */
+    protected static function isChromeDriverRunning(): bool
+    {
+        $driverUrl = $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515';
+        $port = parse_url($driverUrl, PHP_URL_PORT) ?? 9515;
+
+        // Check if port is listening
+        $connection = @fsockopen('localhost', $port, $errno, $errstr, 1);
+        if ($connection) {
+            fclose($connection);
+            return true;
+        }
+
+        return false;
     }
 
     /**

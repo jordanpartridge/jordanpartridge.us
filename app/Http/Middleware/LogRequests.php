@@ -17,6 +17,12 @@ class LogRequests
     {
         $response = $next($request);
 
+        // Only log requests if explicitly enabled via config
+        // This provides great performance by default while keeping the option available
+        if (!config('app.log_requests', false)) {
+            return $response;
+        }
+
         // Skip logging for Gmail OAuth callback to prevent database overflow from long OAuth URLs
         if ($request->is('gmail/auth/callback')) {
             return $response;
