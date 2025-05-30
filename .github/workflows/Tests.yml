@@ -58,3 +58,34 @@ jobs:
       run: php artisan migrate
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       run: php artisan test --parallel
+    
+    - name: Install Google Chrome
+      run: |
+        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+    
+    - name: Start ChromeDriver
+      run: |
+        CHROME_VERSION=$(google-chrome --version | cut -d " " -f3 | cut -d "." -f1-3)
+        CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+        wget -N "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -P /tmp/
+        unzip /tmp/chromedriver_linux64.zip -d /tmp/
+        sudo mv /tmp/chromedriver /usr/local/bin/chromedriver
+        sudo chmod +x /usr/local/bin/chromedriver
+        chromedriver --version
+    
+    - name: Start Laravel Server
+      run: php artisan serve --host=127.0.0.1 --port=8000 &
+      env:
+        APP_ENV: testing
+    
+    - name: Wait for server to be ready
+      run: |
+        timeout 30 bash -c 'until curl -f http://127.0.0.1:8000; do sleep 1; done'
+    
+    - name: Run Dusk Tests
+      run: php artisan dusk --env=testing
+      env:
+        APP_URL: http://127.0.0.1:8000
