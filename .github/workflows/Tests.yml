@@ -68,14 +68,22 @@ jobs:
     
     - name: Create Dusk CI Environment
       run: |
-        cp .env.dusk.local .env.dusk.ci
-        echo "APP_URL=http://127.0.0.1:8000" >> .env.dusk.ci
-        echo "DUSK_DRIVER_URL=http://selenium:4444/wd/hub" >> .env.dusk.ci
+        cp .env.dusk.ci .env
+        echo "OPENAI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> .env
+        echo "CARD_API_BASE_URL=${{ secrets.CARD_API_BASE_URL }}" >> .env
+        echo "CARD_API_KEY=${{ secrets.CARD_API_KEY }}" >> .env
+    
+    - name: Debug Environment
+      run: |
+        echo "PHP Version: $(php --version)"
+        echo "Environment: $APP_ENV"
+        php artisan --version
+        php artisan config:show app.debug || echo "Config not accessible"
     
     - name: Start Laravel Server
       run: php artisan serve --host=127.0.0.1 --port=8000 &
       env:
-        APP_ENV: dusk.ci
+        APP_ENV: testing
     
     - name: Wait for server to be ready
       run: |
@@ -86,13 +94,16 @@ jobs:
             exit 0
           fi
           echo "Waiting for server... (attempt $i/30)"
+          # Show the actual response for debugging
+          curl -s http://127.0.0.1:8000 || echo "Curl failed"
           sleep 2
         done
-        echo "Server failed to start"
+        echo "Server failed to start - showing logs:"
+        ps aux | grep artisan || echo "No artisan process found"
         exit 1
     
     - name: Run Dusk Tests
-      run: php artisan dusk --env=dusk.ci
+      run: php artisan dusk --env=testing
       env:
         APP_URL: http://127.0.0.1:8000
         DUSK_DRIVER_URL: http://selenium:4444/wd/hub
