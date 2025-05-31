@@ -56,7 +56,7 @@ jobs:
     - name: Install Dependencies
       run: |
         composer install --no-interaction --prefer-dist --optimize-autoloader
-        npm ci
+        npm install
         npm run build
 
     - name: Setup Environment
@@ -138,7 +138,7 @@ jobs:
     - name: Install Dependencies
       run: |
         composer install --no-interaction --prefer-dist --optimize-autoloader
-        npm ci
+        npm install
         npm run build
 
     - name: Setup Environment
