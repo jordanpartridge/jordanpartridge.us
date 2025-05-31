@@ -166,6 +166,9 @@ jobs:
     - name: Run Database Migrations
       run: php artisan migrate --force
 
+    - name: Seed Database
+      run: php artisan db:seed --force
+
     - name: Start Laravel Server
       run: php artisan serve --host=127.0.0.1 --port=8000 &
 
