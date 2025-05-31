@@ -14,7 +14,7 @@ return [
      |
      */
 
-    'enabled'         => env('DEBUGBAR_ENABLED', env('APP_DEBUG', false) && !app()->runningInConsole() && !app()->environment('testing')),
+    'enabled'         => env('DEBUGBAR_ENABLED', env('APP_DEBUG', false) && !app()->runningInConsole() && env('APP_ENV') !== 'testing'),
     'hide_empty_tabs' => true, // Hide tabs until they have content
     'except'          => [
         'telescope*',
