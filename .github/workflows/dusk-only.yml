@@ -34,22 +34,22 @@ jobs:
 
     steps:
       - name: Checkout Code
-      uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
-    - name: Setup PHP 8.4
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.4'
-        extensions: mbstring, xml, ctype, iconv, mysql, gd, zip
-        coverage: none
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, mysql, gd, zip
+          coverage: none
 
-    - name: Install Dependencies
-      run: |
+      - name: Install Dependencies
+        run: |
         composer install --no-interaction --prefer-dist --optimize-autoloader
         npm install
         npm run build
 
-    - name: Setup Environment
+      - name: Setup Environment
       run: |
         cp .env.example .env
         echo "APP_URL=http://127.0.0.1:8000" >> .env
@@ -64,31 +64,31 @@ jobs:
         echo "CARD_API_BASE_URL=http://example.com" >> .env
         echo "CARD_API_KEY=test_key" >> .env
 
-    - name: Generate Application Keys
+      - name: Generate Application Keys
       run: |
         php artisan key:generate
         php artisan key:generate --env=testing
 
-    - name: Set Permissions
+      - name: Set Permissions
       run: chmod -R 777 storage bootstrap/cache
 
-    - name: Run Database Migrations
+      - name: Run Database Migrations
       run: php artisan migrate --force
 
-    - name: Seed Database
+      - name: Seed Database
       run: php artisan db:seed --force
 
-    - name: Verify Selenium Connection
+      - name: Verify Selenium Connection
       run: |
         echo "Testing Selenium connection..."
         curl -f http://127.0.0.1:4444/wd/hub/status || echo "Selenium not ready yet"
         sleep 5
         curl -f http://127.0.0.1:4444/wd/hub/status
 
-    - name: Start Laravel Server
+      - name: Start Laravel Server
       run: php artisan serve --host=127.0.0.1 --port=8000 &
 
-    - name: Wait for Server
+      - name: Wait for Server
       run: |
         for i in {1..30}; do
           if curl -f -s http://127.0.0.1:8000 >/dev/null 2>&1; then
@@ -99,20 +99,21 @@ jobs:
           sleep 2
         done
 
-    - name: Debug Dusk Setup
+      - name: Debug Dusk Setup
       run: |
         echo "📋 Environment Check:"
         echo "APP_URL: $APP_URL"
         echo "DUSK_DRIVER_URL: $DUSK_DRIVER_URL"
         echo "Selenium status:"
         curl -s http://127.0.0.1:4444/wd/hub/status | head -10
-    - name: Run Dusk Tests
+
+      - name: Run Dusk Tests
       run: php artisan dusk --env=testing
       env:
         APP_URL: http://127.0.0.1:8000
         DUSK_DRIVER_URL: http://127.0.0.1:4444/wd/hub
 
-    - name: Upload Screenshots on Failure
+      - name: Upload Screenshots on Failure
       if: failure()
       uses: actions/upload-artifact@v4
       with:
