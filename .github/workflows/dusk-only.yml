@@ -65,6 +65,9 @@ jobs:
     - name: Run Database Migrations
       run: php artisan migrate --force
 
+    - name: Seed Database
+      run: php artisan db:seed --force
+
     - name: Setup Virtual Display
       run: |
         sudo apt-get update
