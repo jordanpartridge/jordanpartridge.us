@@ -19,34 +19,8 @@ abstract class DuskTestCase extends BaseTestCase
     public static function prepare(): void
     {
         if (! static::runningInSail()) {
-            echo "🔧 Starting ChromeDriver in CI environment...\n";
-
-            // Set DISPLAY variable for headless Linux CI
-            if (! isset($_ENV['DISPLAY']) && PHP_OS_FAMILY === 'Linux') {
-                $_ENV['DISPLAY'] = ':99';
-                echo "📺 Set DISPLAY environment variable to :99\n";
-            }
-
-            try {
-                static::startChromeDriver(['--verbose', '--log-level=DEBUG']);
-                echo "✅ ChromeDriver started successfully\n";
-
-                // Give ChromeDriver a moment to start
-                sleep(2);
-
-                // Test connection
-                $connection = @fsockopen('localhost', 9515, $errno, $errstr, 5);
-                if ($connection) {
-                    echo "✅ ChromeDriver is responding on localhost:9515\n";
-                    fclose($connection);
-                } else {
-                    echo "❌ ChromeDriver not responding: $errno - $errstr\n";
-                }
-
-            } catch (Exception $e) {
-                echo "❌ ChromeDriver failed to start: " . $e->getMessage() . "\n";
-                throw $e;
-            }
+            // ChromeDriver will be started when needed in ensureChromeDriverIsRunning()
+            echo "🔧 Dusk environment prepared\n";
         }
     }
 

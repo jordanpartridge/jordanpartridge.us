@@ -2,10 +2,13 @@ name: Dusk Browser Tests Only
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   dusk-tests:
@@ -24,7 +27,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
-    - name: Checkout Code
+      - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Setup PHP 8.4
@@ -92,13 +95,13 @@ jobs:
         vendor/laravel/dusk/bin/chromedriver-linux --port=9515 --whitelisted-ips= &
         CHROMEDRIVER_PID=$!
         echo "ChromeDriver PID: $CHROMEDRIVER_PID"
-        
+
         # Wait a moment for startup
         sleep 3
-        
+
         # Test if it's responding
         curl -f http://localhost:9515/status || echo "❌ ChromeDriver not responding"
-        
+
         # Leave it running for Dusk tests to use
         echo "✅ Leaving ChromeDriver running for Dusk tests (PID: $CHROMEDRIVER_PID)"
 
@@ -126,7 +129,6 @@ jobs:
         ls -la vendor/laravel/dusk/bin/ || echo "❌ ChromeDriver not found"
         ps aux | grep chrome || echo "No Chrome processes"
         ps aux | grep Xvfb || echo "No Xvfb processes"
-        
     - name: Run Dusk Tests
       run: php artisan dusk --env=testing
 
