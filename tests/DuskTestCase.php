@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Exception;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
@@ -42,7 +43,7 @@ abstract class DuskTestCase extends BaseTestCase
                     echo "❌ ChromeDriver not responding: $errno - $errstr\n";
                 }
 
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 echo "❌ ChromeDriver failed to start: " . $e->getMessage() . "\n";
                 throw $e;
             }
@@ -54,6 +55,9 @@ abstract class DuskTestCase extends BaseTestCase
      */
     protected function driver(): RemoteWebDriver
     {
+        // Ensure ChromeDriver is running before trying to connect
+        $this->ensureChromeDriverIsRunning();
+
         $options = (new ChromeOptions())->addArguments(collect([
             $this->shouldStartMaximized() ? '--start-maximized' : '--window-size=1920,1080',
             '--no-sandbox',
@@ -74,6 +78,65 @@ abstract class DuskTestCase extends BaseTestCase
                 $options
             )
         );
+    }
+
+    /**
+     * Ensure ChromeDriver is running and accessible.
+     */
+    protected function ensureChromeDriverIsRunning(): void
+    {
+        static $chromeDriverStarted = false;
+
+        if ($chromeDriverStarted) {
+            return;
+        }
+
+        echo "🔧 Ensuring ChromeDriver is running...\n";
+
+        // Set DISPLAY for Linux CI
+        if (! isset($_ENV['DISPLAY']) && PHP_OS_FAMILY === 'Linux') {
+            $_ENV['DISPLAY'] = ':99';
+            echo "📺 Set DISPLAY to :99 for Linux CI\n";
+        }
+
+        // Test if ChromeDriver is already running
+        $connection = @fsockopen('localhost', 9515, $errno, $errstr, 2);
+        if ($connection) {
+            fclose($connection);
+            echo "✅ ChromeDriver already running on port 9515\n";
+            $chromeDriverStarted = true;
+            return;
+        }
+
+        echo "⚠️ ChromeDriver not found on port 9515, starting it...\n";
+
+        if (! static::runningInSail()) {
+            try {
+                static::startChromeDriver(['--verbose']);
+                echo "✅ ChromeDriver started via Dusk\n";
+
+                // Give it time to start
+                sleep(3);
+
+                // Verify it's responding
+                $connection = @fsockopen('localhost', 9515, $errno, $errstr, 5);
+                if ($connection) {
+                    fclose($connection);
+                    echo "✅ ChromeDriver is now responding\n";
+                    $chromeDriverStarted = true;
+                } else {
+                    throw new Exception("ChromeDriver failed to respond after startup: $errno - $errstr");
+                }
+
+            } catch (Exception $e) {
+                echo "❌ Failed to start ChromeDriver: " . $e->getMessage() . "\n";
+                echo "🔍 Debugging info:\n";
+                echo "- PHP_OS_FAMILY: " . PHP_OS_FAMILY . "\n";
+                echo "- DISPLAY: " . ($_ENV['DISPLAY'] ?? 'not set') . "\n";
+                echo "- ChromeDriver binary exists: " . (file_exists(base_path('vendor/laravel/dusk/bin/chromedriver-linux')) ? 'yes' : 'no') . "\n";
+                throw $e;
+            }
+        }
     }
 
     /**

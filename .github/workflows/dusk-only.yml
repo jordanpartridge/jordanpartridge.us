@@ -85,8 +85,8 @@ jobs:
       run: |
         echo "🧪 Testing ChromeDriver startup manually..."
         vendor/laravel/dusk/bin/chromedriver-linux --version
-        # Start ChromeDriver in background
-        vendor/laravel/dusk/bin/chromedriver-linux --port=9515 &
+        # Start ChromeDriver in background for Dusk to use
+        vendor/laravel/dusk/bin/chromedriver-linux --port=9515 --whitelisted-ips= &
         CHROMEDRIVER_PID=$!
         echo "ChromeDriver PID: $CHROMEDRIVER_PID"
         
@@ -96,8 +96,8 @@ jobs:
         # Test if it's responding
         curl -f http://localhost:9515/status || echo "❌ ChromeDriver not responding"
         
-        # Stop it for now (Dusk will start its own)
-        kill $CHROMEDRIVER_PID || echo "Failed to kill ChromeDriver"
+        # Leave it running for Dusk tests to use
+        echo "✅ Leaving ChromeDriver running for Dusk tests (PID: $CHROMEDRIVER_PID)"
 
     - name: Start Laravel Server
       run: php artisan serve --host=127.0.0.1 --port=8000 &
