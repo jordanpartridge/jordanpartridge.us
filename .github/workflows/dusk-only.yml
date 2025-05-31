@@ -25,6 +25,12 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: --shm-size=2gb
 
     steps:
       - name: Checkout Code
@@ -53,6 +59,7 @@ jobs:
         echo "DB_HOST=127.0.0.1" >> .env
         echo "DB_USERNAME=root" >> .env
         echo "DB_PASSWORD=password" >> .env
+        echo "DUSK_DRIVER_URL=http://127.0.0.1:4444/wd/hub" >> .env
         echo "OPENAI_API_KEY=test_key" >> .env
         echo "CARD_API_BASE_URL=http://example.com" >> .env
         echo "CARD_API_KEY=test_key" >> .env
@@ -71,45 +78,12 @@ jobs:
     - name: Seed Database
       run: php artisan db:seed --force
 
-    - name: Setup Virtual Display
+    - name: Verify Selenium Connection
       run: |
-        sudo apt-get update
-        sudo apt-get install -y xvfb
-        # Start virtual display on :99
-        sudo Xvfb :99 -ac -screen 0 1920x1080x24 &
-        echo "DISPLAY=:99" >> $GITHUB_ENV
-
-    - name: Install Google Chrome
-      uses: browser-actions/setup-chrome@v1
-      with:
-        chrome-version: stable
-
-    - name: Install ChromeDriver
-      run: php artisan dusk:chrome-driver --detect
-
-    - name: Test ChromeDriver Startup
-      run: |
-        echo "🧪 Testing ChromeDriver startup manually..."
-        ls -la vendor/laravel/dusk/bin/ || echo "ChromeDriver not found"
-        if [ -f vendor/laravel/dusk/bin/chromedriver-linux ]; then
-          vendor/laravel/dusk/bin/chromedriver-linux --version
-          # Start ChromeDriver in background for Dusk to use
-          vendor/laravel/dusk/bin/chromedriver-linux --port=9515 --whitelisted-ips= &
-          CHROMEDRIVER_PID=$!
-          echo "ChromeDriver PID: $CHROMEDRIVER_PID"
-
-          # Wait a moment for startup
-          sleep 3
-
-          # Test if it's responding
-          curl -f http://localhost:9515/status || echo "❌ ChromeDriver not responding"
-
-          # Leave it running for Dusk tests to use
-          echo "✅ Leaving ChromeDriver running for Dusk tests (PID: $CHROMEDRIVER_PID)"
-        else
-          echo "❌ ChromeDriver binary not found at vendor/laravel/dusk/bin/chromedriver-linux"
-          exit 1
-        fi
+        echo "Testing Selenium connection..."
+        curl -f http://127.0.0.1:4444/wd/hub/status || echo "Selenium not ready yet"
+        sleep 5
+        curl -f http://127.0.0.1:4444/wd/hub/status
 
     - name: Start Laravel Server
       run: php artisan serve --host=127.0.0.1 --port=8000 &
@@ -129,14 +103,14 @@ jobs:
       run: |
         echo "📋 Environment Check:"
         echo "APP_URL: $APP_URL"
-        echo "DISPLAY: $DISPLAY"
-        echo "Chrome version: $(google-chrome --version)"
-        echo "ChromeDriver should be at: vendor/laravel/dusk/bin/chromedriver-linux"
-        ls -la vendor/laravel/dusk/bin/ || echo "❌ ChromeDriver not found"
-        ps aux | grep chrome || echo "No Chrome processes"
-        ps aux | grep Xvfb || echo "No Xvfb processes"
+        echo "DUSK_DRIVER_URL: $DUSK_DRIVER_URL"
+        echo "Selenium status:"
+        curl -s http://127.0.0.1:4444/wd/hub/status | head -10
     - name: Run Dusk Tests
       run: php artisan dusk --env=testing
+      env:
+        APP_URL: http://127.0.0.1:8000
+        DUSK_DRIVER_URL: http://127.0.0.1:4444/wd/hub
 
     - name: Upload Screenshots on Failure
       if: failure()
