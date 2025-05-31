@@ -99,6 +99,7 @@ new class () extends Component {
                 <input
                     wire:model.lazy="name"
                     id="name"
+                    name="name"
                     type="text"
                     class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all duration-200"
                     placeholder="Your name"
@@ -113,6 +114,7 @@ new class () extends Component {
                 <input
                     wire:model.lazy="email"
                     id="email"
+                    name="email"
                     type="email"
                     class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all duration-200"
                     placeholder="Your email address"
@@ -198,6 +200,7 @@ new class () extends Component {
             <textarea
                 wire:model.lazy="message"
                 id="message"
+                name="message"
                 rows="5"
                 class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400 focus:border-transparent transition-all duration-200 resize-none"
                 placeholder="Tell me about your project or inquiry"
