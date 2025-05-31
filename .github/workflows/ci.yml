@@ -1,4 +1,4 @@
-name: Modern CI (Simplified)
+name: CI Pipeline
 
 on:
   push:
@@ -53,12 +53,6 @@ jobs:
         key: node-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
         restore-keys: node-${{ runner.os }}-
 
-    - name: Install Dependencies
-      run: |
-        composer install --no-interaction --prefer-dist --optimize-autoloader
-        npm ci
-        npm run build
-
     - name: Setup Environment
       run: |
         cp .env.example .env
@@ -71,6 +65,12 @@ jobs:
         echo "OPENAI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> .env
         echo "CARD_API_BASE_URL=${{ secrets.CARD_API_BASE_URL }}" >> .env
         echo "CARD_API_KEY=${{ secrets.CARD_API_KEY }}" >> .env
+
+    - name: Install Dependencies
+      run: |
+        composer install --no-interaction --prefer-dist --optimize-autoloader
+        npm ci
+        npm run build
 
     - name: Generate Application Keys
       run: |
@@ -86,19 +86,19 @@ jobs:
     - name: Run Pest Tests
       run: php artisan test --parallel --coverage-clover=coverage.xml
 
-    - name: Upload Coverage
+    - name: Upload Coverage to Codecov
       if: matrix.php-version == '8.4'
       uses: codecov/codecov-action@v4
       with:
         file: ./coverage.xml
         fail_ci_if_error: false
 
-  # Browser Tests with Modern Dusk (No Selenium needed!)
+  # Browser Tests (only run if unit tests pass)
   dusk-tests:
-    name: Browser Tests (Dusk + Chrome)
+    name: Browser Tests (Dusk)
     runs-on: ubuntu-latest
     needs: pest-tests
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     services:
       mysql:
@@ -109,6 +109,12 @@ jobs:
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+      
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: --shm-size=2gb
 
     steps:
     - name: Checkout Code
@@ -121,29 +127,29 @@ jobs:
         extensions: mbstring, xml, ctype, iconv, mysql, gd, zip
         coverage: none
 
-    - name: Install Google Chrome
-      uses: browser-actions/setup-chrome@v1
-      with:
-        chrome-version: stable
-
-    - name: Cache Dependencies
+    - name: Cache Composer Dependencies
       uses: actions/cache@v4
       with:
-        path: |
-          vendor
-          node_modules
-        key: deps-${{ runner.os }}-${{ hashFiles('composer.lock', 'package-lock.json') }}
-        restore-keys: deps-${{ runner.os }}-
+        path: vendor
+        key: composer-${{ runner.os }}-8.4-${{ hashFiles('composer.lock') }}
+        restore-keys: composer-${{ runner.os }}-8.4-
+
+    - name: Cache Node Dependencies
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: node-${{ runner.os }}-
 
     - name: Install Dependencies
       run: |
-        composer install --no-interaction --prefer-dist --optimize-autoloader
+        composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
         npm ci
         npm run build
 
-    - name: Setup Environment
+    - name: Setup Environment for Dusk
       run: |
-        cp .env.example .env
+        cp .env.dusk.ci .env
         echo "APP_URL=http://127.0.0.1:8000" >> .env
         echo "DB_CONNECTION=mysql" >> .env
         echo "DB_DATABASE=jordanpartridge_testing" >> .env
@@ -151,6 +157,7 @@ jobs:
         echo "DB_HOST=127.0.0.1" >> .env
         echo "DB_USERNAME=root" >> .env
         echo "DB_PASSWORD=password" >> .env
+        echo "DUSK_DRIVER_URL=http://127.0.0.1:4444/wd/hub" >> .env
         echo "OPENAI_API_KEY=${{ secrets.OPEN_AI_API_KEY }}" >> .env
         echo "CARD_API_BASE_URL=${{ secrets.CARD_API_BASE_URL }}" >> .env
         echo "CARD_API_KEY=${{ secrets.CARD_API_KEY }}" >> .env
@@ -160,43 +167,109 @@ jobs:
         php artisan key:generate
         php artisan key:generate --env=testing
 
-    - name: Set Permissions
+    - name: Set Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
 
     - name: Run Database Migrations
       run: php artisan migrate --force
 
-    - name: Start Laravel Server
-      run: php artisan serve --host=127.0.0.1 --port=8000 &
-
-    - name: Wait for Server
+    - name: Wait for Selenium
       run: |
+        echo "Waiting for Selenium to be ready..."
         for i in {1..30}; do
-          if curl -f -s http://127.0.0.1:8000 >/dev/null 2>&1; then
-            echo "✅ Server ready!"
+          if curl -f http://127.0.0.1:4444/wd/hub/status >/dev/null 2>&1; then
+            echo "✅ Selenium is ready!"
             break
           fi
-          echo "⏳ Waiting... ($i/30)"
+          echo "⏳ Waiting for Selenium... (attempt $i/30)"
           sleep 2
         done
 
-    - name: Run Dusk Tests
+    - name: Start Laravel Server
       run: |
-        echo "🧪 Running browser tests with headless Chrome..."
-        php artisan dusk
+        php artisan serve --host=127.0.0.1 --port=8000 &
+        echo $! > server.pid
+      env:
+        APP_ENV: testing
 
-    - name: Upload Screenshots on Failure
+    - name: Wait for Laravel Server
+      run: |
+        echo "Waiting for Laravel server..."
+        for i in {1..30}; do
+          if curl -f -s http://127.0.0.1:8000 >/dev/null 2>&1; then
+            echo "✅ Laravel server is ready!"
+            break
+          fi
+          echo "⏳ Waiting for server... (attempt $i/30)"
+          sleep 2
+        done
+
+    - name: Verify Selenium Ready
+      run: |
+        echo "🔗 Testing Selenium connectivity..."
+        curl -f http://127.0.0.1:4444/wd/hub/status
+        echo "✅ Selenium is accessible"
+
+    - name: Run Browser Tests
+      run: |
+        echo "🧪 Running Core Functionality Tests..."
+        php artisan dusk tests/Browser/CoreFunctionalityTest.php
+        
+        echo "🧪 Running Performance Tests..."
+        php artisan dusk tests/Browser/PerformanceTest.php
+        
+        echo "🧪 Running SEO Infrastructure Tests..."
+        php artisan dusk tests/Browser/SEOInfrastructureTest.php
+        
+        echo "🧪 Running Error Handling Tests..."
+        php artisan dusk tests/Browser/ErrorHandlingTest.php
+
+    - name: Stop Laravel Server
+      if: always()
+      run: |
+        if [ -f server.pid ]; then
+          kill $(cat server.pid) || echo "Server already stopped"
+          rm server.pid
+        fi
+
+    - name: Upload Browser Test Artifacts
       if: failure()
       uses: actions/upload-artifact@v4
       with:
-        name: dusk-screenshots
-        path: tests/Browser/screenshots/
-        retention-days: 3
+        name: browser-test-artifacts
+        path: |
+          tests/Browser/screenshots/
+          tests/Browser/console/
+          storage/logs/laravel.log
+        retention-days: 7
 
-    - name: Upload Logs on Failure
-      if: failure()
-      uses: actions/upload-artifact@v4
+  # Code Quality Checks
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP 8.4
+      uses: shivammathur/setup-php@v2
       with:
-        name: laravel-logs
-        path: storage/logs/
-        retention-days: 3
+        php-version: '8.4'
+        extensions: mbstring, xml, ctype, iconv
+
+    - name: Cache Composer Dependencies
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: composer-${{ runner.os }}-8.4-${{ hashFiles('composer.lock') }}
+        restore-keys: composer-${{ runner.os }}-8.4-
+
+    - name: Install Dependencies
+      run: composer install --no-interaction --prefer-dist --optimize-autoloader --dev
+
+    - name: Run Pint (Code Style)
+      run: ./vendor/bin/pint --test
+
+    - name: Run Duster (Additional Checks)
+      run: ./vendor/bin/duster lint
