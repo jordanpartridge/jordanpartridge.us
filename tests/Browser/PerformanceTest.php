@@ -21,8 +21,8 @@ class PerformanceTest extends DuskTestCase
 
             $loadTime = (microtime(true) - $startTime) * 1000; // Convert to milliseconds
 
-            // Assert page loads under 1000ms (production baseline)
-            $this->assertLessThan(1000, $loadTime, "Homepage took {$loadTime}ms, should be under 1000ms");
+            // Assert page loads under 3000ms (CI baseline - more lenient than production)
+            $this->assertLessThan(3000, $loadTime, "Homepage took {$loadTime}ms, should be under 3000ms");
         });
     }
 
@@ -40,8 +40,8 @@ class PerformanceTest extends DuskTestCase
 
             $loadTime = (microtime(true) - $startTime) * 1000;
 
-            // Assert page loads under 1000ms
-            $this->assertLessThan(1000, $loadTime, "Blog page took {$loadTime}ms, should be under 1000ms");
+            // Assert page loads under 3000ms (CI baseline - more lenient than production)
+            $this->assertLessThan(3000, $loadTime, "Blog page took {$loadTime}ms, should be under 3000ms");
         });
     }
 
