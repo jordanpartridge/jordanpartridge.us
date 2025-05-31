@@ -238,7 +238,7 @@ class SEOInfrastructureTest extends DuskTestCase
             $robotsContent = $browser->driver->getPageSource();
 
             // Should allow search engines to index
-            $this->assertStringNotContains(
+            $this->assertStringNotContainsString(
                 'Disallow: /',
                 $robotsContent,
                 'Robots.txt should not disallow all pages'
@@ -277,7 +277,7 @@ class SEOInfrastructureTest extends DuskTestCase
             $browser->visit('/');
 
             // Check for mobile viewport meta tag
-            $viewportMeta = $browser->attribute('head meta[name="viewport"]', 'content');
+            $viewportMeta = $browser->driver->findElement(WebDriverBy::cssSelector('meta[name="viewport"]'))->getAttribute('content');
 
             $this->assertNotEmpty($viewportMeta, 'Page missing viewport meta tag for mobile SEO');
             $this->assertStringContainsString(

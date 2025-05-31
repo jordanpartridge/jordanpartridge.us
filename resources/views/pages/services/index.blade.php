@@ -5,7 +5,7 @@
             <!-- Hero Section -->
             <div class="mb-16 text-center">
                 <h1 class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-500 dark:from-primary-400 dark:to-secondary-400 mb-6">
-                    Laravel Development Services
+                    Laravel Engineering & Consulting Services
                 </h1>
                 <p class="max-w-3xl mx-auto text-lg text-gray-600 dark:text-gray-300 mb-8">
                     Elevate your web applications with expert Laravel development. I specialize in creating fast, scalable, and maintainable solutions that empower your business and delight your users.
@@ -37,7 +37,7 @@
                                 Comprehensive assessment of your codebase to identify vulnerabilities, performance bottlenecks, and opportunities for optimization. I'll provide detailed recommendations to improve code quality and security.
                             </p>
                             <a href="/services/code-audit" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors duration-300">
-                                Learn More
+                                Code Audit
                                 <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
@@ -59,7 +59,7 @@
                                 Strategic enhancement of your application's speed, efficiency, and resource utilization. I'll optimize your database queries, implement caching strategies, and streamline your codebase for maximum performance.
                             </p>
                             <a href="/services/performance-optimization" class="inline-flex items-center text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 font-medium transition-colors duration-300">
-                                Learn More
+                                Performance Optimization
                                 <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
@@ -81,7 +81,7 @@
                                 Bespoke Laravel solutions tailored to your business needs. From API integrations to complex business logic implementation, I'll architect and deploy robust applications that meet your specific objectives.
                             </p>
                             <a href="/services/custom-development" class="inline-flex items-center text-purple-600 dark:text-purple-400 hover:text-purple-800 dark:hover:text-purple-300 font-medium transition-colors duration-300">
-                                Learn More
+                                Custom Development
                                 <svg class="w-5 h-5 ml-2 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                                 </svg>
