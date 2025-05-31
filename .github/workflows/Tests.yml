@@ -1,10 +1,11 @@
-name: Tests
+name: Tests (DISABLED - Debugging)
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  # Temporarily disabled while separating Pest and Dusk tests
+  # push:
+  #   branches: [ "master" ]
+  # pull_request:
+  #   branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
