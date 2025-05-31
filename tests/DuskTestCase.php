@@ -17,39 +17,9 @@ abstract class DuskTestCase extends BaseTestCase
     #[BeforeClass]
     public static function prepare(): void
     {
-        // Only start ChromeDriver locally, not in CI where we use Selenium service
-        if (! static::runningInSail() && ! static::runningInCI()) {
-            // Check if ChromeDriver is already running before attempting to start
-            if (! static::isChromeDriverRunning()) {
-                static::startChromeDriver();
-            }
+        if (! static::runningInSail()) {
+            static::startChromeDriver();
         }
-    }
-
-    /**
-     * Determine if we're running in CI environment.
-     */
-    protected static function runningInCI(): bool
-    {
-        return isset($_ENV['CI']) || isset($_ENV['GITHUB_ACTIONS']) || isset($_ENV['DUSK_DRIVER_URL']);
-    }
-
-    /**
-     * Check if ChromeDriver is already running on the expected port.
-     */
-    protected static function isChromeDriverRunning(): bool
-    {
-        $driverUrl = $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515';
-        $port = parse_url($driverUrl, PHP_URL_PORT) ?? 9515;
-
-        // Check if port is listening
-        $connection = @fsockopen('localhost', $port, $errno, $errstr, 1);
-        if ($connection) {
-            fclose($connection);
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -59,12 +29,10 @@ abstract class DuskTestCase extends BaseTestCase
     {
         $options = (new ChromeOptions())->addArguments(collect([
             $this->shouldStartMaximized() ? '--start-maximized' : '--window-size=1920,1080',
-            // Add additional options to help with macOS security issues
             '--no-sandbox',
             '--disable-dev-shm-usage',
-            // Add debugging options for non-headless mode
-            $this->hasHeadlessDisabled() ? '--disable-web-security' : '',
-            $this->hasHeadlessDisabled() ? '--disable-features=VizDisplayCompositor' : '',
+            '--disable-web-security',
+            '--disable-features=VizDisplayCompositor',
         ])->filter()->unless($this->hasHeadlessDisabled(), function (Collection $items) {
             return $items->merge([
                 '--disable-gpu',
@@ -72,7 +40,6 @@ abstract class DuskTestCase extends BaseTestCase
             ]);
         })->all());
 
-        // Try to use a different port
         return RemoteWebDriver::create(
             $_ENV['DUSK_DRIVER_URL'] ?? 'http://localhost:9515',
             DesiredCapabilities::chrome()->setCapability(
