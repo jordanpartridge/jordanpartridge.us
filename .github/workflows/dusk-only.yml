@@ -43,6 +43,9 @@ jobs:
     - name: Setup Environment
       run: |
         cp .env.example .env
+        echo "APP_ENV=testing" >> .env
+        echo "APP_DEBUG=false" >> .env
+        echo "DEBUGBAR_ENABLED=false" >> .env
         echo "APP_URL=http://127.0.0.1:8000" >> .env
         echo "DB_CONNECTION=mysql" >> .env
         echo "DB_DATABASE=jordanpartridge_testing" >> .env
