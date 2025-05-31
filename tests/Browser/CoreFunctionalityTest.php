@@ -100,7 +100,7 @@ class CoreFunctionalityTest extends DuskTestCase
                 ->type('name', 'Test User')
                 ->type('email', 'test@example.com')
                 ->type('message', 'This is a test message from the E2E test suite.')
-                ->press('Send Message')
+                ->press('button[type="submit"]')
                 ->waitFor('.success, .thank-you, [data-success]', 5) // Wait for success message
                 ->assertVisible('.success, .thank-you, [data-success]'); // Should show success
         });
@@ -136,8 +136,8 @@ class CoreFunctionalityTest extends DuskTestCase
             // Test full navigation flow
             $browser->visit('/')
                 ->click('@nav-bike')
-                ->assertPathIs('/software-development')
-                ->assertSee('Software Development')
+                ->assertPathIs('/bike')
+                ->assertSee('Fat Bike Corps')
 
                 ->click('@nav-contact')
                 ->assertPathIs('/contact')
