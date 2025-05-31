@@ -12,6 +12,8 @@ it('shows the right name', function () {
 it('can follow the software-development link', function () {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
+            ->click('button:contains("Software")') // Click dropdown trigger
+            ->waitFor('@nav-software-development') // Wait for dropdown to appear
             ->click('@nav-software-development')
             ->assertPathIs('/software-development');
     });

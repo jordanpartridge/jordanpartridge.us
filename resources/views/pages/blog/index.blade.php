@@ -79,7 +79,7 @@ with(fn () => [
     <x-ui.marketing.breadcrumbs :crumbs="[ ['text' => 'Blog'] ]" />
 
     @volt('blog.index')
-        <div class="relative flex flex-col w-full px-6 py-10 mx-auto lg:max-w-6xl sm:max-w-xl md:max-w-full sm:pb-16">
+        <main class="relative flex flex-col w-full px-6 py-10 mx-auto lg:max-w-6xl sm:max-w-xl md:max-w-full sm:pb-16">
             <!-- Blog Header -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
                 <div>
@@ -299,6 +299,6 @@ with(fn () => [
                 </div>
             </div>
 
-        </div>
+        </main>
     @endvolt
 </x-layouts.marketing>
