@@ -53,7 +53,10 @@ abstract class DuskTestCase extends BaseTestCase
             // Add additional options to help with macOS security issues
             '--no-sandbox',
             '--disable-dev-shm-usage',
-        ])->unless($this->hasHeadlessDisabled(), function (Collection $items) {
+            // Add debugging options for non-headless mode
+            $this->hasHeadlessDisabled() ? '--disable-web-security' : '',
+            $this->hasHeadlessDisabled() ? '--disable-features=VizDisplayCompositor' : '',
+        ])->filter()->unless($this->hasHeadlessDisabled(), function (Collection $items) {
             return $items->merge([
                 '--disable-gpu',
                 '--headless=new',

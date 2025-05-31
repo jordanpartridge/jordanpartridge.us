@@ -107,3 +107,11 @@ jobs:
       env:
         APP_URL: http://127.0.0.1:8000
         DUSK_DRIVER_URL: http://selenium:4444/wd/hub
+    
+    - name: Upload Dusk Screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: dusk-screenshots
+        path: tests/Browser/screenshots/
+        retention-days: 7
