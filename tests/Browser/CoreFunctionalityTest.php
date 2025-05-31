@@ -51,7 +51,7 @@ class CoreFunctionalityTest extends DuskTestCase
             if (count($postLinks) > 0) {
                 // Click on first blog post
                 $browser->click('a[href*="blog/"]:first-of-type')
-                    ->assertUrlMatches('/\/blog\/.*/')
+                    ->assertPathBeginsWith('/blog/')
                     ->assertVisible('h1')
                     ->assertVisible('[role="main"], main, .content')
                     ->assertMissing('[data-error]');
