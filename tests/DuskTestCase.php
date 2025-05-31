@@ -17,12 +17,21 @@ abstract class DuskTestCase extends BaseTestCase
     #[BeforeClass]
     public static function prepare(): void
     {
-        if (! static::runningInSail()) {
+        // Only start ChromeDriver locally, not in CI where we use Selenium service
+        if (! static::runningInSail() && ! static::runningInCI()) {
             // Check if ChromeDriver is already running before attempting to start
             if (! static::isChromeDriverRunning()) {
                 static::startChromeDriver();
             }
         }
+    }
+
+    /**
+     * Determine if we're running in CI environment.
+     */
+    protected static function runningInCI(): bool
+    {
+        return isset($_ENV['CI']) || isset($_ENV['GITHUB_ACTIONS']) || isset($_ENV['DUSK_DRIVER_URL']);
     }
 
     /**
