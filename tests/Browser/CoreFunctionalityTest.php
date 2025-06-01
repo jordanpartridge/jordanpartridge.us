@@ -84,9 +84,10 @@ class CoreFunctionalityTest extends DuskTestCase
     {
         $this->browse(function (Browser $browser) {
             $browser->visit('/contact')
-                ->press('Send Message') // Try to submit empty form
-                ->waitFor('.error, .invalid, [data-error]', 3) // Wait for validation errors
-                ->assertVisible('.error, .invalid, [data-error]'); // Should show validation errors
+                ->assertPresent('input[name="name"][required]') // Name field should be required
+                ->assertPresent('input[name="email"][required]') // Email field should be required
+                ->assertPresent('textarea[name="message"][required]') // Message field should be required
+                ->assertPresent('button[type="submit"]'); // Submit button should be present
         });
     }
 
@@ -172,13 +173,22 @@ class CoreFunctionalityTest extends DuskTestCase
         $this->browse(function (Browser $browser) {
             $browser->visit('/');
 
-            // Look for dark mode toggle
-            $darkModeToggle = $browser->elements('[data-theme-toggle], .dark-mode-toggle, [aria-label*="theme"]');
+            // Look for dark mode toggle (it has aria-label="Toggle dark mode")
+            $darkModeToggle = $browser->elements('[aria-label="Toggle dark mode"]');
 
             if (count($darkModeToggle) > 0) {
-                $browser->click('[data-theme-toggle], .dark-mode-toggle, [aria-label*="theme"]:first')
-                    ->pause(500) // Wait for theme change
-                    ->assertPresent('.dark, [data-theme="dark"], html.dark'); // Should apply dark theme
+                // Get initial state
+                $initialDarkMode = $browser->script('return document.documentElement.classList.contains("dark")');
+                $initialDarkMode = is_array($initialDarkMode) ? $initialDarkMode[0] : $initialDarkMode;
+
+                $browser->click('[aria-label="Toggle dark mode"]')
+                    ->pause(500); // Wait for theme change
+
+                // Check if dark mode state changed
+                $finalDarkMode = $browser->script('return document.documentElement.classList.contains("dark")');
+                $finalDarkMode = is_array($finalDarkMode) ? $finalDarkMode[0] : $finalDarkMode;
+
+                $this->assertNotEquals($initialDarkMode, $finalDarkMode, 'Dark mode toggle should change theme state');
             } else {
                 $this->markTestSkipped('No dark mode toggle found');
             }

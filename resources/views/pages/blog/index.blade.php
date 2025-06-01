@@ -163,7 +163,7 @@ with(fn () => [
                         <div class="md:flex">
                             <div class="md:w-2/5 h-64 md:h-auto">
                                 @if ($featuredPost->image)
-                                    <img src="@if (str_starts_with($featuredPost->image, 'https') || str_starts_with($featuredPost->image, 'http')){{ storage_path($featuredPost->image) }}@else{{ asset('storage/' . $featuredPost->image) }}@endif"
+                                    <img src="@if (str_starts_with($featuredPost->image, 'https') || str_starts_with($featuredPost->image, 'http')){{ $featuredPost->image }}@else{{ asset('storage/' . $featuredPost->image) }}@endif"
                                         class="w-full h-full object-cover"
                                         alt="{{ $featuredPost->title }}" />
                                 @else
@@ -229,7 +229,7 @@ with(fn () => [
                         <article class="flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8 pb-8 border-b border-gray-200 dark:border-gray-700">
                             <a href="/{{ $this->route_prefix }}/{{ $post->slug }}" class="block w-full md:w-5/12 h-56 md:h-auto">
                                 @if ($post->image)
-                                    <img src="@if (str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http')){{ storage_path($post->image) }}@else{{ asset('storage/' . $post->image) }}@endif"
+                                    <img src="@if (str_starts_with($post->image, 'https') || str_starts_with($post->image, 'http')){{ $post->image }}@else{{ asset('storage/' . $post->image) }}@endif"
                                          class="relative object-cover w-full h-full bg-gray-200 rounded-lg shadow-lg md:aspect-video dark:bg-slate-700"
                                          alt="{{ $post->title }}" />
                                 @else

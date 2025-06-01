@@ -42,34 +42,37 @@ class SEOInfrastructureTest extends DuskTestCase
                 $browser->visit($url);
 
                 // Check essential meta tags
+                $titleText = $browser->script('return document.title');
                 $this->assertNotEmpty(
-                    $browser->attribute('head title', 'textContent'),
+                    $titleText,
                     "Page {$url} missing title tag"
                 );
 
+                $metaDescription = $browser->script('return document.querySelector(\'meta[name="description"]\')?.content || ""');
                 $this->assertNotEmpty(
-                    $browser->attribute('head meta[name="description"]', 'content'),
+                    $metaDescription,
                     "Page {$url} missing meta description"
                 );
 
                 // Check Open Graph tags
+                $ogTitle = $browser->script('return document.querySelector(\'meta[property="og:title"]\')?.content || ""');
                 $this->assertNotEmpty(
-                    $browser->attribute('head meta[property="og:title"]', 'content'),
+                    $ogTitle,
                     "Page {$url} missing og:title"
                 );
 
+                $ogDescription = $browser->script('return document.querySelector(\'meta[property="og:description"]\')?.content || ""');
                 $this->assertNotEmpty(
-                    $browser->attribute('head meta[property="og:description"]', 'content'),
+                    $ogDescription,
                     "Page {$url} missing og:description"
                 );
 
                 // Check Twitter Card tags
-                $twitterCard = $browser->attribute('head meta[name="twitter:card"]', 'content');
-                if ($twitterCard) {
-                    $this->assertContains(
-                        $twitterCard,
-                        ['summary', 'summary_large_image'],
-                        "Page {$url} has invalid Twitter card type"
+                $twitterCard = $browser->script('return document.querySelector(\'meta[name="twitter:card"]\')?.content || ""');
+                if ($twitterCard && is_string($twitterCard)) {
+                    $this->assertTrue(
+                        in_array($twitterCard, ['summary', 'summary_large_image']),
+                        "Page {$url} has invalid Twitter card type: {$twitterCard}"
                     );
                 }
             }
@@ -153,8 +156,8 @@ class SEOInfrastructureTest extends DuskTestCase
             // These are optional, so just verify they work if present
 
             // Check Open Graph image exists if specified
-            $ogImage = $browser->attribute('head meta[property="og:image"]', 'content');
-            if ($ogImage && !filter_var($ogImage, FILTER_VALIDATE_URL)) {
+            $ogImage = $browser->script('return document.querySelector(\'meta[property="og:image"]\')?.content || ""');
+            if ($ogImage && is_string($ogImage) && !filter_var($ogImage, FILTER_VALIDATE_URL)) {
                 // If it's a relative URL, test it
                 $response = $this->get($ogImage);
                 $response->assertStatus(200);
@@ -207,9 +210,9 @@ class SEOInfrastructureTest extends DuskTestCase
             foreach ($pages as $url) {
                 $browser->visit($url);
 
-                $canonicalLink = $browser->attribute('head link[rel="canonical"]', 'href');
+                $canonicalLink = $browser->script('return document.querySelector(\'link[rel="canonical"]\')?.href || ""');
 
-                if ($canonicalLink) {
+                if ($canonicalLink && is_string($canonicalLink)) {
                     $this->assertTrue(
                         filter_var($canonicalLink, FILTER_VALIDATE_URL) !== false,
                         "Invalid canonical URL on page {$url}: {$canonicalLink}"
@@ -297,7 +300,8 @@ class SEOInfrastructureTest extends DuskTestCase
             $pages = ['/', '/blog', '/software-development'];
 
             foreach ($pages as $url) {
-                $browser->visit($url);
+                $browser->visit($url)
+                    ->waitFor('h1', 5); // Wait for H1 to load (Livewire pages may need time)
 
                 // Should have exactly one H1 tag
                 $h1Elements = $browser->elements('h1');
