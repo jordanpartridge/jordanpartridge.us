@@ -50,6 +50,28 @@ abstract class DuskTestCase extends BaseTestCase
     public static function prepare(): void
     {
         if (! static::runningInSail()) {
+            // Ensure ChromeDriver binary exists before attempting to start
+            $chromedriverPaths = [
+                base_path('vendor/laravel/dusk/bin/chromedriver-linux'),
+                base_path('vendor/laravel/dusk/bin/chromedriver-mac-arm'),
+                base_path('vendor/laravel/dusk/bin/chromedriver-mac-intel'),
+                base_path('vendor/laravel/dusk/bin/chromedriver-win.exe'),
+            ];
+
+            $chromedriverExists = false;
+            foreach ($chromedriverPaths as $path) {
+                if (file_exists($path)) {
+                    $chromedriverExists = true;
+                    break;
+                }
+            }
+
+            if (! $chromedriverExists) {
+                throw new Exception(
+                    "ChromeDriver not found. Run 'php artisan dusk:chrome-driver' to install it."
+                );
+            }
+
             // Check if ChromeDriver is already running before attempting to start
             if (! static::isChromeDriverRunning()) {
                 static::startChromeDriver();
@@ -130,6 +152,7 @@ abstract class DuskTestCase extends BaseTestCase
             $this->shouldStartMaximized() ? '--start-maximized' : '--window-size=1920,1080',
             '--no-sandbox',
             '--disable-dev-shm-usage',
+            // Disable web security and display compositor for stable testing
             '--disable-web-security',
             '--disable-features=VizDisplayCompositor',
         ])->filter()->unless($this->hasHeadlessDisabled(), function (Collection $items) {
@@ -160,29 +183,39 @@ abstract class DuskTestCase extends BaseTestCase
             return;
         }
 
-        echo "🔧 Ensuring ChromeDriver is running...\n";
+        if (env('CI_DEBUG', false)) {
+            echo "🔧 Ensuring ChromeDriver is running...\n";
+        }
 
         // Set DISPLAY for Linux CI
         if (! isset($_ENV['DISPLAY']) && PHP_OS_FAMILY === 'Linux') {
             $_ENV['DISPLAY'] = ':99';
-            echo "📺 Set DISPLAY to :99 for Linux CI\n";
+            if (env('CI_DEBUG', false)) {
+                echo "📺 Set DISPLAY to :99 for Linux CI\n";
+            }
         }
 
         // Test if ChromeDriver is already running
         $connection = @fsockopen('localhost', 9515, $errno, $errstr, 2);
         if ($connection) {
             fclose($connection);
-            echo "✅ ChromeDriver already running on port 9515\n";
+            if (env('CI_DEBUG', false)) {
+                echo "✅ ChromeDriver already running on port 9515\n";
+            }
             $chromeDriverStarted = true;
             return;
         }
 
-        echo "⚠️ ChromeDriver not found on port 9515, starting it...\n";
+        if (env('CI_DEBUG', false)) {
+            echo "⚠️ ChromeDriver not found on port 9515, starting it...\n";
+        }
 
         if (! static::runningInSail()) {
             try {
                 static::startChromeDriver(['--verbose']);
-                echo "✅ ChromeDriver started via Dusk\n";
+                if (env('CI_DEBUG', false)) {
+                    echo "✅ ChromeDriver started via Dusk\n";
+                }
 
                 // Give it time to start
                 sleep(3);
@@ -191,18 +224,22 @@ abstract class DuskTestCase extends BaseTestCase
                 $connection = @fsockopen('localhost', 9515, $errno, $errstr, 5);
                 if ($connection) {
                     fclose($connection);
-                    echo "✅ ChromeDriver is now responding\n";
+                    if (env('CI_DEBUG', false)) {
+                        echo "✅ ChromeDriver is now responding\n";
+                    }
                     $chromeDriverStarted = true;
                 } else {
                     throw new Exception("ChromeDriver failed to respond after startup: $errno - $errstr");
                 }
 
             } catch (Exception $e) {
-                echo "❌ Failed to start ChromeDriver: " . $e->getMessage() . "\n";
-                echo "🔍 Debugging info:\n";
-                echo "- PHP_OS_FAMILY: " . PHP_OS_FAMILY . "\n";
-                echo "- DISPLAY: " . ($_ENV['DISPLAY'] ?? 'not set') . "\n";
-                echo "- ChromeDriver binary exists: " . (file_exists(base_path('vendor/laravel/dusk/bin/chromedriver-linux')) ? 'yes' : 'no') . "\n";
+                if (env('CI_DEBUG', false)) {
+                    echo "❌ Failed to start ChromeDriver: " . $e->getMessage() . "\n";
+                    echo "🔍 Debugging info:\n";
+                    echo "- PHP_OS_FAMILY: " . PHP_OS_FAMILY . "\n";
+                    echo "- DISPLAY: " . ($_ENV['DISPLAY'] ?? 'not set') . "\n";
+                    echo "- ChromeDriver binary exists: " . (file_exists(base_path('vendor/laravel/dusk/bin/chromedriver-linux')) ? 'yes' : 'no') . "\n";
+                }
                 throw $e;
             }
         }
