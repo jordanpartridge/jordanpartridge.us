@@ -75,7 +75,7 @@ resources/views/
 2. **Component Hierarchy**
    - Base UI components (ui/) provide foundational elements
    - Feature-specific components build on these base components
-   - Page templates compose multiple components together.
+   - Page templates compose multiple components together
 
 3. **Layout Components**
    - The `layouts/` directory contains wrapper templates
@@ -88,7 +88,7 @@ resources/views/
 
 The GitHub integration showcases repositories on the website and syncs repository data:
 
-1. **The Service Layer**
+1. **Service Layer**
    - `GitHubService` handles repository fetching and syncing
    - `GitHubSyncService` manages periodic updates
    - These services use Laravel's built-in HTTP client to interact with GitHub's API
@@ -118,7 +118,7 @@ Connects to Strava's API to fetch and display cycling activities:
 
 3. **Components**
    - Specialized bike activity components in `components/bike-joy/`
-   - Custom styling with a biking theme
+   - Custom styling with biking theme
 
 ### Gmail Integration
 
@@ -210,7 +210,7 @@ Volt is used for simplified Livewire components directly in Blade files:
 
 3. **GitHub Management**
    - Repository synchronization
-   - Repository featuring for the homepage
+   - Repository featuring for homepage
 
 ### Custom Pages
 
@@ -388,7 +388,7 @@ The project has been upgraded to Laravel 12, which includes several key changes:
    - New PHP 8.2+ features usage
 
 2. **Package Updates**
-   - Laravel Prompts have been updated to match Laravel 12 requirements
+   - Laravel Prompts has been updated to match Laravel 12 requirements
    - Various dependency updates for compatibility
 
 3. **Middleware Implementations**
@@ -425,7 +425,7 @@ The project has been upgraded to Laravel 12, which includes several key changes:
 
 2. **API Integration Problems**
    - Verify API credentials are correctly set
-   - Check for rate-limiting issues
+   - Check for rate limiting issues
    - Examine API response logs
 
 3. **Database Migration Failures**
@@ -435,7 +435,7 @@ The project has been upgraded to Laravel 12, which includes several key changes:
 
 ### Logging and Monitoring
 
-- Review Laravel logs in `storage/logs/laravel.log`
+- Review Laravel logs at `storage/logs/laravel.log`
 - Monitor queue workers with `ps aux | grep artisan`
 - Use database seeders for test data population
 

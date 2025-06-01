@@ -76,6 +76,10 @@
 - System labels (INBOX, SENT, etc.) working
 - Custom labels working
 - Label filtering working
+- **FIXED:** Livewire serialization error with complex label objects (Issue #251)
+  - Added robust array conversion for Gmail labels
+  - Implemented graceful error handling for missing settings
+  - All label information now displays correctly without errors
 
 ### ✅ Search & Filtering
 - Email search working

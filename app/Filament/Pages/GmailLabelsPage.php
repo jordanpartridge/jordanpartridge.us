@@ -83,29 +83,44 @@ class GmailLabelsPage extends Page implements HasForms
             $gmailClient = $user->getGmailClient();
             $gmailLabels = $gmailClient->listLabels();
 
+            // Convert all labels to simple arrays for Livewire compatibility
             $this->labels = $gmailLabels->map(function ($label) {
+                // Ensure we only extract safe, serializable properties
+                $labelData = [
+                    'id'             => '',
+                    'name'           => '',
+                    'type'           => 'user',
+                    'messagesTotal'  => 0,
+                    'messagesUnread' => 0,
+                    'threadsTotal'   => 0,
+                    'threadsUnread'  => 0,
+                ];
+
+                // Handle both array and object formats
                 if (is_array($label)) {
-                    return [
-                        'id'             => $label['id'] ?? '',
-                        'name'           => $label['name'] ?? '',
-                        'type'           => $label['type'] ?? 'user',
-                        'messagesTotal'  => $label['messagesTotal'] ?? 0,
-                        'messagesUnread' => $label['messagesUnread'] ?? 0,
-                        'threadsTotal'   => $label['threadsTotal'] ?? 0,
-                        'threadsUnread'  => $label['threadsUnread'] ?? 0,
-                    ];
+                    $labelData['id'] = (string) ($label['id'] ?? '');
+                    $labelData['name'] = (string) ($label['name'] ?? '');
+                    $labelData['type'] = (string) ($label['type'] ?? 'user');
+                    $labelData['messagesTotal'] = (int) ($label['messagesTotal'] ?? 0);
+                    $labelData['messagesUnread'] = (int) ($label['messagesUnread'] ?? 0);
+                    $labelData['threadsTotal'] = (int) ($label['threadsTotal'] ?? 0);
+                    $labelData['threadsUnread'] = (int) ($label['threadsUnread'] ?? 0);
+                } else {
+                    // Handle object format - explicitly cast to safe types
+                    $labelData['id'] = (string) ($label->id ?? '');
+                    $labelData['name'] = (string) ($label->name ?? '');
+                    $labelData['type'] = (string) ($label->type ?? 'user');
+                    $labelData['messagesTotal'] = (int) ($label->messagesTotal ?? 0);
+                    $labelData['messagesUnread'] = (int) ($label->messagesUnread ?? 0);
+                    $labelData['threadsTotal'] = (int) ($label->threadsTotal ?? 0);
+                    $labelData['threadsUnread'] = (int) ($label->threadsUnread ?? 0);
                 }
 
-                return [
-                    'id'             => $label->id,
-                    'name'           => $label->name,
-                    'type'           => $label->type ?? 'user',
-                    'messagesTotal'  => $label->messagesTotal ?? 0,
-                    'messagesUnread' => $label->messagesUnread ?? 0,
-                    'threadsTotal'   => $label->threadsTotal ?? 0,
-                    'threadsUnread'  => $label->threadsUnread ?? 0,
-                ];
-            })->toArray();
+                return $labelData;
+            })->filter(function ($label) {
+                // Only include labels with valid IDs
+                return !empty($label['id']);
+            })->values()->toArray();
 
             $this->filterLabels();
         } catch (\Exception $e) {
@@ -126,11 +141,11 @@ class GmailLabelsPage extends Page implements HasForms
         // Filter by search term
         if (!empty($this->searchTerm)) {
             $filtered = $filtered->filter(function ($label) {
-                return str_contains(strtolower($label['name']), strtolower($this->searchTerm));
+                return str_contains(strtolower($label['name'] ?? ''), strtolower($this->searchTerm));
             });
         }
 
-        // Separate system and user labels
+        // Separate system and user labels - ensure arrays
         $this->systemLabels = $filtered->where('type', 'system')->values()->toArray();
         $this->userLabels = $filtered->where('type', 'user')->values()->toArray();
     }

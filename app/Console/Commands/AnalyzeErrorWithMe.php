@@ -3,11 +3,13 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Process;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Process;
 
 class AnalyzeErrorWithMe extends Command
 {
-    protected $signature = 'logs:analyze-error 
+    protected $signature = 'logs:analyze-error
                             {--recent : Analyze the most recent error}
                             {--hours=24 : Hours to look back}
                             {--create-issue : Create GitHub issue}
@@ -204,7 +206,7 @@ class AnalyzeErrorWithMe extends Command
 
     protected function getRecentCommits(): array
     {
-        $result = \Illuminate\Support\Facades\Process::run('git log --oneline -5 2>/dev/null');
+        $result = Process::run('git log --oneline -5 2>/dev/null');
 
         if ($result->successful() && !empty(trim($result->output()))) {
             return explode("\n", trim($result->output()));
