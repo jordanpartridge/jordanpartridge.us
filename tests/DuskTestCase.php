@@ -187,7 +187,7 @@ abstract class DuskTestCase extends BaseTestCase
 
         if (! $chromedriverExists) {
             throw new Exception(
-                "ChromeDriver not found. Run 'php artisan dusk:chrome-driver' to install it."
+                "ChromeDriver binary not found in any expected location. Run 'php artisan dusk:chrome-driver' to install it for your platform."
             );
         }
 
