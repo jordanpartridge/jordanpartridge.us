@@ -2,16 +2,33 @@
 
 namespace Tests;
 
+use App\Models\Category;
+use App\Models\Post;
 use Exception;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Collection;
 use Laravel\Dusk\TestCase as BaseTestCase;
 use PHPUnit\Framework\Attributes\BeforeClass;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 abstract class DuskTestCase extends BaseTestCase
 {
+    use RefreshDatabase;
+
+    /**
+     * Setup the test environment with fresh migrations and essential data.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Run essential seeders for browser tests
+        $this->seedEssentialData();
+    }
     /**
      * Prepare for Dusk test execution.
      */
@@ -42,6 +59,42 @@ abstract class DuskTestCase extends BaseTestCase
         }
 
         return false;
+    }
+
+    /**
+     * Seed essential data needed for browser tests to work properly.
+     */
+    protected function seedEssentialData(): void
+    {
+        // Create essential roles for FilamentShield
+        $roles = ['admin', 'editor', 'user', 'super_admin', 'panel_user'];
+        foreach ($roles as $roleName) {
+            Role::firstOrCreate(['name' => $roleName]);
+        }
+
+        // Create essential permissions for testing
+        $permissions = ['manage users', 'edit articles', 'view articles'];
+        foreach ($permissions as $permissionName) {
+            Permission::firstOrCreate(['name' => $permissionName]);
+        }
+
+        // Assign permissions to admin role
+        $adminRole = Role::where('name', 'admin')->first();
+        if ($adminRole) {
+            $adminRole->syncPermissions($permissions);
+        }
+
+        // Seed a few blog posts for testing if the Post model exists
+        if (class_exists(Post::class)) {
+            Post::factory()->count(3)->create([
+                'status' => 'published'
+            ]);
+        }
+
+        // Seed categories if they exist
+        if (class_exists(Category::class)) {
+            Category::factory()->count(2)->create();
+        }
     }
 
     /**

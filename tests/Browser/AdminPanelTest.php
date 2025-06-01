@@ -4,7 +4,6 @@ namespace Tests\Browser;
 
 use App\Models\User;
 use Laravel\Dusk\Browser;
-use Spatie\Permission\Models\Role;
 use Tests\DuskTestCase;
 
 class AdminPanelTest extends DuskTestCase
@@ -23,9 +22,8 @@ class AdminPanelTest extends DuskTestCase
             'email_verified_at' => now(),
         ]);
 
-        // Ensure admin role exists and assign it
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $this->adminUser->assignRole($adminRole);
+        // Assign admin role (role already created by DuskTestCase)
+        $this->adminUser->assignRole('admin');
 
         // Create a regular user for security testing
         $this->regularUser = User::factory()->create([
