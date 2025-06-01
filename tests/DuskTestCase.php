@@ -20,14 +20,28 @@ abstract class DuskTestCase extends BaseTestCase
     use RefreshDatabase;
 
     /**
-     * Setup the test environment with fresh migrations and essential data.
+     * Track if essential data has been seeded
+     */
+    protected static bool $dataSeedComplete = false;
+
+    /**
+     * Reset static tracking variables between test classes.
+     */
+    public static function tearDownAfterClass(): void
+    {
+        static::$dataSeedComplete = false;
+        parent::tearDownAfterClass();
+    }
+
+    /**
+     * Setup the test environment with optimized database setup.
      */
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Run essential seeders for browser tests
-        $this->seedEssentialData();
+        // Seed essential data only once per test session for better performance
+        $this->seedEssentialDataOnce();
     }
     /**
      * Prepare for Dusk test execution.
@@ -61,11 +75,16 @@ abstract class DuskTestCase extends BaseTestCase
         return false;
     }
 
+
     /**
-     * Seed essential data needed for browser tests to work properly.
+     * Seed essential data only once per test session for better performance.
      */
-    protected function seedEssentialData(): void
+    protected function seedEssentialDataOnce(): void
     {
+        if (static::$dataSeedComplete) {
+            return;
+        }
+
         // Create essential roles for FilamentShield
         $roles = ['admin', 'editor', 'user', 'super_admin', 'panel_user'];
         foreach ($roles as $roleName) {
@@ -95,6 +114,8 @@ abstract class DuskTestCase extends BaseTestCase
         if (class_exists(Category::class)) {
             Category::factory()->count(2)->create();
         }
+
+        static::$dataSeedComplete = true;
     }
 
     /**
@@ -126,6 +147,7 @@ abstract class DuskTestCase extends BaseTestCase
             )
         );
     }
+
 
     /**
      * Ensure ChromeDriver is running and accessible.
