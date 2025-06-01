@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
@@ -24,15 +25,26 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('gmail_tokens', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'gmail_email']);
-            $table->dropIndex(['user_id', 'is_primary']);
+            // Drop indexes by their specific names (Laravel auto-generates these names)
+            try {
+                DB::statement('DROP INDEX gmail_tokens_user_id_is_primary_index ON gmail_tokens');
+            } catch (\Exception $e) {
+                // Index might not exist, continue
+            }
 
+            try {
+                DB::statement('DROP INDEX gmail_tokens_user_id_gmail_email_index ON gmail_tokens');
+            } catch (\Exception $e) {
+                // Index might not exist, continue
+            }
+
+            // Drop columns added in up() method
             $table->dropColumn([
-                'gmail_email',
-                'account_name',
-                'is_primary',
+                'account_info',
                 'last_sync_at',
-                'account_info'
+                'is_primary',
+                'account_name',
+                'gmail_email'
             ]);
         });
     }

@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ListPostsTest extends TestCase
@@ -18,6 +19,9 @@ class ListPostsTest extends TestCase
     public function authenticated_users_can_view_posts_listing()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         $response = $this
             ->actingAs($user)
@@ -39,6 +43,9 @@ class ListPostsTest extends TestCase
     public function it_displays_posts_in_the_table()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         $post = Post::factory()->create([
             'title' => 'Test Post Title',
@@ -53,6 +60,9 @@ class ListPostsTest extends TestCase
     public function it_can_filter_posts_by_status()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         Post::factory()->create([
             'title'  => 'Published Post',
@@ -75,6 +85,9 @@ class ListPostsTest extends TestCase
     public function it_can_search_posts_by_title()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         Post::factory()->create([
             'title' => 'First Post',

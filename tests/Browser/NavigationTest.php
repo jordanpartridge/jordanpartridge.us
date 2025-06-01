@@ -12,6 +12,9 @@ it('shows the right name', function () {
 it('can follow the software-development link', function () {
     $this->browse(function (Browser $browser) {
         $browser->visit('/')
+            ->pause(1000) // Wait for Alpine.js to load
+            ->press('Software') // Try pressing the button by text
+            ->pause(500) // Wait for dropdown
             ->click('@nav-software-development')
             ->assertPathIs('/software-development');
     });

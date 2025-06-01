@@ -6,6 +6,7 @@ use App\Filament\Resources\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class CreatePostTest extends TestCase
@@ -16,6 +17,9 @@ class CreatePostTest extends TestCase
     public function authenticated_users_can_view_create_post_form()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         $response = $this
             ->actingAs($user)
@@ -38,6 +42,9 @@ class CreatePostTest extends TestCase
     {
         // Create the user for our test
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         // Create a post directly to test our model
         $post = Post::create([
@@ -71,6 +78,9 @@ class CreatePostTest extends TestCase
         // since validation happens at the form level in Filament
 
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         // Count posts before creating
         $postCountBefore = Post::count();

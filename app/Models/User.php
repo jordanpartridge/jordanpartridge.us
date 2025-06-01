@@ -167,11 +167,26 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasStrava
      * Determine if the user can access the given Filament panel.
      *
      * @param Panel $panel The Filament panel to check access for
-     * @return bool Always returns true as all users can access panels
+     * @return bool True if user has admin role or super_admin permission
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        // Check for super admin permission (FilamentShield)
+        if ($this->hasRole(config('filament-shield.super_admin.name', 'super_admin'))) {
+            return true;
+        }
+
+        // Check for admin role
+        if ($this->hasRole('admin')) {
+            return true;
+        }
+
+        // Check for panel_user permission (FilamentShield)
+        if ($this->hasRole(config('filament-shield.panel_user.name', 'panel_user'))) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

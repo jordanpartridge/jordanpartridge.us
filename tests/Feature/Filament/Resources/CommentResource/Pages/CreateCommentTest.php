@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 use Tests\Helpers\AssetHelper;
 use Tests\TestCase;
 
@@ -21,6 +22,10 @@ class CreateCommentTest extends TestCase
     {
         AssetHelper::handleMissingAssets();
         $user = User::factory()->create();
+
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         $response = $this
             ->actingAs($user)
@@ -69,6 +74,10 @@ class CreateCommentTest extends TestCase
     {
         AssetHelper::handleMissingAssets();
         $user = User::factory()->create();
+
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         // Count comments before to ensure none are created with invalid data
         $commentCountBefore = Comment::count();

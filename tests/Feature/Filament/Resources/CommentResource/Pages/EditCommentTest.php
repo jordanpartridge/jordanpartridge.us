@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class EditCommentTest extends TestCase
@@ -17,6 +18,9 @@ class EditCommentTest extends TestCase
     public function authenticated_users_can_view_edit_comment_form()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
         $comment = Comment::factory()->create();
 
         $response = $this
@@ -42,6 +46,9 @@ class EditCommentTest extends TestCase
     {
         // Create test data
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
         $post = Post::factory()->create();
         $comment = Comment::factory()->create([
             'post_id' => $post->id,
@@ -78,6 +85,9 @@ class EditCommentTest extends TestCase
     public function it_validates_required_fields_on_update()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
         $post = Post::factory()->create();
         $comment = Comment::factory()->create([
             'user_id' => $user->id,

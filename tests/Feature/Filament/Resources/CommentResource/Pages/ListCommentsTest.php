@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class ListCommentsTest extends TestCase
@@ -19,6 +20,9 @@ class ListCommentsTest extends TestCase
     public function authenticated_users_can_view_comments_listing()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         $response = $this
             ->actingAs($user)
@@ -42,6 +46,9 @@ class ListCommentsTest extends TestCase
         $user = User::factory()->create([
             'name' => 'Test User',
         ]);
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         $post = Post::factory()->create([
             'title' => 'Test Post',
@@ -64,6 +71,9 @@ class ListCommentsTest extends TestCase
     public function it_can_search_comments_by_content()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
 
         Comment::factory()->create([
             'content' => 'First comment content',

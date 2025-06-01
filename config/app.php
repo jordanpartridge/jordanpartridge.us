@@ -123,4 +123,19 @@ return [
         'store'  => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Request Logging
+    |--------------------------------------------------------------------------
+    |
+    | Enable database logging of all requests via LogRequests middleware.
+    | Disabled by default for performance - enable only when you need
+    | detailed request analysis beyond standard access logs.
+    |
+    | Set APP_LOG_REQUESTS=true in .env to enable.
+    |
+    */
+
+    'log_requests' => env('APP_LOG_REQUESTS', false),
+
 ];

@@ -4,8 +4,12 @@
 >
     <?php
     use App\Models\Ride;
+    use Illuminate\Support\Facades\Cache;
 
-    $latestRide = Ride::latest('date')->first();
+    // Cache the latest ride for 15 minutes to improve homepage performance
+    $latestRide = Cache::remember('homepage_latest_ride', 60 * 15, function () {
+        return Ride::latest('date')->first();
+    });
     ?>
     <div x-data="{ scrolled: false }"
          x-init="window.addEventListener('scroll', () => { scrolled = window.scrollY > 50 })"
