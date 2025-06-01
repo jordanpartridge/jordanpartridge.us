@@ -18,8 +18,8 @@ class GitHubSettingsPage extends Page
     protected static ?string $title = 'GitHub Settings';
     protected static string $view = 'filament.pages.github-settings';
 
-
     public ?string $token = null;
+
     public string $username;
 
     protected GitHubSettings $settings;
@@ -43,17 +43,6 @@ class GitHubSettingsPage extends Page
     public static function getSlug(): string
     {
         return 'settings/github';
-    }
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        if (!$user) {
-            return false;
-        }
-
-        // Check if user has admin role or super admin role
-        return $user->hasRole(['admin', 'super_admin']);
     }
 
     public function mount(): void

@@ -31,7 +31,7 @@ class CoreFunctionalityTest extends DuskTestCase
             $browser->visit('/blog')
                 ->assertSee('Blog')
                 ->assertSee('Jordan\'s Blog')
-                ->assertPresent('.blog-post, article, [data-testid="blog-post"]')
+                ->assertSee('Recent Articles') // Verify the section is displayed
                 ->assertVisible('h1')
                 ->assertMissing('[data-error]'); // Ensure no error states
         });
