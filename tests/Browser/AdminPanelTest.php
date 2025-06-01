@@ -4,6 +4,7 @@ namespace Tests\Browser;
 
 use App\Models\User;
 use Laravel\Dusk\Browser;
+use Spatie\Permission\Models\Role;
 use Tests\DuskTestCase;
 
 class AdminPanelTest extends DuskTestCase
@@ -21,6 +22,10 @@ class AdminPanelTest extends DuskTestCase
             'email'             => 'admin@test.com',
             'email_verified_at' => now(),
         ]);
+
+        // Ensure admin role exists and assign it
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $this->adminUser->assignRole($adminRole);
 
         // Create a regular user for security testing
         $this->regularUser = User::factory()->create([
@@ -48,22 +53,11 @@ class AdminPanelTest extends DuskTestCase
             $browser->loginAs($this->regularUser)
                 ->visit('/admin');
 
-            // Should either redirect to login or show 403/unauthorized
+            // Should redirect to login page since user lacks admin role
             $currentUrl = $browser->driver->getCurrentURL();
-            $pageText = $browser->script('return document.body.innerText || document.body.textContent || ""');
-            $pageText = is_array($pageText) ? $pageText[0] : $pageText;
-
-            $hasRestrictedAccess =
-                str_contains($currentUrl, '/login') ||
-                str_contains($currentUrl, '/admin/login') ||
-                str_contains($pageText, '403') ||
-                str_contains($pageText, 'Unauthorized') ||
-                str_contains($pageText, 'Access Denied') ||
-                str_contains($pageText, 'Forbidden');
-
             $this->assertTrue(
-                $hasRestrictedAccess,
-                'Regular user should not have access to admin panel. Current URL: ' . $currentUrl
+                str_contains($currentUrl, '/login') || str_contains($currentUrl, '/admin/login'),
+                'Regular user should be redirected to login. Current URL: ' . $currentUrl
             );
         });
     }
@@ -130,23 +124,11 @@ class AdminPanelTest extends DuskTestCase
                 $browser->loginAs($this->regularUser)
                     ->visit($route);
 
+                // Should redirect to login since user lacks admin role
                 $currentUrl = $browser->driver->getCurrentURL();
-                $pageText = $browser->script('return document.body.innerText || document.body.textContent || ""');
-                $pageText = is_array($pageText) ? $pageText[0] : $pageText;
-
-                $hasRestrictedAccess =
-                    str_contains($currentUrl, '/login') ||
-                    str_contains($currentUrl, '/admin/login') ||
-                    str_contains($pageText, '403') ||
-                    str_contains($pageText, '404') ||
-                    str_contains($pageText, 'Not Found') ||
-                    str_contains($pageText, 'Unauthorized') ||
-                    str_contains($pageText, 'Access Denied') ||
-                    str_contains($pageText, 'Forbidden');
-
                 $this->assertTrue(
-                    $hasRestrictedAccess,
-                    "Regular user should not access {$route}. Current URL: {$currentUrl}"
+                    str_contains($currentUrl, '/login') || str_contains($currentUrl, '/admin/login'),
+                    "Regular user should be redirected from {$route}. Current URL: {$currentUrl}"
                 );
             }
         });
@@ -227,21 +209,19 @@ class AdminPanelTest extends DuskTestCase
             $browser->loginAs($this->regularUser)
                 ->visit('/admin');
 
+            // Should be redirected to login
             $firstUrl = $browser->driver->getCurrentURL();
-
-            // Should be redirected or see access denied
             $this->assertTrue(
                 str_contains($firstUrl, '/login') || str_contains($firstUrl, '/admin/login'),
-                'Regular user should not access admin panel'
+                'Regular user should be redirected to login from admin panel'
             );
 
-            // Now try accessing after being "denied"
+            // Try accessing specific admin route
             $browser->visit('/admin/clients');
             $secondUrl = $browser->driver->getCurrentURL();
-
             $this->assertTrue(
                 str_contains($secondUrl, '/login') || str_contains($secondUrl, '/admin/login'),
-                'Regular user should consistently be denied admin access'
+                'Regular user should consistently be redirected from admin routes'
             );
         });
     }
