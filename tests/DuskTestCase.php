@@ -43,6 +43,7 @@ abstract class DuskTestCase extends BaseTestCase
         // Seed essential data only once per test session for better performance
         $this->seedEssentialDataOnce();
     }
+
     /**
      * Prepare for Dusk test execution.
      */
@@ -50,27 +51,8 @@ abstract class DuskTestCase extends BaseTestCase
     public static function prepare(): void
     {
         if (! static::runningInSail()) {
-            // Ensure ChromeDriver binary exists before attempting to start
-            $chromedriverPaths = [
-                base_path('vendor/laravel/dusk/bin/chromedriver-linux'),
-                base_path('vendor/laravel/dusk/bin/chromedriver-mac-arm'),
-                base_path('vendor/laravel/dusk/bin/chromedriver-mac-intel'),
-                base_path('vendor/laravel/dusk/bin/chromedriver-win.exe'),
-            ];
-
-            $chromedriverExists = false;
-            foreach ($chromedriverPaths as $path) {
-                if (file_exists($path)) {
-                    $chromedriverExists = true;
-                    break;
-                }
-            }
-
-            if (! $chromedriverExists) {
-                throw new Exception(
-                    "ChromeDriver not found. Run 'php artisan dusk:chrome-driver' to install it."
-                );
-            }
+            // Note: Cannot check ChromeDriver binary in BeforeClass as Laravel app isn't fully initialized
+            // This check will happen in ensureChromeDriverIsRunning() method instead
 
             // Check if ChromeDriver is already running before attempting to start
             if (! static::isChromeDriverRunning()) {
@@ -185,6 +167,28 @@ abstract class DuskTestCase extends BaseTestCase
 
         if (env('CI_DEBUG', false)) {
             echo "🔧 Ensuring ChromeDriver is running...\n";
+        }
+
+        // Ensure ChromeDriver binary exists before attempting to start
+        $chromedriverPaths = [
+            base_path('vendor/laravel/dusk/bin/chromedriver-linux'),
+            base_path('vendor/laravel/dusk/bin/chromedriver-mac-arm'),
+            base_path('vendor/laravel/dusk/bin/chromedriver-mac-intel'),
+            base_path('vendor/laravel/dusk/bin/chromedriver-win.exe'),
+        ];
+
+        $chromedriverExists = false;
+        foreach ($chromedriverPaths as $path) {
+            if (file_exists($path)) {
+                $chromedriverExists = true;
+                break;
+            }
+        }
+
+        if (! $chromedriverExists) {
+            throw new Exception(
+                "ChromeDriver not found. Run 'php artisan dusk:chrome-driver' to install it."
+            );
         }
 
         // Set DISPLAY for Linux CI
