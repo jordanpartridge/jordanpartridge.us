@@ -112,7 +112,7 @@ class AdminPanelTest extends DuskTestCase
             '/admin/posts',
             '/admin/users',
             '/admin/categories',
-            '/admin/github-settings-page',
+            '/admin/settings/github',
             '/admin/gmail-integration-page',
             '/admin/performance-monitoring-dashboard'
         ];

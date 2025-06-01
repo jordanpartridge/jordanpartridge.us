@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class EditPostTest extends TestCase
@@ -20,6 +21,9 @@ class EditPostTest extends TestCase
     public function authenticated_users_can_view_edit_post_form()
     {
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
         $post = Post::factory()->create([
             'title'   => 'Test Post Title',
             'body'    => 'Test post content',
@@ -52,6 +56,9 @@ class EditPostTest extends TestCase
         Storage::fake('public');
 
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
         $post = Post::factory()->create([
             'title'   => 'Original Post Title',
             'body'    => 'Original content',
@@ -83,6 +90,9 @@ class EditPostTest extends TestCase
         $this->markTestSkipped('Skipping Filament resource test until issues resolved');
 
         $user = User::factory()->create();
+        // Create admin role and assign to user
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $user->assignRole($adminRole);
         $post = Post::factory()->create([
             'user_id' => $user->id
         ]);
