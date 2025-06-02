@@ -33,14 +33,7 @@ class AdminPanelTest extends DuskTestCase
         ]);
     }
 
-    protected function tearDown(): void
-    {
-        // Clean up test users
-        $this->adminUser->delete();
-        $this->regularUser->delete();
-
-        parent::tearDown();
-    }
+    // Note: tearDown cleanup removed - DatabaseTransactions handles cleanup automatically
 
     /**
      * Test that regular users cannot access admin panel (security test)

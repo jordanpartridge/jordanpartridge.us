@@ -1,0 +1,67 @@
+name: Shared Setup
+
+on:
+  workflow_call:
+    outputs:
+      composer-cache-hit:
+        description: "Whether composer cache was hit"
+        value: ${{ jobs.setup.outputs.composer-cache-hit }}
+      node-cache-hit:
+        description: "Whether node cache was hit"  
+        value: ${{ jobs.setup.outputs.node-cache-hit }}
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    name: Setup Dependencies & Assets
+    runs-on: ubuntu-latest
+    outputs:
+      composer-cache-hit: ${{ steps.composer-cache.outputs.cache-hit }}
+      node-cache-hit: ${{ steps.node-cache.outputs.cache-hit }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, mysql, gd, zip
+          coverage: none
+
+      - name: Cache Composer Dependencies
+        id: composer-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+
+      - name: Cache Node Dependencies
+        id: node-cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: node-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: node-${{ runner.os }}-
+
+      - name: Install Composer Dependencies
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Node Dependencies
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: Build Assets
+        run: npm run build
+
+      - name: Cache Built Assets
+        uses: actions/cache@v4
+        with:
+          path: |
+            public/js
+            public/css
+          key: assets-${{ runner.os }}-${{ github.sha }}

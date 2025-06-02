@@ -3,6 +3,7 @@
 namespace Tests\Browser;
 
 use Laravel\Dusk\Browser;
+use PHPUnit\Framework\Attributes\Group;
 use Tests\DuskTestCase;
 
 class CoreFunctionalityTest extends DuskTestCase
@@ -93,9 +94,8 @@ class CoreFunctionalityTest extends DuskTestCase
 
     /**
      * Test contact form successful submission
-     *
-     * @group skip-alert-issues
      */
+    #[Group('skip-alert-issues')]
     public function test_contact_form_submission()
     {
         $this->markTestSkipped('Contact form has browser alert issues in test environment');
