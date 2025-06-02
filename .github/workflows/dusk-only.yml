@@ -8,8 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    uses: ./.github/workflows/setup-shared.yml
+
   dusk-tests:
     name: Browser Tests (Dusk)
+    needs: setup
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -34,11 +38,27 @@ jobs:
         extensions: mbstring, xml, ctype, iconv, mysql, gd, zip
         coverage: none
 
-    - name: Install Dependencies
-      run: |
-        composer install --no-interaction --prefer-dist --optimize-autoloader
-        npm install
-        npm run build
+    - name: Restore Composer Cache
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+        restore-keys: composer-${{ runner.os }}-
+
+    - name: Restore Node Cache
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: node-${{ runner.os }}-
+
+    - name: Restore Built Assets
+      uses: actions/cache@v4
+      with:
+        path: |
+          public/js
+          public/css
+        key: assets-${{ runner.os }}-${{ github.sha }}
 
     - name: Setup Environment
       run: |

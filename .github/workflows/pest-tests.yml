@@ -8,13 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    uses: ./.github/workflows/setup-shared.yml
+
   pest-tests:
+    needs: setup
     runs-on: ubuntu-latest
-    
-    strategy:
-      fail-fast: false
-      matrix:
-        php-version: [8.4]
 
     services:
       mysql:
@@ -29,26 +28,34 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup PHP ${{ matrix.php-version }}
+    - name: Setup PHP 8.4
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php-version }}
+        php-version: '8.4'
         extensions: mbstring, xml, ctype, iconv, mysql
         coverage: xdebug
 
-    - name: Cache Composer Dependencies
+    - name: Restore Composer Cache
       uses: actions/cache@v4
       with:
         path: vendor
-        key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.lock') }}
-        restore-keys: composer-${{ runner.os }}-${{ matrix.php-version }}-
+        key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+        restore-keys: composer-${{ runner.os }}-
 
-    - name: Cache Node Dependencies
+    - name: Restore Node Cache
       uses: actions/cache@v4
       with:
         path: node_modules
         key: node-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
         restore-keys: node-${{ runner.os }}-
+
+    - name: Restore Built Assets
+      uses: actions/cache@v4
+      with:
+        path: |
+          public/js
+          public/css
+        key: assets-${{ runner.os }}-${{ github.sha }}
 
     - name: Setup Environment
       run: |
@@ -63,11 +70,6 @@ jobs:
         echo "CARD_API_BASE_URL=${{ secrets.CARD_API_BASE_URL }}" >> .env
         echo "CARD_API_KEY=${{ secrets.CARD_API_KEY }}" >> .env
 
-    - name: Install Dependencies
-      run: |
-        composer install --no-interaction --prefer-dist --optimize-autoloader
-        npm ci
-        npm run build
 
     - name: Generate Application Keys
       run: |
