@@ -60,6 +60,16 @@ jobs:
           public/css
         key: assets-${{ runner.os }}-${{ github.sha }}
 
+    - name: Fallback Asset Build
+      run: |
+        # If assets weren't cached properly, build them now
+        if [ ! -f "public/js/app.js" ] || [ ! -f "public/css/app.css" ]; then
+          echo "⚠️ Assets not found, building now..."
+          npm run build
+        else
+          echo "✅ Assets found from cache"
+        fi
+
     - name: Setup Environment
       run: |
         cp .env.example .env
@@ -126,17 +136,41 @@ jobs:
         # Leave it running for Dusk tests to use
         echo "✅ Leaving ChromeDriver running for Dusk tests (PID: $CHROMEDRIVER_PID)"
 
+    - name: Debug Pre-Server State
+      run: |
+        echo "🔍 Checking application state before starting server..."
+        echo "Built assets:"
+        ls -la public/js/ public/css/ || echo "❌ Asset directories not found"
+        echo "Environment:"
+        php artisan env
+        echo "Routes check:"
+        php artisan route:list --compact | head -10
+
     - name: Start Laravel Server
-      run: php artisan serve --host=127.0.0.1 --port=8000 &
+      run: |
+        echo "🚀 Starting Laravel server..."
+        php artisan serve --host=127.0.0.1 --port=8000 > server.log 2>&1 &
+        SERVER_PID=$!
+        echo "Server PID: $SERVER_PID"
+        sleep 2
+        echo "Server log (first few lines):"
+        head -10 server.log || echo "No server log yet"
 
     - name: Wait for Server
       run: |
+        echo "⏳ Waiting for server to respond..."
         for i in {1..30}; do
           if curl -f -s http://127.0.0.1:8000 >/dev/null 2>&1; then
             echo "✅ Server ready!"
+            echo "Server response test:"
+            curl -s http://127.0.0.1:8000 | head -5
             break
           fi
           echo "⏳ Waiting... ($i/30)"
+          if [ $i -eq 15 ]; then
+            echo "🔍 Server log after 15 attempts:"
+            cat server.log || echo "No server log"
+          fi
           sleep 2
         done
 
