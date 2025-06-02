@@ -133,9 +133,23 @@ abstract class DuskTestCase extends BaseTestCase
             $this->shouldStartMaximized() ? '--start-maximized' : '--window-size=1920,1080',
             '--no-sandbox',
             '--disable-dev-shm-usage',
-            // Disable web security and display compositor for stable testing
+            // Performance optimizations for CI
             '--disable-web-security',
             '--disable-features=VizDisplayCompositor',
+            '--disable-background-timer-throttling',
+            '--disable-renderer-backgrounding',
+            '--disable-backgrounding-occluded-windows',
+            '--disable-ipc-flooding-protection',
+            '--disable-hang-monitor',
+            '--disable-prompt-on-repost',
+            '--disable-sync',
+            '--force-color-profile=srgb',
+            '--metrics-recording-only',
+            '--no-first-run',
+            '--safebrowsing-disable-auto-update',
+            '--enable-automation',
+            '--password-store=basic',
+            '--use-mock-keychain',
         ])->filter()->unless($this->hasHeadlessDisabled(), function (Collection $items) {
             return $items->merge([
                 '--disable-gpu',
@@ -206,13 +220,22 @@ abstract class DuskTestCase extends BaseTestCase
             try {
                 static::startChromeDriver(['--verbose']);
 
-                // Give it time to start
-                sleep(3);
+                // Wait for ChromeDriver to respond with retry logic
+                $maxRetries = 10;
+                $retryDelay = 0.5; // 500ms
+                $connected = false;
 
-                // Verify it's responding
-                $connection = @fsockopen('localhost', 9515, $errno, $errstr, 5);
-                if ($connection) {
-                    fclose($connection);
+                for ($i = 0; $i < $maxRetries; $i++) {
+                    usleep($retryDelay * 1000000); // Convert to microseconds
+                    $connection = @fsockopen('localhost', 9515, $errno, $errstr, 1);
+                    if ($connection) {
+                        fclose($connection);
+                        $connected = true;
+                        break;
+                    }
+                }
+
+                if ($connected) {
                     $chromeDriverStarted = true;
                 } else {
                     throw new Exception("ChromeDriver failed to respond after startup: $errno - $errstr");
