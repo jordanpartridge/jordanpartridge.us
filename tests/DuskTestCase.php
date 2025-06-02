@@ -20,28 +20,14 @@ abstract class DuskTestCase extends BaseTestCase
     use RefreshDatabase;
 
     /**
-     * Track if essential data has been seeded
-     */
-    protected static bool $dataSeedComplete = false;
-
-    /**
-     * Reset static tracking variables between test classes.
-     */
-    public static function tearDownAfterClass(): void
-    {
-        static::$dataSeedComplete = false;
-        parent::tearDownAfterClass();
-    }
-
-    /**
-     * Setup the test environment with optimized database setup.
+     * Setup the test environment.
      */
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Seed essential data only once per test session for better performance
-        $this->seedEssentialDataOnce();
+        // Seed essential data for each test to avoid database contention
+        $this->seedEssentialData();
     }
 
     /**
@@ -80,14 +66,10 @@ abstract class DuskTestCase extends BaseTestCase
     }
 
     /**
-     * Seed essential data only once per test session for better performance.
+     * Seed essential data for each test to ensure clean state.
      */
-    protected function seedEssentialDataOnce(): void
+    protected function seedEssentialData(): void
     {
-        if (static::$dataSeedComplete) {
-            return;
-        }
-
         // Create essential roles for FilamentShield
         $roles = ['admin', 'editor', 'user', 'super_admin', 'panel_user'];
         foreach ($roles as $roleName) {
@@ -117,8 +99,6 @@ abstract class DuskTestCase extends BaseTestCase
         if (class_exists(Category::class)) {
             Category::factory()->count(2)->create();
         }
-
-        static::$dataSeedComplete = true;
     }
 
     /**
