@@ -15,7 +15,7 @@ jobs:
     name: Browser Tests (Dusk)
     needs: setup
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
 
     services:
       mysql:

@@ -8,8 +8,9 @@ use Exception;
 use Facebook\WebDriver\Chrome\ChromeOptions;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Laravel\Dusk\TestCase as BaseTestCase;
 use PHPUnit\Framework\Attributes\BeforeClass;
 use Spatie\Permission\Models\Permission;
@@ -17,7 +18,21 @@ use Spatie\Permission\Models\Role;
 
 abstract class DuskTestCase extends BaseTestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
+
+    /**
+     * Track if database has been seeded for this test class
+     */
+    protected static bool $databaseSeeded = false;
+
+    /**
+     * Reset seeding flag when test class finishes
+     */
+    public static function tearDownAfterClass(): void
+    {
+        static::$databaseSeeded = false;
+        parent::tearDownAfterClass();
+    }
 
     /**
      * Setup the test environment.
@@ -26,8 +41,11 @@ abstract class DuskTestCase extends BaseTestCase
     {
         parent::setUp();
 
-        // Seed essential data for each test to avoid database contention
-        $this->seedEssentialData();
+        // Seed essential data once per test class for better performance
+        if (!static::$databaseSeeded) {
+            $this->seedEssentialData();
+            static::$databaseSeeded = true;
+        }
     }
 
     /**
@@ -66,39 +84,43 @@ abstract class DuskTestCase extends BaseTestCase
     }
 
     /**
-     * Seed essential data for each test to ensure clean state.
+     * Seed essential data once per test class for optimal performance.
      */
     protected function seedEssentialData(): void
     {
-        // Create essential roles for FilamentShield
-        $roles = ['admin', 'editor', 'user', 'super_admin', 'panel_user'];
-        foreach ($roles as $roleName) {
-            Role::firstOrCreate(['name' => $roleName]);
-        }
+        // Use database transactions for faster seeding
+        DB::transaction(function () {
+            // Create essential roles for FilamentShield (if they don't exist)
+            $roles = ['admin', 'editor', 'user', 'super_admin', 'panel_user'];
+            foreach ($roles as $roleName) {
+                if (!Role::where('name', $roleName)->exists()) {
+                    Role::create(['name' => $roleName, 'guard_name' => 'web']);
+                }
+            }
 
-        // Create essential permissions for testing
-        $permissions = ['manage users', 'edit articles', 'view articles'];
-        foreach ($permissions as $permissionName) {
-            Permission::firstOrCreate(['name' => $permissionName]);
-        }
+            // Create essential permissions for testing (if they don't exist)
+            $permissions = ['manage users', 'edit articles', 'view articles'];
+            foreach ($permissions as $permissionName) {
+                if (!Permission::where('name', $permissionName)->exists()) {
+                    Permission::create(['name' => $permissionName, 'guard_name' => 'web']);
+                }
+            }
 
-        // Assign permissions to admin role
-        $adminRole = Role::where('name', 'admin')->first();
-        if ($adminRole) {
-            $adminRole->syncPermissions($permissions);
-        }
+            // Assign permissions to admin role (only if not already assigned)
+            $adminRole = Role::where('name', 'admin')->first();
+            if ($adminRole && $adminRole->permissions()->count() === 0) {
+                $adminRole->syncPermissions($permissions);
+            }
 
-        // Seed a few blog posts for testing if the Post model exists
-        if (class_exists(Post::class)) {
-            Post::factory()->count(3)->create([
-                'status' => 'published'
-            ]);
-        }
+            // Create minimal test data only if needed
+            if (class_exists(Post::class) && Post::count() === 0) {
+                Post::factory()->count(2)->create(['status' => 'published']);
+            }
 
-        // Seed categories if they exist
-        if (class_exists(Category::class)) {
-            Category::factory()->count(2)->create();
-        }
+            if (class_exists(Category::class) && Category::count() === 0) {
+                Category::factory()->count(2)->create();
+            }
+        });
     }
 
     /**
