@@ -51,7 +51,7 @@ The site operates as a collection of integrated applications:
 
 The application uses a hierarchical component structure for views:
 
-```
+```text
 resources/views/
 ├── components/      # Reusable view components
 │   ├── bike-joy/    # Bike section components
@@ -78,7 +78,7 @@ resources/views/
    - Page templates compose multiple components together
 
 3. **Layout Components**
-   - The `layouts/` directory contains wrapper layouts
+   - The `layouts/` directory contains wrapper templates
    - Layouts handle document structure, meta information, and shared elements
    - Feature sections use appropriate layouts based on context
 
@@ -142,7 +142,7 @@ Integrates with Gmail API for email tracking and management:
 
 The site uses Laravel Folio for route-by-blade file structure, allowing direct routing from blade files:
 
-```
+```text
 resources/views/pages/
 ├── bike/                   # Bike section pages
 │   ├── index.blade.php     # Main bike dashboard
